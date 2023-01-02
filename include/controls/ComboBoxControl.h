@@ -103,7 +103,12 @@ class ComboBoxControl : public Window {
 			  : ComboBox{Combobox}, Index{(size_t)ComboBox_GetCount(Combobox.handle())}
 			{}
 			
-			CopyMovable(ItemIterator);
+			satisfies(ItemIterator,
+				NotDefaultConstructible,
+				IsCopyable,
+				IsMovable,
+				NotSortable
+			);
 
 		private:
 			bool 

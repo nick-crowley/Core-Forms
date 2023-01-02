@@ -19,6 +19,11 @@ private:
 	std::vector<::HWND>  Children;
 	::HWND	  Parent;
 	unsigned Index;
+	
+private:
+	ConstChildWindowIterator() noexcept
+      : Parent(nullptr), Index(-1)
+	{}
 
  public:
 	explicit
@@ -30,12 +35,11 @@ private:
 			this->Index = -1;
 	}
 
-	CopyMovable(ConstChildWindowIterator);
-
-private:
-	ConstChildWindowIterator() noexcept
-      : Parent(nullptr), Index(-1)
-	{}
+	satisfies(ConstChildWindowIterator,
+		IsCopyable,
+		IsMovable,
+		NotSortable
+	);
 
 private:
 	static

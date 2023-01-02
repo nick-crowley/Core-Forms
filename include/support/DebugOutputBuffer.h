@@ -9,8 +9,9 @@ public:
 		this->setp(this->Buffer.data(), this->Buffer.data() + 255); //-1 to make overflow() easier
 	}
 
-	CopyConstructible(DebugOutputBuffer) = delete;
-	CopyAssignable(DebugOutputBuffer) = delete;
+	satisfies(DebugOutputBuffer,
+		NotCopyable
+	);
 
 private:
     int_type overflow(int_type ch) override {

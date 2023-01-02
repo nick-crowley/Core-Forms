@@ -16,6 +16,11 @@ public:
 private:
 	Message Current;
 	::HWND  Window;
+	
+private:
+	MessageQueueIterator() noexcept {
+		this->Current.message = WM_QUIT;
+	}
 
  public:
 	explicit
@@ -24,13 +29,12 @@ private:
 	{
 		this->increment();
 	}
-
-	CopyMovable(MessageQueueIterator);
-
-private:
-	MessageQueueIterator() noexcept {
-		this->Current.message = WM_QUIT;
-	}
+	
+	satisfies(MessageQueueIterator,
+		IsCopyable,
+		IsMovable,
+		NotSortable
+	);
 
  private:
     bool 

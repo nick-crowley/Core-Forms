@@ -120,7 +120,12 @@ public:
 			  : ListBox(listbox), Index(ListBox_GetCount(listbox.handle()))
 			{}
 			
-			CopyMovable(ItemIterator);
+			satisfies(ItemIterator,
+				NotDefaultConstructible,
+				IsCopyable,
+				IsMovable,
+				NotSortable
+			);
 
 		private:
 			bool 
@@ -241,7 +246,12 @@ public:
 			  : ListBox(listbox), Index(npos)
 			{}
 			
-			CopyMovable(SelectedIndexIterator);
+			satisfies(SelectedIndexIterator,
+				NotDefaultConstructible,
+				IsCopyable,
+				IsMovable,
+				NotSortable
+			);
 
 		private:
 			bool 

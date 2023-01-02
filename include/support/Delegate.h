@@ -42,8 +42,12 @@ private:
 			auto* src = (const std::byte*)std::addressof(pfx);
 			std::copy(src, src + sizeof(pfx), std::begin(this->Method));
 		}
-
-		CopyMovable(MethodIdentifier);
+		
+		satisfies(MethodIdentifier,
+			IsCopyable,
+			IsMovable,
+			NotSortable
+		);
 
 	public:
 		bool valid() const { 
@@ -64,14 +68,6 @@ private:
 	MethodIdentifier  Ident;
 
 public:
-	Delegate() = default;
-
-	template <typename Other>
-	Delegate(const Delegate<Other>&) = delete;
-
-	template <typename Other>
-	Delegate(Delegate<Other>&&) = delete;
-
 	template <typename CallableTarget, typename = std::enable_if_t<std::is_assignable_v<FunctionWrapper,CallableTarget>>> 
 	//explicit 
 	Delegate(CallableTarget&& t) 
@@ -107,8 +103,20 @@ public:
 
 		this->Target = [=](Parameters... args) { return (object->*method)(std::forward<Parameters>(args)...); };
 	}
+	
+	satisfies(Delegate,
+		IsDefaultConstructible,
+		IsCopyable,
+		IsMovable,
+		NotEqualityComparable,
+		NotSortable
+	);
 
-	CopyMovable(Delegate);
+	template <typename Other>
+	Delegate(Delegate<Other> const&) = delete;
+
+	template <typename Other>
+	Delegate(Delegate<Other>&&) = delete;
 
 public:
 	template <typename Other>
