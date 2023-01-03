@@ -785,7 +785,10 @@ protected:
 			if (message == WM_NCCREATE) 
 				Window::on_first_sight(hWnd, {wParam,lParam});
 			
-			if (s_ExistingWindows.contains(hWnd)) {
+			// Search for the C++ object managing this handle
+			if (!s_ExistingWindows.contains(hWnd)) 
+				response = on_unexpected_message(hWnd, message, wParam, lParam);
+			else {
 				wnd = s_ExistingWindows[hWnd];
 
 				// Window lifetime tracking
@@ -793,31 +796,31 @@ protected:
 					wnd->on_destruction_started();
 
 				{
+					// Offer the message to the C++ object managing this handle
 					auto const on_exit = wnd->Debug.setTemporaryState({ProcessingState::MessageProcessing, name});
 					response = wnd->offer_message(hWnd, message, wParam, lParam);
 				}
 
 				{
+					// [POST] Raise the associated event, if any
 					auto const on_exit = wnd->Debug.setTemporaryState({ProcessingState::EventProcessing, name});
 					wnd->raise_message_event(hWnd, message, wParam, lParam);
 				}
-			}
-			else {
-				response = on_unexpected_message(hWnd, message, wParam, lParam);
 			}
 
 			assert(response.Status != Response::Invalid);
 			
 			::LRESULT result;
-			// [HANDLED]
+			// [HANDLED] Return the result provided by the handler
 			if (response.Status == Response::Handled) 			
 				result = *response.Value;
 
-			// [UNHANDLED/ERROR]
+			// [UNHANDLED/ERROR] Let the C++ object managing this handle pass message to ::DefWindowProc()
 			else if (wnd) {	
 				auto const on_exit = wnd->Debug.setTemporaryState({ProcessingState::DefaultProcessing, name});
 				result = wnd->unhandled_message(hWnd, message, wParam, lParam);
 			}
+			// [UNHANDLED/ERROR] Pass message to ::DefWindowProc()
 			else 
 				result = ::DefWindowProc(hWnd, message, wParam, lParam);
 
@@ -834,6 +837,7 @@ protected:
 						
 			return result;
 		} 
+		// [ERROR] Return a value indicating we didn't handle the message (usually anything but zero)
 		catch (const std::exception& e) {
 			log_entry.set_exception(e);
 			return s_MessageDatabase[message].Unhandled;
