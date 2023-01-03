@@ -7,7 +7,6 @@
 #include "controls/PictureControl.h"
 #include "controls/StaticControl.h"
 #include "controls/RadioButtonControl.h"
-#include "Resource.h"
 
 DrawTextFlags
 calculateFlags(EnumBitset<ButtonStyle> style) noexcept
