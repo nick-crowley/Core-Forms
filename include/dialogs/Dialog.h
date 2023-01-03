@@ -243,7 +243,11 @@ protected:
 	::LRESULT 
 	static CALLBACK InterceptMessageHandler(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
 	{
-		// FIXME: This method needs documenting
+		// The documented dialog box Windows API functions do not provide a way of passing a custom
+		// parameter into the creation of dialogs; they only provide a facility to pass a parameter
+		// into the synthetic WM_INITDIALOG message, which is raised post the creation of child windows.
+		// In order to manage the dialog handle throughout its lifetime, we intercept WM_NCCREATE and
+		// manually pass a custom parameter stored (temporarily) in a threadlocal variable by showModal()
 		if (message == WM_NCCREATE && Dialog::s_DialogCreationParameter) {
 			CreateWindowEventArgs args(wParam,lParam);	
 
