@@ -237,7 +237,6 @@ protected:
 		catch (const std::exception& e) {
 			log_entry.set_exception(e);
 			return (INT_PTR)FALSE;
-			//return s_MessageDatabase[message].Unhandled;
 		}
 	}
 
@@ -252,10 +251,7 @@ protected:
 			replacement.lpCreateParams = &Dialog::s_DialogCreationParameter.value();
 			Dialog::s_DialogCreationParameter = std::nullopt;
 
-			auto result = Window::DefaultMessageHandler(hWnd, message, wParam, (LPARAM)&replacement);
-			
-
-			return result;
+			return Window::DefaultMessageHandler(hWnd, message, wParam, (LPARAM)&replacement);
 		} 
 
 		return Window::DefaultMessageHandler(hWnd, message, wParam, lParam);
