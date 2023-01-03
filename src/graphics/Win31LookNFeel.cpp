@@ -76,7 +76,7 @@ Win31LookNFeel::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args)
 {
 	auto const style = ctrl.style<ButtonStyle>();
 	if ((style & ButtonStyle::TypeMask) != ButtonStyle::OwnerDraw)
-		throw std::runtime_error("Button #" + std::to_string(*args.Ident) + " must be OwnerDraw");
+		throw std::runtime_error(std::format("Button #{} must be OwnerDraw", *args.Ident));
 
 	auto const enabled = ctrl.enabled();
 	auto const state = ctrl.state();
@@ -113,7 +113,7 @@ Win31LookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 {
 	auto const style = ctrl.style<ButtonStyle>();
 	if ((style & ButtonStyle::TypeMask) != ButtonStyle::OwnerDraw)
-		throw std::runtime_error("CheckBox #" + std::to_string(*args.Ident) + " must be OwnerDraw");
+		throw std::runtime_error(std::format("CheckBox #{} must be OwnerDraw", *args.Ident));
 
 	auto const enabled = ctrl.enabled();
 	auto const checked = ctrl.checked();
@@ -140,7 +140,7 @@ Win31LookNFeel::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args)
 {
 	auto const style = ctrl.style<StaticStyle>();
 	if ((style & StaticStyle::TypeMask) != StaticStyle::OwnerDraw)
-		throw std::runtime_error("Label #" + std::to_string(*args.Ident) + " must be OwnerDraw");
+		throw std::runtime_error(std::format("Label #{} must be OwnerDraw", *args.Ident));
 
 	args.Graphics.setObj(StockObject::WhiteBrush);
 	args.Graphics.setObj(StockObject::SystemFixedFont);
@@ -155,7 +155,7 @@ void
 Win31LookNFeel::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args) 
 {
 	if (!ctrl.style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawFixed))
-		throw std::runtime_error("Listbox #" + std::to_string(*args.Ident) + " must be OwnerDraw");
+		throw std::runtime_error(std::format("ListBox #{} must be OwnerDraw", *args.Ident));
 
 	bool const selected = args.Item.State.test(OwnerDrawState::Selected);
 	
@@ -188,7 +188,7 @@ Win31LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 {
 	auto const style = ctrl.style<ButtonStyle>();
 	if ((style & ButtonStyle::TypeMask) != ButtonStyle::OwnerDraw)
-		throw std::runtime_error("GroupBox #" + std::to_string(*args.Ident) + " must be OwnerDraw");
+		throw std::runtime_error(std::format("GroupBox #{} must be OwnerDraw", *args.Ident));
 
 	auto const text = ctrl.text();
 	auto const textSize = args.Graphics.measureText(text);
@@ -222,7 +222,7 @@ Win31LookNFeel::draw(PictureControl& ctrl, OwnerDrawEventArgs const& args)
 {
 	auto const style = ctrl.style<StaticStyle>();
 	if ((style & StaticStyle::TypeMask) != StaticStyle::OwnerDraw)
-		throw std::runtime_error("Picture #" + std::to_string(*args.Ident) + " must be OwnerDraw");
+		throw std::runtime_error(std::format("Picture #{} must be OwnerDraw", *args.Ident));
 	
 	if (auto bitmap = ctrl.image(); bitmap) {
 		DeviceContext src{::CreateCompatibleDC(args.Graphics.handle()), ctrl.handle()};
@@ -249,7 +249,7 @@ Win31LookNFeel::draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args)
 {
 	auto const style = ctrl.style<ButtonStyle>();
 	if ((style & ButtonStyle::TypeMask) != ButtonStyle::OwnerDraw)
-		throw std::runtime_error("RadioButton #" + std::to_string(*args.Ident) + " must be OwnerDraw");
+		throw std::runtime_error(std::format("RadioButton #{} must be OwnerDraw", *args.Ident));
 
 	auto const enabled = ctrl.enabled();
 	auto const checked = ctrl.checked();

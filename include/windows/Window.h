@@ -106,7 +106,7 @@ protected:
 		Window* 
 		at(key_t handle) const & {
 			if (auto pos = this->Storage.find(handle); pos == this->Storage.end())
-				throw std::runtime_error("Unrecognised window handle " + to_hexString<8>(uintptr_t(handle)));
+				throw std::runtime_error(std::format("Unrecognised window handle {}", to_hexString<8>(uintptr_t(handle))));
 			else
 				return pos->second;
 		}
@@ -704,7 +704,7 @@ private:
 			w.Area.Left, w.Area.Top, w.Area.width(), w.Area.height(), w.Parent, w.Menu, w.Module, &w.Parameter)) 
 		{
 			this->Debug.setState(ProcessingState::Idle);
-			win::LastError{}.throw_if_failed("Failed to create '" + to_string(w.Class) + "' window");
+			win::LastError{}.throw_if_failed(std::format("Failed to create '{}' window", to_string(w.Class)));
 		}
 
 		this->Debug.setState(ProcessingState::Idle);
@@ -764,9 +764,8 @@ private:
 		}
 		else {
 			using namespace std::literals;
-			throw std::runtime_error(
-				"Received "s + s_MessageDatabase.name(message) + " for unrecognised window " + to_hexString((uintptr_t)hWnd)
-			);
+			throw std::runtime_error(std::format("Received {} for unrecognised window {}", 
+				s_MessageDatabase.name(message), to_hexString((uintptr_t)hWnd)));
 		}
 	}
 	

@@ -78,7 +78,7 @@ public:
 					case ClassId::Listbox:   ctrl.ClassName = ResourceId(L"Custom.LISTBOX");   break;
 					case ClassId::Scrollbar: ctrl.ClassName = ResourceId(L"Custom.SCROLLBAR"); break;
 					case ClassId::Combobox:  ctrl.ClassName = ResourceId(L"Custom.COMBOBOX");  break;
-					default: throw std::invalid_argument("Controls with class id #" + std::to_string(id) + " not yet supported");
+					default: throw std::invalid_argument(std::format("Controls with class id #{0} not yet supported", id));
 					}
 
 					CreateWindowParameter param((*wrappers)[ctrl.Ident]);

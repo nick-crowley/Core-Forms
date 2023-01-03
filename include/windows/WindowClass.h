@@ -25,7 +25,7 @@ public:
 	{
 		auto module = owner ? owner->handle() : nullptr;
 		if (!::GetClassInfoExW(module, name, static_cast<base*>(this))) {
-			win::LastError{}.throw_if_failed("Cannot find '" + to_string(name) + "' window class");
+			win::LastError{}.throw_if_failed(std::format("Cannot find '{}' window class", to_string(name)));
 		}
 	}
 
@@ -50,7 +50,7 @@ public:
 	void 
 	register$() {	
 		if (::ATOM atom = ::RegisterClassExW(static_cast<base*>(this)); !atom) {
-			win::LastError{}.throw_if_failed("Failed to register '" + to_string(this->lpszClassName) + "' window class");
+			win::LastError{}.throw_if_failed(std::format("Failed to register '{}' window class", to_string(this->lpszClassName)));
 		}
 		else {
 			this->Atom = make_handle(atom, this->hInstance);
