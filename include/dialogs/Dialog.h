@@ -277,6 +277,7 @@ private:
 
 		// [MODELESS] Display and return handle
 		this->Handle = ::CreateDialogIndirectW(container, blob, owner, this->DialogProc);
+		return std::nullopt;
 	}
 
 };
