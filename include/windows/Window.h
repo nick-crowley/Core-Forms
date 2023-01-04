@@ -252,7 +252,6 @@ protected:
 		
 		ProcessingState
 		setState(ProcessingState state, std::wstring_view cls, std::wstring_view txt) {
-			// FIXME: Remove min/max macros and replace with std::min/max
 			std::copy(cls.data(), cls.data()+std::min<int>(cls.size(),15), this->Class.begin());
 			std::copy(txt.data(), txt.data()+std::min<int>(txt.size(),15), this->Text.begin());
 			// FIXME: Replace with std::transform() and use static_cast functor to convert char-points
@@ -774,7 +773,6 @@ protected:
 	static CALLBACK DefaultMessageHandler(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
 	{
 		WindowProcLoggingSentry log_entry(__FUNCTION__, message);
-		// FIXME: This method needs documenting
 		try {
 			const char* const name = s_MessageDatabase.name(message);
 			Window* wnd {};
