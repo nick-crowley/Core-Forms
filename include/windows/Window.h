@@ -253,8 +253,8 @@ protected:
 		ProcessingState
 		setState(ProcessingState state, std::wstring_view cls, std::wstring_view txt) {
 			// FIXME: Remove min/max macros and replace with std::min/max
-			std::copy(cls.data(), cls.data()+min(cls.size(),15), this->Class.begin());
-			std::copy(txt.data(), txt.data()+min(txt.size(),15), this->Text.begin());
+			std::copy(cls.data(), cls.data()+std::min<int>(cls.size(),15), this->Class.begin());
+			std::copy(txt.data(), txt.data()+std::min<int>(txt.size(),15), this->Text.begin());
 			// FIXME: Replace with std::transform() and use static_cast functor to convert char-points
 			this->Class.back() = '\0';
 			this->Text.back() = '\0';
