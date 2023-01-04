@@ -62,48 +62,13 @@ public:
 	intptr_t 
 	showModal(Window* parent, std::optional<ControlDictionary> wrappers, std::optional<Module> module = std::nullopt) 
 	{
-		auto customTemplate = this->Template;
-
-		// Change the wndclass for the dialog
-		customTemplate.ClassName = ResourceId::parse(this->wndcls().lpszClassName);
-
-		// Change the wndclass for each wrapped control
-		if (wrappers) {
-			for (auto& ctrl : customTemplate.Controls) {
-				if (ctrl.ClassName && ctrl.ClassName->is_numeric() && wrappers->contains(ctrl.Ident)) {
-					switch (uint16_t id = ctrl.ClassName->as_number(); id) {
-					case ClassId::Button:    ctrl.ClassName = ResourceId(L"Custom.BUTTON");    break;
-					case ClassId::Edit:      ctrl.ClassName = ResourceId(L"Custom.EDIT");      break;
-					case ClassId::Static:    ctrl.ClassName = ResourceId(L"Custom.STATIC");    break;
-					case ClassId::Listbox:   ctrl.ClassName = ResourceId(L"Custom.LISTBOX");   break;
-					case ClassId::Scrollbar: ctrl.ClassName = ResourceId(L"Custom.SCROLLBAR"); break;
-					case ClassId::Combobox:  ctrl.ClassName = ResourceId(L"Custom.COMBOBOX");  break;
-					default: throw std::invalid_argument(std::format("Controls with class id #{0} not yet supported", id));
-					}
-
-					CreateWindowParameter param((*wrappers)[ctrl.Ident]);
-					ctrl.Data = param.as_bytes();
-				}
-			}
-		}
-
-		// Offer derived classes opportunity to modify the template
-		this->onLoadDialog(customTemplate);
-
-		// Pre-creation state
-		Dialog::s_DialogCreationParameter = CreateWindowParameter(this);
-		this->DisplayMode.emplace(DialogMode::Modal);
-		auto const on_exit = this->Debug.setTemporaryState(ProcessingState::BeingCreated);
-		
-		// Display modal
-		DialogTemplateBlob blob = DialogTemplateWriter{}.write_template(customTemplate);
-		auto container = module ? module->handle() : nullptr;
-		auto owner = parent ? parent->handle() : nullptr;
-		auto result = ::DialogBoxIndirectW(container, blob, owner, this->DialogProc);
-
-		// Post-destroy state
-		this->DisplayMode = std::nullopt;
-		return result;
+		return *this->showDialog(DialogMode::Modal, parent, wrappers, module);
+	}
+	
+	void 
+	showModeless(Window* parent, std::optional<ControlDictionary> wrappers, std::optional<Module> module = std::nullopt) 
+	{
+		this->showDialog(DialogMode::NonModal, parent, wrappers, module);
 	}
 
 protected:
@@ -260,5 +225,59 @@ protected:
 
 		return Window::DefaultMessageHandler(hWnd, message, wParam, lParam);
 	}
+
+private:
+	std::optional<intptr_t>
+	showDialog(DialogMode mode, Window* parent, std::optional<ControlDictionary> wrappers, std::optional<Module> module = std::nullopt) 
+	{
+		auto customTemplate = this->Template;
+
+		// Change the wndclass for the dialog
+		customTemplate.ClassName = ResourceId::parse(this->wndcls().lpszClassName);
+
+		// Change the wndclass for each wrapped control
+		if (wrappers) {
+			for (auto& ctrl : customTemplate.Controls) {
+				if (ctrl.ClassName && ctrl.ClassName->is_numeric() && wrappers->contains(ctrl.Ident)) {
+					switch (uint16_t id = ctrl.ClassName->as_number(); id) {
+					case ClassId::Button:    ctrl.ClassName = ResourceId(L"Custom.BUTTON");    break;
+					case ClassId::Edit:      ctrl.ClassName = ResourceId(L"Custom.EDIT");      break;
+					case ClassId::Static:    ctrl.ClassName = ResourceId(L"Custom.STATIC");    break;
+					case ClassId::Listbox:   ctrl.ClassName = ResourceId(L"Custom.LISTBOX");   break;
+					case ClassId::Scrollbar: ctrl.ClassName = ResourceId(L"Custom.SCROLLBAR"); break;
+					case ClassId::Combobox:  ctrl.ClassName = ResourceId(L"Custom.COMBOBOX");  break;
+					default: throw std::invalid_argument(std::format("Controls with class id #{0} not yet supported", id));
+					}
+
+					CreateWindowParameter param((*wrappers)[ctrl.Ident]);
+					ctrl.Data = param.as_bytes();
+				}
+			}
+		}
+
+		// Offer derived classes opportunity to modify the template
+		this->onLoadDialog(customTemplate);
+
+		// Pre-creation state
+		Dialog::s_DialogCreationParameter = CreateWindowParameter(this);
+		this->DisplayMode.emplace(mode);
+		auto const on_exit = this->Debug.setTemporaryState(ProcessingState::BeingCreated);
+		
+		// Generate template with our customizations
+		DialogTemplateBlob blob = DialogTemplateWriter{}.write_template(customTemplate);
+		auto container = module ? module->handle() : nullptr;
+		auto owner = parent ? parent->handle() : nullptr;
+
+		// [MODAL] Display, block, and return result
+		if (mode == DialogMode::Modal) { 
+			auto result = ::DialogBoxIndirectW(container, blob, owner, this->DialogProc);
+			this->DisplayMode = std::nullopt;
+			return result;
+		}
+
+		// [MODELESS] Display and return handle
+		this->Handle = ::CreateDialogIndirectW(container, blob, owner, this->DialogProc);
+	}
+
 };
 
