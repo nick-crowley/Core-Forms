@@ -18,8 +18,8 @@ public:
 	raise(Arguments&&... args) const {
 		static_assert(std::is_invocable_v<Delegate,Arguments...>);
 
-		for (auto& o : this->Observers) {
-			(void)o.invoke(std::forward<Arguments>(args)...);
+		for (auto& fx : this->Observers) {
+			fx.invoke(std::forward<Arguments>(args)...);
 		}
 	}
 
@@ -29,8 +29,7 @@ public:
 	}
 
 	bool unsubscribe(const Delegate& d) {
-		auto is_equal = [&d](auto& e){ return e.compare(d) == DelegateEquality::Equal; };
-		return std::erase_if(this->Observers, is_equal) != 0;
+		return std::erase(this->Observers, d) != 0;
 	}
 
 	type& operator+=(const Delegate& d) {

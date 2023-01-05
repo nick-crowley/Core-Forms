@@ -1,149 +1,198 @@
 #pragma once
 #include "formsFramework.h"
 
-enum class DelegateEquality { Equal, Unequal, Uncertain };
-
-namespace detail {
-	// Given CallableTarget, verify it can be called using arguments of type Signature
-
-	template <typename CallableTarget, typename Signature>
-	struct is_callable_invocable : std::false_type 
-	{};
-
-	template <typename CallableTarget, typename Return, typename... Parameters>
-	struct is_callable_invocable<CallableTarget,Return(Parameters...)> : std::is_invocable<CallableTarget,Parameters...>
-	{};
+template <typename Signature>
+class Delegate 
+{
+	static_assert(std::is_function_v<Signature>, "'Signature' must be of function type");
 };
 
-template <typename Signature>
-class Delegate {
-	template <typename>
-	friend class Delegate;
-
+template <typename Result, typename... Parameters>
+class Delegate<Result(Parameters...)>
+{
 private:
-	using type = Delegate<Signature>;
-	using FunctionWrapper = std::function<Signature>;
+	using type = Delegate<Result(Parameters...)>;
+	using result_t = Result;
 	
-	class MethodIdentifier {
-		using NullaryMethodPointer = void (MethodIdentifier::*)(void);
-		using address_t = const void*;
+	struct ICallable
+	{
+		satisfies(ICallable,
+			virtual IsDestructible
+		);
+		
+		result_t
+		virtual operator()(Parameters...) abstract;
+	};
 
-		address_t   Object;
-		std::byte   Method[sizeof(NullaryMethodPointer)];
+	enum class CallType { Object, Function, Method };
 
-	public:
-		MethodIdentifier() : Object(nullptr), Method{}
+	struct Callable : public ICallable
+	{
+		CallType  m_type;
+
+		Callable(CallType t) : m_type{t}
 		{}
 
-		template <typename Instance, typename MemberPointer>
-		MethodIdentifier(Instance* obj, MemberPointer&& pfx) 
-		  : Object(static_cast<address_t>(obj)) 
-		{
-			auto* src = (const std::byte*)std::addressof(pfx);
-			std::copy(src, src + sizeof(pfx), std::begin(this->Method));
-		}
-		
-		satisfies(MethodIdentifier,
-			IsCopyable,
-			IsMovable,
-			NotSortable
-		);
+		bool
+		virtual operator==(Callable const&) const abstract;
+	};
+
+	template <typename CallableTarget>
+	class FunctionObject : public Callable
+	{
+		using base = Callable;
+
+	private:
+		CallableTarget  m_object;
 
 	public:
-		bool valid() const { 
-			return this->Object != nullptr;
-		};
+		FunctionObject(CallableTarget&& fx) 
+		  : Callable{CallType::Object}, 
+		    m_object{std::move(fx)}
+		{}
+		
+	public:
+		result_t
+		operator()(Parameters... args) override
+		{
+			return this->m_object(std::forward<Parameters>(args)...);
+		}
 
-		bool operator==(const MethodIdentifier& r) const {
-			return this->Object == r.Object 
-				&& std::equal(std::begin(this->Method), std::end(this->Method), std::begin(r.Method));
+		bool
+		operator==(Callable const& r) const override
+		{
+			if (this->m_type != r.m_type)
+				return false;
+
+			throw std::runtime_error("Function objects are incomparable");
+		}
+	};
+
+	class FunctionPointer : public Callable
+	{
+		using base = Callable;
+		using signature_t = Result(*)(Parameters...);
+
+	private:
+		signature_t  m_address;
+
+	public:
+		FunctionPointer(signature_t pfx) 
+		  : Callable{CallType::Function}, 
+		    m_address{pfx}
+		{}
+
+	public:
+		result_t
+		operator()(Parameters... args) override
+		{
+			return (*this->m_address)(std::forward<Parameters>(args)...);
+		}
+
+		bool
+		operator==(Callable const& r) const override
+		{
+			return this->m_type == r.m_type
+			    && this->m_address == static_cast<FunctionPointer const&>(r).m_address;
+		}
+	};
+
+	template <typename Object>
+	class MethodPointer : public Callable
+	{
+		using signature_t = Result (Object::*)(Parameters...);
+
+		Object*      m_object;
+		signature_t  m_method;
+
+	public:
+		MethodPointer(Object& obj, signature_t method) 
+		  : Callable{CallType::Method}, m_object{&obj}, m_method{method}
+		{}
+		
+	private:
+		result_t
+		operator()(Parameters... args) override
+		{
+			return (this->m_object->*m_method)(std::forward<Parameters>(args)...);
+		}
+
+		bool
+		operator==(Callable const& r) const override
+		{
+			return this->m_type == r.m_type
+			    && this->m_object == static_cast<MethodPointer const&>(r).m_object
+			    && this->m_method == static_cast<MethodPointer const&>(r).m_method;
 		}
 	};
 
 public:
-	using result_t = typename FunctionWrapper::result_type;
+	using result_type = result_t;
 
 private:
-	FunctionWrapper   Target;
-	MethodIdentifier  Ident;
+	std::shared_ptr<Callable>  m_callable;
 
 public:
-	template <typename CallableTarget, typename = std::enable_if_t<std::is_assignable_v<FunctionWrapper,CallableTarget>>> 
-	//explicit 
-	Delegate(CallableTarget&& t) 
-	{
-		static_assert(detail::is_callable_invocable<CallableTarget,Signature>::value);
-
-		this->Target = std::forward<CallableTarget>(t);
-	}
-	
-	template <typename Object, typename... Parameters>
-	Delegate(Object* object, result_t (Object::* method)(Parameters...)) 
-	  : Ident(object, method) 
-	{
-		static_assert(std::is_invocable_v<std::decay_t<Signature>,Parameters...>);
-
-		this->Target = [=](Parameters... args) { return (object->*method)(std::forward<Parameters>(args)...); };
-	}
-
-	template <typename Object, typename... Parameters>
-	Delegate(Object* object, result_t (Object::* method)(Parameters...) const) 
-	  : Ident(object, method) 
-	{
-		static_assert(std::is_invocable_v<std::decay_t<Signature>,Parameters...>);
-
-		this->Target = [=](Parameters... args) { return (object->*method)(std::forward<Parameters>(args)...); };
-	}
-
-	template <typename Object, typename... Parameters> 
-	Delegate(const Object* object, result_t (Object::* method)(Parameters...) const) 
-	  : Ident(object, method) 
-	{
-		static_assert(std::is_invocable_v<std::decay_t<Signature>,Parameters...>);
-
-		this->Target = [=](Parameters... args) { return (object->*method)(std::forward<Parameters>(args)...); };
-	}
-	
 	satisfies(Delegate,
 		IsDefaultConstructible,
 		IsCopyable,
-		IsMovable,
-		NotEqualityComparable,
-		NotSortable
+		IsMovable
 	);
+		
+	explicit 
+	Delegate(result_t (*fx)(Parameters...))
+	  : m_callable{std::make_shared<FunctionPointer>(fx)}
+	{}
 
-	template <typename Other>
-	Delegate(Delegate<Other> const&) = delete;
+	template <typename Object> 
+		requires std::is_class_v<Object>
+	explicit 
+	Delegate(Object& obj, result_t (Object::*method)(Parameters...))
+	  : m_callable{std::make_shared<MethodPointer<Object>>(obj,method)}
+	{}
 
-	template <typename Other>
-	Delegate(Delegate<Other>&&) = delete;
+	template <typename CallableTarget> 
+		requires (std::is_class_v<CallableTarget> && std::is_invocable_v<CallableTarget,Parameters...>)
+	explicit 
+	Delegate(CallableTarget&& t)
+	  : m_callable{std::make_shared<FunctionObject>(std::move(t))}
+	{}
 
 public:
-	template <typename Other>
-	DelegateEquality 
-	compare(const Delegate<Other>& r) const {
-		if (!this->Ident.valid() || !r.Ident.valid()) {
-			return DelegateEquality::Uncertain;
-		}
-
-		return this->Ident == r.Ident ? DelegateEquality::Equal : DelegateEquality::Unequal;
+	template <typename... Arguments> 
+		requires std::is_invocable_v<ICallable,Arguments...>
+	result_type
+	invoke(Arguments&&... args) const 
+	{
+		Expects(this->m_callable != nullptr);
+		return (*this->m_callable)(std::forward<Arguments>(args)...);
 	}
 
-	template <typename... Arguments>
-	result_t 
-	invoke(Arguments&&... args) const {
-		static_assert(std::is_invocable_v<std::decay_t<Signature>,Arguments...>);
-
-		return this->Target(std::forward<Arguments>(args)...);
-	}
-
-	template <typename... Arguments>
-	result_t 
-	operator()(Arguments&&... args) const {
-		static_assert(std::is_invocable_v<std::decay_t<Signature>,Arguments...>);
-
+	template <typename... Arguments> 
+		requires std::is_invocable_v<ICallable,Arguments...>
+	result_type 
+	operator()(Arguments&&... args) const 
+	{
 		return this->invoke(std::forward<Arguments>(args)...);
 	}
+
+	bool
+	operator==(type const& r) const
+	{
+		if (!this->m_callable || !r.m_callable)
+			return !this->m_callable && !r.m_callable;
+
+		return *this->m_callable == *r.m_callable;
+	}
+	
+	bool
+	operator!=(type const& r) const
+	{
+		return !(*this == r);
+	}
+	
+	template <typename Other> bool operator==(Delegate<Other> const&) const = delete;
+	template <typename Other> bool operator!=(Delegate<Other> const&) const = delete;
 };
 
 using NullaryDelegate = Delegate<void()>;
