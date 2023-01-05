@@ -90,6 +90,34 @@ public:
 			return *Window::s_ExistingWindows[this->handle(id)];
 		}
 	};
+	
+	//! Encapsulates registered window timers
+	class TimerCollection
+	{
+		Window& Owner;
+
+	public:
+		TimerCollection(Window& wnd) : Owner{wnd}
+		{}
+		
+		satisfies(TimerCollection,
+			NotCopyable,
+			NotEqualityComparable
+		);
+
+	public:
+		void
+		add(uintptr_t ident, std::chrono::milliseconds period) {
+			if (!::SetTimer(this->Owner.handle(), ident, win::DWord{period.count()}, nullptr))
+				win::throw_exception(::GetLastError(), "Failed to set timer #" + std::to_string(ident));
+		}
+		
+		void
+		remove(uintptr_t ident) {
+			if (!::KillTimer(this->Owner.handle(), ident))
+				win::throw_exception(::GetLastError(), "Failed to cancel timer #" + std::to_string(ident));
+		}
+	};
 
 protected:
 	class ExistingWindowCollection {
@@ -295,6 +323,7 @@ protected:
 
 public:
 	ChildWindowCollection	Children;
+	TimerCollection         Timers;
 
 	CreateWindowEvent	Created;
 	NullaryEvent		Destroyed;
@@ -342,7 +371,7 @@ public:
 	ident() const {
 		return ::GetDlgCtrlID(this->handle());
 	}
-
+	
 	::HWND 
 	handle() const {
 		return this->Handle;
@@ -538,6 +567,11 @@ public:
 	virtual onHide(ShowWindowEventArgs args) {
 		return Unhandled;
 	}
+	
+	Response 
+	virtual onTimer(TimerEventArgs args) {
+		return Unhandled;
+	}
 
 	Response
 	virtual onActivateNonClient(ActivateNonClientEventArgs args) {
@@ -610,6 +644,9 @@ protected:
 		
 		case WM_COMMAND:
 			return this->onCommand({wParam, lParam});
+		
+		case WM_TIMER:
+			return this->onTimer({wParam, lParam});
 		
 		case WM_NCACTIVATE: 
 			return this->onActivateNonClient({hWnd,wParam,lParam});

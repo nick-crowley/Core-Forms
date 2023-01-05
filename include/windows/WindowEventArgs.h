@@ -102,6 +102,20 @@ using OwnerDrawDelegate = Delegate<void (OwnerDrawEventArgs)>;
 using OwnerDrawEvent = ObservableEvent<OwnerDrawDelegate>;
 
 
+struct TimerEventArgs 
+{
+	uintptr_t Ident;
+
+	TimerEventArgs(::WPARAM w, ::LPARAM) 
+	  : Ident(static_cast<uintptr_t>(w)) 
+	{
+	}
+};
+
+using TimerDelegate = Delegate<void (TimerEventArgs)>;
+using TimerEvent = ObservableEvent<TimerDelegate>;
+
+
 struct SetFontEventArgs {
 	SetFontEventArgs(WPARAM w, LPARAM l) {
 	}
