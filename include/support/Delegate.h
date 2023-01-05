@@ -21,7 +21,7 @@ private:
 		);
 		
 		result_t
-		virtual operator()(Parameters...) abstract;
+		virtual operator()(Parameters...) const abstract;
 	};
 
 	enum class CallType { Object, Function, Method };
@@ -53,7 +53,7 @@ private:
 		
 	public:
 		result_t
-		operator()(Parameters... args) override
+		operator()(Parameters... args) const override
 		{
 			return this->m_object(std::forward<Parameters>(args)...);
 		}
@@ -84,7 +84,7 @@ private:
 
 	public:
 		result_t
-		operator()(Parameters... args) override
+		operator()(Parameters... args) const override
 		{
 			return (*this->m_address)(std::forward<Parameters>(args)...);
 		}
@@ -112,7 +112,7 @@ private:
 		
 	private:
 		result_t
-		operator()(Parameters... args) override
+		operator()(Parameters... args) const override
 		{
 			return (this->m_object->*m_method)(std::forward<Parameters>(args)...);
 		}
