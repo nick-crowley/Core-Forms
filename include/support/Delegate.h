@@ -147,7 +147,7 @@ public:
 	template <typename Object> 
 		requires std::is_class_v<Object>
 	explicit 
-	Delegate(Object& obj, result_t (Object::*method)(Parameters...))
+	Delegate(Object& obj, result_t (Object::*method)(Parameters...))	//FIXME: Consider non-const objects calling const-methods
 	  : m_callable{std::make_shared<MethodPointer<Object>>(obj,method)}
 	{}
 
