@@ -179,6 +179,15 @@ public:
 	  : m_callable{std::make_shared<FunctionObject>(std::move(t))}
 	{}
 
+	//! Prevent copy/move from delegates of different signatures
+	template <typename Other> 
+	Delegate(Delegate<Other> const&) = delete;
+
+	//! Prevent copy/move from delegates of different signatures
+	template <typename Other> 
+	type& 
+	operator=(Delegate<Other> const&) = delete;
+	
 public:
 	result_type
 	invoke(Parameters... args) const 
