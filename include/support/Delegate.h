@@ -180,21 +180,17 @@ public:
 	{}
 
 public:
-	template <typename... Arguments> 
-		requires std::is_invocable_v<ICallable,Arguments...>
 	result_type
-	invoke(Arguments&&... args) const 
+	invoke(Parameters... args) const 
 	{
 		Expects(this->m_callable != nullptr);
-		return (*this->m_callable)(std::forward<Arguments>(args)...);
+		return (*this->m_callable)(std::forward<Parameters>(args)...);
 	}
 
-	template <typename... Arguments> 
-		requires std::is_invocable_v<ICallable,Arguments...>
 	result_type 
-	operator()(Arguments&&... args) const 
+	operator()(Parameters... args) const 
 	{
-		return this->invoke(std::forward<Arguments>(args)...);
+		return this->invoke(std::forward<Parameters>(args)...);
 	}
 
 	bool
