@@ -649,7 +649,7 @@ protected:
 			return this->onTimer({wParam, lParam});
 		
 		case WM_NCACTIVATE: 
-			return this->onActivateNonClient({hWnd,wParam,lParam});
+			return this->onActivateNonClient({this,wParam,lParam});
 			
 		case WM_NCCREATE: 
 			return this->onCreateNonClient({wParam,lParam});
@@ -673,7 +673,7 @@ protected:
 			return this->onMouseUpNonClient({MouseEvent::ButtonUp,MouseButton::Left,wParam,lParam});
 			
 		case WM_NCPAINT:
-			return this->onPaintNonClient({hWnd,wParam,lParam});
+			return this->onPaintNonClient({this,wParam,lParam});
 		}
 
 		return Unhandled;

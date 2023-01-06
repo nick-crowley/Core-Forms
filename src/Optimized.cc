@@ -26,3 +26,4 @@
 #include "windows/Font.cpp"
 #include "windows/Window.cpp"
 #include "windows/WindowClass.cpp"
+#include "windows/WindowEventArgs.cpp"

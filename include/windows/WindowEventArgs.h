@@ -3,6 +3,8 @@
 #include "support/ObservableEvent.h"
 #include "graphics/Graphics.h"
 
+class Window;
+
 struct CreateWindowEventArgs {
 	static_assert(sizeof(LPARAM) == sizeof(CREATESTRUCT*));
 
@@ -139,11 +141,11 @@ public:
 	
 	std::optional<Region>  InvalidArea;
 	CaptionState           State;
-	::HWND                 Window;
+	Window*                Window;
 	bool                   Repaint;
 
 public:
-	ActivateNonClientEventArgs(::HWND window, ::WPARAM w, ::LPARAM l) 
+	ActivateNonClientEventArgs(::Window* window, ::WPARAM w, ::LPARAM l) 
 	  : State{static_cast<CaptionState>(w)},
 		Window{window},
 		Repaint{l != -1}
@@ -275,11 +277,11 @@ public:
 	Rect                                  Bounds;
 	mutable std::optional<DeviceContext>  Graphics;
 	std::optional<Region>                 InvalidArea;
-	::HWND                                Window;
+	Window*                               Window;
 	CaptionState                          State;
 
 public:
-	PaintNonClientEventArgs(::HWND window, ::WPARAM w, ::LPARAM) 
+	PaintNonClientEventArgs(::Window* window, ::WPARAM w, ::LPARAM) 
 	  : Window{window}, 
 	    State{CaptionState::Unknown}
 	{
@@ -301,44 +303,10 @@ public:
 
 public:
 	bool 
-	beginPaint() {
-		auto constinit
-		static Flags = DCX_WINDOW|DCX_CACHE|DCX_LOCKWINDOWUPDATE;
-
-		::HDC dc {};
-		if (this->InvalidArea) 
-			dc = ::GetDCEx(this->Window, Region{*this->InvalidArea}.detach(), Flags|DCX_INTERSECTRGN);
-		else 
-			dc = ::GetDCEx(this->Window, nullptr, Flags);
-		if (!dc)
-			return false;
-
-		Rect rcClient;
-		Point ptClient;
-		::GetClientRect(this->Window, rcClient);
-		::ClientToScreen(this->Window, ptClient);
-		rcClient += ptClient;
-		Rect rcWindow;
-		::GetWindowRect(this->Window, rcWindow);
-		rcClient -= rcWindow.topLeft();
-		rcWindow -= rcWindow.topLeft();
-		this->Area = rcWindow;
-		this->Area -= Region{rcClient};
-		this->Bounds = rcWindow;
-		this->Graphics = DeviceContext{dc, this->Window};
-		if (this->State == CaptionState::Unknown) {
-			::WINDOWINFO info{sizeof(info)};
-			::GetWindowInfo(this->Window, &info);
-			this->State = info.dwWindowStatus == WS_ACTIVECAPTION ? CaptionState::Active : CaptionState::Inactive;
-		}
-		return true;
-	}
+	beginPaint();
 
 	void 
-	endPaint() {
-		::ReleaseDC(this->Window, this->Graphics->handle());
-		this->Graphics.reset();
-	}
+	endPaint();
 };
 
 using PaintNonClientDelegate = Delegate<void (PaintNonClientEventArgs)>;
