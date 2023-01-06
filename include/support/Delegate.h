@@ -101,12 +101,18 @@ private:
 	class MethodPointer : public Callable
 	{
 		using signature_t = Result (Object::*)(Parameters...);
+		using const_signature_t = Result (Object::*)(Parameters...) const;
+		using MaybeConstSignature = std::variant<signature_t, const_signature_t>;
 
-		Object*      m_object;
-		signature_t  m_method;
+		Object*             m_object;
+		MaybeConstSignature m_method;
 
 	public:
 		MethodPointer(Object& obj, signature_t method) 
+		  : Callable{CallType::Method}, m_object{&obj}, m_method{method}
+		{}
+		
+		MethodPointer(Object& obj, const_signature_t method) 
 		  : Callable{CallType::Method}, m_object{&obj}, m_method{method}
 		{}
 		
@@ -114,7 +120,10 @@ private:
 		result_t
 		operator()(Parameters... args) const override
 		{
-			return (this->m_object->*m_method)(std::forward<Parameters>(args)...);
+			if (std::holds_alternative<signature_t>(this->m_method))
+				return (this->m_object->*std::get<signature_t>(this->m_method))(std::forward<Parameters>(args)...);
+			else
+				return (this->m_object->*std::get<const_signature_t>(this->m_method))(std::forward<Parameters>(args)...);
 		}
 
 		bool
@@ -147,10 +156,22 @@ public:
 	template <typename Object> 
 		requires std::is_class_v<Object>
 	explicit 
-	Delegate(Object& obj, result_t (Object::*method)(Parameters...))	//FIXME: Consider non-const objects calling const-methods
+	Delegate(Object& obj, result_t (Object::*method)(Parameters...))
 	  : m_callable{std::make_shared<MethodPointer<Object>>(obj,method)}
 	{}
 
+	template <typename Object> 
+		requires std::is_class_v<Object>
+	explicit 
+	Delegate(Object const&, result_t (Object::*)(Parameters...)) = delete;
+	
+	template <typename Object> 
+		requires std::is_class_v<Object>
+	explicit 
+	Delegate(Object& obj, result_t (Object::*method)(Parameters...) const)
+	  : m_callable{std::make_shared<MethodPointer<Object>>(obj,method)}
+	{}
+	
 	template <typename CallableTarget> 
 		requires (std::is_class_v<CallableTarget> && std::is_invocable_v<CallableTarget,Parameters...>)
 	explicit 
