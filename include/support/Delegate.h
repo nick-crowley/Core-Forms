@@ -148,11 +148,13 @@ public:
 		IsMovable
 	);
 		
+	//! Construct from function pointer
 	explicit 
 	Delegate(result_t (*fx)(Parameters...))
 	  : m_callable{std::make_shared<FunctionPointer>(fx)}
 	{}
 
+	//! Construct from non-const method
 	template <typename Object> 
 		requires std::is_class_v<Object>
 	explicit 
@@ -160,11 +162,7 @@ public:
 	  : m_callable{std::make_shared<MethodPointer<Object>>(obj,method)}
 	{}
 
-	template <typename Object> 
-		requires std::is_class_v<Object>
-	explicit 
-	Delegate(Object const&, result_t (Object::*)(Parameters...)) = delete;
-	
+	//! Construct from const method
 	template <typename Object> 
 		requires std::is_class_v<Object>
 	explicit 
@@ -172,13 +170,20 @@ public:
 	  : m_callable{std::make_shared<MethodPointer<Object>>(obj,method)}
 	{}
 	
+	//! Construct from function-object
 	template <typename CallableTarget> 
 		requires (std::is_class_v<CallableTarget> && std::is_invocable_v<CallableTarget,Parameters...>)
 	explicit 
 	Delegate(CallableTarget&& t)
 	  : m_callable{std::make_shared<FunctionObject>(std::move(t))}
 	{}
-
+	
+	//! Prevent accidental construction from const-object to a non-const method
+	template <typename Object> 
+		requires std::is_class_v<Object>
+	explicit 
+	Delegate(Object const&, result_t (Object::*)(Parameters...)) = delete;
+	
 	//! Prevent copy/move from delegates of different signatures
 	template <typename Other> 
 	Delegate(Delegate<Other> const&) = delete;
