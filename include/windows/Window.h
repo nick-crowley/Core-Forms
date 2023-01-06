@@ -11,6 +11,7 @@
 #include "windows/ILookNFeelProvider.h"
 #include "windows/WindowClass.h"
 #include "windows/WindowEventArgs.h"
+#include "windows/WindowInfo.h"
 #include "windows/WindowStyle.h"
 
 class Window {
@@ -372,6 +373,13 @@ public:
 		return ::GetDlgCtrlID(this->handle());
 	}
 	
+	WindowInfo
+	info() const {
+		::WINDOWINFO info{sizeof(info)};
+		::GetWindowInfo(this->handle(), &info);
+		return WindowInfo{info};
+	}
+
 	::HWND 
 	handle() const {
 		return this->Handle;

@@ -294,7 +294,7 @@ Win31LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 void
 Win31LookNFeel::draw(Window& wnd, PaintNonClientEventArgs const& args) 
 {
-	auto const activeCaption = args.State == ActivateNonClientEventArgs::Active;
+	auto const activeCaption = args.State == WindowCaptionState::Active;
 	auto const components = NonClientComponentBounds{args.Bounds};
 
 	// Window frame

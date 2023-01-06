@@ -2,6 +2,7 @@
 #include "formsFramework.h"
 #include "support/ObservableEvent.h"
 #include "graphics/Graphics.h"
+#include "windows/WindowInfo.h"
 
 class Window;
 
@@ -137,16 +138,14 @@ using ShowWindowEvent = ObservableEvent<ShowWindowDelegate>;
 
 class ActivateNonClientEventArgs {
 public:
-	enum CaptionState {Inactive = FALSE, Active = TRUE, Unknown = -1};
-	
 	std::optional<Region>  InvalidArea;
-	CaptionState           State;
+	WindowCaptionState     State;
 	Window*                Window;
 	bool                   Repaint;
 
 public:
 	ActivateNonClientEventArgs(::Window* window, ::WPARAM w, ::LPARAM l) 
-	  : State{static_cast<CaptionState>(w)},
+	  : State{static_cast<WindowCaptionState>(w)},
 		Window{window},
 		Repaint{l != -1}
 	{
@@ -271,19 +270,17 @@ public:
 
 class PaintNonClientEventArgs {
 public:
-	using CaptionState = ActivateNonClientEventArgs::CaptionState;
-public:
 	Region                                Area;
 	Rect                                  Bounds;
 	mutable std::optional<DeviceContext>  Graphics;
 	std::optional<Region>                 InvalidArea;
 	Window*                               Window;
-	CaptionState                          State;
+	WindowCaptionState                    State;
 
 public:
 	PaintNonClientEventArgs(::Window* window, ::WPARAM w, ::LPARAM) 
 	  : Window{window}, 
-	    State{CaptionState::Unknown}
+	    State{WindowCaptionState::Unknown}
 	{
 		if (w > NULLREGION)
 			this->InvalidArea = reinterpret_cast<::HRGN>(w);

@@ -27,11 +27,9 @@ PaintNonClientEventArgs::beginPaint()
 	this->Area -= Region{rcClient};
 	this->Bounds = rcWindow;
 	this->Graphics = DeviceContext{dc, this->Window->handle()};
-	if (this->State == CaptionState::Unknown) {
-		::WINDOWINFO info{sizeof(info)};
-		::GetWindowInfo(this->Window->handle(), &info);
-		this->State = info.dwWindowStatus == WS_ACTIVECAPTION ? CaptionState::Active : CaptionState::Inactive;
-	}
+	if (this->State == WindowCaptionState::Unknown)
+		this->State = this->Window->info().State;
+	
 	return true;
 }
 
