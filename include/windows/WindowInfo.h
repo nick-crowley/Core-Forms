@@ -1,4 +1,5 @@
 #pragma once
+#include "windows/ExWindowStyle.h"
 #include "windows/WindowStyle.h"
 #include "graphics/SizePoint.h"
 #include "graphics/Rectangle.h"
