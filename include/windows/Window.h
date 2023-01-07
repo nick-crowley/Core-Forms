@@ -352,6 +352,22 @@ public:
 		return rc;
 	}
 
+	Rect
+	clientRect(std::nullptr_t) const {
+		Rect rc = this->clientRect();
+		auto* pointsArray = reinterpret_cast<::POINT*>(static_cast<::RECT*>(rc));
+		::MapWindowPoints(this->handle(), nullptr, pointsArray, 2);
+		return rc;
+	}
+	
+	Rect
+	clientRect(Window const& alternateCoordinateSystem) const {
+		Rect rc = this->clientRect();
+		auto* pointsArray = reinterpret_cast<::POINT*>(static_cast<::RECT*>(rc));
+		::MapWindowPoints(this->handle(), alternateCoordinateSystem.handle(), pointsArray, 2);
+		return rc;
+	}
+	
 	bool
 	enabled() const {
 		return ::IsWindowEnabled(this->handle()) != FALSE;
@@ -417,7 +433,7 @@ public:
 	}
 	
 	Rect
-	wndRect(Window& alternateCoordinateSystem) const {
+	wndRect(Window const& alternateCoordinateSystem) const {
 		Rect rc = this->wndRect();
 		::POINT* pointsArray = reinterpret_cast<POINT*>(static_cast<::RECT*>(rc));
 		::MapWindowPoints(nullptr, alternateCoordinateSystem.handle(), pointsArray, 2);

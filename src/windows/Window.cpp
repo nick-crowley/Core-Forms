@@ -7,6 +7,9 @@ Window::s_ExistingWindows{};
 WindowMessageDictionary 
 Window::s_MessageDatabase{};
 
+//Window const
+//Window::s_Desktop;
+	
 Window::Window()
   : Children(*this),
     LookNFeel{std::make_shared<Win31LookNFeel>()},

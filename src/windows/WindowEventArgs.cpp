@@ -1,4 +1,5 @@
 #include "windows/WindowEventArgs.h"
+#include "windows/Window.h"
 
 bool
 PaintNonClientEventArgs::beginPaint()
@@ -14,15 +15,12 @@ PaintNonClientEventArgs::beginPaint()
 	if (!dc)
 		return false;
 
-	Rect rcClient;
-	Point ptClient;
-	::GetClientRect(this->Window->handle(), rcClient);
-	::ClientToScreen(this->Window->handle(), ptClient);
-	rcClient += ptClient;
-	Rect rcWindow;
-	::GetWindowRect(this->Window->handle(), rcWindow);
+	// Retrieve client rect in window co-ordinates with origin at {0,0}
+	Rect rcClient = this->Window->clientRect(nullptr);
+	Rect rcWindow = this->Window->wndRect();
 	rcClient -= rcWindow.topLeft();
 	rcWindow -= rcWindow.topLeft();
+
 	this->Area = rcWindow;
 	this->Area -= Region{rcClient};
 	this->Bounds = rcWindow;
