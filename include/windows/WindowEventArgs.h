@@ -320,32 +320,16 @@ public:
 	std::optional<bool>           Erase = false, 
 	                              Restore = false, 
 	                              Update = false;
-	::HWND                        Window;
+	Window*                       Window;
 
-	PaintWindowEventArgs(::HWND w) : Window(w) 
+	PaintWindowEventArgs(::Window* w) : Window(w) 
 	{}
 
 	void 
-	beginPaint() {
-		if (auto dc = ::BeginPaint(this->Window, &this->Data)) {
-			this->Graphics = DeviceContext{dc, this->Window};
-			this->Area = this->Data.rcPaint;
-			this->Erase = this->Data.fErase;
-			this->Restore = this->Data.fRestore;
-			this->Update = this->Data.fIncUpdate;
-		}
-	}
+	beginPaint();
 
 	void 
-	endPaint() {
-		if (::EndPaint(this->Window, &this->Data)) {
-			this->Graphics.reset();
-			this->Area.reset();
-			this->Erase.reset();
-			this->Restore.reset();
-			this->Update.reset();
-		}
-	}
+	endPaint();
 };
 
 using PaintWindowDelegate = Delegate<void (PaintWindowEventArgs)>;

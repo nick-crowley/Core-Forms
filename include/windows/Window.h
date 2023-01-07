@@ -660,7 +660,7 @@ protected:
 			return this->onEraseBackground({hWnd,wParam,lParam});
 
 		case WM_PAINT:
-			return this->onPaint({hWnd});
+			return this->onPaint({this});
 			
 		case WM_DRAWITEM:
 			return this->onOwnerDraw({wParam,lParam});
@@ -740,7 +740,7 @@ protected:
 			return;
 
 		case WM_PAINT:
-			this->Painted.raise(PaintWindowEventArgs{hWnd});
+			this->Painted.raise(PaintWindowEventArgs{this});
 			return;
 		}
 	} 
