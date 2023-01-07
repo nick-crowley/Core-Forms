@@ -91,7 +91,7 @@ public:
 			return *Window::s_ExistingWindows[this->handle(id)];
 		}
 	};
-	
+
 	//! Encapsulates registered window timers
 	class TimerCollection
 	{
@@ -310,7 +310,7 @@ public:
 
 	Response const
 	static inline Error { Response::Error };
-	
+
 	ExistingWindowCollection 
 	static s_ExistingWindows; 
 
@@ -354,7 +354,7 @@ public:
 		::GetClientRect(this->handle(), rc);
 		return rc;
 	}
-
+	
 	Rect
 	clientRect(std::nullptr_t) const {
 		Rect rc = this->clientRect();
@@ -573,13 +573,12 @@ public:
 
 	Response 
 	virtual onOwnerDraw(OwnerDrawEventArgs args) {
-		if (args.Ident) {
-			return s_ExistingWindows.at(args.Window)->onOwnerDraw(args);
-		}
+		if (args.Window != this)
+			return args.Window->onOwnerDraw(args);
 
 		return Unhandled;
 	}
-
+	
 	Response 
 	virtual onPaint(PaintWindowEventArgs args) {
 		return Unhandled;

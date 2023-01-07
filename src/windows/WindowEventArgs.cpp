@@ -1,6 +1,33 @@
 #include "windows/WindowEventArgs.h"
 #include "windows/Window.h"
 
+OwnerDrawEventArgs::ItemData::ItemData(::DRAWITEMSTRUCT& data) 
+  : Area{data.rcItem},
+    Data{data.itemData},
+    State{static_cast<OwnerDrawState>(data.itemState)}
+{
+	if (data.CtlType != ODT_MENU)
+		this->Ident = static_cast<uint32_t>(data.itemID);
+	else
+		this->Ident = ResourceId{static_cast<uint16_t>(data.itemID)};
+}
+
+OwnerDrawEventArgs::OwnerDrawEventArgs(::WPARAM id, ::LPARAM data) 
+  : OwnerDrawEventArgs{*reinterpret_cast<::DRAWITEMSTRUCT*>(data)}
+{
+	Expects(id != 0);
+}
+
+OwnerDrawEventArgs::OwnerDrawEventArgs(::DRAWITEMSTRUCT& data) 
+  : Action{static_cast<OwnerDrawAction>(data.itemAction)},
+    Ident{static_cast<uint16_t>(data.CtlID)},
+	Item{data},
+	Graphics{data.hDC, data.hwndItem},
+	Type{static_cast<OwnerDrawControl>(data.CtlType)},
+	Window{Window::s_ExistingWindows.at(data.hwndItem)}
+{
+}
+
 bool
 PaintNonClientEventArgs::beginPaint()
 {

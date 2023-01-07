@@ -51,54 +51,30 @@ public:
 class OwnerDrawEventArgs 
 {
 public:
-	enum EventSource { Menu, Control };
-
 	struct ItemData {
-		EnumBitset<OwnerDrawAction> Action;
+		using IdentOrIndex = std::variant<ResourceId,uint32_t>;
+
+		ItemData(::DRAWITEMSTRUCT& data);
+
 		Rect                        Area;
 		uintptr_t                   Data;
-		UINT                        Id;
+		IdentOrIndex                Ident;
 		EnumBitset<OwnerDrawState>  State;
 	};
 
-	struct ControlData {
-		OwnerDrawControl    Type;
-		uint16_t            Id;
-	};
-	
 public:
-	std::optional<uint16_t> Ident;
-	EventSource             Source;
-	ControlData             Ctrl;
-	ItemData                Item;
-	::HWND                  Window;
-	mutable DeviceContext   Graphics;
+	EnumBitset<OwnerDrawAction> Action;
+	uint16_t                    Ident;
+	ItemData                    Item;
+	mutable DeviceContext       Graphics;
+	OwnerDrawControl            Type;
+	Window*                     Window;
 
 public:
-	OwnerDrawEventArgs(::WPARAM id, ::LPARAM data) 
-	  : Source{id ? Control : Menu},
-		Ctrl{static_cast<OwnerDrawControl>(
-			     reinterpret_cast<::DRAWITEMSTRUCT*>(data)->CtlType
-			 ),
-			 static_cast<uint16_t>(
-				reinterpret_cast<::DRAWITEMSTRUCT*>(data)->CtlID
-			 )},
-		Item{static_cast<OwnerDrawAction>(
-			   reinterpret_cast<::DRAWITEMSTRUCT*>(data)->itemAction
-			 ),
-		     reinterpret_cast<::DRAWITEMSTRUCT*>(data)->rcItem,
-		     reinterpret_cast<::DRAWITEMSTRUCT*>(data)->itemData,
-		     reinterpret_cast<::DRAWITEMSTRUCT*>(data)->itemID,
-		     static_cast<OwnerDrawState>(
-		         reinterpret_cast<::DRAWITEMSTRUCT*>(data)->itemState
-			 )},
-		Window{reinterpret_cast<::DRAWITEMSTRUCT*>(data)->hwndItem},
-	    Graphics{reinterpret_cast<::DRAWITEMSTRUCT*>(data)->hDC,
-	             reinterpret_cast<::DRAWITEMSTRUCT*>(data)->hwndItem}
-	{
-		if (Source == Control)
-			Ident = static_cast<uint16_t>(id);
-	}
+	OwnerDrawEventArgs(::WPARAM w, ::LPARAM l);
+
+private:
+	OwnerDrawEventArgs(::DRAWITEMSTRUCT& data);
 };
 
 using OwnerDrawDelegate = Delegate<void (OwnerDrawEventArgs)>;

@@ -128,6 +128,7 @@ enum class OwnerDrawAction : uint32_t
 //! \enum OwnerDrawControl - Defines controls that support owner draw
 enum class OwnerDrawControl : uint32_t
 {
+    Unknown = NULL,           //!< Unspecified
     Button = ODT_BUTTON,      //!< Button control
     ComboBox = ODT_COMBOBOX,  //!< ComboBox control
     ListBox = ODT_LISTBOX,    //!< ListBox control
