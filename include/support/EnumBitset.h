@@ -1,13 +1,10 @@
 #pragma once
 #include "formsFramework.h"
 
-template <typename T>
-concept Enumeration = std::is_enum_v<T>;
-
-template <Enumeration E>
+template <meta::Enumeration E>
 class EnumBitset
 {
-	template <Enumeration>
+	template <meta::Enumeration>
 	friend class EnumBitset;
 
 	using type = EnumBitset<E>;
@@ -32,7 +29,7 @@ public:
 	  : Value{v}
 	{}
 	
-	template <Enumeration E2>
+	template <meta::Enumeration E2>
 	constexpr 
 	explicit
 	EnumBitset(EnumBitset<E2> const& v) noexcept
@@ -47,13 +44,13 @@ public:
 	operator=(type const&) noexcept = default;
 
 public:
-	template <Enumeration E2>
+	template <meta::Enumeration E2>
 	EnumBitset<E2> constexpr
 	cast() const noexcept {
 		return static_cast<E2>(this->Value);
 	}
 	
-	template <Enumeration E2>
+	template <meta::Enumeration E2>
 	bool constexpr
 	test(E2 bits) const noexcept {
 		return (this->Value & bits) != Zero;
@@ -130,61 +127,61 @@ public:
 	}
 };
 
-template <Enumeration E>
+template <meta::Enumeration E>
 EnumBitset<E> constexpr
 inline operator|(EnumBitset<E> const& lhs, E rhs) noexcept {
 	return lhs | EnumBitset<E>{rhs};
 }
 
-template <Enumeration E>
+template <meta::Enumeration E>
 EnumBitset<E> constexpr
 inline operator|(E lhs, EnumBitset<E> const& rhs) noexcept {
 	return EnumBitset<E>{lhs} | rhs;
 }
 
-template <Enumeration E>
+template <meta::Enumeration E>
 EnumBitset<E> constexpr
 inline operator&(EnumBitset<E> const& lhs, E rhs) noexcept {
 	return lhs & EnumBitset<E>{rhs};
 }
 
-template <Enumeration E>
+template <meta::Enumeration E>
 EnumBitset<E> constexpr
 inline operator&(E lhs, EnumBitset<E> const& rhs) noexcept {
 	return EnumBitset<E>{lhs} & rhs;
 }
 
-template <Enumeration E>
+template <meta::Enumeration E>
 EnumBitset<E> constexpr
 inline operator^(EnumBitset<E> const& lhs, E rhs) noexcept {
 	return lhs ^ EnumBitset<E>{rhs};
 }
 
-template <Enumeration E>
+template <meta::Enumeration E>
 EnumBitset<E> constexpr
 inline operator^(E lhs, EnumBitset<E> const& rhs) noexcept {
 	return EnumBitset<E>{lhs} ^ rhs;
 }
 
-template <Enumeration E>
+template <meta::Enumeration E>
 bool constexpr
 inline operator==(E lhs, EnumBitset<E> const& rhs) noexcept {
 	return lhs == static_cast<E>(rhs);
 }
 
-template <Enumeration E>
+template <meta::Enumeration E>
 bool constexpr
 inline operator==(EnumBitset<E> const& lhs, E rhs) noexcept {
 	return static_cast<E>(lhs) == rhs;
 }
 
-template <Enumeration E>
+template <meta::Enumeration E>
 bool constexpr
 inline operator!=(E lhs, EnumBitset<E> const& rhs) noexcept {
 	return lhs != static_cast<E>(rhs);
 }
 
-template <Enumeration E>
+template <meta::Enumeration E>
 bool constexpr
 inline operator!=(EnumBitset<E> const& lhs, E rhs) noexcept {
 	return static_cast<E>(lhs) != rhs;

@@ -1,9 +1,6 @@
 #pragma once
 #include "formsFramework.h"
 
-template <typename T>
-concept IntegralOrEnum = std::is_integral_v<T> || std::is_enum_v<T>;
-
 std::string
 inline to_hexString(std::span<std::byte const> bytes)
 {
@@ -19,7 +16,7 @@ inline to_hexString(std::span<std::byte const> bytes)
 	return buffer;
 }
 
-template <unsigned Width = -1, IntegralOrEnum Value>
+template <unsigned Width = -1, meta::IntegralOrEnum Value>
 auto 
 inline to_hexString(Value const n)
 {

@@ -376,7 +376,7 @@ public:
 		return ::IsWindowEnabled(this->handle()) != FALSE;
 	}
 	
-	template <Enumeration Style = ExWindowStyle>
+	template <meta::Enumeration Style = ExWindowStyle>
 	EnumBitset<Style>
 	exStyle() const {
 		return static_cast<Style>(::GetWindowLongW(this->handle(),GWL_EXSTYLE));
@@ -410,7 +410,7 @@ public:
 		return ::SendMessage(this->handle(), MessageId, first, second);
 	}
 
-	template <Enumeration Style = WindowStyle>
+	template <meta::Enumeration Style = WindowStyle>
 	EnumBitset<Style>
 	style() const {
 		return static_cast<Style>(::GetWindowLongW(this->handle(),GWL_STYLE));

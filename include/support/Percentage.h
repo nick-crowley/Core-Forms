@@ -1,10 +1,6 @@
 #pragma once
 #include "formsFramework.h"
 
-template <typename T>
-concept RealNumber = std::is_arithmetic_v<T>
-                 && !std::_Is_any_of_v<T,bool,char,wchar_t,char8_t,char16_t,char32_t>;
-
 class Percentage
 {
 public:
@@ -15,7 +11,7 @@ private:
 	float   m_value;
 
 public:
-	template <RealNumber T>
+	template <meta::RealNumber T>
 	constexpr
 	explicit  
 	Percentage(T v) : m_value{static_cast<float>(v)}
@@ -26,13 +22,13 @@ public:
 			this->m_value = Max;
 	}
 
-	template <RealNumber Result> 
+	template <meta::RealNumber Result> 
 	/*implicit*/
 	operator Result() const {
 		return static_cast<Result>(this->m_value);
 	}
 
-	template <RealNumber Result> 
+	template <meta::RealNumber Result> 
 	Result
 	operator*(Result const rhs) const
 	{
