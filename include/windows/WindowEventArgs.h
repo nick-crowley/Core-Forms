@@ -81,6 +81,25 @@ using OwnerDrawDelegate = Delegate<void (OwnerDrawEventArgs)>;
 using OwnerDrawEvent = ObservableEvent<OwnerDrawDelegate>;
 
 
+class OwnerDrawMenuEventArgs 
+{
+public:
+	EnumBitset<OwnerDrawAction>   Action;
+	OwnerDrawEventArgs::ItemData  Item;
+	::HMENU                       Menu;
+	mutable DeviceContext         Graphics;
+
+public:
+	OwnerDrawMenuEventArgs(::WPARAM w, ::LPARAM l);
+
+private:
+	OwnerDrawMenuEventArgs(::DRAWITEMSTRUCT&);
+};
+
+using OwnerDrawMenuDelegate = Delegate<void (OwnerDrawMenuEventArgs)>;
+using OwnerDrawMenuEvent = ObservableEvent<OwnerDrawMenuDelegate>;
+
+
 struct TimerEventArgs 
 {
 	uintptr_t Ident;

@@ -580,6 +580,11 @@ public:
 	}
 	
 	Response 
+	virtual onOwnerDrawMenu(OwnerDrawMenuEventArgs args) {
+		return Unhandled;
+	}
+
+	Response 
 	virtual onPaint(PaintWindowEventArgs args) {
 		return Unhandled;
 	}
@@ -662,7 +667,8 @@ protected:
 			return this->onPaint({this});
 			
 		case WM_DRAWITEM:
-			return this->onOwnerDraw({wParam,lParam});
+			return wParam ? this->onOwnerDraw({wParam,lParam}) 
+			              : this->onOwnerDrawMenu({wParam,lParam});
 
 		case WM_SHOWWINDOW:
 			return wParam ? this->onShow({wParam,lParam})
