@@ -325,6 +325,14 @@ public:
 	}
 	
 public:
+	//!	@brief	Add rectangle to clip region
+	void
+	exclude(Rect const& rc)
+	{
+		if (!::ExcludeClipRect(this->handle(), rc.Left, rc.Top, rc.Right, rc.Bottom))
+			win::throw_exception(::GetLastError());
+	}
+
 	//!	@brief	Restores the state upon creation
 	void 
 	restore()
