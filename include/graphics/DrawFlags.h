@@ -186,7 +186,7 @@ enum class StockObject : int32_t
     WhiteBrush = 0,                  //!< 
     LtGreyBrush = 1,                 //!< 
     GreyBrush = 2,                   //!< 
-    DkBreyBrush = 3,                 //!< 
+    DkGreyBrush = 3,                 //!< 
     BlackBrush = 4,                  //!< 
     NullBrush = 5,                   //!< 
     HollowBrush = NullBrush,         //!< 

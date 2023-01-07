@@ -298,12 +298,12 @@ Win31LookNFeel::draw(Window& wnd, PaintNonClientEventArgs const& args)
 	auto const components = NonClientComponentBounds{args.Bounds};
 
 	// Window frame
-	args.Graphics->setObj(SystemColour::BtnShadow);
+	args.Graphics->setObj(DeviceContext::get<StockObject::LtGreyBrush>());
 	args.Graphics->setObj(StockObject::BlackPen);
-	auto const insideFrame = args.Bounds - 2*Border{SystemMetric::cxSizeFrame,SystemMetric::cySizeFrame};
-	auto const frameEdges = args.Area - Region{insideFrame};
+	Rect const insideFrame = args.Bounds - 2*Border{SystemMetric::cxSizeFrame,SystemMetric::cySizeFrame};
+	Region const frameEdges = args.Area - Region{insideFrame};
 	args.Graphics->fillRegion(frameEdges);
-	args.Graphics->frameRegion(frameEdges, DeviceContext::get<StockObject::BlackBrush>(), Size{2,2});
+	args.Graphics->frameRegion(frameEdges, DeviceContext::get<StockObject::DkGreyBrush>(), Size{2,2});
 	
 	// Caption background
 	args.Graphics->setObj(activeCaption ? SystemColour::Highlight : SystemColour::BtnDkShadow);

@@ -65,7 +65,7 @@ public:
 		if constexpr (Object == StockObject::WhiteBrush
 		           || Object == StockObject::LtGreyBrush
 		           || Object == StockObject::GreyBrush
-		           || Object == StockObject::DkBreyBrush
+		           || Object == StockObject::DkGreyBrush
 		           || Object == StockObject::BlackBrush
 		           || Object == StockObject::NullBrush
 		           || Object == StockObject::DcBrush
@@ -355,7 +355,7 @@ public:
 		case StockObject::WhiteBrush:
 		case StockObject::LtGreyBrush:
 		case StockObject::GreyBrush:
-		case StockObject::DkBreyBrush:
+		case StockObject::DkGreyBrush:
 		case StockObject::BlackBrush:
 		case StockObject::NullBrush:
 		case StockObject::DcBrush:
