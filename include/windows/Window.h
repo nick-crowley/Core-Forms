@@ -264,11 +264,14 @@ protected:
 	//! @brief	Identifies the window, its state, and its current message-processing loop
 	class DebuggingAide 
 	{
+		auto constexpr
+		inline static toChar = [](wchar_t c){ return static_cast<char>(c); };
+
 	private:
-		uint32_t const          MagicNumber = 12345678;
-		std::array<wchar_t,16>	Class {L'\0'};
-		ProcessingState			State {ProcessingState::NotApplicable};
-		std::array<wchar_t,16>	Text  {L'\0'};
+		uint32_t const       MagicNumber = 12345678;
+		std::array<char,16>  Class {L'\0'};
+		ProcessingState      State {ProcessingState::NotApplicable};
+		std::array<char,16>	 Text  {L'\0'};
 
 	public:
 		DebuggingAide() = default;
@@ -281,9 +284,9 @@ protected:
 		
 		ProcessingState
 		setState(ProcessingState state, std::wstring_view cls, std::wstring_view txt) {
-			std::copy(cls.data(), cls.data()+std::min<int>(cls.size(),15), this->Class.begin());
-			std::copy(txt.data(), txt.data()+std::min<int>(txt.size(),15), this->Text.begin());
-			// FIXME: Replace with std::transform() and use static_cast functor to convert char-points
+			// Copy short preview; assume text isn't non-latin charset
+			std::transform(cls.data(), cls.data()+std::min<int>(cls.size(),lengthof(this->Class)-1), this->Class.begin(), toChar);
+			std::transform(txt.data(), txt.data()+std::min<int>(txt.size(),lengthof(this->Text)-1), this->Text.begin(), toChar);
 			this->Class.back() = '\0';
 			this->Text.back() = '\0';
 			return std::exchange(this->State, state);
