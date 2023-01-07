@@ -554,13 +554,18 @@ public:
 	Response 
 	virtual onCommand(CommandEventArgs args)
 	{
+		// [CONTROL] Reflect notification back to child control
+		if (args.Source == CommandEventArgs::Control) 
+			if (s_ExistingWindows.contains(args.Notification->Handle))
+				return s_ExistingWindows[args.Notification->Handle]->offer_notification(args.Notification->Code);
+
+		// [DEBUG] Notification from child window we didn't create
 		if (args.Source == CommandEventArgs::Control) {
-			auto const ctrl = s_ExistingWindows.at(args.Notification->Handle);
-			auto const on_exit = ctrl->Debug.setTemporaryState(
-				{ProcessingState::NotificationProcessing, ctrl->notification_name(args.Notification->Code)}
-			); 
-			// FIXME: Window::onCommand() should move the code changing the debug state to derived classes
-			return ctrl->offer_notification(args.Notification->Code);
+			cdebug << "Window::onCommand : warning : WM_COMMAND Received " << to_hexString<4>(args.Notification->Code)
+				    << " from unknown window id=" << ::GetDlgCtrlID(args.Notification->Handle) 
+				    << " handle=" << to_hexString<8>((uintptr_t)args.Notification->Handle)
+				    << std::endl;
+			return Unhandled;
 		}
 
 		return this->offer_notification(args.Ident);

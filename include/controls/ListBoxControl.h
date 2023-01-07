@@ -369,6 +369,9 @@ protected:
 
 	/*Response
 	offer_notification(::UINT notification) override {
+		auto const on_exit = this->Debug.setTemporaryState(
+			{ProcessingState::NotificationProcessing, this->notification_name(notification)}
+		); 
 		switch (notification) {
 		case BN_CLICKED:
 			this->Clicked.raise();
