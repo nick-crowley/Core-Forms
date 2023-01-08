@@ -525,6 +525,12 @@ public:
 	}
 	
 	void 
+	reposition(Rect wnd) {
+		::SetWindowPos(this->handle(), nullptr, wnd.Left, wnd.Top, wnd.width(), wnd.height(),
+			SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOACTIVATE);
+	}
+	
+	void 
 	resize(Size sz) {
 		::SetWindowPos(this->handle(), nullptr, -1, -1, sz.Width, sz.Height,
 			SWP_NOMOVE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOACTIVATE);
