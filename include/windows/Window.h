@@ -404,6 +404,12 @@ public:
 		return this->Handle;
 	}
 
+	Window*
+	parent() const {
+		auto const wnd = ::GetParent(this->handle());
+		return wnd ? s_ExistingWindows[wnd] : nullptr;
+	}
+
 	template <unsigned MessageId>
 	::LRESULT
 	send(::WPARAM first, ::LPARAM second) const {
