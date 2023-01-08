@@ -112,6 +112,7 @@ public:
 	{}
 	
 public:
+	// FIXME: Use satisfies() to cleanup these constructors
 	constexpr Rect(Rect const&) noexcept = default;
 	constexpr Rect& operator=(Rect const&) noexcept = default;
 	
