@@ -193,8 +193,9 @@ public:
 	
 	//! @brief	Return scaled version of this size
 	type constexpr
-	operator*(::LONG scale) const noexcept {
-		return {this->Width*scale, this->Height*scale};
+	operator*(float scale) const noexcept {
+		return {static_cast<::LONG>(this->Width*scale), 
+		        static_cast<::LONG>(this->Height*scale)};
 	}
 	
 	//! Equality comparable
@@ -229,9 +230,9 @@ public:
 
 	//! @brief	Multiply size by @p scale
 	reference constexpr
-	operator*=(::LONG scale) noexcept {
-		this->Width *= scale;
-		this->Height *= scale;
+	operator*=(float scale) noexcept {
+		this->Width = static_cast<::LONG>(scale*this->Width);
+		this->Height = static_cast<::LONG>(scale*this->Height);
 		return *this;
 	}
 
@@ -245,7 +246,7 @@ Size const
 inline Size::Zero{0,0};
 
 Size constexpr
-operator*(::LONG scale, Size const& sz) noexcept {
+operator*(float scale, Size const& sz) noexcept {
 	return sz * scale;
 }
 
