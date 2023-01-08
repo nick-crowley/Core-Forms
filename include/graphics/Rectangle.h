@@ -52,6 +52,8 @@ public:
 	Rect const
 	static Empty;
 
+	enum Origin { FromTopLeft, FromTopRight, FromCentre };
+
 private:
 	using type = Rect;
 	using reference = Rect&;
@@ -87,6 +89,18 @@ public:
 	    Bottom{static_cast<::LONG>(origin.Y+dimensions.Height)} 
 	{}
 	
+	//! @brief	Construct from any point and dimensions
+	constexpr
+	Rect(Point const& pt, Size const& sz, Origin origin) noexcept
+	{
+		switch (origin) {
+		case Origin::FromTopLeft:  *this = {pt.X, pt.Y, pt.X+sz.Width, pt.Y+sz.Height}; break;
+		case Origin::FromTopRight: *this = {pt.X-sz.Width, pt.Y, pt.X, pt.Y+sz.Height}; break;
+		case Origin::FromCentre:   *this = {pt.X-(sz.Width/2), pt.Y-(sz.Height/2), 
+		                                    pt.X+(sz.Width/2), pt.Y+(sz.Height/2)}; break;
+		}
+	}
+	
 	//! @brief	Construct from Windows RECT (ie. LONG 4-tuple)
 	constexpr
 	/*implicit*/
@@ -102,6 +116,12 @@ public:
 	constexpr Rect& operator=(Rect const&) noexcept = default;
 	
 public:
+	Point constexpr
+	centre() const noexcept {
+		return {this->Left + this->width()/2, 
+		        this->Top + this->height()/2};
+	}
+	
 	bool constexpr
 	contains(Point const& pt) const noexcept {
 		return pt.X >= this->Left
