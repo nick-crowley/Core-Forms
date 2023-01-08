@@ -149,7 +149,7 @@ public:
 	);
 		
 	//! Construct from function pointer
-	explicit 
+	implicit
 	Delegate(result_t (*fx)(Parameters...))
 	  : m_callable{std::make_shared<FunctionPointer>(fx)}
 	{}
@@ -157,7 +157,7 @@ public:
 	//! Construct from non-const method
 	template <typename Object> 
 		requires std::is_class_v<Object>
-	explicit 
+	implicit
 	Delegate(Object& obj, result_t (Object::*method)(Parameters...))
 	  : m_callable{std::make_shared<MethodPointer<Object>>(obj,method)}
 	{}
@@ -165,7 +165,7 @@ public:
 	//! Construct from const method
 	template <typename Object> 
 		requires std::is_class_v<Object>
-	explicit 
+	implicit
 	Delegate(Object& obj, result_t (Object::*method)(Parameters...) const)
 	  : m_callable{std::make_shared<MethodPointer<Object>>(obj,method)}
 	{}
@@ -181,7 +181,6 @@ public:
 	//! Prevent accidental construction from const-object to a non-const method
 	template <typename Object> 
 		requires std::is_class_v<Object>
-	explicit 
 	Delegate(Object const&, result_t (Object::*)(Parameters...)) = delete;
 	
 	//! Prevent copy/move from delegates of different signatures
