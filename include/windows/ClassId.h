@@ -8,4 +8,5 @@ enum ClassId : uint16_t
 	Listbox = 0x0083,
 	Scrollbar = 0x0084,
 	Combobox = 0x0085,
+	Desktop = 0x8001
 };
