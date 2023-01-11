@@ -37,8 +37,10 @@ public:
 		{}
 
 		satisfies(Response,
-			IsCopyable,
-			IsMovable,
+			IsCopyConstructible,	//FIXME: IsCopyable,
+			IsCopyAssignable,
+			IsMoveConstructible,	//FIXME: IsMovable,
+			IsMoveAssignable,
 			IsEqualityComparable,
 			NotSortable
 		);

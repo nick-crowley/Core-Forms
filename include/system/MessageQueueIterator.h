@@ -31,8 +31,10 @@ private:
 	}
 	
 	satisfies(MessageQueueIterator,
-		IsCopyable,
-		IsMovable,
+		IsCopyConstructible,	//FIXME: IsCopyable,
+		IsCopyAssignable,
+		IsMoveConstructible,	//FIXME: IsMovable,
+		IsMoveAssignable,
 		NotSortable
 	);
 

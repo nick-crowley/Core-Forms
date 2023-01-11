@@ -144,8 +144,10 @@ private:
 public:
 	satisfies(Delegate,
 		IsDefaultConstructible,
-		IsCopyable,
-		IsMovable
+		IsCopyConstructible,	//FIXME: IsCopyable,
+		IsCopyAssignable,
+		IsMoveConstructible,	//FIXME: IsMovable,
+		IsMoveAssignable,
 	);
 		
 	//! Construct from function pointer

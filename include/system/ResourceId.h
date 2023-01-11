@@ -26,8 +26,10 @@ public:
 	}
 
 	satisfies(ResourceId,
-		constexpr_IsCopyable,
-		constexpr_IsMovable,
+		constexpr IsCopyConstructible,	//FIXME: constexpr_IsCopyable,
+		constexpr IsCopyAssignable,
+		constexpr IsMoveConstructible,	//FIXME: constexpr_IsMovable,
+		constexpr IsMoveAssignable,
 		constexpr IsEqualityComparable,
 		NotSortable
 	);

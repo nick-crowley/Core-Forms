@@ -36,8 +36,10 @@ private:
 	}
 
 	satisfies(ConstChildWindowIterator,
-		IsCopyable,
-		IsMovable,
+		IsCopyConstructible,	//FIXME: IsCopyable,
+		IsCopyAssignable,
+		IsMoveConstructible,	//FIXME: IsMovable,
+		IsMoveAssignable,
 		NotSortable
 	);
 
