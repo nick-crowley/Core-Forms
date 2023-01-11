@@ -105,10 +105,8 @@ class ComboBoxControl : public Window {
 			
 			satisfies(ItemIterator,
 				NotDefaultConstructible,
-				IsCopyConstructible,	//FIXME: IsCopyable,
-				IsCopyAssignable,
-				IsMoveConstructible,	//FIXME: IsMovable,
-				IsMoveAssignable,
+				IsCopyable,
+				IsMovable,
 				NotSortable
 			);
 

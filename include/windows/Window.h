@@ -21,13 +21,10 @@ public:
 		enum Result { Invalid, Handled, Unhandled, Error };
 
 	public:
-		Result                    Status;
+		Result                    Status = Invalid;
 		std::optional<::LRESULT>  Value;
 
 	public:
-		Response() : Status(Invalid)
-		{}
-
 		explicit
 		Response(Result r) : Status(r)
 		{}
@@ -37,11 +34,7 @@ public:
 		{}
 
 		satisfies(Response,
-			IsCopyConstructible,	//FIXME: IsCopyable,
-			IsCopyAssignable,
-			IsMoveConstructible,	//FIXME: IsMovable,
-			IsMoveAssignable,
-			IsEqualityComparable,
+			IsRegular,
 			NotSortable
 		);
 	};
@@ -104,7 +97,8 @@ public:
 		{}
 		
 		satisfies(TimerCollection,
-			NotCopyable,
+			NotCopyConstructible,			// FIXME: NotCopyable
+			NotCopyAssignable,
 			NotEqualityComparable
 		);
 
@@ -342,8 +336,10 @@ public:
 	Window();
 
 	satisfies(Window,
-		NotCopyable,
-		NotMovable,
+		NotCopyConstructible,		// FIXME: NotCopyable
+		NotCopyAssignable,
+		NotMoveConstructible,		// FIXME: NotMovable
+		NotMoveAssignable,
 		NotEqualityComparable,
 		NotSortable,
 		virtual IsDestructible

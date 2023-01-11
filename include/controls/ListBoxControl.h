@@ -122,10 +122,8 @@ public:
 			
 			satisfies(ItemIterator,
 				NotDefaultConstructible,
-				IsCopyConstructible,	//FIXME: IsCopyable,
-				IsCopyAssignable,
-				IsMoveConstructible,	//FIXME: IsMovable,
-				IsMoveAssignable,
+				IsCopyable,
+				IsMovable,
 				NotSortable
 			);
 
@@ -250,10 +248,8 @@ public:
 			
 			satisfies(SelectedIndexIterator,
 				NotDefaultConstructible,
-				IsCopyConstructible,	//FIXME: IsCopyable,
-				IsCopyAssignable,
-				IsMoveConstructible,	//FIXME: IsMovable,
-				IsMoveAssignable,
+				IsCopyable,
+				IsMovable,
 				NotSortable
 			);
 

@@ -7,14 +7,9 @@ private:
 	using Storage = std::variant<uint16_t, std::wstring>;
 
 private:
-	Storage		Ident;
+	Storage		Ident = uint16_t(0);
 	
 public:
-	constexpr
-	ResourceId() : ResourceId{uint16_t(0)}
-	{
-	}
-
 	explicit constexpr
 	ResourceId(uint16_t numeric) : Ident{numeric}
 	{
@@ -26,11 +21,7 @@ public:
 	}
 
 	satisfies(ResourceId,
-		constexpr IsCopyConstructible,	//FIXME: constexpr_IsCopyable,
-		constexpr IsCopyAssignable,
-		constexpr IsMoveConstructible,	//FIXME: constexpr_IsMovable,
-		constexpr IsMoveAssignable,
-		constexpr IsEqualityComparable,
+		constexpr IsRegular,
 		NotSortable
 	);
 	
