@@ -97,8 +97,7 @@ public:
 		{}
 		
 		satisfies(TimerCollection,
-			NotCopyConstructible,			// FIXME: NotCopyable
-			NotCopyAssignable,
+			NotCopyable,
 			NotEqualityComparable
 		);
 
@@ -336,10 +335,8 @@ public:
 	Window();
 
 	satisfies(Window,
-		NotCopyConstructible,		// FIXME: NotCopyable
-		NotCopyAssignable,
-		NotMoveConstructible,		// FIXME: NotMovable
-		NotMoveAssignable,
+		NotCopyable,
+		NotMovable,
 		NotEqualityComparable,
 		NotSortable,
 		virtual IsDestructible

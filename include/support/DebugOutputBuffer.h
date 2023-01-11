@@ -10,8 +10,7 @@ public:
 	}
 
 	satisfies(DebugOutputBuffer,
-		NotCopyConstructible,	// FIXME: NotCopyable
-		NotCopyAssignable
+		NotCopyable
 	);
 
 private:
