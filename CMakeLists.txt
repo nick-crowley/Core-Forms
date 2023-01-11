@@ -141,6 +141,13 @@ target_include_directories(libCoreForms BEFORE
     ${PROJECT_INCLUDE_FOLDER}            
 	)
 	
+# Set linker dependencies 
+target_link_libraries(libCoreForms
+	libCoreCom
+	libCorePlatform
+	UxTheme
+	Msimg32)
+
 # Differentiate the filename of the static library
 set_target_properties(libCoreForms PROPERTIES
 					  #OUTPUT_NAME "libCoreForms"
