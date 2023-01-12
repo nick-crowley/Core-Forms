@@ -65,9 +65,6 @@ public:
 	::LONG Bottom = 0;
 
 public:
-	constexpr
-	Rect() noexcept = default;
-	
 	//! @brief	Construct from (any combination of) values or system-metrics
 	constexpr
 	Rect(GuiMeasurement left, 
@@ -112,9 +109,10 @@ public:
 	{}
 	
 public:
-	// FIXME: Use satisfies() to cleanup these constructors
-	constexpr Rect(Rect const&) noexcept = default;
-	constexpr Rect& operator=(Rect const&) noexcept = default;
+	satisfies(Rect,
+		constexpr IsRegular noexcept,
+		constexpr NotSortable noexcept
+	);
 	
 public:
 	Point constexpr
@@ -194,14 +192,6 @@ public:
 		return r;
 	}
 	
-	//! Equality comparable
-	bool constexpr
-	operator==(Rect const&) const noexcept = default;
-
-	//! No ordering relation
-	auto constexpr
-	operator<=>(Rect const&) const noexcept = delete;
-
 	/*implicit*/ operator 
 	::RECT const*() const noexcept {
 		return reinterpret_cast<::RECT const*>(this);

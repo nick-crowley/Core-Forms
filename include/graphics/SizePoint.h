@@ -47,9 +47,6 @@ public:
 	::LONG Y = 0;
 
 public:
-	constexpr
-	Point() noexcept = default;
-
 	//! @brief	Construct from (any combination of) values or system-metrics
 	constexpr
 	Point(GuiMeasurement x, GuiMeasurement y) noexcept
@@ -66,9 +63,11 @@ public:
 	{}
 	
 public:
-	constexpr Point(Point const&) noexcept = default;
-	constexpr Point& operator=(Point const&) noexcept = default;
-	
+	satisfies(Point,
+		constexpr IsRegular noexcept,
+		constexpr NotSortable noexcept
+	);
+
 public:
 	//! @brief	Negation operator
 	Point constexpr
@@ -93,14 +92,6 @@ public:
 	operator*(::LONG scale) const noexcept {
 		return Point{this->X*scale, this->Y*scale};
 	}
-
-	//! Equality comparable
-	bool constexpr
-	operator==(Point const&) const noexcept = default;
-
-	//! No ordering relation
-	auto constexpr
-	operator<=>(Point const&) const noexcept = delete;
 
 	/*constexpr*/ 
 	operator 
@@ -150,9 +141,6 @@ public:
 	::LONG Height = 0;
 
 public:
-	constexpr
-	Size() noexcept = default;
-	
 	//! @brief	Construct from (any combination of) values or system-metrics
 	constexpr
 	Size(GuiMeasurement width, GuiMeasurement height) noexcept
@@ -169,8 +157,10 @@ public:
 	{}
 	
 public:
-	constexpr Size(Size const&) noexcept = default;
-	constexpr Size& operator=(Size const&) noexcept = default;
+	satisfies(Size,
+		constexpr IsRegular noexcept,
+		constexpr NotSortable noexcept
+	);
 	
 public:
 	//! @brief	Negation operator
@@ -198,14 +188,6 @@ public:
 		        static_cast<::LONG>(this->Height*scale)};
 	}
 	
-	//! Equality comparable
-	bool constexpr
-	operator==(Size const&) const noexcept = default;
-
-	//! No ordering relation
-	auto constexpr
-	operator<=>(Size const&) const noexcept = delete;
-
 	/*implicit*/ operator 
 	::SIZE const*() const noexcept {
 		return reinterpret_cast<::SIZE const*>(this);
