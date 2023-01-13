@@ -1,18 +1,20 @@
 #pragma once
-
 #include "system/MessageQueueIterator.h"
 
-struct MessageQueue
+namespace core::forms
 {
-	MessageQueue() = default;
+	struct MessageQueue
+	{
+		MessageQueue() = default;
 
-	MessageQueueIterator
-	begin() const {
-		return MessageQueueIterator{nullptr};
-	}
+		MessageQueueIterator
+		begin() const {
+			return MessageQueueIterator{nullptr};
+		}
 
-	MessageQueueIterator
-	end() const {
-		return MessageQueueIterator::npos;
-	}
-};
+		MessageQueueIterator
+		end() const {
+			return MessageQueueIterator::npos;
+		}
+	};
+} // namespace core::forms

@@ -1,6 +1,9 @@
 #include "windows/ChildWindowIterator.h"
+using namespace core;
+using namespace forms;
 
-const ConstChildWindowIterator  ConstChildWindowIterator::npos;
+const ConstChildWindowIterator  
+ConstChildWindowIterator::npos;
 
 ::BOOL 
 CALLBACK ConstChildWindowIterator::on_next_child_window(::HWND child, ::LPARAM iterator) 

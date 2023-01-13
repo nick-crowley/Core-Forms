@@ -1,7 +1,7 @@
 #pragma once
 #include "formsFramework.h"
 
-namespace detail {
+namespace core::forms::detail {
 	auto constexpr
 	inline enum_bit_and(auto&& lhs, auto&& rhs) { 
 		using lhs_t = std::remove_const_t<std::remove_reference_t<decltype(lhs)>>;

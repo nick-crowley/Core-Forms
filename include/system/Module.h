@@ -1,96 +1,98 @@
 #pragma once
-
 #include "formsFramework.h"
 #include "system/ResourceId.h"
 #include "system/SharedHandle.h"
 #include "graphics/Bitmap.h"
 #include "graphics/Icon.h"
 
-class Module 
+namespace core::forms
 {
-	SharedHandle	Handle;
-
-public:
-	explicit
-	Module(SharedHandle m) : Handle(m) {
-	}
-	
-public:
-	Bitmap
-	static loadBitmap(ResourceId name, std::optional<Module> source) 
+	class Module 
 	{
-		::HINSTANCE module = source ? source->handle() : nullptr;
-		if (auto const bitmap = (HBITMAP)::LoadImageW(module, name, 
-		                                              IMAGE_BITMAP, 
-		                                              0, 0, 
-		                                              NULL); !bitmap)
-			win::throw_exception(::GetLastError());
-		else if (::BITMAP info{}; !::GetObject(bitmap, sizeof(info), &info))
-			win::throw_exception(::GetLastError());
-		else
-			return Bitmap{bitmap, {info.bmWidth,info.bmHeight}, static_cast<ColourDepth>(info.bmBitsPixel)};
-	}
+		SharedHandle	Handle;
+
+	public:
+		explicit
+		Module(SharedHandle m) : Handle(m) {
+		}
 	
-	Icon
-	static loadIcon(ResourceId name, std::optional<Module> source) 
-	{	
-		Size const 
-		static dimensions{SystemMetric::cxIcon,SystemMetric::cyIcon};
+	public:
+		Bitmap
+		static loadBitmap(ResourceId name, std::optional<Module> source) 
+		{
+			::HINSTANCE module = source ? source->handle() : nullptr;
+			if (auto const bitmap = (HBITMAP)::LoadImageW(module, name, 
+														  IMAGE_BITMAP, 
+														  0, 0, 
+														  NULL); !bitmap)
+				win::throw_exception(::GetLastError());
+			else if (::BITMAP info{}; !::GetObject(bitmap, sizeof(info), &info))
+				win::throw_exception(::GetLastError());
+			else
+				return Bitmap{bitmap, {info.bmWidth,info.bmHeight}, static_cast<ColourDepth>(info.bmBitsPixel)};
+		}
+	
+		Icon
+		static loadIcon(ResourceId name, std::optional<Module> source) 
+		{	
+			Size const 
+			static dimensions{SystemMetric::cxIcon,SystemMetric::cyIcon};
 		
-		::HINSTANCE module = source ? source->handle() : nullptr;
-		if (auto const icon = (::HICON)::LoadImageW(module, name, 
-		                                            IMAGE_ICON, 
-		                                            dimensions.Width, dimensions.Height, 
-		                                            LR_LOADTRANSPARENT); !icon)
-			win::throw_exception(::GetLastError());
-		else
-			return Icon{icon, dimensions};
-	}
+			::HINSTANCE module = source ? source->handle() : nullptr;
+			if (auto const icon = (::HICON)::LoadImageW(module, name, 
+														IMAGE_ICON, 
+														dimensions.Width, dimensions.Height, 
+														LR_LOADTRANSPARENT); !icon)
+				win::throw_exception(::GetLastError());
+			else
+				return Icon{icon, dimensions};
+		}
 
-	std::vector<std::byte> 
-	static load_resource(const wchar_t* name, const wchar_t* category, std::optional<Module> source) 
-	{
-		::HINSTANCE module = source ? source->handle() : nullptr;
-		if (::HRSRC resource = ::FindResourceW(module, name /*MAKEINTRESOURCE(1)*/, category /*RT_MANIFEST*/); !resource) {
-			win::LastError{}.throw_always(std::format("Failed to find resource '{}'", to_string(name)));
+		std::vector<std::byte> 
+		static load_resource(const wchar_t* name, const wchar_t* category, std::optional<Module> source) 
+		{
+			::HINSTANCE module = source ? source->handle() : nullptr;
+			if (::HRSRC resource = ::FindResourceW(module, name /*MAKEINTRESOURCE(1)*/, category /*RT_MANIFEST*/); !resource) {
+				win::LastError{}.throw_always(std::format("Failed to find resource '{}'", to_string(name)));
+			}
+			else if (::HGLOBAL block = ::LoadResource(module, resource); !block) {
+				win::LastError{}.throw_always(std::format("Failed to load resource '{}'", to_string(name)));
+			}
+			else if (::DWORD size = ::SizeofResource(module, resource); !size) {
+				win::LastError{}.throw_always(std::format("Failed to measure resource '{}'", to_string(name)));
+			}
+			else if (auto data = (const std::byte*)::LockResource(block); !data) {
+				win::LastError{}.throw_always(std::format("Failed to lock resource '{}'", to_string(name)));
+			}
+			else {
+				auto f = gsl::finally([&]{ UnlockResource(block); });
+				return { data, data + size };
+			}
 		}
-		else if (::HGLOBAL block = ::LoadResource(module, resource); !block) {
-			win::LastError{}.throw_always(std::format("Failed to load resource '{}'", to_string(name)));
-		}
-		else if (::DWORD size = ::SizeofResource(module, resource); !size) {
-			win::LastError{}.throw_always(std::format("Failed to measure resource '{}'", to_string(name)));
-		}
-		else if (auto data = (const std::byte*)::LockResource(block); !data) {
-			win::LastError{}.throw_always(std::format("Failed to lock resource '{}'", to_string(name)));
-		}
-		else {
-			auto f = gsl::finally([&]{ UnlockResource(block); });
-			return { data, data + size };
-		}
-	}
 
-public:
-	::HINSTANCE 
-	handle() const {
-		return get_handle<::HINSTANCE>(this->Handle);
-	}
+	public:
+		::HINSTANCE 
+		handle() const {
+			return get_handle<::HINSTANCE>(this->Handle);
+		}
 
-	std::vector<std::byte> 
-	load_resource(const wchar_t* name, const wchar_t* category) const
-	{
-		return Module::load_resource(name, category, *this);
-	}
+		std::vector<std::byte> 
+		load_resource(const wchar_t* name, const wchar_t* category) const
+		{
+			return Module::load_resource(name, category, *this);
+		}
 
-	Bitmap
-	loadBitmap(ResourceId name) const
-	{
-		return Module::loadBitmap(name, *this);
-	}
+		Bitmap
+		loadBitmap(ResourceId name) const
+		{
+			return Module::loadBitmap(name, *this);
+		}
 	
-	Icon
-	loadIcon(ResourceId name) const
-	{
-		return Module::loadIcon(name, *this);
-	}
+		Icon
+		loadIcon(ResourceId name) const
+		{
+			return Module::loadIcon(name, *this);
+		}
 
-};
+	};
+}	// namespace core::forms

@@ -5,112 +5,115 @@
 #include "system/MessageDictionary.h"
 #include "controls/ButtonStyle.h"
 
-enum class ButtonState {	
-	Unchecked      = BST_UNCHECKED,     // 
-	Checked        = BST_CHECKED,       // 
-	Indeterminate  = BST_INDETERMINATE, // 
-	Pushed         = BST_PUSHED,        // 
-	Focus          = BST_FOCUS,         // 
-	None           = Unchecked,
-};
-
-ButtonState constexpr inline operator|(ButtonState a, ButtonState b) { return detail::enum_bit_or(a,b);  }
-ButtonState constexpr inline operator&(ButtonState a, ButtonState b) { return detail::enum_bit_and(a,b); }
-ButtonState constexpr inline operator^(ButtonState a, ButtonState b) { return detail::enum_bit_xor(a,b); }
-
-class ButtonControl : public Window {
-	class ButtonWindowClass : public WindowClass {
-	public:
-		::WNDPROC	OriginalMessageHandler;
-
-	public:
-		ButtonWindowClass() : WindowClass{ResourceId{WC_BUTTON}}  {
-			this->name(ResourceId{L"Custom.BUTTON"});
-			this->OriginalMessageHandler = std::exchange(this->lpfnWndProc, Window::DefaultMessageHandler);
-			this->register$();
-		}
+namespace core::forms
+{
+	enum class ButtonState {	
+		Unchecked      = BST_UNCHECKED,     // 
+		Checked        = BST_CHECKED,       // 
+		Indeterminate  = BST_INDETERMINATE, // 
+		Pushed         = BST_PUSHED,        // 
+		Focus          = BST_FOCUS,         // 
+		None           = Unchecked,
 	};
+
+	ButtonState constexpr inline operator|(ButtonState a, ButtonState b) { return detail::enum_bit_or(a,b);  }
+	ButtonState constexpr inline operator&(ButtonState a, ButtonState b) { return detail::enum_bit_and(a,b); }
+	ButtonState constexpr inline operator^(ButtonState a, ButtonState b) { return detail::enum_bit_xor(a,b); }
+
+	class ButtonControl : public Window {
+		class ButtonWindowClass : public WindowClass {
+		public:
+			::WNDPROC	OriginalMessageHandler;
+
+		public:
+			ButtonWindowClass() : WindowClass{ResourceId{WC_BUTTON}}  {
+				this->name(ResourceId{L"Custom.BUTTON"});
+				this->OriginalMessageHandler = std::exchange(this->lpfnWndProc, Window::DefaultMessageHandler);
+				this->register$();
+			}
+		};
 	
-	class ButtonNotificationDictionary : public MessageDictionary {
-		using base = MessageDictionary;
+		class ButtonNotificationDictionary : public MessageDictionary {
+			using base = MessageDictionary;
+		public:
+			ButtonNotificationDictionary() : base({
+	#define MakeMessageName(msg)  { msg, #msg }
+				MakeMessageName(BN_CLICKED),
+				MakeMessageName(BN_PAINT),
+				MakeMessageName(BN_HILITE),
+				MakeMessageName(BN_UNHILITE),
+				MakeMessageName(BN_DISABLE),
+				MakeMessageName(BN_DOUBLECLICKED),
+				MakeMessageName(BN_PUSHED),
+				MakeMessageName(BN_UNPUSHED),
+				MakeMessageName(BN_DBLCLK),
+				MakeMessageName(BN_SETFOCUS),
+				MakeMessageName(BN_KILLFOCUS)
+	#undef MakeMessageName
+				})
+			{}
+		};
+
 	public:
-		ButtonNotificationDictionary() : base({
-#define MakeMessageName(msg)  { msg, #msg }
-			MakeMessageName(BN_CLICKED),
-			MakeMessageName(BN_PAINT),
-			MakeMessageName(BN_HILITE),
-			MakeMessageName(BN_UNHILITE),
-			MakeMessageName(BN_DISABLE),
-			MakeMessageName(BN_DOUBLECLICKED),
-			MakeMessageName(BN_PUSHED),
-			MakeMessageName(BN_UNPUSHED),
-			MakeMessageName(BN_DBLCLK),
-			MakeMessageName(BN_SETFOCUS),
-			MakeMessageName(BN_KILLFOCUS)
-#undef MakeMessageName
-			})
+		ButtonControl() 
 		{}
-	};
 
-public:
-	ButtonControl() 
-	{}
-
-public:
-	ButtonWindowClass const& 
-	wndcls() override {
-		static ButtonWindowClass c;
-		return c;
-	}
+	public:
+		ButtonWindowClass const& 
+		wndcls() override {
+			static ButtonWindowClass c;
+			return c;
+		}
 	
-	Response 
-	onOwnerDraw(OwnerDrawEventArgs args) override {
-		if (args.Ident == this->ident()) {
-			this->LookNFeel->draw(*this, args);
-			return TRUE;
+		Response 
+		onOwnerDraw(OwnerDrawEventArgs args) override {
+			if (args.Ident == this->ident()) {
+				this->LookNFeel->draw(*this, args);
+				return TRUE;
+			}
+
+			return Unhandled;
 		}
 
-		return Unhandled;
-	}
+		EnumBitset<ButtonState>
+		state() const {
+			return static_cast<ButtonState>(this->send<BM_GETSTATE>(0,0));
+		}
 
-	EnumBitset<ButtonState>
-	state() const {
-		return static_cast<ButtonState>(this->send<BM_GETSTATE>(0,0));
-	}
+	protected:
+		const char*
+		notification_name(::UINT notification) override {
+			static const ButtonNotificationDictionary names;
+			return names.at(notification);
+		}
 
-protected:
-	const char*
-	notification_name(::UINT notification) override {
-		static const ButtonNotificationDictionary names;
-		return names.at(notification);
-	}
+		Response
+		offer_notification(::UINT notification) override {
+			auto const on_exit = this->Debug.setTemporaryState(
+				{ProcessingState::NotificationProcessing, this->notification_name(notification)}
+			); 
 
-	Response
-	offer_notification(::UINT notification) override {
-		auto const on_exit = this->Debug.setTemporaryState(
-			{ProcessingState::NotificationProcessing, this->notification_name(notification)}
-		); 
-
-		switch (notification) {
-		case BN_CLICKED:
-			this->Clicked.raise();
-			return 0;
+			switch (notification) {
+			case BN_CLICKED:
+				this->Clicked.raise();
+				return 0;
 			
-		case BN_PAINT:
-		case BN_PUSHED:
-		case BN_UNPUSHED:
-		case BN_SETFOCUS:
-		case BN_KILLFOCUS:
-			InvalidateRect(this->handle(), 0, FALSE);
-			UpdateWindow(this->handle());
-			return 0;
+			case BN_PAINT:
+			case BN_PUSHED:
+			case BN_UNPUSHED:
+			case BN_SETFOCUS:
+			case BN_KILLFOCUS:
+				InvalidateRect(this->handle(), 0, FALSE);
+				UpdateWindow(this->handle());
+				return 0;
+			}
+
+			return Unhandled;
 		}
 
-		return Unhandled;
-	}
-
-	::LRESULT 
-	unhandled_message(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
-		return ::CallWindowProc(this->wndcls().OriginalMessageHandler, hWnd, message, wParam, lParam);
-	}
-};
+		::LRESULT 
+		unhandled_message(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
+			return ::CallWindowProc(this->wndcls().OriginalMessageHandler, hWnd, message, wParam, lParam);
+		}
+	};
+} // namespace core::forms

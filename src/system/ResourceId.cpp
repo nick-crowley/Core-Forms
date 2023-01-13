@@ -1,10 +1,12 @@
 #include "system/ResourceId.h"
+using namespace core;
+using namespace forms;
 
 ResourceId const 
-ResourceId::Null {};
+forms::ResourceId::Null {};
 
 std::wstring
-to_wstring(ResourceId const& res)
+forms::to_wstring(ResourceId const& res)
 {
 	if (res.is_numeric())
 		return L'#' + std::to_wstring(res.as_number());

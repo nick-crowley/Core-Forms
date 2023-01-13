@@ -1,7 +1,9 @@
 #include "windows/WindowEventArgs.h"
 #include "windows/Window.h"
+using namespace core;
+using namespace forms;
 
-OwnerDrawEventArgs::ItemData::ItemData(::DRAWITEMSTRUCT& data) 
+forms::OwnerDrawEventArgs::ItemData::ItemData(::DRAWITEMSTRUCT& data) 
   : Area{data.rcItem},
     Data{data.itemData},
     State{static_cast<OwnerDrawState>(data.itemState)}
@@ -12,13 +14,13 @@ OwnerDrawEventArgs::ItemData::ItemData(::DRAWITEMSTRUCT& data)
 		this->Ident = ResourceId{static_cast<uint16_t>(data.itemID)};
 }
 
-OwnerDrawEventArgs::OwnerDrawEventArgs(::WPARAM id, ::LPARAM data) 
+forms::OwnerDrawEventArgs::OwnerDrawEventArgs(::WPARAM id, ::LPARAM data) 
   : OwnerDrawEventArgs{*reinterpret_cast<::DRAWITEMSTRUCT*>(data)}
 {
 	Expects(id != 0);
 }
 
-OwnerDrawEventArgs::OwnerDrawEventArgs(::DRAWITEMSTRUCT& data) 
+forms::OwnerDrawEventArgs::OwnerDrawEventArgs(::DRAWITEMSTRUCT& data) 
   : Action{static_cast<OwnerDrawAction>(data.itemAction)},
     Ident{static_cast<uint16_t>(data.CtlID)},
 	Item{data},
@@ -28,13 +30,13 @@ OwnerDrawEventArgs::OwnerDrawEventArgs(::DRAWITEMSTRUCT& data)
 {
 }
 
-OwnerDrawMenuEventArgs::OwnerDrawMenuEventArgs(::WPARAM id, ::LPARAM data) 
+forms::OwnerDrawMenuEventArgs::OwnerDrawMenuEventArgs(::WPARAM id, ::LPARAM data) 
   : OwnerDrawMenuEventArgs{*reinterpret_cast<::DRAWITEMSTRUCT*>(data)}
 {
 	Expects(id == 0);
 }
 
-OwnerDrawMenuEventArgs::OwnerDrawMenuEventArgs(::DRAWITEMSTRUCT& data)
+forms::OwnerDrawMenuEventArgs::OwnerDrawMenuEventArgs(::DRAWITEMSTRUCT& data)
   : Action{static_cast<OwnerDrawAction>(data.itemAction)},
 	Item{data},
 	Menu{reinterpret_cast<::HMENU>(data.hwndItem)},
@@ -43,7 +45,7 @@ OwnerDrawMenuEventArgs::OwnerDrawMenuEventArgs(::DRAWITEMSTRUCT& data)
 }
 
 bool
-PaintNonClientEventArgs::beginPaint()
+forms::PaintNonClientEventArgs::beginPaint()
 {
 	auto constinit
 	static Flags = DCX_WINDOW|DCX_CACHE|DCX_LOCKWINDOWUPDATE;
@@ -73,13 +75,13 @@ PaintNonClientEventArgs::beginPaint()
 }
 
 void 
-PaintNonClientEventArgs::endPaint() {
+forms::PaintNonClientEventArgs::endPaint() {
 	::ReleaseDC(this->Window->handle(), this->Graphics->handle());
 	this->Graphics.reset();
 }
 
 void 
-PaintWindowEventArgs::beginPaint() 
+forms::PaintWindowEventArgs::beginPaint() 
 {
 	if (auto dc = ::BeginPaint(this->Window->handle(), &this->Data)) {
 		this->Graphics = DeviceContext{dc, this->Window->handle()};
@@ -91,7 +93,7 @@ PaintWindowEventArgs::beginPaint()
 }
 
 void 
-PaintWindowEventArgs::endPaint() 
+forms::PaintWindowEventArgs::endPaint() 
 {
 	if (::EndPaint(this->Window->handle(), &this->Data)) {
 		this->Graphics.reset();

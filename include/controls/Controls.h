@@ -1,5 +1,4 @@
 #pragma once
-
 #include "formsFramework.h"
 #include "windows/Window.h"
 #include "controls/ButtonControl.h"

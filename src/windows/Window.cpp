@@ -1,5 +1,7 @@
 #include "windows/Window.h"
 #include "windows/Win31LookNFeel.h"
+using namespace core;
+using namespace forms;
 
 Window::ExistingWindowCollection 
 Window::s_ExistingWindows{};

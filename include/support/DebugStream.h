@@ -2,20 +2,23 @@
 #include "formsFramework.h"
 #include "support/DebugOutputBuffer.h"
 
-class DebugStream : public std::ostream 
+namespace core::forms
 {
-	using base = std::ostream;
+	class DebugStream : public std::ostream 
+	{
+		using base = std::ostream;
 
-	DebugOutputBuffer Buffer;
+		DebugOutputBuffer Buffer;
 
-public:
-	DebugStream() : base(&this->Buffer) {
+	public:
+		DebugStream() : base(&this->Buffer) {
+		};
 	};
-};
 
-std::add_lvalue_reference_t<std::ostream>
-inline operator<<(std::ostream& os, const std::wstring& ws) {
-	return os << to_string(ws);
+	std::add_lvalue_reference_t<std::ostream>
+	inline operator<<(std::ostream& os, const std::wstring& ws) {
+		return os << to_string(ws);
+	}
+
+	extern DebugStream cdebug;
 }
-
-extern DebugStream cdebug;

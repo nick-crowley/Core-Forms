@@ -1,17 +1,20 @@
 #pragma once
 #include "formsFramework.h"
 
-struct Message : public ::MSG {
-	using base = ::MSG;
+namespace core::forms
+{
+	struct Message : public ::MSG {
+		using base = ::MSG;
 		
-	Message() : base({}) 
-	{}
+		Message() : base({}) 
+		{}
 
-	void dispatch() const {
-		::DispatchMessage(this);
-	}
+		void dispatch() const {
+			::DispatchMessage(this);
+		}
 
-	void translate() const {
-		::TranslateMessage(this);
-	}
-};
+		void translate() const {
+			::TranslateMessage(this);
+		}
+	};
+}
