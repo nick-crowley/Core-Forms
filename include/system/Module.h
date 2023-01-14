@@ -65,7 +65,7 @@ namespace core::forms
 				win::LastError{}.throw_always(std::format("Failed to lock resource '{}'", to_string(name)));
 			}
 			else {
-				auto f = gsl::finally([&]{ UnlockResource(block); });
+				final_act(=) { UnlockResource(block); };
 				return { data, data + size };
 			}
 		}
