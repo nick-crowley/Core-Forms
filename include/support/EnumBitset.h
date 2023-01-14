@@ -22,11 +22,8 @@ namespace core::forms
 		value_type  Value = Zero;
 
 	public:
-		constexpr
-		EnumBitset() noexcept = default;
-
 		constexpr 
-		/*implicit*/
+		implicit
 		EnumBitset(value_type const& v) noexcept
 		  : Value{v}
 		{}
@@ -38,12 +35,10 @@ namespace core::forms
 		  : Value{static_cast<value_type>(v.Value)}
 		{}
 
-	public:
-		constexpr
-		EnumBitset(type const&) noexcept = default;
-
-		reference constexpr
-		operator=(type const&) noexcept = default;
+		satisfies(EnumBitset,
+			constexpr IsRegular noexcept,
+			NotSortable
+		);
 
 	public:
 		template <meta::Enumeration E2>
@@ -96,12 +91,6 @@ namespace core::forms
 				~static_cast<underlying_t>(this->Value)
 			);
 		}
-
-		bool constexpr
-		operator==(type const&) const noexcept = default;
-	
-		auto constexpr
-		operator<=>(type const&) const noexcept = delete;
 
 	public:
 		reference constexpr 
