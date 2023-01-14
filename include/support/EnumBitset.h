@@ -15,24 +15,24 @@ namespace core::forms
 		using underlying_t = std::underlying_type_t<value_type>;
 
 	private:
-		value_type constinit
-		inline static Zero = static_cast<value_type>(0);
+		underlying_t constinit
+		inline static Zero = 0;
 
 	private:
-		value_type  Value = Zero;
+		underlying_t  Value = Zero;
 
 	public:
 		constexpr 
 		implicit
 		EnumBitset(value_type const& v) noexcept
-		  : Value{v}
+		  : Value{static_cast<underlying_t>(v)}
 		{}
 	
 		template <meta::Enumeration E2>
 		constexpr 
 		explicit
 		EnumBitset(EnumBitset<E2> const& v) noexcept
-		  : Value{static_cast<value_type>(v.Value)}
+		  : Value{static_cast<underlying_t>(v.Value)}
 		{}
 
 		satisfies(EnumBitset,
@@ -50,70 +50,56 @@ namespace core::forms
 		template <meta::Enumeration E2>
 		bool constexpr
 		test(E2 bits) const noexcept {
-			return (this->Value & bits) != Zero;
+			return (this->Value & static_cast<underlying_t>(bits)) != Zero;
 		}
 
 		underlying_t constexpr
 		value() const noexcept {
-			return static_cast<underlying_t>(this->Value);
+			return this->Value;
 		}
 
 		constexpr 
-		/*implicit*/ operator
+		implicit operator
 		value_type() const noexcept {
-			return this->Value;
+			return static_cast<value_type>(this->Value);
 		}
 	
 		type constexpr 
 		operator|(type const& r) const noexcept {
-			return static_cast<value_type>(
-				static_cast<underlying_t>(this->Value) | static_cast<underlying_t>(r.Value)
-			);
+			return static_cast<value_type>(this->Value | r.Value);
 		}
 
 		type constexpr 
 		operator&(type const& r) const noexcept {
-			return static_cast<value_type>(
-				static_cast<underlying_t>(this->Value) & static_cast<underlying_t>(r.Value)
-			);
+			return static_cast<value_type>(this->Value & r.Value);
 		}
 	
 		type constexpr 
 		operator^(type const& r) const noexcept {
-			return static_cast<value_type>(
-				static_cast<underlying_t>(this->Value) ^ static_cast<underlying_t>(r.Value)
-			);
+			return static_cast<value_type>(this->Value ^ r.Value);
 		}
 	
 		type constexpr 
 		operator~() const noexcept {
-			return static_cast<value_type>(
-				~static_cast<underlying_t>(this->Value)
-			);
+			return static_cast<value_type>(~this->Value);
 		}
 
 	public:
 		reference constexpr 
 		operator|=(type const& r) noexcept {
-			this->Value = static_cast<value_type>(
-				static_cast<underlying_t>(this->Value) | static_cast<underlying_t>(r.Value)
-			);
+			this->Value |= r.Value;
 			return *this;
 		}
 
 		type constexpr 
 		operator&=(type const& r) noexcept {
-			this->Value = static_cast<value_type>(
-				static_cast<underlying_t>(this->Value) & static_cast<underlying_t>(r.Value)
-			);
+			this->Value &= r.Value;
 			return *this;
 		}
 	
 		type constexpr 
 		operator^=(type const& r) noexcept {
-			this->Value = static_cast<value_type>(
-				static_cast<underlying_t>(this->Value) ^ static_cast<underlying_t>(r.Value)
-			);
+			this->Value ^= r.Value;
 			return *this;
 		}
 	};
