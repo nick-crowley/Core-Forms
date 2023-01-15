@@ -542,7 +542,12 @@ namespace core::forms
 		update() {
 			::UpdateWindow(this->handle());
 		}
-
+		
+		Response 
+		virtual onClose() {
+			return Unhandled;
+		}
+	
 		Response 
 		virtual onCreate(CreateWindowEventArgs args) {
 			return Unhandled;
@@ -668,6 +673,9 @@ namespace core::forms
 		virtual offer_message(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) 
 		{
 			switch (message) {
+			case WM_CLOSE: 
+				return this->onClose();
+
 			case WM_CREATE: 
 				return this->onCreate({wParam,lParam});
 			
