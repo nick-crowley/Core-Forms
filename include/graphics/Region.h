@@ -25,7 +25,7 @@ namespace core::forms
 		{}
 	
 		Region(::HRGN rgn)  
-		  : Handle{ThrowIfEmpty(rgn)}
+		  : Handle{ThrowIfNull(rgn)}
 		{
 			if (rgn == (::HRGN)NULLREGION)
 				throw std::invalid_argument{"Region::ctor() 'rgn' is NULLREGION"};
@@ -73,7 +73,7 @@ namespace core::forms
 	public:
 		std::unique_ptr<::RGNDATA>
 		static getData(::HRGN rgn) {
-			auto const size = ::GetRegionData(ThrowIfEmpty(rgn), 0, nullptr);
+			auto const size = ::GetRegionData(ThrowIfNull(rgn), 0, nullptr);
 			auto data = boost::reinterpret_pointer_cast<::RGNDATA>(std::make_unique<std::byte[]>(size));
 			if (!::GetRegionData(rgn, size, data.get()))
 				return nullptr;
