@@ -281,7 +281,7 @@ namespace core::forms
 		
 			ProcessingState
 			setState(ProcessingState state, std::wstring_view cls, std::wstring_view txt) {
-				// Copy short preview; assume text isn't non-latin charset
+				// Copy short preview; assume text is latin charset
 				std::transform(cls.data(), cls.data()+std::min<int>(cls.size(),lengthof(this->Class)-1), this->Class.begin(), toChar);
 				std::transform(txt.data(), txt.data()+std::min<int>(txt.size(),lengthof(this->Text)-1), this->Text.begin(), toChar);
 				this->Class.back() = '\0';
