@@ -61,6 +61,7 @@ namespace core::forms
 		}
 
 	public:
+		// FIXME: Remove the need to supply `Module` at every construction by making it a static variable of every Window/Dialog
 		intptr_t 
 		virtual showModal(Window* parent, std::optional<ControlDictionary> wrappers, std::optional<Module> module = std::nullopt) 
 		{
