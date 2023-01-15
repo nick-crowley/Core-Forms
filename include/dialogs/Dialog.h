@@ -82,11 +82,7 @@ namespace core::forms
 
 		Response 
 		virtual onDestroy() override {
-			if (this->DisplayMode == Modal) {
-				return Unhandled;
-			}
-
-			return Window::onDestroy();
+			return Unhandled;
 		}
 	
 		void
