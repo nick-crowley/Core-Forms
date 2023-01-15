@@ -192,7 +192,7 @@ namespace core::forms
 			Rect Area {CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT };
 			ResourceId Class;
 			std::wstring_view Text;
-			WindowStyle Style = WindowStyle(NULL);
+			WindowStyle Style = WindowStyle::None;
 			::HWND Parent = nullptr;
 			::HMENU Menu = nullptr;
 			::HMODULE Module = nullptr;
