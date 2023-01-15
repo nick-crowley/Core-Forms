@@ -5,6 +5,8 @@
 namespace core::forms
 {
 	class RadioButtonControl : public ButtonControl {
+		bool Checked = false;
+
 	public:
 		RadioButtonControl() 
 		{}
@@ -12,6 +14,10 @@ namespace core::forms
 	public:
 		bool
 		checked() const {
+			// Owner-draw buttons don't maintain radio-button state
+			if (this->ownerDraw()) 
+				return this->Checked;
+
 			return this->state().test(ButtonState::Checked);
 		}
 		
@@ -19,11 +25,18 @@ namespace core::forms
 		void
 		check() {
 			Button_SetCheck(this->handle(), ButtonState::Checked);
+
+			if (this->ownerDraw()) {
+				this->Checked = true;
+				::InvalidateRect(this->handle(), nullptr, TRUE);
+			}
 		}
 		
 		Response 
 		onOwnerDraw(OwnerDrawEventArgs args) override {
 			if (args.Ident == this->ident()) {
+				if (this->Checked)
+					args.Item.State |= OwnerDrawState::Checked;
 				this->LookNFeel->draw(*this, args);
 				return TRUE;
 			}
@@ -34,6 +47,11 @@ namespace core::forms
 		void
 		uncheck() {
 			Button_SetCheck(this->handle(), ButtonState::Unchecked);
+			
+			if (this->ownerDraw()) {
+				this->Checked = false;
+				::InvalidateRect(this->handle(), nullptr, TRUE);
+			}
 		}
 		
 	protected:
@@ -51,5 +69,10 @@ namespace core::forms
 
 			return Unhandled;
 		}*/
+
+		bool
+		ownerDraw() const {
+			return (this->style<ButtonStyle>() & ButtonStyle::TypeMask) == ButtonStyle::OwnerDraw;
+		}
 	};
 }	// namespace core::forms
