@@ -62,13 +62,13 @@ namespace core::forms
 
 	public:
 		intptr_t 
-		showModal(Window* parent, std::optional<ControlDictionary> wrappers, std::optional<Module> module = std::nullopt) 
+		virtual showModal(Window* parent, std::optional<ControlDictionary> wrappers, std::optional<Module> module = std::nullopt) 
 		{
 			return *this->showDialog(DialogMode::Modal, parent, wrappers, module);
 		}
 	
 		void 
-		showModeless(Window* parent, std::optional<ControlDictionary> wrappers, std::optional<Module> module = std::nullopt) 
+		virtual showModeless(Window* parent, std::optional<ControlDictionary> wrappers, std::optional<Module> module = std::nullopt) 
 		{
 			this->showDialog(DialogMode::NonModal, parent, wrappers, module);
 		}
