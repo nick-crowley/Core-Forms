@@ -266,9 +266,9 @@ namespace core::forms
 
 		private:
 			uint32_t const       MagicNumber = 12345678;
-			std::array<char,16>  Class {L'\0'};
+			std::array<char,16>  Class {};
 			ProcessingState      State {ProcessingState::NotApplicable};
-			std::array<char,16>	 Text  {L'\0'};
+			std::array<char,16>	 Text  {};
 
 		public:
 			DebuggingAide() = default;
