@@ -314,11 +314,11 @@ namespace core::forms
 		WindowMessageDictionary 
 		static s_MessageDatabase;
 
-	protected: 
-		::HWND  Handle;  // NB: Due to message handling being re-entrant there is a significant delay 
-						 //     between releasing smart-pointer and the release delegate returning.
-						 //     Therefore raw-pointers are preferable here due to simplicity.
 	protected:
+		//! @remarks Due to message handling being re-entrant there is a significant delay 
+		//!          between releasing smart-pointer and the release delegate returning.
+		//!          Therefore raw-pointers are preferable here due to simplicity.
+		::HWND                  Handle;
 		DebuggingAide           Debug;
 		SharedLookNFeelProvider LookNFeel;
 
