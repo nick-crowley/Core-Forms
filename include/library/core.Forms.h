@@ -1,7 +1,6 @@
 #pragma once
 // Core-COM library header
 #include <library/core.COM.h>
-#include "../../src/StdLibrary.h"
 #include "../../src/PlatformSdk.h"
 #include "../../src/libBoost.h"
 #include <gsl/gsl>
