@@ -95,7 +95,7 @@ namespace core::forms
 
 			switch (notification) {
 			case BN_CLICKED:
-				this->Clicked.raise();
+				this->Clicked.raise(*this);
 				return 0;
 			
 			case BN_PAINT:

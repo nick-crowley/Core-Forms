@@ -7,6 +7,8 @@
 namespace core::forms
 {
 	class Window;
+	using WindowDelegate = Delegate<void (Window&)>;
+	using WindowEvent = ObservableEvent<WindowDelegate>;
 
 	struct CreateWindowEventArgs {
 		static_assert(sizeof(LPARAM) == sizeof(CREATESTRUCT*));
@@ -24,7 +26,7 @@ namespace core::forms
 		}
 	};
 
-	using CreateWindowDelegate = Delegate<void (CreateWindowEventArgs)>;
+	using CreateWindowDelegate = Delegate<void (Window&,CreateWindowEventArgs)>;
 	using CreateWindowEvent = ObservableEvent<CreateWindowDelegate>;
 
 
@@ -79,7 +81,7 @@ namespace core::forms
 		OwnerDrawEventArgs(::DRAWITEMSTRUCT& data);
 	};
 
-	using OwnerDrawDelegate = Delegate<void (OwnerDrawEventArgs)>;
+	using OwnerDrawDelegate = Delegate<void (Window&,OwnerDrawEventArgs)>;
 	using OwnerDrawEvent = ObservableEvent<OwnerDrawDelegate>;
 
 
@@ -98,7 +100,7 @@ namespace core::forms
 		OwnerDrawMenuEventArgs(::DRAWITEMSTRUCT&);
 	};
 
-	using OwnerDrawMenuDelegate = Delegate<void (OwnerDrawMenuEventArgs)>;
+	using OwnerDrawMenuDelegate = Delegate<void (Window&,OwnerDrawMenuEventArgs)>;
 	using OwnerDrawMenuEvent = ObservableEvent<OwnerDrawMenuDelegate>;
 
 
@@ -112,7 +114,7 @@ namespace core::forms
 		}
 	};
 
-	using TimerDelegate = Delegate<void (TimerEventArgs)>;
+	using TimerDelegate = Delegate<void (Window&,TimerEventArgs)>;
 	using TimerEvent = ObservableEvent<TimerDelegate>;
 
 
@@ -129,7 +131,7 @@ namespace core::forms
 		}
 	};
 
-	using ShowWindowDelegate = Delegate<void (ShowWindowEventArgs)>;
+	using ShowWindowDelegate = Delegate<void (Window&,ShowWindowEventArgs)>;
 	using ShowWindowEvent = ObservableEvent<ShowWindowDelegate>;
 
 
@@ -157,7 +159,7 @@ namespace core::forms
 		}
 	};
 
-	using ActivateNonClientDelegate = Delegate<void (ActivateNonClientEventArgs)>;
+	using ActivateNonClientDelegate = Delegate<void (Window&,ActivateNonClientEventArgs)>;
 	using ActivateNonClientEvent = ObservableEvent<ActivateNonClientDelegate>;
 
 
@@ -214,7 +216,7 @@ namespace core::forms
 		{}
 	};
 
-	using MouseNonClientDelegate = Delegate<void (MouseNonClientEventArgs)>;
+	using MouseNonClientDelegate = Delegate<void (Window&,MouseNonClientEventArgs)>;
 	using MouseNonClientEvent = ObservableEvent<MouseNonClientDelegate>;
 
 
@@ -228,7 +230,7 @@ namespace core::forms
 		{}
 	};
 
-	using HitTestNonClientDelegate = Delegate<void (HitTestNonClientEventArgs)>;
+	using HitTestNonClientDelegate = Delegate<void (Window&,HitTestNonClientEventArgs)>;
 	using HitTestNonClientEvent = ObservableEvent<HitTestNonClientDelegate>;
 
 
@@ -303,7 +305,7 @@ namespace core::forms
 		endPaint();
 	};
 
-	using PaintNonClientDelegate = Delegate<void (PaintNonClientEventArgs)>;
+	using PaintNonClientDelegate = Delegate<void (Window&,PaintNonClientEventArgs)>;
 	using PaintNonClientEvent = ObservableEvent<PaintNonClientDelegate>;
 
 
@@ -329,7 +331,7 @@ namespace core::forms
 		endPaint();
 	};
 
-	using PaintWindowDelegate = Delegate<void (PaintWindowEventArgs)>;
+	using PaintWindowDelegate = Delegate<void (Window&,PaintWindowEventArgs)>;
 	using PaintWindowEvent = ObservableEvent<PaintWindowDelegate>;
 
 

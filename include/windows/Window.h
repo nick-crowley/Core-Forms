@@ -327,11 +327,11 @@ namespace core::forms
 		TimerCollection         Timers;
 
 		CreateWindowEvent	Created;
-		NullaryEvent		Destroyed;
+		WindowEvent         Destroyed;
 		ShowWindowEvent		Shown;
 		ShowWindowEvent		Hidden;
 		PaintWindowEvent	Painted;
-		NullaryEvent		Clicked;
+		WindowEvent         Clicked;
 	
 	public:
 		Window();
@@ -750,24 +750,24 @@ namespace core::forms
 		{
 			switch (message) {
 			case WM_CREATE: 
-				this->Created.raise(CreateWindowEventArgs{wParam,lParam});
+				this->Created.raise(*this, CreateWindowEventArgs{wParam,lParam});
 				return;
 
 			case WM_DESTROY:
-				this->Destroyed.raise();
+				this->Destroyed.raise(*this);
 				return;
 			
 			case WM_SHOWWINDOW:
 				if (wParam) {
-					this->Shown.raise(ShowWindowEventArgs{wParam,lParam});
+					this->Shown.raise(*this, ShowWindowEventArgs{wParam,lParam});
 				}
 				else {
-					this->Hidden.raise(ShowWindowEventArgs{wParam,lParam});
+					this->Hidden.raise(*this, ShowWindowEventArgs{wParam,lParam});
 				}
 				return;
 
 			case WM_PAINT:
-				this->Painted.raise(PaintWindowEventArgs{this});
+				this->Painted.raise(*this, PaintWindowEventArgs{this});
 				return;
 			}
 		} 
