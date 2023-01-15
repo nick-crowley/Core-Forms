@@ -14,7 +14,13 @@ namespace core::forms
 		checked() const {
 			return this->state().test(ButtonState::Checked);
 		}
-	
+		
+	public:
+		void
+		check() {
+			Button_SetCheck(this->handle(), ButtonState::Checked);
+		}
+		
 		Response 
 		onOwnerDraw(OwnerDrawEventArgs args) override {
 			if (args.Ident == this->ident()) {
@@ -24,7 +30,12 @@ namespace core::forms
 
 			return Unhandled;
 		}
-
+		
+		void
+		uncheck() {
+			Button_SetCheck(this->handle(), ButtonState::Unchecked);
+		}
+		
 	protected:
 		/*Response
 		offer_notification(::UINT notification) override {
