@@ -1,5 +1,5 @@
 #pragma once
-#include "formsFramework.h"
+#include "library/core.Forms.h"
 #include "system/ResourceId.h"
 #include "graphics/Rectangle.h"
 #include "windows/WindowStyle.h"

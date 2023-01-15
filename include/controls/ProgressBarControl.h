@@ -1,5 +1,5 @@
 #pragma once
-#include "formsFramework.h"
+#include "library/core.Forms.h"
 #include "windows/Window.h"
 #include "windows/WindowClass.h"
 #include "controls/ProgressBarStyle.h"

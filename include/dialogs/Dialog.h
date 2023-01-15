@@ -1,5 +1,5 @@
 #pragma once
-#include "formsFramework.h"
+#include "library/core.Forms.h"
 #include "windows/ClassId.h"
 #include "windows/Window.h"
 #include "dialogs/DialogEventArgs.h"

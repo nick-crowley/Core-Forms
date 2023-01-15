@@ -1,5 +1,5 @@
 #pragma once
-#include "formsFramework.h"
+#include "library/core.Forms.h"
 #include "system/SharedHandle.h"
 #include "graphics/ObjectFlags.h"
 

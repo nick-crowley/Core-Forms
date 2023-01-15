@@ -1,5 +1,5 @@
 #pragma once
-#include "formsFramework.h"
+#include "library/core.Forms.h"
 #include "support/ObservableEvent.h"
 #include "graphics/Graphics.h"
 #include "windows/WindowInfo.h"

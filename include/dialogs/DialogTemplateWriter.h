@@ -1,5 +1,5 @@
 #pragma once
-#include "formsFramework.h"
+#include "library/core.Forms.h"
 #include "dialogs/DialogTemplate.h"
 #include "dialogs/DialogTemplateBlob.h"
 #include "dialogs/DialogTemplateTypes.h"
