@@ -409,8 +409,8 @@ namespace core::forms
 
 		template <unsigned MessageId>
 		::LRESULT
-		send(::WPARAM first, ::LPARAM second) const {
-			return ::SendMessage(this->handle(), MessageId, first, second);
+		send(std::optional<::WPARAM> first = std::nullopt, std::optional<::LPARAM> second = std::nullopt) const {
+			return ::SendMessageW(this->handle(), MessageId, first.value_or(0), second.value_or(0));
 		}
 
 		template <meta::Enumeration Style = WindowStyle>
