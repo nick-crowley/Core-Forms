@@ -13,7 +13,7 @@ namespace core::forms
 	public:
 		Pen(Colour col, unsigned width, PenStyle s = PenStyle::Solid) {
 			if (auto const pen = ::CreatePen(static_cast<int>(s), width, win::DWord{col}); !pen)
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 			else
 				this->Handle = make_handle(pen);
 		}

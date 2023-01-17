@@ -27,7 +27,7 @@ namespace core::forms
 			req.lfCharSet = static_cast<BYTE>(charSet);
 			wcscpy_s(req.lfFaceName, name.data());
 			if (auto const font = ::CreateFontIndirectW(&req); !font)
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 			else
 				this->Handle = make_handle(font);
 		}

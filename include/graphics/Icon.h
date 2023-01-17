@@ -30,7 +30,7 @@ namespace core::forms
 														IMAGE_ICON, 
 														dimensions.Width, dimensions.Height, 
 														LR_LOADFROMFILE|LR_LOADTRANSPARENT); !icon)
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 			else
 				return Icon{icon, dimensions};
 		}

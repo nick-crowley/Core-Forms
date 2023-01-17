@@ -26,7 +26,7 @@ namespace core::forms
 		{
 			auto module = owner ? owner->handle() : nullptr;
 			if (!::GetClassInfoExW(module, name, static_cast<base*>(this))) {
-				win::LastError{}.throw_if_failed(std::format("Cannot find '{}' window class", to_string(name)));
+				win::LastError{}.throw_if_failed("Cannot find '{}' window class", to_string(name));
 			}
 		}
 
@@ -51,7 +51,7 @@ namespace core::forms
 		void 
 		register$() {	
 			if (::ATOM atom = ::RegisterClassExW(static_cast<base*>(this)); !atom) {
-				win::LastError{}.throw_if_failed(std::format("Failed to register '{}' window class", to_string(this->lpszClassName)));
+				win::LastError{}.throw_if_failed("Failed to register '{}' window class", to_string(this->lpszClassName));
 			}
 			else {
 				this->Atom = make_handle(atom, this->hInstance);

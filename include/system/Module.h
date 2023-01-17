@@ -25,9 +25,9 @@ namespace core::forms
 														  IMAGE_BITMAP, 
 														  0, 0, 
 														  NULL); !bitmap)
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 			else if (::BITMAP info{}; !::GetObject(bitmap, sizeof(info), &info))
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 			else
 				return Bitmap{bitmap, {info.bmWidth,info.bmHeight}, static_cast<ColourDepth>(info.bmBitsPixel)};
 		}
@@ -43,7 +43,7 @@ namespace core::forms
 														IMAGE_ICON, 
 														dimensions.Width, dimensions.Height, 
 														LR_LOADTRANSPARENT); !icon)
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 			else
 				return Icon{icon, dimensions};
 		}
@@ -53,16 +53,16 @@ namespace core::forms
 		{
 			::HINSTANCE module = source ? source->handle() : nullptr;
 			if (::HRSRC resource = ::FindResourceW(module, name /*MAKEINTRESOURCE(1)*/, category /*RT_MANIFEST*/); !resource) {
-				win::LastError{}.throw_always(std::format("Failed to find resource '{}'", to_string(name)));
+				win::LastError{}.throw_always("Failed to find resource '{}'", to_string(name));
 			}
 			else if (::HGLOBAL block = ::LoadResource(module, resource); !block) {
-				win::LastError{}.throw_always(std::format("Failed to load resource '{}'", to_string(name)));
+				win::LastError{}.throw_always("Failed to load resource '{}'", to_string(name));
 			}
 			else if (::DWORD size = ::SizeofResource(module, resource); !size) {
-				win::LastError{}.throw_always(std::format("Failed to measure resource '{}'", to_string(name)));
+				win::LastError{}.throw_always("Failed to measure resource '{}'", to_string(name));
 			}
 			else if (auto data = (const std::byte*)::LockResource(block); !data) {
-				win::LastError{}.throw_always(std::format("Failed to lock resource '{}'", to_string(name)));
+				win::LastError{}.throw_always("Failed to lock resource '{}'", to_string(name));
 			}
 			else {
 				final_act(=) { UnlockResource(block); };

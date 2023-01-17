@@ -113,7 +113,7 @@ namespace core::forms
 						  source,
 						  0, 0, 
 						  win::DWord{op}))
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 		}
 	
 		void
@@ -124,7 +124,7 @@ namespace core::forms
 						  source,
 						  src.X, src.Y, 
 						  win::DWord{op}))
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 		}
 	
 		void
@@ -135,7 +135,7 @@ namespace core::forms
 							  source,
 							  src.Left, src.Top, src.width(), src.height(),
 							  win::DWord{op}))
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 		}
 	
 		void
@@ -150,7 +150,7 @@ namespace core::forms
 							  source,
 							  src.Left, src.Top, src.width(), src.height(),
 							  blend))
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 		}
 
 		//! @brief	Draws one or more edges of rectangle
@@ -158,7 +158,7 @@ namespace core::forms
 		drawEdge(Rect const& rc, EdgeFlags edge, BorderFlags flags = BorderFlags::Rect) const
 		{
 			if (!::DrawEdge(this->handle(), const_cast<Rect&>(rc), win::DWord{edge}, win::DWord{flags}))
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 		}
 	
 		//!	@brief	Fills a focus rectangle 
@@ -166,7 +166,7 @@ namespace core::forms
 		drawFocus(Rect const& rc) const
 		{
 			if (!::DrawFocusRect(this->handle(), rc))
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 		}
 
 		//! @brief	Fills a frame rectangle with a custom brush
@@ -175,7 +175,7 @@ namespace core::forms
 		{
 			// Draw frame rectangle with custom brush
 			if (!::FrameRect(this->handle(), rc, get_handle<::HBRUSH>(brush)))
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 		}
 	
 		//! @brief	Draws component of built-in control
@@ -184,7 +184,7 @@ namespace core::forms
 		{
 			// Draw control state
 			if (!::DrawFrameControl(this->handle(), const_cast<Rect&>(rc), ctrl, state))
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 		}
 
 		//!	@brief	Draw an icon at a position
@@ -198,7 +198,7 @@ namespace core::forms
 							  sz.Width, sz.Height, 
 							  0, nullptr, 
 							  DI_IMAGE | DI_MASK))
-				win::throw_exception(::GetLastError(), "Unable to draw icon");
+				win::LastError{}.throw_always("Unable to draw icon");
 		}
 
 		//!	@brief	Draw an icon into a rectangle
@@ -212,7 +212,7 @@ namespace core::forms
 							  rc.width(), rc.height(), 
 							  0, nullptr, 
 							  DI_IMAGE | DI_MASK))
-				win::throw_exception(::GetLastError(), "Unable to draw icon");
+				win::LastError{}.throw_always("Unable to draw icon");
 		}
 	
 		//! @brief	Draws a filled rectangle with the current brush and pen
@@ -221,7 +221,7 @@ namespace core::forms
 		{
 			// Outline source rectangle with current pen
 			if (!::Rectangle(this->handle(), rc.Left, rc.Top, rc.Right, rc.Bottom))
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 		}
 		//! @brief	Writes text into a rectangle
 		//! @return Height of the text in logical units if successful; otherwise 0
@@ -232,7 +232,7 @@ namespace core::forms
 											 txt.data(), static_cast<int>(txt.size()), 
 											 const_cast<Rect&>(rc), 
 											 win::DWord{flags}); !height)
-				win::throw_exception(::GetLastError(), "Unable to draw text");
+				win::LastError{}.throw_always("Unable to draw text");
 			else
 				return height;
 		}
@@ -260,7 +260,7 @@ namespace core::forms
 		{
 			// Fill target rectangle with custom brush
 			if (!::FillRect(this->handle(), rc, brush))
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 		}
 	
 		//!	@brief	Fills a region interior with current brush
@@ -268,7 +268,7 @@ namespace core::forms
 		fillRegion(Region const& rgn) const
 		{
 			if (!::PaintRgn(this->handle(), const_cast<Region&>(rgn)))
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 		}
 	
 		//!	@brief	Fills a region interior with a sytem-coloured brush
@@ -276,7 +276,7 @@ namespace core::forms
 		fillRegion(Region const& rgn, SystemColour col) const
 		{
 			if (!::FillRgn(this->handle(), const_cast<Region&>(rgn), ::GetSysColorBrush(static_cast<int>(col))))
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 		}
 	
 		//!	@brief	Fills a region interior with a custom brush
@@ -284,7 +284,7 @@ namespace core::forms
 		fillRegion(Region const& rgn, ::HBRUSH brush) const
 		{
 			if (!::FillRgn(this->handle(), const_cast<Region&>(rgn), brush))
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 		}
 	
 		//!	@brief	Outlines a region with a system-coloured brush
@@ -299,7 +299,7 @@ namespace core::forms
 		frameRegion(Region const& rgn, ::HBRUSH brush, Size const thickness) const
 		{
 			if (!::FrameRgn(this->handle(), const_cast<Region&>(rgn), brush, thickness.Width, thickness.Height))
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 		}
 	
 		// @returns		Height in twips
@@ -308,7 +308,7 @@ namespace core::forms
 		{
 			// Query logical pixel height & convert
 			if (auto const logPixels = ::GetDeviceCaps(this->handle(), LOGPIXELSY); !logPixels)
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 			else
 				return static_cast<int32_t>(-points * logPixels / 72ll); 
 		}
@@ -321,7 +321,7 @@ namespace core::forms
 
 			// Measure text
 			if (!::GetTextExtentPoint32W(this->handle(), txt.data(), static_cast<int>(txt.size()), sz))
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 
 			return sz;
 		}
@@ -332,7 +332,7 @@ namespace core::forms
 		exclude(Rect const& rc)
 		{
 			if (!::ExcludeClipRect(this->handle(), rc.Left, rc.Top, rc.Right, rc.Bottom))
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 		}
 
 		//!	@brief	Restores the state upon creation
@@ -395,7 +395,7 @@ namespace core::forms
 		setObj(::HBITMAP bitmap)
 		{
 			if (auto prev = (::HBITMAP)::SelectObject(this->handle(), bitmap); !prev) 
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 			else if (!this->Modified.PrevBitmap) 
 				this->Modified.PrevBitmap = prev;
 		}
@@ -404,7 +404,7 @@ namespace core::forms
 		setObj(::HBRUSH brush)
 		{
 			if (auto prev = (::HBRUSH)::SelectObject(this->handle(), brush); !prev) 
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 			else if (!this->Modified.PrevBrush) 
 				this->Modified.PrevBrush = prev;
 		}
@@ -419,7 +419,7 @@ namespace core::forms
 		setObj(::HFONT font)
 		{
 			if (auto prev = (::HFONT)::SelectObject(this->handle(), font); !prev) 
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 			else if (!this->Modified.PrevFont) 
 				this->Modified.PrevFont = prev;
 		}
@@ -428,7 +428,7 @@ namespace core::forms
 		setObj(::HPEN pen)
 		{
 			if (auto prev = (::HPEN)::SelectObject(this->handle(), pen); !prev) 
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 			else if (!this->Modified.PrevPen) 
 				this->Modified.PrevPen = prev;
 		}
@@ -440,7 +440,7 @@ namespace core::forms
 			// Change background drawing mode
 			if (auto const prev = static_cast<DrawingMode>(::SetBkMode(this->handle(), static_cast<int>(mode))); 
 				  prev == DrawingMode::Invalid)
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 			else if (!this->Modified.PrevDrawingMode) 
 				this->Modified.PrevDrawingMode = prev;
 		}
@@ -453,7 +453,7 @@ namespace core::forms
 			// Change background colour
 			if (auto const prev = static_cast<Colour>(::SetBkColor(this->handle(), win::DWord{col})); 
 				  prev == Colour::Invalid)
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 			else if (!this->Modified.PrevBackColour) 
 				this->Modified.PrevBackColour = prev;
 		}
@@ -472,7 +472,7 @@ namespace core::forms
 			// Change text colour
 			if (auto const prev = static_cast<Colour>(::SetTextColor(this->handle(), win::DWord{col}));
 				  prev == Colour::Invalid)
-				win::throw_exception(::GetLastError());
+				win::LastError{}.throw_always();
 			else if (!this->Modified.PrevTextColour) 
 				this->Modified.PrevTextColour = prev;
 		}

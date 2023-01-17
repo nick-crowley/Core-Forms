@@ -107,13 +107,13 @@ namespace core::forms
 			void
 			add(uintptr_t ident, std::chrono::milliseconds period) {
 				if (!::SetTimer(this->Owner.handle(), ident, win::DWord{period.count()}, nullptr))
-					win::throw_exception(::GetLastError(), "Failed to set timer #" + std::to_string(ident));
+					win::LastError{}.throw_always("Failed to set timer #{}", std::to_string(ident));
 			}
 		
 			void
 			remove(uintptr_t ident) {
 				if (!::KillTimer(this->Owner.handle(), ident))
-					win::throw_exception(::GetLastError(), "Failed to cancel timer #" + std::to_string(ident));
+					win::LastError{}.throw_always("Failed to cancel timer #{}", std::to_string(ident));
 			}
 		};
 
@@ -132,7 +132,7 @@ namespace core::forms
 			Window* 
 			at(key_t handle) const & {
 				if (auto pos = this->Storage.find(handle); pos == this->Storage.end())
-					throw std::runtime_error(std::format("Unrecognised window handle {}", to_hexString<8>(uintptr_t(handle))));
+					throw runtime_error{"Unrecognised window handle {}", to_hexString<8>(uintptr_t(handle))};
 				else
 					return pos->second;
 			}
@@ -794,7 +794,7 @@ namespace core::forms
 				w.Area.Left, w.Area.Top, w.Area.width(), w.Area.height(), w.Parent, w.Menu, w.Module, &w.Parameter)) 
 			{
 				this->Debug.setState(ProcessingState::Idle);
-				win::LastError{}.throw_if_failed(std::format("Failed to create '{}' window", to_string(w.Class)));
+				win::LastError{}.throw_if_failed("Failed to create '{}' window", to_string(w.Class));
 			}
 
 			this->Debug.setState(ProcessingState::Idle);
@@ -854,8 +854,8 @@ namespace core::forms
 			}
 			else {
 				using namespace std::literals;
-				throw std::runtime_error(std::format("Received {} for unrecognised window {}", 
-					s_MessageDatabase.name(message), to_hexString((uintptr_t)hWnd)));
+				throw runtime_error{"Received {} for unrecognised window {}", s_MessageDatabase.name(message), 
+					to_hexString((uintptr_t)hWnd)};
 			}
 		}
 	
