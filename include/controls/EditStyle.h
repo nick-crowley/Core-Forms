@@ -21,16 +21,11 @@ namespace core::forms
 	
 		None			= Left,
 	};
-
-	EditStyle constexpr inline operator|(EditStyle a,EditStyle b) { return detail::enum_bit_or(a,b);  }
-	EditStyle constexpr inline operator&(EditStyle a,EditStyle b) { return detail::enum_bit_and(a,b); }
-	EditStyle constexpr inline operator^(EditStyle a,EditStyle b) { return detail::enum_bit_xor(a,b); }
-
-	WindowStyle constexpr inline operator|(WindowStyle a,EditStyle b) { return detail::enum_bit_or(a,b);  }
-	WindowStyle constexpr inline operator&(WindowStyle a,EditStyle b) { return detail::enum_bit_and(a,b); }
-	WindowStyle constexpr inline operator^(WindowStyle a,EditStyle b) { return detail::enum_bit_xor(a,b); }
-
-	EditStyle constexpr inline operator|(EditStyle a,WindowStyle b) { return detail::enum_bit_or(a,b);  }
-	EditStyle constexpr inline operator&(EditStyle a,WindowStyle b) { return detail::enum_bit_and(a,b); }
-	EditStyle constexpr inline operator^(EditStyle a,WindowStyle b) { return detail::enum_bit_xor(a,b); }
 }	// namespace core::forms
+
+namespace core::meta 
+{
+	constdata bool Settings<bitwise_enum_t, core::forms::EditStyle> = true;
+	constdata bool Settings<compatible_enum_t, core::forms::EditStyle, core::forms::WindowStyle> = true;
+	constdata bool Settings<compatible_enum_t, core::forms::WindowStyle, core::forms::EditStyle> = true;
+}

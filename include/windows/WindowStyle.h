@@ -36,9 +36,6 @@ namespace core::forms
 
 		None				= Overlapped,
 	};
-
-	WindowStyle constexpr inline operator~(WindowStyle a) { return detail::enum_bit_not(a); }
-	WindowStyle constexpr inline operator|(WindowStyle a,WindowStyle b) { return detail::enum_bit_or(a,b);  }
-	WindowStyle constexpr inline operator&(WindowStyle a,WindowStyle b) { return detail::enum_bit_and(a,b); }
-	WindowStyle constexpr inline operator^(WindowStyle a,WindowStyle b) { return detail::enum_bit_xor(a,b); }
 }	// namespace core::forms
+
+constdata bool core::meta::Settings<core::meta::bitwise_enum_t, core::forms::WindowStyle> = true;

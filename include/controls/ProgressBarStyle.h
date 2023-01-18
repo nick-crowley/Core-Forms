@@ -11,16 +11,11 @@ namespace core::forms
 	
 		None			  = 0
 	};
-
-	ProgressBarStyle constexpr inline operator|(ProgressBarStyle a,ProgressBarStyle b) { return detail::enum_bit_or(a,b);  }
-	ProgressBarStyle constexpr inline operator&(ProgressBarStyle a,ProgressBarStyle b) { return detail::enum_bit_and(a,b); }
-	ProgressBarStyle constexpr inline operator^(ProgressBarStyle a,ProgressBarStyle b) { return detail::enum_bit_xor(a,b); }
-
-	WindowStyle constexpr inline operator|(WindowStyle a,ProgressBarStyle b) { return detail::enum_bit_or(a,b);  }
-	WindowStyle constexpr inline operator&(WindowStyle a,ProgressBarStyle b) { return detail::enum_bit_and(a,b); }
-	WindowStyle constexpr inline operator^(WindowStyle a,ProgressBarStyle b) { return detail::enum_bit_xor(a,b); }
-
-	ProgressBarStyle constexpr inline operator|(ProgressBarStyle a,WindowStyle b) { return detail::enum_bit_or(a,b);  }
-	ProgressBarStyle constexpr inline operator&(ProgressBarStyle a,WindowStyle b) { return detail::enum_bit_and(a,b); }
-	ProgressBarStyle constexpr inline operator^(ProgressBarStyle a,WindowStyle b) { return detail::enum_bit_xor(a,b); }
 }	// namespace core::forms
+
+namespace core::meta 
+{
+	constdata bool Settings<bitwise_enum_t, core::forms::ProgressBarStyle> = true;
+	constdata bool Settings<compatible_enum_t, core::forms::ProgressBarStyle, core::forms::WindowStyle> = true;
+	constdata bool Settings<compatible_enum_t, core::forms::WindowStyle, core::forms::ProgressBarStyle> = true;
+}

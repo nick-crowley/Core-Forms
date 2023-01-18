@@ -7,6 +7,12 @@
 
 namespace core::forms
 {
+	enum class ButtonState;
+}
+constdata bool core::meta::Settings<core::meta::bitwise_enum_t, core::forms::ButtonState> = true;
+
+namespace core::forms
+{
 	enum class ButtonState {	
 		Unchecked      = BST_UNCHECKED,     // 
 		Checked        = BST_CHECKED,       // 
@@ -15,10 +21,6 @@ namespace core::forms
 		Focus          = BST_FOCUS,         // 
 		None           = Unchecked,
 	};
-
-	ButtonState constexpr inline operator|(ButtonState a, ButtonState b) { return detail::enum_bit_or(a,b);  }
-	ButtonState constexpr inline operator&(ButtonState a, ButtonState b) { return detail::enum_bit_and(a,b); }
-	ButtonState constexpr inline operator^(ButtonState a, ButtonState b) { return detail::enum_bit_xor(a,b); }
 
 	class ButtonControl : public Window {
 		class ButtonWindowClass : public WindowClass {

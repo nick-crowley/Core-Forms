@@ -4,93 +4,95 @@
 
 namespace core::forms
 {
-    //! \enum EdgeFlags - Defines DrawEdge edge flags
-    enum class EdgeFlags : uint32_t
-    {
-        RaisedInner = BDR_RAISEDINNER,      //!< Raised inner edge.
-        SunkenInner = BDR_SUNKENINNER,      //!< Sunken inner edge.
+    enum class EdgeFlags : uint32_t;
+    enum class BorderFlags : uint32_t;
+    enum class DrawTextFlags : uint32_t;
+    enum class OwnerDrawState : uint16_t;
+}
 
-        RaisedOuter = BDR_RAISEDOUTER,      //!< Raised outer edge.
-        SunkenOuter = BDR_SUNKENOUTER,      //!< Sunken outer edge.
+//! \enum EdgeFlags - Defines DrawEdge edge flags
+enum class core::forms::EdgeFlags : uint32_t
+{
+    RaisedInner = BDR_RAISEDINNER,      //!< Raised inner edge.
+    SunkenInner = BDR_SUNKENINNER,      //!< Sunken inner edge.
 
-        Bump = EDGE_BUMP,          //!< Combination of RaisedOuter and SunkenInner.
-        Etched = EDGE_ETCHED,      //!< Combination of SunkenOuter and RaisedInner.
-        Raised = EDGE_RAISED,      //!< Combination of RaisedOuter and RaisedInner.
-        Sunken = EDGE_SUNKEN,      //!< Combination of SunkenOuter and SunkenInner.
+    RaisedOuter = BDR_RAISEDOUTER,      //!< Raised outer edge.
+    SunkenOuter = BDR_SUNKENOUTER,      //!< Sunken outer edge.
 
-        None = 0,
-    };
+    Bump = EDGE_BUMP,          //!< Combination of RaisedOuter and SunkenInner.
+    Etched = EDGE_ETCHED,      //!< Combination of SunkenOuter and RaisedInner.
+    Raised = EDGE_RAISED,      //!< Combination of RaisedOuter and RaisedInner.
+    Sunken = EDGE_SUNKEN,      //!< Combination of SunkenOuter and SunkenInner.
 
-    EdgeFlags constexpr inline operator|(EdgeFlags a, EdgeFlags b) { return detail::enum_bit_or(a,b);  }
-    EdgeFlags constexpr inline operator&(EdgeFlags a, EdgeFlags b) { return detail::enum_bit_and(a,b); }
-    EdgeFlags constexpr inline operator^(EdgeFlags a, EdgeFlags b) { return detail::enum_bit_xor(a,b); }
+    None = 0,
+};
 
-    //! \enum BorderFlags - Defines DrawText border flags
-    enum class BorderFlags : uint32_t
-    {
-        Adjust = BF_ADJUST,                                 //!< Shrink the passed rectangle to exclude the edges that were drawn
-        Bottom = BF_BOTTOM,                                 //!< Bottom of border rectangle.
-        BottomLeft = BF_BOTTOMLEFT,                         //!< Bottom and left side of border rectangle.
-        BottomRight = BF_BOTTOMRIGHT,                       //!< Bottom and right side of border rectangle.
-        Diagonal = BF_DIAGONAL,                             //!< Diagonal border.
-        DiagonalBottomLeft = BF_DIAGONAL_ENDBOTTOMLEFT,     //!< Diagonal border. The end point is the lower-left corner of the rectangle; the origin is top-right corner.
-        DiagonalBottomRight = BF_DIAGONAL_ENDBOTTOMRIGHT,   //!< Diagonal border. The end point is the lower-right corner of the rectangle; the origin is top-left corner.
-        DiagonalTopLeft = BF_DIAGONAL_ENDTOPLEFT,           //!< Diagonal border. The end point is the top-left corner of the rectangle; the origin is lower-right corner.
-        DiagonalTopRight = BF_DIAGONAL_ENDTOPRIGHT,         //!< Diagonal border. The end point is the top-right corner of the rectangle; the origin is lower-left corner.
-        Flag = BF_FLAT,                                     //!< Flat border.
-        Left = BF_LEFT,                                     //!< Left side of border rectangle.
-        Middle = BF_MIDDLE,                                 //!< Interior of rectangle to be filled.
-        Mono = BF_MONO,                                     //!< One-dimensional border.
-        Rect = BF_RECT,                                     //!< Entire border rectangle.
-        Right = BF_RIGHT,                                   //!< Right side of border rectangle.
-        Soft = BF_SOFT,                                     //!< Soft buttons instead of tiles.
-        Top = BF_TOP,                                       //!< Top of border rectangle.
-        TopLeft = BF_TOPLEFT,                               //!< Top and left side of border rectangle.
-        TopRight = BF_TOPRIGHT,                             //!< Top and right side of border rectangle.
-    };
+constdata bool core::meta::Settings<core::meta::bitwise_enum_t, core::forms::EdgeFlags> = true;
 
-    BorderFlags constexpr inline operator|(BorderFlags a, BorderFlags b) { return detail::enum_bit_or(a,b);  }
-    BorderFlags constexpr inline operator&(BorderFlags a, BorderFlags b) { return detail::enum_bit_and(a,b); }
-    BorderFlags constexpr inline operator^(BorderFlags a, BorderFlags b) { return detail::enum_bit_xor(a,b); }
+//! \enum BorderFlags - Defines DrawText border flags
+enum class core::forms::BorderFlags : uint32_t
+{
+    Adjust = BF_ADJUST,                                 //!< Shrink the passed rectangle to exclude the edges that were drawn
+    Bottom = BF_BOTTOM,                                 //!< Bottom of border rectangle.
+    BottomLeft = BF_BOTTOMLEFT,                         //!< Bottom and left side of border rectangle.
+    BottomRight = BF_BOTTOMRIGHT,                       //!< Bottom and right side of border rectangle.
+    Diagonal = BF_DIAGONAL,                             //!< Diagonal border.
+    DiagonalBottomLeft = BF_DIAGONAL_ENDBOTTOMLEFT,     //!< Diagonal border. The end point is the lower-left corner of the rectangle; the origin is top-right corner.
+    DiagonalBottomRight = BF_DIAGONAL_ENDBOTTOMRIGHT,   //!< Diagonal border. The end point is the lower-right corner of the rectangle; the origin is top-left corner.
+    DiagonalTopLeft = BF_DIAGONAL_ENDTOPLEFT,           //!< Diagonal border. The end point is the top-left corner of the rectangle; the origin is lower-right corner.
+    DiagonalTopRight = BF_DIAGONAL_ENDTOPRIGHT,         //!< Diagonal border. The end point is the top-right corner of the rectangle; the origin is lower-left corner.
+    Flag = BF_FLAT,                                     //!< Flat border.
+    Left = BF_LEFT,                                     //!< Left side of border rectangle.
+    Middle = BF_MIDDLE,                                 //!< Interior of rectangle to be filled.
+    Mono = BF_MONO,                                     //!< One-dimensional border.
+    Rect = BF_RECT,                                     //!< Entire border rectangle.
+    Right = BF_RIGHT,                                   //!< Right side of border rectangle.
+    Soft = BF_SOFT,                                     //!< Soft buttons instead of tiles.
+    Top = BF_TOP,                                       //!< Top of border rectangle.
+    TopLeft = BF_TOPLEFT,                               //!< Top and left side of border rectangle.
+    TopRight = BF_TOPRIGHT,                             //!< Top and right side of border rectangle.
+};
 
-    //! \enum DrawTextFlags - Defines DrawText flags
-    enum class DrawTextFlags : uint32_t
-    {
-        Top = 0x00000000,                          //!< 
-        Left = 0x00000000,                         //!< 
-        Centre = 0x00000001,                       //!< 
-        Right = 0x00000002,                        //!< 
-        VCentre = 0x00000004,                      //!< 
-        Bottom = 0x00000008,                       //!< 
-        WordBreak = 0x00000010,                    //!< 
-        SingleLine = 0x00000020,                   //!< 
-        ExpandTabs = 0x00000040,                   //!< 
-        TabStop = 0x00000080,                      //!< 
-        NoClip = 0x00000100,                       //!< 
-        ExternalLeading = 0x00000200,              //!< 
-        CalcRect = 0x00000400,                     //!< 
-        NoPrefix = 0x00000800,                     //!< 
-        Internal = 0x00001000,                     //!< 
-        EditControl = 0x00002000,                  //!< 
-        PathEllipsis = 0x00004000,                 //!< 
-        EndElipsis = 0x00008000,                   //!< 
-        ModifyString = 0x00010000,                 //!< 
-        RtlReading = 0x00020000,                   //!< 
-        WordElipsis = 0x00040000,                  //!< 
-        NoFullWidthCharBreak = 0x00080000,         //!< [windows 5.00]
-        HidePrefix = 0x00100000,                   //!< [windows 5.00]
-        PrefixOnly = 0x00200000,                   //!< [windows 5.00]
+constdata bool core::meta::Settings<core::meta::bitwise_enum_t, core::forms::BorderFlags> = true;
 
-        SimpleLeft = Left|VCentre|SingleLine,
-        SimpleCentre = Centre|VCentre|SingleLine,
-        SimpleRight = Right|VCentre|SingleLine,
-        None = Top
-    };
+//! \enum DrawTextFlags - Defines DrawText flags
+enum class core::forms::DrawTextFlags : uint32_t
+{
+    Top = 0x00000000,                          //!< 
+    Left = 0x00000000,                         //!< 
+    Centre = 0x00000001,                       //!< 
+    Right = 0x00000002,                        //!< 
+    VCentre = 0x00000004,                      //!< 
+    Bottom = 0x00000008,                       //!< 
+    WordBreak = 0x00000010,                    //!< 
+    SingleLine = 0x00000020,                   //!< 
+    ExpandTabs = 0x00000040,                   //!< 
+    TabStop = 0x00000080,                      //!< 
+    NoClip = 0x00000100,                       //!< 
+    ExternalLeading = 0x00000200,              //!< 
+    CalcRect = 0x00000400,                     //!< 
+    NoPrefix = 0x00000800,                     //!< 
+    Internal = 0x00001000,                     //!< 
+    EditControl = 0x00002000,                  //!< 
+    PathEllipsis = 0x00004000,                 //!< 
+    EndElipsis = 0x00008000,                   //!< 
+    ModifyString = 0x00010000,                 //!< 
+    RtlReading = 0x00020000,                   //!< 
+    WordElipsis = 0x00040000,                  //!< 
+    NoFullWidthCharBreak = 0x00080000,         //!< [windows 5.00]
+    HidePrefix = 0x00100000,                   //!< [windows 5.00]
+    PrefixOnly = 0x00200000,                   //!< [windows 5.00]
+
+    SimpleLeft = Left|VCentre|SingleLine,
+    SimpleCentre = Centre|VCentre|SingleLine,
+    SimpleRight = Right|VCentre|SingleLine,
+    None = Top
+};
   
-    DrawTextFlags constexpr inline operator|(DrawTextFlags a, DrawTextFlags b) { return detail::enum_bit_or(a,b);  }
-    DrawTextFlags constexpr inline operator&(DrawTextFlags a, DrawTextFlags b) { return detail::enum_bit_and(a,b); }
-    DrawTextFlags constexpr inline operator^(DrawTextFlags a, DrawTextFlags b) { return detail::enum_bit_xor(a,b); }
+constdata bool core::meta::Settings<core::meta::bitwise_enum_t, core::forms::DrawTextFlags> = true;
 
+namespace core::forms
+{
     //! \enum DrawingMode - Defines background drawing modes
     enum class DrawingMode : uint32_t
     {
@@ -139,28 +141,29 @@ namespace core::forms
         Static = ODT_STATIC,      //!< Static control
         Tab = ODT_TAB,            //!< Tab control
     };
-  
-    //! \enum OwnerDrawState - Defines controls that support owner draw
-    enum class OwnerDrawState : uint16_t
-    {
-        None = 0,
-        Checked = ODS_CHECKED,              //!< The menu item is to be checked. This bit is used only in a menu.
-        ComboBoxEdit = ODS_COMBOBOXEDIT,    //!< The drawing takes place in the selection field (edit control) of an owner-drawn combo box.
-        Default = ODS_DEFAULT,              //!< The item is the default item.
-        Disabled = ODS_DISABLED,            //!< The item is to be drawn as disabled.
-        Focus = ODS_FOCUS,                  //!< The item has the keyboard focus.
-        Grayed = ODS_GRAYED,                //!< The item is to be grayed. This bit is used only in a menu.
-        Hotlight = ODS_HOTLIGHT,            //!< The item is being hot-tracked, that is, the item will be highlighted when the mouse is on the item.
-        Inactive = ODS_INACTIVE,            //!< The item is inactive and the window associated with the menu is inactive.
-        NoAccel = ODS_NOACCEL,              //!< The control is drawn without the keyboard accelerator cues.
-        NoFocusRect = ODS_NOFOCUSRECT,      //!< The control is drawn without focus indicator cues.
-        Selected = ODS_SELECTED,            //!< The menu item's status is selected.
-    };
-  
-    OwnerDrawState constexpr inline operator|(OwnerDrawState a, OwnerDrawState b) { return detail::enum_bit_or(a,b);  }
-    OwnerDrawState constexpr inline operator&(OwnerDrawState a, OwnerDrawState b) { return detail::enum_bit_and(a,b); }
-    OwnerDrawState constexpr inline operator^(OwnerDrawState a, OwnerDrawState b) { return detail::enum_bit_xor(a,b); }
+}
 
+//! \enum OwnerDrawState - Defines controls that support owner draw
+enum class core::forms::OwnerDrawState : uint16_t
+{
+    None = 0,
+    Checked = ODS_CHECKED,              //!< The menu item is to be checked. This bit is used only in a menu.
+    ComboBoxEdit = ODS_COMBOBOXEDIT,    //!< The drawing takes place in the selection field (edit control) of an owner-drawn combo box.
+    Default = ODS_DEFAULT,              //!< The item is the default item.
+    Disabled = ODS_DISABLED,            //!< The item is to be drawn as disabled.
+    Focus = ODS_FOCUS,                  //!< The item has the keyboard focus.
+    Grayed = ODS_GRAYED,                //!< The item is to be grayed. This bit is used only in a menu.
+    Hotlight = ODS_HOTLIGHT,            //!< The item is being hot-tracked, that is, the item will be highlighted when the mouse is on the item.
+    Inactive = ODS_INACTIVE,            //!< The item is inactive and the window associated with the menu is inactive.
+    NoAccel = ODS_NOACCEL,              //!< The control is drawn without the keyboard accelerator cues.
+    NoFocusRect = ODS_NOFOCUSRECT,      //!< The control is drawn without focus indicator cues.
+    Selected = ODS_SELECTED,            //!< The menu item's status is selected.
+};
+  
+constdata bool core::meta::Settings<core::meta::bitwise_enum_t, core::forms::OwnerDrawState> = true;
+
+namespace core::forms
+{
     //! \enum RasterOp - Defines operations for combining bitmap pixels
     enum class RasterOp : uint32_t
     {

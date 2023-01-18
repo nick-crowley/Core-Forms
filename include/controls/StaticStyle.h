@@ -42,18 +42,11 @@ namespace core::forms
 	
 		None				= Left
 	};
-
-	StaticStyle constexpr inline operator~(StaticStyle a) { return detail::enum_bit_not(a); }
-
-	StaticStyle constexpr inline operator|(StaticStyle a,StaticStyle b) { return detail::enum_bit_or(a,b);  }
-	StaticStyle constexpr inline operator&(StaticStyle a,StaticStyle b) { return detail::enum_bit_and(a,b); }
-	StaticStyle constexpr inline operator^(StaticStyle a,StaticStyle b) { return detail::enum_bit_xor(a,b); }
-
-	WindowStyle constexpr inline operator|(WindowStyle a,StaticStyle b) { return detail::enum_bit_or(a,b);  }
-	WindowStyle constexpr inline operator&(WindowStyle a,StaticStyle b) { return detail::enum_bit_and(a,b); }
-	WindowStyle constexpr inline operator^(WindowStyle a,StaticStyle b) { return detail::enum_bit_xor(a,b); }
-
-	StaticStyle constexpr inline operator|(StaticStyle a,WindowStyle b) { return detail::enum_bit_or(a,b);  }
-	StaticStyle constexpr inline operator&(StaticStyle a,WindowStyle b) { return detail::enum_bit_and(a,b); }
-	StaticStyle constexpr inline operator^(StaticStyle a,WindowStyle b) { return detail::enum_bit_xor(a,b); }
 }	// namespace core::forms
+
+namespace core::meta 
+{
+	constdata bool Settings<bitwise_enum_t, core::forms::StaticStyle> = true;
+	constdata bool Settings<compatible_enum_t, core::forms::StaticStyle, core::forms::WindowStyle> = true;
+	constdata bool Settings<compatible_enum_t, core::forms::WindowStyle, core::forms::StaticStyle> = true;
+}

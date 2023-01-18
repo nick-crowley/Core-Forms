@@ -44,8 +44,6 @@ namespace core::forms
         Geometric = 0x00010000,             //!< 
         TypeMask  = 0x000f0000,             //!< 
     };
-
-    PenStyle inline operator|(PenStyle a, PenStyle b) { return detail::enum_bit_or(a,b);  }
-    PenStyle inline operator&(PenStyle a, PenStyle b) { return detail::enum_bit_and(a,b); }
-    PenStyle inline operator^(PenStyle a, PenStyle b) { return detail::enum_bit_xor(a,b); }
 }
+
+constdata bool core::meta::Settings<core::meta::bitwise_enum_t, core::forms::PenStyle> = true;

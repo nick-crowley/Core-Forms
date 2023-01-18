@@ -21,8 +21,6 @@ namespace core::forms
 	
 		None				= 0,
 	};
-
-	ClassStyle constexpr inline operator|(ClassStyle a,ClassStyle b) { return detail::enum_bit_or(a,b);  }
-	ClassStyle constexpr inline operator&(ClassStyle a,ClassStyle b) { return detail::enum_bit_and(a,b); }
-	ClassStyle constexpr inline operator^(ClassStyle a,ClassStyle b) { return detail::enum_bit_xor(a,b); }
 }	// namespace core::forms
+
+constdata bool core::meta::Settings<core::meta::bitwise_enum_t, core::forms::ClassStyle> = true;

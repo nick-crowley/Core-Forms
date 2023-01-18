@@ -24,16 +24,11 @@ namespace core::forms
 	
 		None			= 0,
 	};
+}
 
-	DialogStyle constexpr inline operator|(DialogStyle a,DialogStyle b) { return detail::enum_bit_or(a,b);  }
-	DialogStyle constexpr inline operator&(DialogStyle a,DialogStyle b) { return detail::enum_bit_and(a,b); }
-	DialogStyle constexpr inline operator^(DialogStyle a,DialogStyle b) { return detail::enum_bit_xor(a,b); }
-
-	WindowStyle constexpr inline operator|(WindowStyle a,DialogStyle b) { return detail::enum_bit_or(a,b);  }
-	WindowStyle constexpr inline operator&(WindowStyle a,DialogStyle b) { return detail::enum_bit_and(a,b); }
-	WindowStyle constexpr inline operator^(WindowStyle a,DialogStyle b) { return detail::enum_bit_xor(a,b); }
-
-	DialogStyle constexpr inline operator|(DialogStyle a,WindowStyle b) { return detail::enum_bit_or(a,b);  }
-	DialogStyle constexpr inline operator&(DialogStyle a,WindowStyle b) { return detail::enum_bit_and(a,b); }
-	DialogStyle constexpr inline operator^(DialogStyle a,WindowStyle b) { return detail::enum_bit_xor(a,b); }
+namespace core::meta 
+{
+	constdata bool Settings<bitwise_enum_t, core::forms::DialogStyle> = true;
+	constdata bool Settings<compatible_enum_t, core::forms::DialogStyle, core::forms::WindowStyle> = true;
+	constdata bool Settings<compatible_enum_t, core::forms::WindowStyle, core::forms::DialogStyle> = true;
 }

@@ -40,18 +40,11 @@ namespace core::forms
 	
 		None				= PushButton,
 	};
-
-	ButtonStyle constexpr inline operator~(ButtonStyle a) { return detail::enum_bit_not(a); }
-
-	ButtonStyle constexpr inline operator|(ButtonStyle a,ButtonStyle b) { return detail::enum_bit_or(a,b);  }
-	ButtonStyle constexpr inline operator&(ButtonStyle a,ButtonStyle b) { return detail::enum_bit_and(a,b); }
-	ButtonStyle constexpr inline operator^(ButtonStyle a,ButtonStyle b) { return detail::enum_bit_xor(a,b); }
-
-	WindowStyle constexpr inline operator|(WindowStyle a,ButtonStyle b) { return detail::enum_bit_or(a,b);  }
-	WindowStyle constexpr inline operator&(WindowStyle a,ButtonStyle b) { return detail::enum_bit_and(a,b); }
-	WindowStyle constexpr inline operator^(WindowStyle a,ButtonStyle b) { return detail::enum_bit_xor(a,b); }
-
-	ButtonStyle constexpr inline operator|(ButtonStyle a,WindowStyle b) { return detail::enum_bit_or(a,b);  }
-	ButtonStyle constexpr inline operator&(ButtonStyle a,WindowStyle b) { return detail::enum_bit_and(a,b); }
-	ButtonStyle constexpr inline operator^(ButtonStyle a,WindowStyle b) { return detail::enum_bit_xor(a,b); }
 }	// namespace core::forms
+
+namespace core::meta 
+{
+	constdata bool Settings<bitwise_enum_t, core::forms::ButtonStyle> = true;
+	constdata bool Settings<compatible_enum_t, core::forms::ButtonStyle, core::forms::WindowStyle> = true;
+	constdata bool Settings<compatible_enum_t, core::forms::WindowStyle, core::forms::ButtonStyle> = true;
+}

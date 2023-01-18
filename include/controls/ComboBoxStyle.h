@@ -20,16 +20,11 @@ namespace core::forms
 	
 		None			  = 0x0000
 	};
-
-	ComboBoxStyle constexpr inline operator|(ComboBoxStyle a,ComboBoxStyle b) { return detail::enum_bit_or(a,b);  }
-	ComboBoxStyle constexpr inline operator&(ComboBoxStyle a,ComboBoxStyle b) { return detail::enum_bit_and(a,b); }
-	ComboBoxStyle constexpr inline operator^(ComboBoxStyle a,ComboBoxStyle b) { return detail::enum_bit_xor(a,b); }
-
-	WindowStyle constexpr inline operator|(WindowStyle a,ComboBoxStyle b) { return detail::enum_bit_or(a,b);  }
-	WindowStyle constexpr inline operator&(WindowStyle a,ComboBoxStyle b) { return detail::enum_bit_and(a,b); }
-	WindowStyle constexpr inline operator^(WindowStyle a,ComboBoxStyle b) { return detail::enum_bit_xor(a,b); }
-
-	ComboBoxStyle constexpr inline operator|(ComboBoxStyle a,WindowStyle b) { return detail::enum_bit_or(a,b);  }
-	ComboBoxStyle constexpr inline operator&(ComboBoxStyle a,WindowStyle b) { return detail::enum_bit_and(a,b); }
-	ComboBoxStyle constexpr inline operator^(ComboBoxStyle a,WindowStyle b) { return detail::enum_bit_xor(a,b); }
 }	// namespace core::forms
+
+namespace core::meta 
+{
+	constdata bool Settings<bitwise_enum_t, core::forms::ComboBoxStyle> = true;
+	constdata bool Settings<compatible_enum_t, core::forms::ComboBoxStyle, core::forms::WindowStyle> = true;
+	constdata bool Settings<compatible_enum_t, core::forms::WindowStyle, core::forms::ComboBoxStyle> = true;
+}
