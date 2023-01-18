@@ -234,6 +234,8 @@ namespace core::forms
 			// Change the wndclass for the dialog
 			customTemplate.ClassName = ResourceId::parse(this->wndcls().lpszClassName);
 
+			// BUG: Prevent callers from wrapping more than one window handle using the same C++ object
+			
 			// Change the wndclass for each wrapped control
 			if (wrappers) {
 				for (auto& ctrl : customTemplate.Controls) {
