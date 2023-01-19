@@ -15,7 +15,7 @@ namespace core::forms
 
 namespace core::meta 
 {
-	constdata bool Settings<bitwise_enum_t, core::forms::ProgressBarStyle> = true;
-	constdata bool Settings<compatible_enum_t, core::forms::ProgressBarStyle, core::forms::WindowStyle> = true;
-	constdata bool Settings<compatible_enum_t, core::forms::WindowStyle, core::forms::ProgressBarStyle> = true;
+	constdata bool Settings<bitwise_enum, core::forms::ProgressBarStyle> = true;
+	constdata bool Settings<compatible_enum, core::forms::ProgressBarStyle, core::forms::WindowStyle> = true;
+	constdata bool Settings<compatible_enum, core::forms::WindowStyle, core::forms::ProgressBarStyle> = true;
 }

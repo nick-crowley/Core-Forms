@@ -9,7 +9,7 @@ namespace core::forms
 {
 	enum class ButtonState;
 }
-constdata bool core::meta::Settings<core::meta::bitwise_enum_t, core::forms::ButtonState> = true;
+constdata bool core::meta::Settings<core::bitwise_enum, core::forms::ButtonState> = true;
 
 namespace core::forms
 {
