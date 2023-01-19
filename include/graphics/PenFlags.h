@@ -1,7 +1,6 @@
 #pragma once
 #include "Common.h"
 #include "PlatformSdk.h"
-#include "support/EnumOperators.h"
 
 namespace core::forms
 {
