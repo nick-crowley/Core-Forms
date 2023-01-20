@@ -105,7 +105,7 @@ namespace core::forms
 
 		public:
 			void
-			add(uintptr_t ident, std::chrono::milliseconds period) {
+			add(uintptr_t ident, chrono::milliseconds period) {
 				if (!::SetTimer(this->Owner.handle(), ident, win::DWord{period.count()}, nullptr))
 					win::LastError{}.throw_always("Failed to set timer #{}", std::to_string(ident));
 			}
