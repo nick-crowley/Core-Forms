@@ -9,8 +9,8 @@ namespace core::forms
 {
 	struct DialogItemTemplate {
 		std::optional<uint32_t>      HelpId;
-		EnumBitset<ExWindowStyle>    ExtendedStyle;
-		EnumBitset<WindowStyle>      Style;
+		nstd::bitset<ExWindowStyle>  ExtendedStyle;
+		nstd::bitset<WindowStyle>    Style;
 		Rect                         Area;
 		uint32_t                     Ident;
 		std::optional<ResourceId> Title;
@@ -20,8 +20,8 @@ namespace core::forms
 
 	struct DialogTemplate {
 		std::optional<uint32_t>         HelpId;
-		EnumBitset<ExWindowStyle>       ExtendedStyle;
-		EnumBitset<WindowStyle>         Style;
+		nstd::bitset<ExWindowStyle>     ExtendedStyle;
+		nstd::bitset<WindowStyle>       Style;
 		uint16_t                        NumControls;
 		Rect                            Area;
 		std::optional<ResourceId>    Menu;

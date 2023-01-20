@@ -77,7 +77,7 @@ namespace core::forms
 			return Unhandled;
 		}
 
-		EnumBitset<ButtonState>
+		nstd::bitset<ButtonState>
 		state() const {
 			return static_cast<ButtonState>(this->send<BM_GETSTATE>(0,0));
 		}

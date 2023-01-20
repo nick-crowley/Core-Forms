@@ -11,9 +11,9 @@ using namespace core;
 using namespace forms;
 
 DrawTextFlags
-calculateFlags(EnumBitset<ButtonStyle> style) noexcept
+calculateFlags(nstd::bitset<ButtonStyle> style) noexcept
 {
-	EnumBitset<DrawTextFlags> textAlign = style.test(ButtonStyle::Left)  ? DrawTextFlags::Left
+	nstd::bitset<DrawTextFlags> textAlign = style.test(ButtonStyle::Left)  ? DrawTextFlags::Left
 	                                    : style.test(ButtonStyle::Right) ? DrawTextFlags::Right
 	                                    :                                  DrawTextFlags::Centre;
 	
@@ -25,9 +25,9 @@ calculateFlags(EnumBitset<ButtonStyle> style) noexcept
 }
 
 DrawTextFlags
-calculateFlags(EnumBitset<StaticStyle> style) noexcept
+calculateFlags(nstd::bitset<StaticStyle> style) noexcept
 {
-	EnumBitset<DrawTextFlags> textAlign = style.test(StaticStyle::Centre) ? DrawTextFlags::Centre
+	nstd::bitset<DrawTextFlags> textAlign = style.test(StaticStyle::Centre) ? DrawTextFlags::Centre
 	                                    : style.test(StaticStyle::Right)  ? DrawTextFlags::Right
 	                                    :                                   DrawTextFlags::Left;
 
@@ -38,7 +38,7 @@ calculateFlags(EnumBitset<StaticStyle> style) noexcept
 }
 
 EdgeFlags
-calculateFlags(EnumBitset<ExWindowStyle> style) noexcept
+calculateFlags(nstd::bitset<ExWindowStyle> style) noexcept
 {
 	if (style.test(ExWindowStyle::ClientEdge))
 		return EdgeFlags::SunkenOuter;
@@ -50,7 +50,7 @@ calculateFlags(EnumBitset<ExWindowStyle> style) noexcept
 }
 
 Size
-measureEdge(EnumBitset<ExWindowStyle> style) noexcept
+measureEdge(nstd::bitset<ExWindowStyle> style) noexcept
 {
 	if (style.test(ExWindowStyle::ClientEdge|ExWindowStyle::StaticEdge))
 		return {SystemMetric::cxBorder, SystemMetric::cyBorder};
@@ -60,7 +60,7 @@ measureEdge(EnumBitset<ExWindowStyle> style) noexcept
 }
 
 void
-drawWindowBorder(DeviceContext& graphics, Rect const& client, EnumBitset<WindowStyle> style, EnumBitset<ExWindowStyle> exStyle) noexcept
+drawWindowBorder(DeviceContext& graphics, Rect const& client, nstd::bitset<WindowStyle> style, nstd::bitset<ExWindowStyle> exStyle) noexcept
 {
 	auto constexpr edgeStyles = ExWindowStyle::StaticEdge|ExWindowStyle::ClientEdge|ExWindowStyle::DlgModalFrame;
 

@@ -63,11 +63,11 @@ namespace core::forms
 			Rect                        Area;
 			uintptr_t                   Data;
 			IdentOrIndex                Ident;
-			EnumBitset<OwnerDrawState>  State;
+			nstd::bitset<OwnerDrawState> State;
 		};
 
 	public:
-		EnumBitset<OwnerDrawAction> Action;
+		nstd::bitset<OwnerDrawAction> Action;
 		uint16_t                    Ident;
 		ItemData                    Item;
 		mutable DeviceContext       Graphics;
@@ -88,7 +88,7 @@ namespace core::forms
 	class OwnerDrawMenuEventArgs 
 	{
 	public:
-		EnumBitset<OwnerDrawAction>   Action;
+		nstd::bitset<OwnerDrawAction> Action;
 		OwnerDrawEventArgs::ItemData  Item;
 		::HMENU                       Menu;
 		mutable DeviceContext         Graphics;

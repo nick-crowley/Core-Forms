@@ -374,7 +374,7 @@ namespace core::forms
 		}
 	
 		template <meta::Enumeration Style = ExWindowStyle>
-		EnumBitset<Style>
+		nstd::bitset<Style>
 		exStyle() const {
 			return static_cast<Style>(::GetWindowLongW(this->handle(),GWL_EXSTYLE));
 		}
@@ -414,7 +414,7 @@ namespace core::forms
 		}
 
 		template <meta::Enumeration Style = WindowStyle>
-		EnumBitset<Style>
+		nstd::bitset<Style>
 		style() const {
 			return static_cast<Style>(::GetWindowLongW(this->handle(),GWL_STYLE));
 		}
