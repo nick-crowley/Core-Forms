@@ -52,7 +52,7 @@ namespace core::forms
 		static loadResource(gsl::cwzstring name, gsl::cwzstring category, std::optional<Module> source) 
 		{
 			::HINSTANCE module = source ? source->handle() : nullptr;
-			if (::HRSRC resource = ::FindResourceW(module, name /*MAKEINTRESOURCE(1)*/, category /*RT_MANIFEST*/); !resource) {
+			if (::HRSRC resource = ::FindResourceW(module, name, category); !resource) {
 				win::LastError{}.throwAlways("Failed to find resource '{}'", to_string(name));
 			}
 			else if (::HGLOBAL block = ::LoadResource(module, resource); !block) {
