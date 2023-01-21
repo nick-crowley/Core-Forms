@@ -363,7 +363,7 @@ namespace core::forms
 		}
 
 	protected:
-		const char*
+		gsl::czstring
 		notificationName(::UINT notification) override {
 			static const ListBoxNotificationDictionary names;
 			return names.at(notification);

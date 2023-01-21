@@ -208,7 +208,7 @@ namespace core::forms
 			bool		 Common = false;
 
 		public:
-			WindowProcLoggingSentry(const char* func, ::UINT message) {
+			WindowProcLoggingSentry(gsl::czstring func, ::UINT message) {
 				using namespace std::literals;
 				if (!s_MessageDatabase.contains(message)) 
 					this->Text = func + " : Processing unrecognised message "s + to_hexString<4>(message) + " ";
@@ -245,7 +245,7 @@ namespace core::forms
 
 		public:
 			CurrentState State;
-			char const*  Message = "";
+			gsl::czstring Message = "";
 
 		public:
 			implicit
@@ -253,7 +253,7 @@ namespace core::forms
 			  : State(s)
 			{}
 
-			ProcessingState(CurrentState s, char const* const msg) 
+			ProcessingState(CurrentState s, gsl::czstring const msg) 
 			  : State(s), Message(msg) 
 			{}
 		};
@@ -738,7 +738,7 @@ namespace core::forms
 			return Unhandled;
 		}
 	
-		std::type_identity_t<char const*>
+		gsl::czstring
 		virtual notificationName(::UINT notification) {
 			// FIXME: Window::notificationName() isn't threadsafe. Consider returning fixed-string instead.
 			static thread_local std::string str;
@@ -865,7 +865,7 @@ namespace core::forms
 		{
 			WindowProcLoggingSentry log_entry(__FUNCTION__, message);
 			try {
-				const char* const name = s_MessageDatabase.name(message);
+				gsl::czstring const name = s_MessageDatabase.name(message);
 				Window* wnd {};
 				Response response;
 

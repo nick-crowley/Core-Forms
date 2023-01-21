@@ -162,7 +162,7 @@ namespace core::forms
 			WindowProcLoggingSentry log_entry(__FUNCTION__, message);
 			// FIXME: This method needs documenting
 			try {
-				const char* const name = s_MessageDatabase.name(message);
+				gsl::czstring const name = s_MessageDatabase.name(message);
 				Response response;
 				Dialog* dlg {};
 			

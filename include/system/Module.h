@@ -49,7 +49,7 @@ namespace core::forms
 		}
 
 		std::vector<std::byte> 
-		static loadResource(const wchar_t* name, const wchar_t* category, std::optional<Module> source) 
+		static loadResource(gsl::cwzstring name, gsl::cwzstring category, std::optional<Module> source) 
 		{
 			::HINSTANCE module = source ? source->handle() : nullptr;
 			if (::HRSRC resource = ::FindResourceW(module, name /*MAKEINTRESOURCE(1)*/, category /*RT_MANIFEST*/); !resource) {
@@ -77,7 +77,7 @@ namespace core::forms
 		}
 
 		std::vector<std::byte> 
-		loadResource(const wchar_t* name, const wchar_t* category) const
+		loadResource(gsl::cwzstring name, gsl::cwzstring category) const
 		{
 			return Module::loadResource(name, category, *this);
 		}

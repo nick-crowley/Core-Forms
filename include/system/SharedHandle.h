@@ -73,7 +73,7 @@ namespace core::forms
 	SharedHandle 
 	inline make_handle(::ATOM a, ::HINSTANCE m) {
 		return SharedHandle((void*)(uintptr_t)a, [a, m](void*) {
-			::UnregisterClassA((const char*)(uintptr_t)a, m);
+			::UnregisterClassA((gsl::czstring)(uintptr_t)a, m);
 		});
 	}
 

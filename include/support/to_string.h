@@ -28,7 +28,7 @@ namespace core::forms
 	}
 
 	std::string 
-	inline to_string(const wchar_t* const ws) {
+	inline to_string(gsl::cwzstring const ws) {
 		return { 
 			boost::make_transform_iterator(ws, detail::to_narrow),
 			boost::make_transform_iterator(ws + wcslen(ws), detail::to_narrow)
@@ -46,7 +46,7 @@ namespace core::forms
 	}
 
 	std::wstring 
-	inline to_wstring(const char* const s) {
+	inline to_wstring(gsl::czstring const s) {
 		return { &s[0], &s[std::strlen(s)] };
 	}
 }

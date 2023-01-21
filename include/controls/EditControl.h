@@ -54,7 +54,7 @@ namespace core::forms
 		}
 
 	protected:
-		const char*
+		gsl::czstring
 		notificationName(::UINT notification) override {
 			static const EditNotificationDictionary names;
 			return names.at(notification);

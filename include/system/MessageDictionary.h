@@ -3,8 +3,8 @@
 
 namespace core::forms
 {
-	class MessageDictionary : public std::map<::UINT, const char*> {
-		using base = std::map<::UINT, const char*>;
+	class MessageDictionary : public std::map<::UINT, gsl::czstring> {
+		using base = std::map<::UINT, gsl::czstring>;
 
 	public:
 		MessageDictionary() = default;

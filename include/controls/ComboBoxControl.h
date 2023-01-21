@@ -241,7 +241,7 @@ namespace core::forms
 		}
 
 	protected:
-		const char*
+		gsl::czstring
 		notificationName(::UINT notification) override {
 			static const ComboBoxNotificationDictionary names;
 			return names.at(notification);

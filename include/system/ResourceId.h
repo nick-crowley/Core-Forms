@@ -33,7 +33,7 @@ namespace core::forms
 
 	public:
 		ResourceId constexpr
-		static parse(wchar_t const* id) 
+		static parse(gsl::cwzstring id) 
 		{
 			return IS_INTRESOURCE(id) 
 			  ? ResourceId{static_cast<uint16_t>(reinterpret_cast<uintptr_t>(id))} 
@@ -60,7 +60,7 @@ namespace core::forms
 		}
 	
 		constexpr operator 
-		wchar_t const*() const 
+		gsl::cwzstring() const 
 		{
 			if (auto* numeric = std::get_if<uint16_t>(&this->Ident))
 				return MAKEINTRESOURCE(*numeric);

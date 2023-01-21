@@ -83,7 +83,7 @@ namespace core::forms
 		}
 
 	protected:
-		const char*
+		gsl::czstring
 		notificationName(::UINT notification) override {
 			static const ButtonNotificationDictionary names;
 			return names.at(notification);

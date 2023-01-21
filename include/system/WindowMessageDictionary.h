@@ -7,14 +7,14 @@ namespace core::forms
 	struct MessageName 
 	{
 		uint16_t	Ident;
-		const char*	Name;
+		gsl::czstring	Name;
 
 		constexpr
-		MessageName(uint16_t id, const char* n) : Ident(id), Name(n)
+		MessageName(uint16_t id, gsl::czstring n) : Ident(id), Name(n)
 		{}
 
 		constexpr operator 
-		std::pair<uint16_t,const char*>() const {
+		std::pair<uint16_t,gsl::czstring>() const {
 			return {this->Ident, this->Name};
 		}
 	};
@@ -24,7 +24,7 @@ namespace core::forms
 		::LRESULT	Unhandled = 0xffffffff;
 		bool        Common = false;
 
-		MessageProperties(uint16_t id, const char* n) : MessageName(id,n)
+		MessageProperties(uint16_t id, gsl::czstring n) : MessageName(id,n)
 		{}
 	};
 
@@ -61,7 +61,7 @@ namespace core::forms
 			return this->Storage.contains(static_cast<uint16_t>(id));
 		}
 	
-		char const* 
+		gsl::czstring
 		name(::UINT id) const {
 			return this->contains(id) ? (*this)[id].Name : "WM_????";
 		}
