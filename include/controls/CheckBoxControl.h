@@ -28,9 +28,9 @@ namespace core::forms
 
 	protected:
 		/*Response
-		offer_notification(::UINT notification) override {
+		offerNotification(::UINT notification) override {
 			auto const on_exit = this->Debug.setTemporaryState(
-				{ProcessingState::NotificationProcessing, this->notification_name(notification)}
+				{ProcessingState::NotificationProcessing, this->notificationName(notification)}
 			); 
 			switch (notification) {
 			case BN_CLICKED:

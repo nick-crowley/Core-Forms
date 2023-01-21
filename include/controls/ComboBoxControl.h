@@ -242,15 +242,15 @@ namespace core::forms
 
 	protected:
 		const char*
-		notification_name(::UINT notification) override {
+		notificationName(::UINT notification) override {
 			static const ComboBoxNotificationDictionary names;
 			return names.at(notification);
 		}
 
 		//Response
-		//offer_notification(::UINT notification) override {
+		//offerNotification(::UINT notification) override {
 		//  auto const on_exit = this->Debug.setTemporaryState(
-		//		{ProcessingState::NotificationProcessing, this->notification_name(notification)}
+		//		{ProcessingState::NotificationProcessing, this->notificationName(notification)}
 		//	); 
 		//	switch (notification) {
 		//	case CBN_SELCHANGE:
@@ -263,7 +263,7 @@ namespace core::forms
 		//}
 
 		::LRESULT 
-		unhandled_message(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
+		unhandledMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
 			return ::CallWindowProc(this->wndcls().OriginalMessageHandler, hWnd, message, wParam, lParam);
 		}
 	};

@@ -49,7 +49,7 @@ namespace core::forms
 		}
 
 		std::vector<std::byte> 
-		static load_resource(const wchar_t* name, const wchar_t* category, std::optional<Module> source) 
+		static loadResource(const wchar_t* name, const wchar_t* category, std::optional<Module> source) 
 		{
 			::HINSTANCE module = source ? source->handle() : nullptr;
 			if (::HRSRC resource = ::FindResourceW(module, name /*MAKEINTRESOURCE(1)*/, category /*RT_MANIFEST*/); !resource) {
@@ -77,9 +77,9 @@ namespace core::forms
 		}
 
 		std::vector<std::byte> 
-		load_resource(const wchar_t* name, const wchar_t* category) const
+		loadResource(const wchar_t* name, const wchar_t* category) const
 		{
-			return Module::load_resource(name, category, *this);
+			return Module::loadResource(name, category, *this);
 		}
 
 		Bitmap

@@ -177,7 +177,7 @@ namespace core::forms
 
 		public:
 			std::vector<std::byte> 
-			as_bytes() const {
+			asBytes() const {
 				return { std::begin(this->Data), std::begin(this->Data)+this->Length };
 			}
 
@@ -225,13 +225,13 @@ namespace core::forms
 
 		public:
 			void 
-			set_result(Response::Result res, ::LRESULT val) { 
+			setResult(Response::Result res, ::LRESULT val) { 
 				this->Text += (res == Response::Handled ? "Handled" : "Unhandled");
 				this->Text += (" (" + to_hexString(val) + ")");
 			}
 
 			void 
-			set_exception(const std::exception& e) { 
+			setException(const std::exception& e) { 
 				using namespace std::literals;
 				this->Text += (" (ERROR: "s + e.what() + ')');
 			}
@@ -571,7 +571,7 @@ namespace core::forms
 			// [CONTROL] Reflect notification back to child control
 			if (args.Source == CommandEventArgs::Control) 
 				if (s_ExistingWindows.contains(args.Notification->Handle))
-					return s_ExistingWindows[args.Notification->Handle]->offer_notification(args.Notification->Code);
+					return s_ExistingWindows[args.Notification->Handle]->offerNotification(args.Notification->Code);
 
 			// [DEBUG] Notification from child window we didn't create
 			if (args.Source == CommandEventArgs::Control) {
@@ -582,7 +582,7 @@ namespace core::forms
 				return Unhandled;
 			}
 
-			return this->offer_notification(args.Ident);
+			return this->offerNotification(args.Ident);
 		}
 	
 		Response 
@@ -670,7 +670,7 @@ namespace core::forms
 
 	protected:
 		Response
-		virtual offer_message(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) 
+		virtual offerMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) 
 		{
 			switch (message) {
 			case WM_CLOSE: 
@@ -734,19 +734,19 @@ namespace core::forms
 		} 
 
 		Response
-		virtual offer_notification(::UINT notification) {
+		virtual offerNotification(::UINT notification) {
 			return Unhandled;
 		}
 	
 		std::type_identity_t<char const*>
-		virtual notification_name(::UINT notification) {
-			// FIXME: Window::notification_name() isn't threadsafe. Consider returning fixed-string instead.
+		virtual notificationName(::UINT notification) {
+			// FIXME: Window::notificationName() isn't threadsafe. Consider returning fixed-string instead.
 			static thread_local std::string str;
 			return (str = to_hexString<4>(notification)).c_str();
 		}
 
 		void
-		virtual raise_message_event(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) 
+		virtual raiseMessageEvent(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) 
 		{
 			switch (message) {
 			case WM_CREATE: 
@@ -773,14 +773,14 @@ namespace core::forms
 		} 
 	
 		::LRESULT
-		perform_default_processing(::UINT message, ::WPARAM wParam, ::LPARAM lParam)
+		performDefaultProcessing(::UINT message, ::WPARAM wParam, ::LPARAM lParam)
 		{
 			auto const on_exit = this->Debug.setTemporaryState({ProcessingState::DefaultProcessing,s_MessageDatabase.name(message)});
-			return this->unhandled_message(this->handle(), message, wParam, lParam);
+			return this->unhandledMessage(this->handle(), message, wParam, lParam);
 		}
 
 		::LRESULT 
-		virtual unhandled_message(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) {
+		virtual unhandledMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) {
 			return ::DefWindowProc(hWnd, message, wParam, lParam);
 		}
 
@@ -801,31 +801,31 @@ namespace core::forms
 		}
 
 		//void
-		//on_first_sight(::HWND hWnd) {
+		//onFirstSight(::HWND hWnd) {
 		//	s_ExistingWindows.add(hWnd, this);
 		//	this->Handle = hWnd;	// this->Handle = make_handle(hWnd);
 		//	this->DebugState = {ProcessingState::BeingCreated};	// Not yet set for dialog controls
 		//}
 	
 		void
-		on_last_sight(::HWND hWnd) {
+		onLastSight(::HWND hWnd) {
 			s_ExistingWindows.remove(hWnd);
 			this->Debug.setState(ProcessingState::NotApplicable);
 		}
 	
 		void
-		on_construction_finished() {
+		onConstructionFinished() {
 			this->Debug.setState(ProcessingState::Idle);
 		}
 	
 		void
-		on_destruction_started() {
+		onDestructionStarted() {
 			this->Debug.setState(ProcessingState::BeingDestroyed);
 		}
 
 	private:
 		void
-		static on_first_sight(::HWND hWnd, CreateWindowEventArgs args) {
+		static onFirstSight(::HWND hWnd, CreateWindowEventArgs args) {
 			if (!args.Data->lpCreateParams) 
 				return;
 
@@ -848,7 +848,7 @@ namespace core::forms
 		}
 	
 		Response
-		static on_unexpected_message(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) {
+		static onUnexpectedMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) {
 			if (message == WM_GETMINMAXINFO) {
 				return Window::onMinMaxInfo({wParam,lParam});
 			}
@@ -871,28 +871,28 @@ namespace core::forms
 
 				// Window lifetime tracking
 				if (message == WM_NCCREATE) 
-					Window::on_first_sight(hWnd, {wParam,lParam});
+					Window::onFirstSight(hWnd, {wParam,lParam});
 			
 				// Search for the C++ object managing this handle
 				if (!s_ExistingWindows.contains(hWnd)) 
-					response = on_unexpected_message(hWnd, message, wParam, lParam);
+					response = onUnexpectedMessage(hWnd, message, wParam, lParam);
 				else {
 					wnd = s_ExistingWindows[hWnd];
 
 					// Window lifetime tracking
 					if (message == WM_DESTROY) 
-						wnd->on_destruction_started();
+						wnd->onDestructionStarted();
 
 					{
 						// Offer the message to the C++ object managing this handle
 						auto const on_exit = wnd->Debug.setTemporaryState({ProcessingState::MessageProcessing, name});
-						response = wnd->offer_message(hWnd, message, wParam, lParam);
+						response = wnd->offerMessage(hWnd, message, wParam, lParam);
 					}
 
 					{
 						// [POST] Raise the associated event, if any
 						auto const on_exit = wnd->Debug.setTemporaryState({ProcessingState::EventProcessing, name});
-						wnd->raise_message_event(hWnd, message, wParam, lParam);
+						wnd->raiseMessageEvent(hWnd, message, wParam, lParam);
 					}
 				}
 
@@ -906,28 +906,28 @@ namespace core::forms
 				// [UNHANDLED/ERROR] Let the C++ object managing this handle pass message to ::DefWindowProc()
 				else if (wnd) {	
 					auto const on_exit = wnd->Debug.setTemporaryState({ProcessingState::DefaultProcessing, name});
-					result = wnd->unhandled_message(hWnd, message, wParam, lParam);
+					result = wnd->unhandledMessage(hWnd, message, wParam, lParam);
 				}
 				// [UNHANDLED/ERROR] Pass message to ::DefWindowProc()
 				else 
 					result = ::DefWindowProc(hWnd, message, wParam, lParam);
 
-				log_entry.set_result(response.Status == Response::Handled ? response.Status : Response::Unhandled, result);
+				log_entry.setResult(response.Status == Response::Handled ? response.Status : Response::Unhandled, result);
 
 				// Window lifetime tracking
 				if (message == WM_CREATE) {
-					wnd->on_construction_finished();
+					wnd->onConstructionFinished();
 				}
 				else if (message == WM_NCDESTROY) {
 					assert(wnd != nullptr);
-					wnd->on_last_sight(hWnd);
+					wnd->onLastSight(hWnd);
 				}
 						
 				return result;
 			} 
 			// [ERROR] Return a value indicating we didn't handle the message (usually anything but zero)
 			catch (const std::exception& e) {
-				log_entry.set_exception(e);
+				log_entry.setException(e);
 				return s_MessageDatabase[message].Unhandled;
 			}
 		}

@@ -42,7 +42,7 @@ namespace core::forms
 		Dialog(ResourceId resource, ::DLGPROC handler = Dialog::DefaultDialogHandler, std::optional<Module> module = std::nullopt) 
 		  : DialogProc(handler)
 		{
-			auto bytes = Module::load_resource(resource, RT_DIALOG, module);
+			auto bytes = Module::loadResource(resource, RT_DIALOG, module);
 			DialogTemplateReader r{ bytes };
 			this->Template = r.read_template();
 		}
@@ -105,18 +105,18 @@ namespace core::forms
 		}
 
 		Response
-		virtual offer_message(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override
+		virtual offerMessage(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override
 		{
 			switch (message) {
 			case WM_INITDIALOG: 
 				return this->onInitDialog({wParam,lParam});
 			}
 
-			return Window::offer_message(hDlg, message, wParam, lParam);
+			return Window::offerMessage(hDlg, message, wParam, lParam);
 		} 
 	
 		Response
-		virtual offer_notification(::UINT notification) override {
+		virtual offerNotification(::UINT notification) override {
 			switch (notification) {
 			case IDOK:
 			case IDCANCEL:
@@ -130,7 +130,7 @@ namespace core::forms
 		}
 	
 		void
-		virtual raise_message_event(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override
+		virtual raiseMessageEvent(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override
 		{
 			switch (message) {
 			case WM_INITDIALOG: 
@@ -138,16 +138,16 @@ namespace core::forms
 				return;
 			}
 
-			Window::raise_message_event(hDlg, message, wParam, lParam);
+			Window::raiseMessageEvent(hDlg, message, wParam, lParam);
 		} 
 
 		::LRESULT 
-		virtual unhandled_message(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
+		virtual unhandledMessage(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
 			return ::CallWindowProc(this->wndcls().OriginalMessageHandler, hDlg, message, wParam, lParam);
 		}
 
 		/*::LRESULT 
-		unhandled_message(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
+		unhandledMessage(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
 			return Dialog::FallbackDialogHandler(hDlg, message, wParam, lParam);
 		}*/
 
@@ -172,12 +172,12 @@ namespace core::forms
 
 					{
 						auto const on_exit = dlg->Debug.setTemporaryState({ProcessingState::DialogProcessing,name});
-						response = dlg->offer_message(hDlg, message, wParam, lParam);
+						response = dlg->offerMessage(hDlg, message, wParam, lParam);
 					}
 
 					{
 						auto const on_exit = dlg->Debug.setTemporaryState({ProcessingState::EventProcessing,name});
-						dlg->raise_message_event(hDlg, message, wParam, lParam);
+						dlg->raiseMessageEvent(hDlg, message, wParam, lParam);
 					}
 				}
 				else if (message == WM_SETFONT) {
@@ -191,15 +191,15 @@ namespace core::forms
 			
 				if (response.Status == Response::Handled) 
 				{
-					log_entry.set_result(Response::Handled, *response.Value);
+					log_entry.setResult(Response::Handled, *response.Value);
 					return *response.Value;
 				}
 
-				log_entry.set_result(Response::Unhandled, FALSE);
+				log_entry.setResult(Response::Unhandled, FALSE);
 				return FALSE;
 			} 
 			catch (const std::exception& e) {
-				log_entry.set_exception(e);
+				log_entry.setException(e);
 				return (INT_PTR)FALSE;
 			}
 		}
@@ -251,7 +251,7 @@ namespace core::forms
 						}
 
 						CreateWindowParameter param((*wrappers)[ctrl.Ident]);
-						ctrl.Data = param.as_bytes();
+						ctrl.Data = param.asBytes();
 					}
 				}
 			}

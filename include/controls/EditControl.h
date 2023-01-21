@@ -55,13 +55,13 @@ namespace core::forms
 
 	protected:
 		const char*
-		notification_name(::UINT notification) override {
+		notificationName(::UINT notification) override {
 			static const EditNotificationDictionary names;
 			return names.at(notification);
 		}
 
 		::LRESULT 
-		unhandled_message(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
+		unhandledMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
 			return ::CallWindowProc(wndcls().OriginalMessageHandler, hWnd, message, wParam, lParam);
 		}
 	};
