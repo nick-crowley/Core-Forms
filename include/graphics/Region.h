@@ -42,7 +42,7 @@ namespace core::forms
 		  : Region{}
 		{
 			if (::CombineRgn(this->Handle, r.Handle, nullptr, RGN_COPY) == ERROR)
-				win::LastError{}.throw_always("Cannot copy region {}", to_string(r.Handle));
+				win::LastError{}.throwAlways("Cannot copy region {}", to_string(r.Handle));
 		}
 
 		reference 
@@ -56,7 +56,7 @@ namespace core::forms
 		operator=(Rect const& r)
 		{
 			if (!::SetRectRgn(this->Handle, r.Left, r.Top, r.Right, r.Bottom))
-				win::LastError{}.throw_always("Cannot overwrite region with {}", to_string(r));
+				win::LastError{}.throwAlways("Cannot overwrite region with {}", to_string(r));
 			return *this;
 		}
 
@@ -150,7 +150,7 @@ namespace core::forms
 		void
 		combine(type const& r) noexcept {
 			if (::CombineRgn(this->Handle, this->Handle, r.Handle, RGN_OR) == ERROR)
-				win::LastError{}.throw_always("Cannot union {} with {}", to_string(*this), to_string(const_cast<Region&>(r)));
+				win::LastError{}.throwAlways("Cannot union {} with {}", to_string(*this), to_string(const_cast<Region&>(r)));
 		}
 
 		::HRGN
@@ -161,13 +161,13 @@ namespace core::forms
 		void
 		exclude(type const& r) noexcept {
 			if (::CombineRgn(this->Handle, this->Handle, r.Handle, RGN_DIFF) == ERROR)
-				win::LastError{}.throw_always("Cannot combine {} with {}", to_string(*this), to_string(const_cast<Region&>(r)));
+				win::LastError{}.throwAlways("Cannot combine {} with {}", to_string(*this), to_string(const_cast<Region&>(r)));
 		}
 	
 		void
 		intersect(type const& r) noexcept {
 			if (::CombineRgn(this->Handle, this->Handle, r.Handle, RGN_AND) == ERROR)
-				win::LastError{}.throw_always("Cannot intersect {} with {}", to_string(*this), to_string(const_cast<Region&>(r)));
+				win::LastError{}.throwAlways("Cannot intersect {} with {}", to_string(*this), to_string(const_cast<Region&>(r)));
 		}
 	
 		void
@@ -178,7 +178,7 @@ namespace core::forms
 		void
 		translate(Point const& pt) noexcept {
 			if (::OffsetRgn(this->Handle, pt.X, pt.Y) == ERROR)
-				win::LastError{}.throw_always("Cannot offset {} by {}", to_string(*this), to_string(pt));
+				win::LastError{}.throwAlways("Cannot offset {} by {}", to_string(*this), to_string(pt));
 		}
 
 		reference

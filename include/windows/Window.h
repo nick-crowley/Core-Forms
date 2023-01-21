@@ -107,13 +107,13 @@ namespace core::forms
 			void
 			add(uintptr_t ident, chrono::milliseconds period) {
 				if (!::SetTimer(this->Owner.handle(), ident, win::DWord{period.count()}, nullptr))
-					win::LastError{}.throw_always("Failed to set timer #{}", std::to_string(ident));
+					win::LastError{}.throwAlways("Failed to set timer #{}", std::to_string(ident));
 			}
 		
 			void
 			remove(uintptr_t ident) {
 				if (!::KillTimer(this->Owner.handle(), ident))
-					win::LastError{}.throw_always("Failed to cancel timer #{}", std::to_string(ident));
+					win::LastError{}.throwAlways("Failed to cancel timer #{}", std::to_string(ident));
 			}
 		};
 
@@ -794,7 +794,7 @@ namespace core::forms
 				w.Area.Left, w.Area.Top, w.Area.width(), w.Area.height(), w.Parent, w.Menu, w.Module, &w.Parameter)) 
 			{
 				this->Debug.setState(ProcessingState::Idle);
-				win::LastError{}.throw_if_failed("Failed to create '{}' window", to_string(w.Class));
+				win::LastError{}.throwIfError("Failed to create '{}' window", to_string(w.Class));
 			}
 
 			this->Debug.setState(ProcessingState::Idle);

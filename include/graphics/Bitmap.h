@@ -45,9 +45,9 @@ namespace core::forms
 														  IMAGE_BITMAP, 
 														  0, 0, 
 														  LR_LOADFROMFILE); !bitmap)
-				win::LastError{}.throw_always();
+				win::LastError{}.throwAlways();
 			else if (::BITMAP info{}; !::GetObject(bitmap, sizeof(info), &info))
-				win::LastError{}.throw_always();
+				win::LastError{}.throwAlways();
 			else
 				return Bitmap{bitmap, {info.bmWidth,info.bmHeight}, static_cast<ColourDepth>(info.bmBitsPixel)};
 		}

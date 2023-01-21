@@ -52,7 +52,7 @@ namespace core::forms
 		void 
 		increment() { 
 			if (::GetMessage(&this->Current, this->Window, 0, 0) == -1) {
-				win::LastError{}.throw_always("Message pump failed");
+				win::LastError{}.throwAlways("Message pump failed");
 			}
 		}
 	};

@@ -12,7 +12,7 @@ namespace core::forms
 	public:
 		Brush(Colour col) {
 			if (auto const brush = ::CreateSolidBrush(win::DWord{col}); !brush)
-				win::LastError{}.throw_always();
+				win::LastError{}.throwAlways();
 			else
 				this->Handle = make_handle(brush);
 		}
