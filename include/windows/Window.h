@@ -159,32 +159,36 @@ namespace core::forms
 			}
 		};
 	
+#		pragma pack (push, 1)
 		class CreateWindowParameter {		
 			uint16_t   Length = 0;
 			uint16_t   DuplicateLength = 0;		// Fix: ABI compatibility with how DialogBoxIndirectParamW does it
-			std::byte  Data[8] {};
+			Window*    Parameter = nullptr;
 
 		public:
 			CreateWindowParameter() = default;
 
 			explicit 
 			CreateWindowParameter(Window* w) 
-			  : Length{sizeof(Window*)}, DuplicateLength{Length}
-			{
-				ranges::copy(std::as_bytes(std::span{&w,1}), std::begin(this->Data));
-			}
+			  : Length{sizeof(Window*)}, 
+			    DuplicateLength{Length},
+				Parameter{w}
+			{}
 
 		public:
 			std::vector<std::byte> 
 			asBytes() const {
-				return { std::begin(this->Data), std::begin(this->Data)+this->Length };
+				Expects(this->Length <= sizeof(Window*));
+				auto const r = std::as_bytes(std::span{&this->Parameter,1});
+				return {r.begin(), r.begin() + this->Length};
 			}
 
 			Window* 
 			get() {
-				return reinterpret_cast<Window*(&)[1]>(this->Data)[0];
+				return this->Parameter;
 			}
 		};
+#		pragma pack (pop)
 
 		class CreateWindowBuilder {
 		public:
