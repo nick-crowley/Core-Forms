@@ -261,10 +261,6 @@ namespace core::forms
 		//! @brief	Identifies the window, its state, and its current message-processing loop
 		class DebuggingAide 
 		{
-			auto constexpr
-			inline static toChar = [](wchar_t c){ return static_cast<char>(c); };
-
-		private:
 			uint32_t const       MagicNumber = 12345678;
 			std::array<char,16>  Class {};
 			ProcessingState      State {ProcessingState::NotApplicable};
@@ -282,10 +278,8 @@ namespace core::forms
 			ProcessingState
 			setState(ProcessingState state, std::wstring_view cls, std::wstring_view txt) {
 				// Copy short preview; assume text is latin charset
-				std::transform(cls.data(), cls.data()+std::min<int>(cls.size(),lengthof(this->Class)-1), this->Class.begin(), toChar);
-				std::transform(txt.data(), txt.data()+std::min<int>(txt.size(),lengthof(this->Text)-1), this->Text.begin(), toChar);
-				this->Class.back() = '\0';
-				this->Text.back() = '\0';
+				*ranges::transform(views::take(cls,lengthof(this->Class)-1), this->Class.begin(), nstd::convert_to<char>).out = '\0';
+				*ranges::transform(views::take(txt,lengthof(this->Text)-1), this->Text.begin(), nstd::convert_to<char>).out = '\0';
 				return std::exchange(this->State, state);
 			}
 		
