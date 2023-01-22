@@ -160,9 +160,11 @@ namespace core::forms
 		};
 	
 #		pragma pack (push, 1)
-		class CreateWindowParameter {		
+		//! @brief	Represents custom data provided at Window construction
+		//! @remarks	Modifying layout will break ABI compatibility
+		class CreateWindowParameter {
 			uint16_t   Length = 0;
-			uint16_t   DuplicateLength = 0;		// Fix: ABI compatibility with how DialogBoxIndirectParamW does it
+			uint16_t   DuplicateLength = 0;		// Fix: Required for ABI compatibility with DialogBoxIndirectParamW()
 			Window*    Parameter = nullptr;
 
 		public:
