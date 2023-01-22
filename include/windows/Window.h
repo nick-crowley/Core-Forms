@@ -171,8 +171,7 @@ namespace core::forms
 			CreateWindowParameter(Window* w) 
 			  : Length{sizeof(Window*)}, DuplicateLength{Length}
 			{
-				auto const src = std::as_bytes(std::span<Window*>{&w,1});
-				std::copy(src.begin(), src.end(), std::begin(this->Data));
+				ranges::copy(std::as_bytes(std::span{&w,1}), std::begin(this->Data));
 			}
 
 		public:
@@ -183,7 +182,7 @@ namespace core::forms
 
 			Window* 
 			get() {
-				return std::span<Window*>{reinterpret_cast<Window**>(this->Data),1}.front();
+				return reinterpret_cast<Window*(&)[1]>(this->Data)[0];
 			}
 		};
 
