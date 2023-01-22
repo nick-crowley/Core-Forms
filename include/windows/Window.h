@@ -70,7 +70,7 @@ namespace core::forms
 
 			bool
 			contains(uint16_t const id) const {
-				return Window::s_ExistingWindows.contains(this->handle(id));
+				return Window::s_ExistingWindows.contains(this->handle(id));	//!< BUG: Returns `true` for any managed window
 			}
 		
 			bool
