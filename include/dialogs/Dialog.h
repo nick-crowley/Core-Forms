@@ -61,6 +61,15 @@ namespace core::forms
 		}
 
 	public:
+		void 
+		virtual showEmbedded(Window& parent, std::optional<Border> border, std::optional<ControlDictionary> wrappers, std::optional<Module> module = std::nullopt)
+		{
+			auto const Area = border ? parent.clientRect() - *border : parent.clientRect();
+			this->showDialog(DialogMode::NonModal, &parent, wrappers, module);
+			this->move(Area.topLeft());
+			this->resize(Area.size());
+		}
+
 		// FIXME: Remove the need to supply `Module` at every construction by making it a static variable of every Window/Dialog
 		intptr_t 
 		virtual showModal(Window* parent, std::optional<ControlDictionary> wrappers, std::optional<Module> module = std::nullopt) 
