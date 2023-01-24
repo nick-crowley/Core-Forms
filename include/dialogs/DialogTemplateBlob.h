@@ -19,6 +19,7 @@ namespace core::forms
 		{}
 
 	public:
+		// FIXME: DialogTemplateBlob needs reformatting
 		operator const DLGTEMPLATE* () const {
 			return reinterpret_cast<const ::DLGTEMPLATE*>(this->Bytes.data());
 		}

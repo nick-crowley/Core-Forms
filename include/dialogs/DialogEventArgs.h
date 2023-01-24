@@ -10,6 +10,7 @@ namespace core::forms
 		::HWND		InitialFocus;
 		::LPARAM	CustomData;
 
+		// FIXME: InitDialogEventArgs has missing access specifiers & should be declared as class not struct
 		InitDialogEventArgs(::WPARAM focusCtrl, ::LPARAM data) 
 		  : InitialFocus(reinterpret_cast<::HWND>(focusCtrl)),
 			CustomData(data) 

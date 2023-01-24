@@ -18,6 +18,7 @@ namespace core::forms
 		{}
 
 	public:
+		// FIXME: DialogTemplateReader methods need changing to lower camel-case
 		DialogTemplate
 		read_template() 
 		{

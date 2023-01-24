@@ -14,6 +14,7 @@ namespace core::forms
 		DialogTemplateWriter() = default;
 
 	public:
+		// FIXME: DialogTemplateWriter methods need changing to lower camel-case
 		DialogTemplateBlob
 		write_template(DialogTemplate const& dlg) 
 		{

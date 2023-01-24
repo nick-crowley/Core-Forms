@@ -18,6 +18,7 @@ namespace core::forms
 		std::vector<std::byte>       Data;
 	};
 
+	// FIXME: DialogTemplate fields need reformatting due to rename operations
 	struct DialogTemplate {
 		std::optional<uint32_t>         HelpId;
 		nstd::bitset<ExWindowStyle>     ExtendedStyle;
