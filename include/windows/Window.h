@@ -13,6 +13,7 @@
 #include "windows/WindowEventArgs.h"
 #include "windows/WindowInfo.h"
 #include "windows/WindowStyle.h"
+#include "win/Boolean.h"
 
 namespace core::forms
 {
@@ -502,7 +503,12 @@ namespace core::forms
 		font(const Font& f) {
 			SetWindowFont(this->handle(), f.handle(), FALSE);
 		}
-	
+		
+		void
+		invalidate(std::optional<Rect> rc = std::nullopt, bool redraw = false) {
+			::InvalidateRect(this->handle(), rc ? *rc : nullptr, win::Boolean{redraw});
+		}
+
 		void
 		order(::HWND after) {
 			::SetWindowPos(this->handle(), after, -1, -1, -1, -1, 
