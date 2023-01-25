@@ -506,7 +506,7 @@ namespace core::forms
 		void
 		order(::HWND after) {
 			::SetWindowPos(this->handle(), after, -1, -1, -1, -1, 
-				SWP_NOMOVE|SWP_NOSIZE|/*SWP_NOOWNERZORDER|*/SWP_NOACTIVATE);
+				SWP_NOMOVE|SWP_NOSIZE|SWP_NOACTIVATE);
 		}
 
 		void 
