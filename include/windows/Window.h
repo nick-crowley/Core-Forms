@@ -300,6 +300,11 @@ namespace core::forms
 	private:
 		using SharedLookNFeelProvider = std::shared_ptr<ILookNFeelProvider>;
 		using wndclass_constref_t = WindowClass const&;
+		using const_pointer = Window const*;
+
+	private:
+		const_pointer
+		static s_BeneathCursor;
 
 	public:
 		Response const  
@@ -604,7 +609,32 @@ namespace core::forms
 		virtual onEraseBackground(EraseBackgroundEventArgs args) {
 			return Unhandled;
 		}
+		
+		Response
+		virtual onMouseDown(MouseEventArgs args) {
+			return Unhandled;
+		}
+	
+		Response
+		virtual onMouseEnter(MouseEventArgs args) {
+			return Unhandled;
+		}
 
+		Response
+		virtual onMouseLeave() {
+			return Unhandled;
+		}
+
+		Response
+		virtual onMouseMove(MouseEventArgs args) {
+			return Unhandled;
+		}
+	
+		Response
+		virtual onMouseUp(MouseEventArgs args) {
+			return Unhandled;
+		}
+	
 		Response 
 		virtual onOwnerDraw(OwnerDrawEventArgs args) {
 			if (args.Window != this)
@@ -699,7 +729,24 @@ namespace core::forms
 			
 			case WM_ERASEBKGND:
 				return this->onEraseBackground({hWnd,wParam,lParam});
-
+				
+			case WM_LBUTTONDOWN:
+				return this->onMouseDown({MouseMessage::ButtonDown,MouseButton::Left,wParam,lParam});
+			
+			case WM_MOUSELEAVE:
+				return this->onMouseLeave();
+			
+			case WM_MOUSEMOVE:
+				if (s_BeneathCursor != this) {
+					s_BeneathCursor = this;
+					if (auto r = this->onMouseEnter({MouseMessage::Enter,MouseButton::None,wParam,lParam}); r != Unhandled)
+						return r;
+				}
+				return this->onMouseMove({MouseMessage::Move,MouseButton::None,wParam,lParam});
+			
+			case WM_LBUTTONUP:
+				return this->onMouseUp({MouseMessage::ButtonUp,MouseButton::Left,wParam,lParam});
+			
 			case WM_PAINT:
 				return this->onPaint({this});
 			
@@ -730,16 +777,16 @@ namespace core::forms
 				return this->onHitTestNonClient({wParam,lParam});
 			
 			case WM_NCLBUTTONDOWN:
-				return this->onMouseDownNonClient({MouseEvent::ButtonDown,MouseButton::Left,wParam,lParam});
+				return this->onMouseDownNonClient({MouseMessage::ButtonDown,MouseButton::Left,wParam,lParam});
 			
 			case WM_NCMOUSELEAVE:
 				return this->onMouseLeaveNonClient();
 			
 			case WM_NCMOUSEMOVE:
-				return this->onMouseMoveNonClient({MouseEvent::Move,MouseButton::None,wParam,lParam});
+				return this->onMouseMoveNonClient({MouseMessage::Move,MouseButton::None,wParam,lParam});
 			
 			case WM_NCLBUTTONUP:
-				return this->onMouseUpNonClient({MouseEvent::ButtonUp,MouseButton::Left,wParam,lParam});
+				return this->onMouseUpNonClient({MouseMessage::ButtonUp,MouseButton::Left,wParam,lParam});
 			
 			case WM_NCPAINT:
 				return this->onPaintNonClient({this,wParam,lParam});
@@ -868,6 +915,9 @@ namespace core::forms
 				return Window::onMinMaxInfo({wParam,lParam});
 			}
 			else {
+				if (message == WM_MOUSEMOVE && Window::s_BeneathCursor)
+					Window::s_BeneathCursor = nullptr;
+				
 				using namespace std::literals;
 				throw runtime_error{"Received {} for unrecognised window {}", s_MessageDatabase.name(message), 
 					to_hexString((uintptr_t)hWnd)};

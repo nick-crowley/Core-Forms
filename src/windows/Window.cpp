@@ -3,6 +3,9 @@
 using namespace core;
 using namespace forms;
 
+Window::const_pointer
+Window::s_BeneathCursor{};
+
 Window::ExistingWindowCollection 
 Window::s_ExistingWindows{};
 

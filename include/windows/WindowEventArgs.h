@@ -192,23 +192,47 @@ namespace core::forms
 
 	enum class MouseButton 
 	{
-		None, Left, Middle, Right
+		None, 
+		Left = MK_LBUTTON, 
+		Middle = MK_MBUTTON, 
+		Right = MK_RBUTTON, 
+		Shift = MK_SHIFT,
+		Ctrl = MK_CONTROL
 	};
 
-	enum class MouseEvent
+	enum class MouseMessage
 	{
-		ButtonUp, ButtonDown, DoubleClick, Move, Hover
+		ButtonUp, ButtonDown, DoubleClick, Enter, Move, Hover
 	};
+	
+
+	class MouseEventArgs {
+	public:
+		MouseMessage  Event;
+		MouseButton   Button;
+		Point         Position;		//!< Client co-ordinates
+	
+	public:
+		MouseEventArgs(MouseMessage evn, MouseButton btn, ::WPARAM, ::LPARAM l) 
+		  : Button{btn},
+			Event{evn},
+			Position{reinterpret_cast<::POINTS&>(l).x, reinterpret_cast<::POINTS&>(l).y}
+		{}
+	};
+
+	using MouseDelegate = Delegate<void (Window&,MouseEventArgs)>;
+	using MouseEvent = ObservableEvent<MouseDelegate>;
+
 
 	class MouseNonClientEventArgs {
 	public:
-		MouseEvent    Event;
+		MouseMessage  Event;
 		MouseButton   Button;
 		WindowHitTest Object;
-		Point         Position;
+		Point         Position;		//!< Screen co-ordinates
 	
 	public:
-		MouseNonClientEventArgs(MouseEvent evn, MouseButton btn, ::WPARAM w, ::LPARAM l) 
+		MouseNonClientEventArgs(MouseMessage evn, MouseButton btn, ::WPARAM w, ::LPARAM l) 
 		  : Button{btn},
 			Event{evn},
 			Object{static_cast<WindowHitTest>(w)},
