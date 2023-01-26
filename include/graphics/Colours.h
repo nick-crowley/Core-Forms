@@ -7,6 +7,7 @@ namespace core::forms
     enum class Colour : uint32_t
     {
         Black = RGB(0x00,0x00,0x00),      //!< 
+        Grey = RGB(0x80,0x80,0x80),       //!< 
     
         Blue = RGB(0x00,0x4B,0xff),       //!< 
         DarkBlue = RGB(0x00,0x05,0xff),   //!< 
