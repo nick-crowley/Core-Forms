@@ -6,35 +6,41 @@ namespace core::forms
 {
 	struct Border 
 	{
-		::LONG const Horizontal, Vertical;
+		::LONG const Left, Top, Right, Bottom;
 
 		constexpr
 		explicit
 		Border(GuiMeasurement amount) noexcept 
-		  : Horizontal{amount}, Vertical{amount}
+		  : Left{amount}, Top{amount}, Right{amount}, Bottom{amount}
 		{}
 
 		constexpr
 		explicit
 		Border(GuiMeasurement horz, GuiMeasurement vert) noexcept 
-		  : Horizontal{horz}, Vertical{vert}
+		  : Left{horz}, Top{vert}, Right{horz}, Bottom{vert}
+		{}
+		
+		constexpr
+		explicit
+		Border(GuiMeasurement left, GuiMeasurement top, GuiMeasurement right, GuiMeasurement bottom) noexcept 
+		  : Left{left}, Top{top}, Right{right}, Bottom{bottom}
 		{}
 
 		constexpr 
 		explicit
 		Border(Size const& amount) noexcept 
-		  : Horizontal{amount.Width}, Vertical{amount.Height}
+		  : Left{amount.Width}, Top{amount.Height}, Right{amount.Width}, Bottom{amount.Height}
 		{}
 
 		Border constexpr
 		operator-() const {
-			return Border{-this->Horizontal, -this->Vertical};
+			return Border{-this->Left, -this->Top, -this->Right, -this->Bottom};
 		}
 	
 		//! @brief	Return scaled version of this border
 		Border constexpr
 		operator*(::LONG scale) const noexcept {
-			return Border{this->Horizontal*scale, this->Vertical*scale};
+			return Border{this->Left*scale, this->Top*scale, this->Right*scale, this->Bottom*scale};
 		}
 	};
 
@@ -46,7 +52,11 @@ namespace core::forms
 	std::string
 	inline to_string(Border const& b)
 	{
-		return std::format("{{Horz={} Vert={}}}", b.Horizontal, b.Vertical);
+		if (b.Left == b.Top == b.Right == b.Bottom)
+			return std::format("{{Border={}}}", b.Left);
+		else if (b.Left == b.Right && b.Top == b.Bottom)
+			return std::format("{{Horz={} Vert={}}}", b.Left, b.Top);
+		return std::format("{{{},{},{},{}}}", b.Left, b.Top, b.Right, b.Bottom);
 	}
 
 	class Rect {
@@ -177,14 +187,14 @@ namespace core::forms
 	
 		Rect constexpr
 		operator+(Border const& amount) const noexcept {
-			return {this->Left - amount.Horizontal,  this->Top - amount.Vertical,
-					this->Right + amount.Horizontal, this->Bottom + amount.Vertical};
+			return {this->Left - amount.Left,  this->Top - amount.Top,
+					this->Right + amount.Right, this->Bottom + amount.Bottom};
 		}
 	
 		Rect constexpr
 		operator-(Border const& amount) const noexcept {
-			return {this->Left + amount.Horizontal,  this->Top + amount.Vertical,
-					this->Right - amount.Horizontal, this->Bottom - amount.Vertical};
+			return {this->Left + amount.Left,  this->Top + amount.Top,
+					this->Right - amount.Right, this->Bottom - amount.Bottom};
 		}
 	
 		Rect constexpr
@@ -218,10 +228,10 @@ namespace core::forms
 	
 		void constexpr
 		inflate(Border const& amount) noexcept {
-			this->Left -= amount.Horizontal;
-			this->Right += amount.Horizontal;
-			this->Top -= amount.Vertical;
-			this->Bottom += amount.Vertical;
+			this->Left -= amount.Left;
+			this->Right += amount.Right;
+			this->Top -= amount.Top;
+			this->Bottom += amount.Bottom;
 		}
 
 		void constexpr
