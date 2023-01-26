@@ -28,7 +28,7 @@ namespace core::forms
 
 			if (this->ownerDraw()) {
 				this->Checked = true;
-				::InvalidateRect(this->handle(), nullptr, TRUE);
+				this->invalidate(true);
 			}
 		}
 		
@@ -50,7 +50,7 @@ namespace core::forms
 			
 			if (this->ownerDraw()) {
 				this->Checked = false;
-				::InvalidateRect(this->handle(), nullptr, TRUE);
+				this->invalidate(true);
 			}
 		}
 		
