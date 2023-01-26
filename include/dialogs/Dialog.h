@@ -6,6 +6,20 @@
 
 namespace core::forms
 {
+	class Dialog;
+}
+namespace core::meta
+{
+	template <typename T>
+	concept AnyWindow = std::derived_from<T,::core::forms::Window>;
+}
+
+namespace core::forms
+{
+	template <meta::AnyWindow Dialog>
+	Module 
+	inline DialogLocation = Module{nullptr};
+
 	class Dialog : public Window {
 	public:
 		class DialogWindowClass : public WindowClass {
@@ -31,20 +45,18 @@ namespace core::forms
 
 		// NB: Fields ordered for debugging convenience
 	private:
+		ResourceId const                DialogId;
 		std::optional<DialogMode const>	DisplayMode;
 		::DLGPROC const					DialogProc;
-		DialogTemplate					Template;
-	
+		
 	public:
 		InitDialogEvent		Initialized;
 
 	protected:
-		Dialog(ResourceId resource, ::DLGPROC handler = Dialog::DefaultDialogHandler, std::optional<Module> module = std::nullopt) 
-		  : DialogProc(handler)
+		Dialog(ResourceId resource, ::DLGPROC handler = Dialog::DefaultDialogHandler) 
+		  : DialogId{resource},
+		    DialogProc{handler}
 		{
-			auto bytes = Module::loadResource(resource, RT_DIALOG, module);
-			DialogTemplateReader r{ bytes };
-			this->Template = r.read_template();
 		}
 	
 	public:
@@ -54,6 +66,12 @@ namespace core::forms
 		}
 	
 	public:
+		template <typename Self>
+		Module
+		instance(this Self&& self) {
+			return DialogLocation<std::remove_cvref_t<Self>>;
+		}
+
 		DialogWindowClass const& 
 		wndcls() override {
 			static DialogWindowClass c;
@@ -62,25 +80,24 @@ namespace core::forms
 
 	public:
 		void 
-		virtual showEmbedded(Window& parent, std::optional<Border> border, std::optional<ControlDictionary> wrappers, std::optional<Module> module = std::nullopt)
+		virtual showEmbedded(Window& parent, std::optional<Border> border, std::optional<ControlDictionary> wrappers = std::nullopt)
 		{
 			auto const Area = border ? parent.clientRect() - *border : parent.clientRect();
-			this->showDialog(DialogMode::NonModal, &parent, wrappers, module);
+			this->showDialog(DialogMode::NonModal, &parent, wrappers, this->instance());
 			this->move(Area.topLeft());
 			this->resize(Area.size());
 		}
 
-		// FIXME: Remove the need to supply `Module` at every construction by making it a static variable of every Window/Dialog
 		intptr_t 
-		virtual showModal(Window* parent, std::optional<ControlDictionary> wrappers, std::optional<Module> module = std::nullopt) 
+		virtual showModal(Window* parent, std::optional<ControlDictionary> wrappers = std::nullopt)
 		{
-			return *this->showDialog(DialogMode::Modal, parent, wrappers, module);
+			return *this->showDialog(DialogMode::Modal, parent, wrappers, this->instance());
 		}
 	
 		void 
-		virtual showModeless(Window* parent, std::optional<ControlDictionary> wrappers, std::optional<Module> module = std::nullopt) 
+		virtual showModeless(Window* parent, std::optional<ControlDictionary> wrappers = std::nullopt)
 		{
-			this->showDialog(DialogMode::NonModal, parent, wrappers, module);
+			this->showDialog(DialogMode::NonModal, parent, wrappers, this->instance());
 		}
 
 	protected:
@@ -236,9 +253,9 @@ namespace core::forms
 
 	private:
 		std::optional<intptr_t>
-		showDialog(DialogMode mode, Window* parent, std::optional<ControlDictionary> wrappers, std::optional<Module> module = std::nullopt) 
+		showDialog(DialogMode mode, Window* parent, std::optional<ControlDictionary> wrappers, std::optional<Module> module)
 		{
-			auto customTemplate = this->Template;
+			auto customTemplate = DialogTemplateReader{Module::loadResource(this->DialogId, RT_DIALOG, module)}.read_template();
 
 			// Change the wndclass for the dialog
 			customTemplate.ClassName = ResourceId::parse(this->wndcls().lpszClassName);
