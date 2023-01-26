@@ -505,8 +505,13 @@ namespace core::forms
 		}
 		
 		void
-		invalidate(std::optional<Rect> rc = std::nullopt, bool redraw = false) {
-			::InvalidateRect(this->handle(), rc ? *rc : nullptr, win::Boolean{redraw});
+		invalidate(bool redraw = false) {
+			::InvalidateRect(this->handle(), nullptr, win::Boolean{redraw});
+		}
+
+		void
+		invalidate(Rect rc, bool redraw = false) {
+			::InvalidateRect(this->handle(), rc.operator RECT const*(), win::Boolean{redraw});
 		}
 
 		void
