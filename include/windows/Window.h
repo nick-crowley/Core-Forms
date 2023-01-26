@@ -495,6 +495,11 @@ namespace core::forms
 		}
 	
 		void
+		enable(bool enabled) const {
+			::EnableWindow(this->handle(), win::Boolean{enabled});
+		}
+	
+		void
 		font(::HFONT f) {
 			SetWindowFont(this->handle(), f, FALSE);
 		}
