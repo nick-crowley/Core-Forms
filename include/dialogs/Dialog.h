@@ -1,5 +1,6 @@
 #pragma once
 #include "library/core.Forms.h"
+#include "controls/ControlDictionary.h"
 #include "windows/ClassId.h"
 #include "windows/Window.h"
 #include "dialogs/DialogEventArgs.h"
@@ -19,9 +20,7 @@ namespace core::forms
 				this->register$();
 			}
 		};
-	
-		using ControlDictionary = std::map<uint16_t, Window*>;
-	
+
 	protected:
 		enum DialogMode { Modal, NonModal };
 
@@ -61,7 +60,7 @@ namespace core::forms
 
 	public:
 		void 
-		virtual showEmbedded(Module source, Window& parent, std::optional<Border> border, std::optional<ControlDictionary> wrappers = std::nullopt)
+		virtual showEmbedded(Module source, Window& parent, std::optional<Border> border, ControlDictionary wrappers)
 		{
 			auto const Area = border ? parent.clientRect() - *border : parent.clientRect();
 			this->showDialog(source, DialogMode::NonModal, &parent, wrappers);
@@ -70,31 +69,31 @@ namespace core::forms
 		}
 
 		void 
-		virtual showEmbedded(Window& parent, std::optional<Border> border, std::optional<ControlDictionary> wrappers = std::nullopt)
+		virtual showEmbedded(Window& parent, std::optional<Border> border, ControlDictionary wrappers)
 		{
 			this->showEmbedded(ProcessModule, parent, border, wrappers);
 		}
 
 		intptr_t 
-		virtual showModal(Module source, Window* parent, std::optional<ControlDictionary> wrappers = std::nullopt)
+		virtual showModal(Module source, Window* parent, ControlDictionary wrappers)
 		{
 			return *this->showDialog(source, DialogMode::Modal, parent, wrappers);
 		}
 	
 		intptr_t 
-		virtual showModal(Window* parent, std::optional<ControlDictionary> wrappers = std::nullopt)
+		virtual showModal(Window* parent, ControlDictionary wrappers)
 		{
 			return this->showModal(ProcessModule, parent, wrappers);
 		}
 	
 		void 
-		virtual showModeless(Module source, Window* parent, std::optional<ControlDictionary> wrappers = std::nullopt)
+		virtual showModeless(Module source, Window* parent, ControlDictionary wrappers)
 		{
 			this->showDialog(source, DialogMode::NonModal, parent, wrappers);
 		}
 		
 		void 
-		virtual showModeless(Window* parent, std::optional<ControlDictionary> wrappers = std::nullopt)
+		virtual showModeless(Window* parent, ControlDictionary wrappers)
 		{
 			this->showModeless(ProcessModule, parent, wrappers);
 		}
@@ -252,7 +251,7 @@ namespace core::forms
 
 	private:
 		std::optional<intptr_t>
-		showDialog(Module source, DialogMode mode, Window* parent, std::optional<ControlDictionary> wrappers)
+		showDialog(Module source, DialogMode mode, Window* parent, ControlDictionary wrappers)
 		{
 			// Change the wndclass for the dialog
 			auto customTemplate = this->Template;
@@ -261,9 +260,9 @@ namespace core::forms
 			// BUG: Prevent callers from wrapping more than one window handle using the same C++ object
 			
 			// Change the wndclass for each wrapped control
-			if (wrappers) {
+			if (!wrappers.empty()) {
 				for (auto& ctrl : customTemplate.Controls) {
-					if (ctrl.ClassName && ctrl.ClassName->is_numeric() && wrappers->contains(ctrl.Ident)) {
+					if (ctrl.ClassName && ctrl.ClassName->is_numeric() && wrappers.contains(ctrl.Ident)) {
 						switch (uint16_t id = ctrl.ClassName->as_number(); id) {
 						case ClassId::Button:    ctrl.ClassName = ResourceId(L"Custom.BUTTON");    break;
 						case ClassId::Edit:      ctrl.ClassName = ResourceId(L"Custom.EDIT");      break;
@@ -274,7 +273,7 @@ namespace core::forms
 						default: throw invalid_argument{"Controls with class id #{0} not yet supported", id};
 						}
 
-						CreateWindowParameter param((*wrappers)[ctrl.Ident]);
+						CreateWindowParameter param(wrappers[ctrl.Ident]);
 						ctrl.Data = param.asBytes();
 					}
 				}
