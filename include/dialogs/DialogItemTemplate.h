@@ -26,7 +26,7 @@ namespace core::forms
 		subclassed() const {
 			return this->ClassName 
 			    && !this->ClassName->is_numeric() 
-			    && this->ClassName->as_string().starts_with(L"CUSTOM.");
+			    && this->ClassName->as_string().starts_with(L"Custom.");
 		}
 		
 	public:
