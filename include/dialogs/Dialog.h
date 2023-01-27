@@ -60,24 +60,36 @@ namespace core::forms
 
 	public:
 		void 
-		virtual showEmbedded(Module source, Window& parent, std::optional<Border> border, ControlDictionary wrappers)
+		virtual createEmbedded(Module source, Window& parent, std::optional<Border> border, ControlDictionary wrappers)
 		{
 			auto const Area = border ? parent.clientRect() - *border : parent.clientRect();
-			this->showDialog(source, DialogMode::NonModal, &parent, wrappers);
+			this->createInternal(source, DialogMode::NonModal, &parent, wrappers);
 			this->move(Area.topLeft());
 			this->resize(Area.size());
 		}
 
 		void 
-		virtual showEmbedded(Window& parent, std::optional<Border> border, ControlDictionary wrappers)
+		virtual createEmbedded(Window& parent, std::optional<Border> border, ControlDictionary wrappers)
 		{
-			this->showEmbedded(ProcessModule, parent, border, wrappers);
+			this->createEmbedded(ProcessModule, parent, border, wrappers);
 		}
 
+		void 
+		virtual createModeless(Module source, Window* parent, ControlDictionary wrappers)
+		{
+			this->createInternal(source, DialogMode::NonModal, parent, wrappers);
+		}
+		
+		void 
+		virtual createModeless(Window* parent, ControlDictionary wrappers)
+		{
+			this->createModeless(ProcessModule, parent, wrappers);
+		}
+		
 		intptr_t 
 		virtual showModal(Module source, Window* parent, ControlDictionary wrappers)
 		{
-			return *this->showDialog(source, DialogMode::Modal, parent, wrappers);
+			return *this->createInternal(source, DialogMode::Modal, parent, wrappers);
 		}
 	
 		intptr_t 
@@ -86,18 +98,6 @@ namespace core::forms
 			return this->showModal(ProcessModule, parent, wrappers);
 		}
 	
-		void 
-		virtual showModeless(Module source, Window* parent, ControlDictionary wrappers)
-		{
-			this->showDialog(source, DialogMode::NonModal, parent, wrappers);
-		}
-		
-		void 
-		virtual showModeless(Window* parent, ControlDictionary wrappers)
-		{
-			this->showModeless(ProcessModule, parent, wrappers);
-		}
-
 	protected:
 		void 
 		endModal(uint16_t const id)
@@ -251,7 +251,7 @@ namespace core::forms
 
 	private:
 		std::optional<intptr_t>
-		showDialog(Module source, DialogMode mode, Window* parent, ControlDictionary wrappers)
+		createInternal(Module source, DialogMode mode, Window* parent, ControlDictionary wrappers)
 		{
 			// Change the wndclass for the dialog
 			auto customTemplate = this->Template;
