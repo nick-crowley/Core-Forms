@@ -8,7 +8,7 @@ namespace core::forms
 		bool Checked = false;
 
 	public:
-		RadioButtonControl() 
+		RadioButtonControl(uint16_t id) : ButtonControl{id}
 		{}
 
 	public:

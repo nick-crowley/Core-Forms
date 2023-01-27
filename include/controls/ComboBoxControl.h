@@ -1,13 +1,12 @@
 #pragma once
 #include "library/core.Forms.h"
-#include "windows/Window.h"
-#include "windows/WindowClass.h"
+#include "controls/Control.h"
 #include "controls/ComboBoxStyle.h"
-#include "system/MessageDictionary.h"
+#include "windows/WindowClass.h"
 
 namespace core::forms
 {
-	class ComboBoxControl : public Window {
+	class ComboBoxControl : public Control {
 		class ComboBoxWindowClass : public WindowClass {
 		public:
 			::WNDPROC	OriginalMessageHandler;
@@ -219,7 +218,9 @@ namespace core::forms
 		ItemCollection   Items;
 
 	public:
-		ComboBoxControl() : Items{*this}
+		ComboBoxControl(uint16_t id) 
+		  : Control{id}, 
+		    Items{*this}
 		{}
 
 	public:

@@ -7,7 +7,7 @@ namespace core::forms
 	class CheckBoxControl : public ButtonControl {
 	
 	public:
-		CheckBoxControl() 
+		CheckBoxControl(uint16_t id) : ButtonControl{id}
 		{}
 
 	public:

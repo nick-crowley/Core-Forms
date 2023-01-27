@@ -1,12 +1,12 @@
 #pragma once
 #include "library/core.Forms.h"
-#include "windows/Window.h"
-#include "windows/WindowClass.h"
+#include "controls/Control.h"
 #include "controls/ProgressBarStyle.h"
+#include "windows/WindowClass.h"
 
 namespace core::forms
 {
-	class ProgressBarControl : public Window {
+	class ProgressBarControl : public Control {
 		class ProgressBarWindowClass : public WindowClass {
 		public:
 			::WNDPROC	OriginalMessageHandler;
@@ -20,7 +20,8 @@ namespace core::forms
 		};
 
 	public:
-		ProgressBarControl() 
+		ProgressBarControl(uint16_t id) 
+		  : Control{id}
 		{}
 	
 	public:
@@ -31,6 +32,11 @@ namespace core::forms
 		}
 
 	protected:
+		gsl::czstring
+		notificationName(::UINT notification) override {
+			return "Unknown";
+		}
+
 		::LRESULT 
 		unhandledMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
 			return ::CallWindowProc(wndcls().OriginalMessageHandler, hWnd, message, wParam, lParam);

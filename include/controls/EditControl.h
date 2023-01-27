@@ -1,13 +1,12 @@
 #pragma once
 #include "library/core.Forms.h"
-#include "windows/Window.h"
-#include "windows/WindowClass.h"
+#include "controls/Control.h"
 #include "controls/EditStyle.h"
-#include "system/MessageDictionary.h"
+#include "windows/WindowClass.h"
 
 namespace core::forms
 {
-	class EditControl : public Window {
+	class EditControl : public Control {
 		class EditWindowClass : public WindowClass {
 		public:
 			::WNDPROC	OriginalMessageHandler;
@@ -43,7 +42,8 @@ namespace core::forms
 		};
 
 	public:
-		EditControl() 
+		EditControl(uint16_t id) 
+		  : Control{id}
 		{}
 	
 	public:

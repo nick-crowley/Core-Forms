@@ -799,13 +799,6 @@ namespace core::forms
 		virtual offerNotification(::UINT notification) {
 			return Unhandled;
 		}
-	
-		gsl::czstring
-		virtual notificationName(::UINT notification) {
-			// FIXME: Window::notificationName() isn't threadsafe. Consider returning fixed-string instead.
-			static thread_local std::string str;
-			return (str = to_hexString<4>(notification)).c_str();
-		}
 
 		void
 		virtual raiseMessageEvent(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) 

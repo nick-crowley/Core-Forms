@@ -1,12 +1,11 @@
 #pragma once
 #include "library/core.Forms.h"
-#include "windows/Window.h"
+#include "controls/Control.h"
 #include "windows/WindowClass.h"
-#include "system/MessageDictionary.h"
 
 namespace core::forms
 {
-	class ListViewControl : public Window {
+	class ListViewControl : public Control {
 		class ListViewWindowClass : public WindowClass {
 		public:
 			::WNDPROC	OriginalMessageHandler;
@@ -62,7 +61,8 @@ namespace core::forms
 		};
 
 	public:
-		ListViewControl() 
+		ListViewControl(uint16_t id) 
+		  : Control{id}
 		{}
 
 	public:
@@ -73,6 +73,12 @@ namespace core::forms
 		}
 
 	protected:
+		gsl::czstring
+		notificationName(::UINT notification) override {
+			static const ListViewNotificationDictionary names;
+			return names.at(notification);
+		}
+
 		/*Response
 		offerNotification(::UINT notification) override {
 			auto const on_exit = this->Debug.setTemporaryState(

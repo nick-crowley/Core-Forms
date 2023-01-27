@@ -9,7 +9,7 @@ namespace core::forms
 		Colour  TextColour = DeviceContext::get(SystemColour::WindowText);
 
 	public:
-		GroupBoxControl() 
+		GroupBoxControl(uint16_t id) : ButtonControl{id}
 		{}
 	
 	public:

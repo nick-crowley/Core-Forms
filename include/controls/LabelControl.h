@@ -10,7 +10,7 @@ namespace core::forms
 		Colour  TextColour = DeviceContext::get(SystemColour::WindowText);
 
 	public:
-		LabelControl() 
+		LabelControl(uint16_t id) : StaticControl{id}
 		{}
 	
 	public:

@@ -14,7 +14,7 @@ namespace core::forms
 		std::optional<Picture> Image;
 
 	public:
-		PictureControl() 
+		PictureControl(uint16_t id) : StaticControl{id}
 		{}
 	
 	public:

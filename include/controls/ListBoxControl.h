@@ -1,13 +1,12 @@
 #pragma once
 #include "library/core.Forms.h"
-#include "windows/Window.h"
-#include "windows/WindowClass.h"
+#include "controls/Control.h"
 #include "controls/ListBoxStyle.h"
-#include "system/MessageDictionary.h"
+#include "windows/WindowClass.h"
 
 namespace core::forms
 {
-	class ListBoxControl : public Window {
+	class ListBoxControl : public Control {
 	protected:
 		class ListBoxNotificationDictionary : public MessageDictionary {
 			using base = MessageDictionary;
@@ -306,8 +305,10 @@ namespace core::forms
 		ItemCollection				Items;
 
 	public:
-		ListBoxControl() 
-			: SelectedItems(*this), Items(*this)
+		ListBoxControl(uint16_t id) 
+		  : Control{id}, 
+		    SelectedItems(*this), 
+		    Items(*this)
 		{}
 
 	public:

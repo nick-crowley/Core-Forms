@@ -1,12 +1,12 @@
 #pragma once
 #include "library/core.Forms.h"
-#include "windows/Window.h"
-#include "windows/WindowClass.h"
+#include "controls/Control.h"
 #include "controls/StaticStyle.h"
+#include "windows/WindowClass.h"
 
 namespace core::forms
 {
-	class StaticControl : public Window {
+	class StaticControl : public Control {
 		class StaticWindowClass : public WindowClass {
 		public:
 			::WNDPROC	OriginalMessageHandler;
@@ -18,9 +18,24 @@ namespace core::forms
 				this->register$();
 			}
 		};
+		
+		class StaticNotificationDictionary : public MessageDictionary {
+			using base = MessageDictionary;
+		public:
+			StaticNotificationDictionary() : base({
+	#define MakeMessageName(msg)  { msg, #msg }
+				MakeMessageName(STN_CLICKED),
+				MakeMessageName(STN_ENABLE),
+				MakeMessageName(STN_DISABLE),
+				MakeMessageName(STN_DBLCLK),
+	#undef MakeMessageName
+				})
+			{}
+		};
 
 	public:
-		StaticControl() 
+		StaticControl(uint16_t id) 
+		  : Control{id}
 		{}
 	
 	public:
@@ -39,8 +54,14 @@ namespace core::forms
 
 			return Unhandled;
 		}
-
+	
 	protected:
+		gsl::czstring
+		notificationName(::UINT notification) override {
+			static const StaticNotificationDictionary names;
+			return names.at(notification);
+		}
+
 		::LRESULT 
 		unhandledMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
 			return ::CallWindowProc(this->wndcls().OriginalMessageHandler, hWnd, message, wParam, lParam);

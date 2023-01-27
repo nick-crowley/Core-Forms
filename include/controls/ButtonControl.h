@@ -1,9 +1,8 @@
 #pragma once
 #include "library/core.Forms.h"
-#include "windows/Window.h"
-#include "windows/WindowClass.h"
-#include "system/MessageDictionary.h"
+#include "controls/Control.h"
 #include "controls/ButtonStyle.h"
+#include "windows/WindowClass.h"
 
 namespace core::forms
 {
@@ -22,7 +21,9 @@ namespace core::forms
 		None           = Unchecked,
 	};
 
-	class ButtonControl : public Window {
+	class ButtonControl : public Control {
+		using base = Control;
+
 		class ButtonWindowClass : public WindowClass {
 		public:
 			::WNDPROC	OriginalMessageHandler;
@@ -57,7 +58,8 @@ namespace core::forms
 		};
 
 	public:
-		ButtonControl() 
+		ButtonControl(uint16_t id)
+		  : Control{id}
 		{}
 
 	public:
