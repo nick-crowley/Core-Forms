@@ -17,14 +17,18 @@ namespace core::forms
 		}
 	
 	public:
+		::HINSTANCE 
+		handle() const {
+			return get_handle<::HINSTANCE>(this->Handle);
+		}
+
 		Bitmap
-		static loadBitmap(ResourceId name, std::optional<Module> source) 
+		loadBitmap(ResourceId name) const
 		{
-			::HINSTANCE module = source ? source->handle() : nullptr;
-			if (auto const bitmap = (HBITMAP)::LoadImageW(module, name, 
-														  IMAGE_BITMAP, 
-														  0, 0, 
-														  NULL); !bitmap)
+			if (auto const bitmap = (::HBITMAP)::LoadImageW(this->handle(), name, 
+														    IMAGE_BITMAP, 
+														    0, 0, 
+														    NULL); !bitmap)
 				win::LastError{}.throwAlways();
 			else if (::BITMAP info{}; !::GetObject(bitmap, sizeof(info), &info))
 				win::LastError{}.throwAlways();
@@ -33,13 +37,12 @@ namespace core::forms
 		}
 	
 		Icon
-		static loadIcon(ResourceId name, std::optional<Module> source) 
+		loadIcon(ResourceId name) const
 		{	
 			Size const 
 			static dimensions{SystemMetric::cxIcon,SystemMetric::cyIcon};
 		
-			::HINSTANCE module = source ? source->handle() : nullptr;
-			if (auto const icon = (::HICON)::LoadImageW(module, name, 
+			if (auto const icon = (::HICON)::LoadImageW(this->handle(), name, 
 														IMAGE_ICON, 
 														dimensions.Width, dimensions.Height, 
 														LR_LOADTRANSPARENT); !icon)
@@ -49,16 +52,15 @@ namespace core::forms
 		}
 
 		std::vector<std::byte> 
-		static loadResource(gsl::cwzstring name, gsl::cwzstring category, std::optional<Module> source) 
+		loadResource(gsl::cwzstring name, gsl::cwzstring category) const
 		{
-			::HINSTANCE module = source ? source->handle() : nullptr;
-			if (::HRSRC resource = ::FindResourceW(module, name, category); !resource) {
+			if (::HRSRC resource = ::FindResourceW(this->handle(), name, category); !resource) {
 				win::LastError{}.throwAlways("Failed to find resource '{}'", to_string(name));
 			}
-			else if (::HGLOBAL block = ::LoadResource(module, resource); !block) {
+			else if (::HGLOBAL block = ::LoadResource(this->handle(), resource); !block) {
 				win::LastError{}.throwAlways("Failed to load resource '{}'", to_string(name));
 			}
-			else if (::DWORD size = ::SizeofResource(module, resource); !size) {
+			else if (::DWORD size = ::SizeofResource(this->handle(), resource); !size) {
 				win::LastError{}.throwAlways("Failed to measure resource '{}'", to_string(name));
 			}
 			else if (auto data = (const std::byte*)::LockResource(block); !data) {
@@ -69,30 +71,12 @@ namespace core::forms
 				return { data, data + size };
 			}
 		}
-
-	public:
-		::HINSTANCE 
-		handle() const {
-			return get_handle<::HINSTANCE>(this->Handle);
-		}
-
-		std::vector<std::byte> 
-		loadResource(gsl::cwzstring name, gsl::cwzstring category) const
-		{
-			return Module::loadResource(name, category, *this);
-		}
-
-		Bitmap
-		loadBitmap(ResourceId name) const
-		{
-			return Module::loadBitmap(name, *this);
-		}
-	
-		Icon
-		loadIcon(ResourceId name) const
-		{
-			return Module::loadIcon(name, *this);
-		}
-
 	};
+
+	Module const
+	inline static ProcessModule {make_handle(::GetModuleHandleW(nullptr))};
+	
+	Module const
+	inline static SystemResource {nullptr};
+
 }	// namespace core::forms

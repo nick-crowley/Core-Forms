@@ -3,7 +3,6 @@
 #include "windows/ClassId.h"
 #include "windows/Window.h"
 #include "dialogs/DialogEventArgs.h"
-#include "system/Resources.h"
 
 namespace core::forms
 {
@@ -34,15 +33,16 @@ namespace core::forms
 	private:
 		ResourceId const                DialogId;
 		std::optional<DialogMode const>	DisplayMode;
-		::DLGPROC const					DialogProc;
+		::DLGPROC const					DialogProc = Dialog::DefaultDialogHandler;
+		DialogTemplate const            Template;
 		
 	public:
 		InitDialogEvent		Initialized;
 
 	protected:
-		Dialog(ResourceId resource, ::DLGPROC handler = Dialog::DefaultDialogHandler) 
+		Dialog(ResourceId resource, Module source = ProcessModule)
 		  : DialogId{resource},
-		    DialogProc{handler}
+		    Template{DialogTemplateReader{source.loadResource(resource, RT_DIALOG)}.read_template()}
 		{
 		}
 	
@@ -53,12 +53,6 @@ namespace core::forms
 		}
 	
 	public:
-		template <typename Self>
-		Module
-		instance(this Self&& self) {
-			return Resources<std::remove_cvref_t<Self>>;
-		}
-
 		DialogWindowClass const& 
 		wndcls() override {
 			static DialogWindowClass c;
@@ -67,24 +61,42 @@ namespace core::forms
 
 	public:
 		void 
-		virtual showEmbedded(Window& parent, std::optional<Border> border, std::optional<ControlDictionary> wrappers = std::nullopt)
+		virtual showEmbedded(Module source, Window& parent, std::optional<Border> border, std::optional<ControlDictionary> wrappers = std::nullopt)
 		{
 			auto const Area = border ? parent.clientRect() - *border : parent.clientRect();
-			this->showDialog(DialogMode::NonModal, &parent, wrappers);
+			this->showDialog(source, DialogMode::NonModal, &parent, wrappers);
 			this->move(Area.topLeft());
 			this->resize(Area.size());
 		}
 
+		void 
+		virtual showEmbedded(Window& parent, std::optional<Border> border, std::optional<ControlDictionary> wrappers = std::nullopt)
+		{
+			this->showEmbedded(ProcessModule, parent, border, wrappers);
+		}
+
+		intptr_t 
+		virtual showModal(Module source, Window* parent, std::optional<ControlDictionary> wrappers = std::nullopt)
+		{
+			return *this->showDialog(source, DialogMode::Modal, parent, wrappers);
+		}
+	
 		intptr_t 
 		virtual showModal(Window* parent, std::optional<ControlDictionary> wrappers = std::nullopt)
 		{
-			return *this->showDialog(DialogMode::Modal, parent, wrappers);
+			return this->showModal(ProcessModule, parent, wrappers);
 		}
 	
 		void 
+		virtual showModeless(Module source, Window* parent, std::optional<ControlDictionary> wrappers = std::nullopt)
+		{
+			this->showDialog(source, DialogMode::NonModal, parent, wrappers);
+		}
+		
+		void 
 		virtual showModeless(Window* parent, std::optional<ControlDictionary> wrappers = std::nullopt)
 		{
-			this->showDialog(DialogMode::NonModal, parent, wrappers);
+			this->showModeless(ProcessModule, parent, wrappers);
 		}
 
 	protected:
@@ -240,12 +252,10 @@ namespace core::forms
 
 	private:
 		std::optional<intptr_t>
-		showDialog(DialogMode mode, Window* parent, std::optional<ControlDictionary> wrappers)
+		showDialog(Module source, DialogMode mode, Window* parent, std::optional<ControlDictionary> wrappers)
 		{
-			Module module = this->instance();
-			auto customTemplate = DialogTemplateReader{module.loadResource(this->DialogId, RT_DIALOG)}.read_template();
-
 			// Change the wndclass for the dialog
+			auto customTemplate = this->Template;
 			customTemplate.ClassName = ResourceId::parse(this->wndcls().lpszClassName);
 
 			// BUG: Prevent callers from wrapping more than one window handle using the same C++ object
@@ -280,9 +290,9 @@ namespace core::forms
 		
 			// Generate template with our customizations
 			DialogTemplateBlob blob = DialogTemplateWriter{}.write_template(customTemplate);
-			auto container = module.handle();
-			auto owner = parent ? parent->handle() : nullptr;
-
+			auto const container = source.handle();
+			auto const owner = parent ? parent->handle() : nullptr;
+			
 			// [MODAL] Display, block, and return result
 			if (mode == DialogMode::Modal) { 
 				auto result = ::DialogBoxIndirectW(container, blob, owner, this->DialogProc);
