@@ -14,8 +14,8 @@ DrawTextFlags
 calculateFlags(nstd::bitset<ButtonStyle> style) noexcept
 {
 	nstd::bitset<DrawTextFlags> textAlign = style.test(ButtonStyle::Left)  ? DrawTextFlags::Left
-	                                    : style.test(ButtonStyle::Right) ? DrawTextFlags::Right
-	                                    :                                  DrawTextFlags::Centre;
+	                                      : style.test(ButtonStyle::Right) ? DrawTextFlags::Right
+	                                      :                                  DrawTextFlags::Centre;
 	
 	textAlign |= style.test(ButtonStyle::Top)     ? DrawTextFlags::Top
 	           : style.test(ButtonStyle::Bottom)  ? DrawTextFlags::Bottom
@@ -28,8 +28,8 @@ DrawTextFlags
 calculateFlags(nstd::bitset<StaticStyle> style) noexcept
 {
 	nstd::bitset<DrawTextFlags> textAlign = style.test(StaticStyle::Centre) ? DrawTextFlags::Centre
-	                                    : style.test(StaticStyle::Right)  ? DrawTextFlags::Right
-	                                    :                                   DrawTextFlags::Left;
+	                                      : style.test(StaticStyle::Right)  ? DrawTextFlags::Right
+	                                      :                                   DrawTextFlags::Left;
 
 	if (style.test(StaticStyle::CentreImage))
 		textAlign = textAlign|DrawTextFlags::VCentre|DrawTextFlags::SingleLine;

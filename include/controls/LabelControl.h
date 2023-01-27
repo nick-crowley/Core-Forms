@@ -19,6 +19,7 @@ namespace core::forms
 			return this->TextColour;
 		}
 	
+	public:
 		void
 		colour(Colour col) {
 			this->TextColour = col;
