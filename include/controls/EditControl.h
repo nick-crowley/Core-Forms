@@ -47,6 +47,12 @@ namespace core::forms
 		{}
 	
 	public:
+		bool
+		ownerDraw() const override {
+			return false;
+		}
+
+	public:
 		EditWindowClass const& 
 		wndcls() override {
 			static EditWindowClass c;

@@ -25,6 +25,12 @@ namespace core::forms
 		{}
 	
 	public:
+		bool
+		ownerDraw() const override {
+			return false;
+		}
+
+	public:
 		ProgressBarWindowClass const& 
 		wndcls() override {
 			static ProgressBarWindowClass c;

@@ -61,6 +61,12 @@ namespace core::forms
 		ButtonControl(uint16_t id)
 		  : Control{id}
 		{}
+		
+	public:
+		bool
+		ownerDraw() const override {
+			return (this->style<ButtonStyle>() & ButtonStyle::TypeMask).test(ButtonStyle::OwnerDraw);
+		}
 
 	public:
 		ButtonWindowClass const& 

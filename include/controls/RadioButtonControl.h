@@ -69,10 +69,5 @@ namespace core::forms
 
 			return Unhandled;
 		}*/
-
-		bool
-		ownerDraw() const {
-			return (this->style<ButtonStyle>() & ButtonStyle::TypeMask) == ButtonStyle::OwnerDraw;
-		}
 	};
 }	// namespace core::forms

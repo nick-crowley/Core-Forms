@@ -64,6 +64,12 @@ namespace core::forms
 		ListViewControl(uint16_t id) 
 		  : Control{id}
 		{}
+		
+	public:
+		bool
+		ownerDraw() const override {
+			return false;		// FIXME: Implement ListViewControl::ownerDraw()
+		}
 
 	public:
 		ListViewWindowClass const& 

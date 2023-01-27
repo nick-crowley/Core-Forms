@@ -76,8 +76,7 @@ drawWindowBorder(DeviceContext& graphics, Rect const& client, nstd::bitset<Windo
 void
 Win31LookNFeel::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) 
 {
-	auto const style = ctrl.style<ButtonStyle>();
-	if ((style & ButtonStyle::TypeMask) != ButtonStyle::OwnerDraw)
+	if (!ctrl.ownerDraw())
 		throw runtime_error{"Button #{} must be OwnerDraw", args.Ident};
 
 	auto const enabled = ctrl.enabled();
@@ -102,7 +101,7 @@ Win31LookNFeel::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args)
 
 	args.Graphics.setText(enabled ? SystemColour::WindowText : SystemColour::GrayText);
 	args.Graphics.setObj(StockObject::SystemFixedFont);
-	args.Graphics.drawText(ctrl.text(), content, calculateFlags(style));
+	args.Graphics.drawText(ctrl.text(), content, calculateFlags(ctrl.style<ButtonStyle>()));
 
 	if (focused)
 		args.Graphics.drawFocus(content);
@@ -113,8 +112,7 @@ Win31LookNFeel::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args)
 void
 Win31LookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) 
 {
-	auto const style = ctrl.style<ButtonStyle>();
-	if ((style & ButtonStyle::TypeMask) != ButtonStyle::OwnerDraw)
+	if (!ctrl.ownerDraw())
 		throw runtime_error{"CheckBox #{} must be OwnerDraw", args.Ident};
 
 	auto const enabled = ctrl.enabled();
@@ -129,7 +127,7 @@ Win31LookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	areaText.Left += 30;
 	args.Graphics.setText(enabled ? SystemColour::WindowText : SystemColour::GrayText);
 	args.Graphics.setObj(StockObject::SystemFixedFont);
-	args.Graphics.drawText(ctrl.text(), areaText, calculateFlags(style));
+	args.Graphics.drawText(ctrl.text(), areaText, calculateFlags(ctrl.style<ButtonStyle>()));
 
 	if (focused)
 		args.Graphics.drawFocus(content);
@@ -140,15 +138,14 @@ Win31LookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 void
 Win31LookNFeel::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args) 
 {
-	auto const style = ctrl.style<StaticStyle>();
-	if ((style & StaticStyle::TypeMask) != StaticStyle::OwnerDraw)
+	if (!ctrl.ownerDraw())
 		throw runtime_error{"Label #{} must be OwnerDraw", args.Ident};
 	
 	args.Graphics.setObj(StockObject::WhiteBrush);
 	args.Graphics.setObj(StockObject::SystemFixedFont);
 	args.Graphics.setBack(DrawingMode::Transparent);
 	args.Graphics.setText(ctrl.colour());
-	args.Graphics.drawText(ctrl.text(), args.Item.Area, calculateFlags(style));
+	args.Graphics.drawText(ctrl.text(), args.Item.Area, calculateFlags(ctrl.style<StaticStyle>()));
 
 	args.Graphics.restore();
 }
@@ -156,7 +153,7 @@ Win31LookNFeel::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args)
 void
 Win31LookNFeel::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args) 
 {
-	if (!ctrl.style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawFixed))
+	if (!ctrl.ownerDraw())
 		throw runtime_error{"ListBox #{} must be OwnerDraw", args.Ident};
 
 	bool const selected = args.Item.State.test(OwnerDrawState::Selected);
@@ -188,8 +185,7 @@ Win31LookNFeel::erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& args
 void
 Win31LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) 
 {
-	auto const style = ctrl.style<ButtonStyle>();
-	if ((style & ButtonStyle::TypeMask) != ButtonStyle::OwnerDraw)
+	if (!ctrl.ownerDraw())
 		throw runtime_error{"GroupBox #{} must be OwnerDraw", args.Ident};
 
 	auto const text = ctrl.text();
@@ -222,8 +218,7 @@ Win31LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 void
 Win31LookNFeel::draw(PictureControl& ctrl, OwnerDrawEventArgs const& args) 
 {
-	auto const style = ctrl.style<StaticStyle>();
-	if ((style & StaticStyle::TypeMask) != StaticStyle::OwnerDraw)
+	if (!ctrl.ownerDraw())
 		throw runtime_error{"Picture #{} must be OwnerDraw", args.Ident};
 	
 	if (auto bitmap = ctrl.image(); bitmap) {
@@ -231,7 +226,7 @@ Win31LookNFeel::draw(PictureControl& ctrl, OwnerDrawEventArgs const& args)
 		src.setObj(bitmap->handle());
 
 		Rect rcDest = args.Item.Area;
-		if (style.test(StaticStyle::RealSizeImage)) 
+		if (ctrl.style<StaticStyle>().test(StaticStyle::RealSizeImage)) 
 			rcDest = Rect{args.Item.Area.topLeft(), bitmap->size()};	
 		args.Graphics.copyBitmap(src.handle(), bitmap->depth(), bitmap->rect(), rcDest);
 
@@ -240,7 +235,7 @@ Win31LookNFeel::draw(PictureControl& ctrl, OwnerDrawEventArgs const& args)
 	}
 	else if (auto icon = ctrl.icon(); icon) {
 		Rect rcDest = args.Item.Area;
-		if (style.test(StaticStyle::RealSizeImage)) 
+		if (ctrl.style<StaticStyle>().test(StaticStyle::RealSizeImage)) 
 			rcDest = Rect{args.Item.Area.topLeft(), icon->size()};	
 		args.Graphics.drawIcon(icon->handle(), rcDest);
 	}
@@ -249,8 +244,7 @@ Win31LookNFeel::draw(PictureControl& ctrl, OwnerDrawEventArgs const& args)
 void
 Win31LookNFeel::draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args)
 {
-	auto const style = ctrl.style<ButtonStyle>();
-	if ((style & ButtonStyle::TypeMask) != ButtonStyle::OwnerDraw)
+	if (!ctrl.ownerDraw())
 		throw runtime_error{"RadioButton #{} must be OwnerDraw", args.Ident};
 
 	auto const enabled = ctrl.enabled();
@@ -265,7 +259,7 @@ Win31LookNFeel::draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args)
 	areaText.Left += 30;
 	args.Graphics.setText(enabled ? SystemColour::WindowText : SystemColour::GrayText);
 	args.Graphics.setObj(StockObject::SystemFixedFont);
-	args.Graphics.drawText(ctrl.text(), areaText, calculateFlags(style));
+	args.Graphics.drawText(ctrl.text(), areaText, calculateFlags(ctrl.style<ButtonStyle>()));
 
 	if (focused)
 		args.Graphics.drawFocus(content);
@@ -276,10 +270,8 @@ Win31LookNFeel::draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args)
 void
 Win31LookNFeel::draw(StaticControl& ctrl, OwnerDrawEventArgs const& args)
 {
-	auto const style = ctrl.style<StaticStyle>();
-
 	args.Graphics.setBack(SystemColour::Window);
-	args.Graphics.drawText(ctrl.text(), args.Item.Area, calculateFlags(style));
+	args.Graphics.drawText(ctrl.text(), args.Item.Area, calculateFlags(ctrl.style<StaticStyle>()));
 	
 	args.Graphics.restore();
 }

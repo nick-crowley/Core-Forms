@@ -39,6 +39,12 @@ namespace core::forms
 		{}
 	
 	public:
+		bool
+		ownerDraw() const override {
+			return (this->style<StaticStyle>() & StaticStyle::TypeMask).test(StaticStyle::OwnerDraw);
+		}
+
+	public:
 		StaticWindowClass const& 
 		wndcls() override {
 			static StaticWindowClass c;

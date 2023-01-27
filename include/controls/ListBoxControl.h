@@ -321,6 +321,11 @@ namespace core::forms
 		first() const {
 			return (size_t)ListBox_GetTopIndex(this->handle());
 		}
+		
+		bool
+		ownerDraw() const override {
+			return this->style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawFixed|ListBoxStyle::OwnerDrawVariable);
+		}
 	
 	public:
 		void 

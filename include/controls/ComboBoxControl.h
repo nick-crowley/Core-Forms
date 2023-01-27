@@ -222,6 +222,12 @@ namespace core::forms
 		  : Control{id}, 
 		    Items{*this}
 		{}
+		
+	public:
+		bool
+		ownerDraw() const override {
+			return this->style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawFixed|ComboBoxStyle::OwnerDrawVariable);
+		}
 
 	public:
 		ItemCollection const&

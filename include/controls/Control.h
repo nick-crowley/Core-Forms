@@ -19,6 +19,9 @@ namespace core::forms
 		ident() const {
 			return this->Ident;
 		}
+		
+		bool
+		virtual ownerDraw() const abstract;
 	
 	protected:
 		gsl::czstring
