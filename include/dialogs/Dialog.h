@@ -3,23 +3,10 @@
 #include "windows/ClassId.h"
 #include "windows/Window.h"
 #include "dialogs/DialogEventArgs.h"
+#include "system/Resources.h"
 
 namespace core::forms
 {
-	class Dialog;
-}
-namespace core::meta
-{
-	template <typename T>
-	concept AnyWindow = std::derived_from<T,::core::forms::Window>;
-}
-
-namespace core::forms
-{
-	template <meta::AnyWindow Dialog>
-	Module 
-	inline DialogLocation = Module{nullptr};
-
 	class Dialog : public Window {
 	public:
 		class DialogWindowClass : public WindowClass {
@@ -69,7 +56,7 @@ namespace core::forms
 		template <typename Self>
 		Module
 		instance(this Self&& self) {
-			return DialogLocation<std::remove_cvref_t<Self>>;
+			return Resources<std::remove_cvref_t<Self>>;
 		}
 
 		DialogWindowClass const& 
@@ -83,7 +70,7 @@ namespace core::forms
 		virtual showEmbedded(Window& parent, std::optional<Border> border, std::optional<ControlDictionary> wrappers = std::nullopt)
 		{
 			auto const Area = border ? parent.clientRect() - *border : parent.clientRect();
-			this->showDialog(DialogMode::NonModal, &parent, wrappers, this->instance());
+			this->showDialog(DialogMode::NonModal, &parent, wrappers);
 			this->move(Area.topLeft());
 			this->resize(Area.size());
 		}
@@ -91,13 +78,13 @@ namespace core::forms
 		intptr_t 
 		virtual showModal(Window* parent, std::optional<ControlDictionary> wrappers = std::nullopt)
 		{
-			return *this->showDialog(DialogMode::Modal, parent, wrappers, this->instance());
+			return *this->showDialog(DialogMode::Modal, parent, wrappers);
 		}
 	
 		void 
 		virtual showModeless(Window* parent, std::optional<ControlDictionary> wrappers = std::nullopt)
 		{
-			this->showDialog(DialogMode::NonModal, parent, wrappers, this->instance());
+			this->showDialog(DialogMode::NonModal, parent, wrappers);
 		}
 
 	protected:
@@ -253,9 +240,10 @@ namespace core::forms
 
 	private:
 		std::optional<intptr_t>
-		showDialog(DialogMode mode, Window* parent, std::optional<ControlDictionary> wrappers, std::optional<Module> module)
+		showDialog(DialogMode mode, Window* parent, std::optional<ControlDictionary> wrappers)
 		{
-			auto customTemplate = DialogTemplateReader{Module::loadResource(this->DialogId, RT_DIALOG, module)}.read_template();
+			Module module = this->instance();
+			auto customTemplate = DialogTemplateReader{module.loadResource(this->DialogId, RT_DIALOG)}.read_template();
 
 			// Change the wndclass for the dialog
 			customTemplate.ClassName = ResourceId::parse(this->wndcls().lpszClassName);
@@ -292,7 +280,7 @@ namespace core::forms
 		
 			// Generate template with our customizations
 			DialogTemplateBlob blob = DialogTemplateWriter{}.write_template(customTemplate);
-			auto container = module ? module->handle() : nullptr;
+			auto container = module.handle();
 			auto owner = parent ? parent->handle() : nullptr;
 
 			// [MODAL] Display, block, and return result
