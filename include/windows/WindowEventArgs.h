@@ -76,6 +76,8 @@ namespace core::forms
 		}
 	};
 
+	// FIXME: Order-of-message-receipt bug with WM_GETMINMAXINFO could be solved with a static event which derived classes could listen to
+
 
 	class OwnerDrawEventArgs 
 	{
