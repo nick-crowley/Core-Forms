@@ -65,6 +65,8 @@ namespace core::forms
 			: Graphics{reinterpret_cast<::HDC>(w), wnd}
 		{}
 	};
+
+	// FIXME: Missing delegate/event declarations for WM_ERASEBACKGORUND
 	
 
 	struct MinMaxEventArgs {
