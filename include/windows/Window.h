@@ -678,6 +678,11 @@ namespace core::forms
 		virtual onTimer(TimerEventArgs args) {
 			return Unhandled;
 		}
+		
+		Response 
+		virtual onUser(UserEventArgs args) {
+			return Unhandled;
+		}
 
 		Response
 		virtual onActivateNonClient(ActivateNonClientEventArgs args) {
@@ -801,9 +806,13 @@ namespace core::forms
 			
 			case WM_NCPAINT:
 				return this->onPaintNonClient({this,wParam,lParam});
-			}
 
-			return Unhandled;
+			default:
+				if (message >= WM_USER && message < WM_APP)
+					return this->onUser({message,wParam,lParam});
+				
+				return Unhandled;
+			}
 		} 
 
 		Response

@@ -390,5 +390,23 @@ namespace core::forms
 
 	using PaintWindowDelegate = Delegate<void (Window&,PaintWindowEventArgs)>;
 	using PaintWindowEvent = ObservableEvent<PaintWindowDelegate>;
+	
+	
+	struct UserEventArgs
+	{
+		uint16_t Message;
+		::WPARAM wParam;
+		::LPARAM lParam;
+
+		UserEventArgs(::UINT msg, ::WPARAM w, ::LPARAM l) 
+		  : Message(static_cast<uint16_t>(msg)),
+		    wParam(w),
+		    lParam(l) 
+		{
+		}
+	};
+
+	using UserDelegate = Delegate<void (Window&,UserEventArgs)>;
+	using UserEvent = ObservableEvent<UserDelegate>;
 
 }	// namespace core::forms
