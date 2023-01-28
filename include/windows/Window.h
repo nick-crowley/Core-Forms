@@ -411,6 +411,12 @@ namespace core::forms
 			auto const wnd = ::GetParent(this->handle());
 			return wnd ? s_ExistingWindows[wnd] : nullptr;
 		}
+		
+		template <unsigned MessageId>
+		::LRESULT
+		post(std::optional<::WPARAM> first = std::nullopt, std::optional<::LPARAM> second = std::nullopt) const {
+			return ::PostMessageW(this->handle(), MessageId, first.value_or(0), second.value_or(0));
+		}
 
 		template <unsigned MessageId>
 		::LRESULT
