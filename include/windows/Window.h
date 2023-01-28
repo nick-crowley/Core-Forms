@@ -520,6 +520,11 @@ namespace core::forms
 			SetWindowFont(this->handle(), f.handle(), FALSE);
 		}
 		
+		void 
+		hide() {
+			::ShowWindow(this->handle(), SW_HIDE);
+		}
+		
 		void
 		invalidate(bool redraw = false) {
 			::InvalidateRect(this->handle(), nullptr, win::Boolean{redraw});
@@ -537,8 +542,8 @@ namespace core::forms
 		}
 
 		void 
-		show(signed flags) {
-			::ShowWindow(this->handle(), flags);
+		show() {
+			::ShowWindow(this->handle(), SW_SHOW);
 		}
 	
 		void 
