@@ -545,7 +545,12 @@ namespace core::forms
 		show() {
 			::ShowWindow(this->handle(), SW_SHOW);
 		}
-	
+		
+		void 
+		show(signed flags) {
+			::ShowWindow(this->handle(), flags);
+		}
+		
 		void 
 		move(Point pt) {
 			::SetWindowPos(this->handle(), nullptr, pt.X, pt.Y, -1, -1, 
