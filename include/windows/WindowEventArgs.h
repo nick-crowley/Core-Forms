@@ -34,6 +34,8 @@ namespace core::forms
 		}
 	};
 
+	// FIXME: We don't use Delegate/Event types for WM_COMMAND, but should there be a decl. here anyway? maybe type-alias to void?
+
 
 	struct CreateWindowEventArgs {
 		static_assert(sizeof(LPARAM) == sizeof(CREATESTRUCT*));
