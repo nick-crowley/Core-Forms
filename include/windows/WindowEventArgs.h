@@ -9,6 +9,31 @@ namespace core::forms
 	class Window;
 	using WindowDelegate = Delegate<void (Window&)>;
 	using WindowEvent = ObservableEvent<WindowDelegate>;
+	
+
+	struct CommandEventArgs {
+		static_assert(sizeof(LPARAM) == sizeof(HWND));
+
+		enum EventSource { Menu, Accelerator, Control };
+		struct EventData
+		{
+			uint16_t   Code;
+			::HWND     Handle;
+		};
+
+		uint16_t					Ident; 
+		EventSource					Source;
+		std::optional<EventData>	Notification;
+
+		CommandEventArgs(::WPARAM wParam, ::LPARAM ctrl)
+		  : Ident(LOWORD(wParam)), 
+			Source(ctrl ? Control : HIWORD(wParam) ? Accelerator : Menu)
+		{
+			if (Source == Control)
+				this->Notification = EventData{HIWORD(wParam), reinterpret_cast<HWND>(ctrl)};
+		}
+	};
+
 
 	struct CreateWindowEventArgs {
 		static_assert(sizeof(LPARAM) == sizeof(CREATESTRUCT*));
@@ -30,16 +55,6 @@ namespace core::forms
 	using CreateWindowEvent = ObservableEvent<CreateWindowDelegate>;
 
 
-	struct MinMaxEventArgs {
-		static_assert(sizeof(LPARAM) == sizeof(MINMAXINFO*));
-
-		MINMAXINFO*   Extents;
-
-		MinMaxEventArgs(WPARAM, LPARAM ext) : Extents(reinterpret_cast<MINMAXINFO*>(ext)) {
-		}
-	};
-
-
 	class EraseBackgroundEventArgs
 	{
 	public:
@@ -49,6 +64,16 @@ namespace core::forms
 		EraseBackgroundEventArgs(::HWND wnd, ::WPARAM w, ::LPARAM)
 			: Graphics{reinterpret_cast<::HDC>(w), wnd}
 		{}
+	};
+	
+
+	struct MinMaxEventArgs {
+		static_assert(sizeof(LPARAM) == sizeof(MINMAXINFO*));
+
+		MINMAXINFO*   Extents;
+
+		MinMaxEventArgs(WPARAM, LPARAM ext) : Extents(reinterpret_cast<MINMAXINFO*>(ext)) {
+		}
 	};
 
 
@@ -358,27 +383,4 @@ namespace core::forms
 	using PaintWindowDelegate = Delegate<void (Window&,PaintWindowEventArgs)>;
 	using PaintWindowEvent = ObservableEvent<PaintWindowDelegate>;
 
-
-	struct CommandEventArgs {
-		static_assert(sizeof(LPARAM) == sizeof(HWND));
-
-		enum EventSource { Menu, Accelerator, Control };
-		struct EventData
-		{
-			uint16_t   Code;
-			::HWND     Handle;
-		};
-
-		uint16_t					Ident; 
-		EventSource					Source;
-		std::optional<EventData>	Notification;
-
-		CommandEventArgs(::WPARAM wParam, ::LPARAM ctrl)
-		  : Ident(LOWORD(wParam)), 
-			Source(ctrl ? Control : HIWORD(wParam) ? Accelerator : Menu)
-		{
-			if (Source == Control)
-				this->Notification = EventData{HIWORD(wParam), reinterpret_cast<HWND>(ctrl)};
-		}
-	};
 }	// namespace core::forms
