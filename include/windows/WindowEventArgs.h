@@ -153,6 +153,8 @@ namespace core::forms
 		SetFontEventArgs(WPARAM w, LPARAM l) {
 		}
 	};
+	
+	// FIXME: Mising Delegate/Event types for WM_SETFONT
 
 
 	struct ShowWindowEventArgs {
