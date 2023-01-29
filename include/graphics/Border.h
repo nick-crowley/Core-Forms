@@ -36,7 +36,9 @@ namespace core::forms
 		{}
 		
 		satisfies(Border,
-			constexpr IsRegular noexcept,
+			constexpr IsDefaultConstructible noexcept,
+			constexpr IsCopyConstructible noexcept,
+			constexpr IsEqualityComparable noexcept,
 			constexpr NotSortable noexcept
 		);
 	
