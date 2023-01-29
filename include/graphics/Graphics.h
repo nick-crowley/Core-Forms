@@ -223,15 +223,17 @@ namespace core::forms
 			if (!::Rectangle(this->handle(), rc.Left, rc.Top, rc.Right, rc.Bottom))
 				win::LastError{}.throwAlways();
 		}
+
 		//! @brief	Writes text into a rectangle
 		//! @return Height of the text in logical units if successful; otherwise 0
 		int32_t 
-		drawText(std::wstring_view txt, Rect const& rc, DrawTextFlags flags = DrawTextFlags::SimpleLeft) const
+		drawText(std::wstring_view txt, Rect const& rc, nstd::bitset<DrawTextFlags> flags = DrawTextFlags::SimpleLeft) const
 		{
+			ThrowIf(flags, flags.test(DrawTextFlags::ModifyString));
 			if (int32_t height = ::DrawTextW(this->handle(), 
 											 txt.data(), static_cast<int>(txt.size()), 
 											 const_cast<Rect&>(rc), 
-											 win::DWord{flags}); !height)
+											 flags.value()); !height)
 				win::LastError{}.throwAlways("Unable to draw text");
 			else
 				return height;
