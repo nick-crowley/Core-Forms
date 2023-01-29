@@ -60,16 +60,16 @@ namespace core::forms
 
 	public:
 		void 
-		virtual createEmbedded(Module source, Window& parent, std::optional<Border> border, ControlDictionary wrappers)
+		virtual createEmbedded(Module source, Window& parent, Border border, ControlDictionary wrappers)
 		{
-			auto const Area = border ? parent.clientRect() - *border : parent.clientRect();
+			auto const Area = parent.clientRect() - border;
 			this->createInternal(source, DialogMode::NonModal, &parent, wrappers);
 			this->move(Area.topLeft());
 			this->resize(Area.size());
 		}
 
 		void 
-		virtual createEmbedded(Window& parent, std::optional<Border> border, ControlDictionary wrappers)
+		virtual createEmbedded(Window& parent, Border border, ControlDictionary wrappers)
 		{
 			this->createEmbedded(ProcessModule, parent, border, wrappers);
 		}
