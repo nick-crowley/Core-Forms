@@ -6,6 +6,9 @@ namespace core::forms
 {
 	struct Border 
 	{
+		Border const
+		static None;
+
 		::LONG const Left, Top, Right, Bottom;
 
 		constexpr
@@ -48,6 +51,9 @@ namespace core::forms
 	operator*(::LONG scale, Border const& b) noexcept {
 		return b * scale;
 	}
+	
+	Border const
+	inline Border::None{Size{0,0}};
 
 	std::string
 	inline to_string(Border const& b)
