@@ -315,7 +315,7 @@ namespace core::forms
 				return static_cast<int32_t>(-points * logPixels / 72ll); 
 		}
 
-		//! @brief	Measure text using the current font
+		//! @brief	Measure single line of text (rendered in the currently selected font)
 		Size
 		measureText(std::wstring_view txt) const
 		{
@@ -326,6 +326,18 @@ namespace core::forms
 				win::LastError{}.throwAlways();
 
 			return sz;
+		}
+	
+		//! @brief	Measure multiple lines of text displayed within a rectangle (rendered in the currently selected font)
+		Size
+		measureText(std::wstring_view txt, Size initial) const
+		{
+			Rect rc{Point::Zero, initial};
+			// Measure text
+			if (!::DrawTextW(this->handle(), txt.data(), win::DWord{txt.size()}, rc, win::DWord{DrawTextFlags::CalcRect}))
+				win::LastError{}.throwAlways();
+
+			return rc.size();
 		}
 	
 	public:
