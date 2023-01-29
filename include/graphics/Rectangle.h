@@ -9,7 +9,7 @@ namespace core::forms
 		Border const
 		static None;
 
-		::LONG const Left, Top, Right, Bottom;
+		::LONG const Left = 0, Top = 0, Right = 0, Bottom = 0;
 
 		constexpr
 		explicit
@@ -34,7 +34,12 @@ namespace core::forms
 		Border(Size const& amount) noexcept 
 		  : Left{amount.Width}, Top{amount.Height}, Right{amount.Width}, Bottom{amount.Height}
 		{}
-
+		
+		satisfies(Border,
+			constexpr IsRegular noexcept,
+			constexpr NotSortable noexcept
+		);
+	
 		Border constexpr
 		operator-() const {
 			return Border{-this->Left, -this->Top, -this->Right, -this->Bottom};
@@ -53,7 +58,7 @@ namespace core::forms
 	}
 	
 	Border const
-	inline Border::None{Size{0,0}};
+	inline Border::None;
 
 	std::string
 	inline to_string(Border const& b)
