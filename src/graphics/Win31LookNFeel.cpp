@@ -146,7 +146,9 @@ Win31LookNFeel::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args)
 	args.Graphics.setObj(StockObject::SystemFixedFont);
 	args.Graphics.setBack(DrawingMode::Transparent);
 	args.Graphics.setText(ctrl.colour());
-	args.Graphics.drawText(ctrl.text(), args.Item.Area, calculateFlags(ctrl.style<StaticStyle>()));
+
+	auto const style = (ctrl.style<StaticStyle>() & ~StaticStyle::TypeMask) | ctrl.align();
+	args.Graphics.drawText(ctrl.text(), args.Item.Area, calculateFlags(style));
 
 	args.Graphics.restore();
 }

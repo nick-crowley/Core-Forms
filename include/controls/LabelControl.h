@@ -7,19 +7,34 @@ namespace core::forms
 {
 	class LabelControl : public StaticControl 
 	{
-		Colour  TextColour = DeviceContext::get(SystemColour::WindowText);
+	public:
+		enum HorizontalAlign { Left, Centre, Right };
+
+	private:
+		HorizontalAlign TextAlignment = Left;
+		Colour          TextColour = DeviceContext::get(SystemColour::WindowText);
 
 	public:
 		LabelControl(uint16_t id) : StaticControl{id}
 		{}
 	
 	public:
+		HorizontalAlign
+		align() const {
+			return this->TextAlignment;
+		}
+
 		Colour
 		colour() const {
 			return this->TextColour;
 		}
 	
 	public:
+		void
+		align(HorizontalAlign horz) {
+			this->TextAlignment = horz;
+		}
+
 		void
 		colour(Colour col) {
 			this->TextColour = col;
@@ -36,3 +51,7 @@ namespace core::forms
 		}
 	};
 }	// namespace core::forms
+
+constdata bool core::meta::Settings<core::bitwise_enum, core::forms::LabelControl::HorizontalAlign> = true;
+constdata bool core::meta::Settings<core::compatible_enum, core::forms::StaticStyle, core::forms::LabelControl::HorizontalAlign> = true;
+constdata bool core::meta::Settings<core::compatible_enum, core::forms::LabelControl::HorizontalAlign, core::forms::StaticStyle> = true;
