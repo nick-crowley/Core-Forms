@@ -117,12 +117,12 @@ namespace core::forms
 		}
 	
 		void
-		copyBitmap(::HDC source, Point const& src, Rect const& dest, RasterOp op = RasterOp::SrcCopy) const
+		copyBitmap(::HDC source, Rect const& src, Point const& dest, RasterOp op = RasterOp::SrcCopy) const
 		{
 			if (!::BitBlt(this->handle(), 
-						  dest.Left, dest.Top, dest.width(), dest.height(),
+						  dest.X, dest.Y, src.width(), src.height(),
 						  source,
-						  src.X, src.Y, 
+						  src.Left, src.Top, 
 						  win::DWord{op}))
 				win::LastError{}.throwAlways();
 		}
