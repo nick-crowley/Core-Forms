@@ -24,9 +24,15 @@ namespace core::forms
 				this->m_value = Max;
 		}
 
+		satisfies(Percentage,
+			NotDefaultConstructible,
+			IsCopyable,
+			IsSortable
+		);
+
+	public:
 		template <meta::RealNumber Result> 
-		/*implicit*/
-		operator Result() const {
+		implicit operator Result() const {
 			return static_cast<Result>(this->m_value);
 		}
 
@@ -37,7 +43,15 @@ namespace core::forms
 			return static_cast<Result>(this->m_value * rhs / 100.0f);
 		}
 
-		auto operator<=>(Percentage const&) const = default;
+		bool
+		operator==(Percentage const& r) const {
+			return boost::math::relative_difference(this->m_value,r.m_value) < 0.01f;
+		}
+
+		bool
+		operator!=(Percentage const& r) const {
+			return boost::math::relative_difference(this->m_value,r.m_value) >= 0.01f;
+		}
 	};
 
 	Percentage const
