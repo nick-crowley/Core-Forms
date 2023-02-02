@@ -327,16 +327,20 @@ Win31LookNFeel::draw(Window& wnd, PaintNonClientEventArgs const& args)
 	args.Graphics->drawRect(rcSysMenuBar);
 
 	// Maximize button
-	args.Graphics->fillRect(components.MaximizeBtn, SystemColour::BtnFace);
-	args.Graphics->drawEdge(components.MaximizeBtn, EdgeFlags::Raised);
-	args.Graphics->setText(SystemColour::WindowText);
-	args.Graphics->drawText(L"▲", components.MaximizeBtn, DrawTextFlags::SimpleCentre);
+	if (wnd.style().test(WindowStyle::MaximizeBox)) {
+		args.Graphics->fillRect(components.MaximizeBtn, SystemColour::BtnFace);
+		args.Graphics->drawEdge(components.MaximizeBtn, EdgeFlags::Raised);
+		args.Graphics->setText(SystemColour::WindowText);
+		args.Graphics->drawText(L"▲", components.MaximizeBtn, DrawTextFlags::SimpleCentre);
+	}
 
 	// Minimize button
-	args.Graphics->fillRect(components.MinimizeBtn, SystemColour::BtnFace);
-	args.Graphics->drawEdge(components.MinimizeBtn, EdgeFlags::Raised);
-	args.Graphics->setText(SystemColour::WindowText);
-	args.Graphics->drawText(L"▼", components.MinimizeBtn, DrawTextFlags::SimpleCentre);
+	if (wnd.style().test(WindowStyle::MinimizeBox)) {
+		args.Graphics->fillRect(components.MinimizeBtn, SystemColour::BtnFace);
+		args.Graphics->drawEdge(components.MinimizeBtn, EdgeFlags::Raised);
+		args.Graphics->setText(SystemColour::WindowText);
+		args.Graphics->drawText(L"▼", components.MinimizeBtn, DrawTextFlags::SimpleCentre);
+	}
 	
 	args.Graphics->restore();
 }
