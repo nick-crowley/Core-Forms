@@ -13,9 +13,6 @@
 
 #include "graphics/Win31LookNFeel.cpp"
 
-#include "support/DebugOutputBuffer.cpp"
-#include "support/DebugStream.cpp"
-
 #include "system/Message.cpp"
 #include "system/MessageQueue.cpp"
 #include "system/MessageQueueIterator.cpp"

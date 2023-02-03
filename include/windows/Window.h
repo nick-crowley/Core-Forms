@@ -1,7 +1,8 @@
 #pragma once
 #include "library/core.Forms.h"
 #include "windows/ChildWindowIterator.h"
-#include "support/DebugStream.h"
+#include "core/DebugStream.h"
+#include "core/FunctionLogging.h"
 #include "dialogs/DialogTemplateReader.h"
 #include "dialogs/DialogTemplateWriter.h"
 #include "graphics/Font.h"
@@ -611,10 +612,10 @@ namespace core::forms
 
 			// [DEBUG] Notification from child window we didn't create
 			if (args.Source == CommandEventArgs::Control) {
-				cdebug << "Window::onCommand : warning : WM_COMMAND Received " << to_hexString<4>(args.Notification->Code)
-						<< " from unknown window id=" << ::GetDlgCtrlID(args.Notification->Handle) 
-						<< " handle=" << to_hexString<8>((uintptr_t)args.Notification->Handle)
-						<< std::endl;
+				clog << "Window::onCommand : warning : WM_COMMAND Received " << to_hexString<4>(args.Notification->Code)
+				     << " from unknown window id=" << ::GetDlgCtrlID(args.Notification->Handle) 
+				     << " handle=" << to_hexString<8>((uintptr_t)args.Notification->Handle)
+				     << std::endl;
 				return Unhandled;
 			}
 
