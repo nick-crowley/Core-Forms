@@ -7,20 +7,19 @@ namespace core::forms
 {
 	class Brush
 	{
-		SharedHandle  Handle;
+		SharedBrush  Handle;
 
 	public:
-		Brush(Colour col) {
-			if (auto const brush = ::CreateSolidBrush(win::DWord{col}); !brush)
+		Brush(Colour col) : Handle{::CreateSolidBrush(win::DWord{col})}
+		{
+			if (!this->Handle)
 				win::LastError{}.throwAlways();
-			else
-				this->Handle = make_handle(brush);
 		}
 
 		::HBRUSH
 		handle() const
 		{
-			return get_handle<::HBRUSH>(this->Handle);
+			return *this->Handle;
 		}
 	};
 }

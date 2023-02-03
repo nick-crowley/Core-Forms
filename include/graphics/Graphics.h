@@ -171,10 +171,10 @@ namespace core::forms
 
 		//! @brief	Fills a frame rectangle with a custom brush
 		void 
-		drawFrame(Rect const& rc, SharedHandle const& brush) const
+		drawFrame(Rect const& rc, SharedBrush const& brush) const
 		{
 			// Draw frame rectangle with custom brush
-			if (!::FrameRect(this->handle(), rc, get_handle<::HBRUSH>(brush)))
+			if (!::FrameRect(this->handle(), rc, *brush))
 				win::LastError{}.throwAlways();
 		}
 	

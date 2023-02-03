@@ -14,7 +14,7 @@ namespace core::forms
 		ResourceId	Menu;
 
 	protected:
-		SharedHandle	Atom;
+		SharedAtom	Atom;
 
 	public:
 		WindowClass() : base({sizeof(::WNDCLASSEXW)}) {
@@ -54,7 +54,9 @@ namespace core::forms
 				win::LastError{}.throwIfError("Failed to register '{}' window class", to_string(this->lpszClassName));
 			}
 			else {
-				this->Atom = make_handle(atom, this->hInstance);
+				this->Atom.reset(atom, [inst=this->hInstance](::ATOM at) {
+					::UnregisterClassA(reinterpret_cast<gsl::czstring>(static_cast<uintptr_t>(at)), inst);
+				});
 			}
 		}
 

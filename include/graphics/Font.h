@@ -7,7 +7,7 @@ namespace core::forms
 {
 	class Font
 	{
-		SharedHandle  Handle;
+		SharedFont  Handle;
 
 	public:
 		Font(std::wstring_view name, 
@@ -29,13 +29,13 @@ namespace core::forms
 			if (auto const font = ::CreateFontIndirectW(&req); !font)
 				win::LastError{}.throwAlways();
 			else
-				this->Handle = make_handle(font);
+				this->Handle.reset(font);
 		}
 	
 		::HFONT
 		handle() const
 		{
-			return get_handle<::HFONT>(this->Handle);
+			return *this->Handle;
 		}
 	};
 }

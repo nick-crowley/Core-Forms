@@ -1,84 +1,73 @@
 #pragma once
 #include "library/core.Forms.h"
+#include "core/SmartHandle.h"
 
 namespace core::forms
 {
-	using SharedHandle = std::shared_ptr<void>;
-	//using WindowHandle = std::shared_ptr<std::remove_pointer_t<::HWND>>;
-	//using ClassAtom = std::shared_ptr<::ATOM>;
-	//using ModuleHandle = std::shared_ptr<std::remove_pointer_t<::HINSTANCE>>;
+    namespace detail 
+    {
+        struct AtomTraits {
+            ::ATOM constexpr
+            inline static empty = 0;
 
-	template <typename RawHandle, typename FancyHandle>
-	RawHandle 
-	inline get_handle(FancyHandle& h) {
-		return (RawHandle)(uintptr_t)h.get();
-	}
+            auto constexpr
+            inline static release = [](::ATOM at) {
+                ::UnregisterClassA(reinterpret_cast<gsl::czstring>(static_cast<uintptr_t>(at)), nullptr);
+            };
+        };
+        
+        struct DeviceContextTraits {
+            ::HDC constexpr
+            inline static empty = nullptr;
 
-	SharedHandle 
-	inline make_handle(::HBITMAP b) {
-		return SharedHandle((void*)(uintptr_t)b, [b](void*) {
-			::DeleteObject(b);
-		});
-	}
+            auto constexpr
+            inline static release = [](::HDC dc) {
+                ::ReleaseDC(::WindowFromDC(dc), dc);
+            };
+        };
 
-	SharedHandle 
-	inline make_handle(::HBRUSH b) {
-		return SharedHandle((void*)(uintptr_t)b, [b](void*) {
-			::DeleteObject(b);
-		});
-	}
+        struct GdiObjectTraits {
+            ::HGDIOBJ constexpr
+            inline static empty = nullptr;
 
-	SharedHandle 
-	inline make_handle(::HFONT f) {
-		return SharedHandle((void*)(uintptr_t)f, [f](void*) {
-			::DeleteObject(f);
-		});
-	}
+            auto constexpr
+            inline static release = &::DeleteObject;
+        };
+        
+        struct WindowTraits {
+            ::HWND constexpr
+            inline static empty = nullptr;
 
-	SharedHandle 
-	inline make_handle(::HICON i) {
-		return SharedHandle((void*)(uintptr_t)i, [i](void*) {
-			::DeleteObject(i);
-		});
-	}
-
-	SharedHandle 
-	inline make_handle(::HGDIOBJ obj) {
-		return SharedHandle((void*)(uintptr_t)obj, [obj](void*) {
-			::DeleteObject(obj);
-		});
-	}
-
-	SharedHandle 
-	inline make_handle(::HPEN p) {
-		return SharedHandle((void*)(uintptr_t)p, [p](void*) {
-			::DeleteObject(p);
-		});
-	}
-
-	SharedHandle 
-	inline make_handle(::HDC dc, ::HWND wnd) {
-		return SharedHandle((void*)(uintptr_t)dc, [dc,wnd](void*) {
-			::ReleaseDC(wnd,dc);
-		});
-	}
-
-	SharedHandle 
-	inline make_handle(::HWND w) {
-		return SharedHandle((void*)(uintptr_t)w, [w](void*) {
-			::DestroyWindow(w);
-		});
-	}
-
-	SharedHandle 
-	inline make_handle(::ATOM a, ::HINSTANCE m) {
-		return SharedHandle((void*)(uintptr_t)a, [a, m](void*) {
-			::UnregisterClassA((gsl::czstring)(uintptr_t)a, m);
-		});
-	}
-
-	SharedHandle 
-	inline make_handle(::HINSTANCE m) {
-		return SharedHandle((void*)(uintptr_t)m, [m](void*) {});
-	}
+            auto constexpr
+            inline static release = &::DestroyWindow;
+        };
+    }
+	
+    //! @brief  Shared @c ::HBITMAP released using @c ::DeleteObject()
+    using SharedBitmap = SmartHandle<::HBITMAP, detail::GdiObjectTraits>;
+    
+    //! @brief  Shared @c ::HBRUSH released using @c ::DeleteObject()
+    using SharedBrush = SmartHandle<::HBRUSH, detail::GdiObjectTraits>;
+    
+    //! @brief  Shared @c ::HFONT released using @c ::DeleteObject()
+    using SharedFont = SmartHandle<::HFONT, detail::GdiObjectTraits>;
+    
+    //! @brief  Shared @c ::HGDIOBJ released using @c ::DeleteObject()
+    using SharedObject = SmartHandle<::HGDIOBJ, detail::GdiObjectTraits>;
+    
+    //! @brief  Shared @c ::HICON released using @c ::DeleteObject()
+    using SharedIcon = SmartHandle<::HICON, detail::GdiObjectTraits>;
+    
+    //! @brief  Shared @c ::HPEN released using @c ::DeleteObject()
+    using SharedPen = SmartHandle<::HPEN, detail::GdiObjectTraits>;
+    
+	//! @brief  Shared @c ::ATOM released using @c ::UnregisterClassA()
+    using SharedAtom = SmartHandle<::ATOM, detail::AtomTraits>;
+    
+    //! @brief  Shared @c ::HWND released using @c ::DestroyWindow()
+    using SharedWindow = SmartHandle<::HWND, detail::WindowTraits>;
+    
+    //! @brief  Shared @c ::HDC released using @c ::ReleaseDC()
+    using SharedDeviceContext = SmartHandle<::HDC, detail::DeviceContextTraits>;
+    
 }	// namespace core::forms

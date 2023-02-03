@@ -7,7 +7,7 @@ namespace core::forms
 {
 	class Icon
 	{
-		SharedHandle  Handle;
+		SharedIcon    Handle;
 		Size          Dimensions;
 
 	public:
@@ -15,7 +15,7 @@ namespace core::forms
 
 		explicit
 		Icon(::HICON icon, Size dimensions) 
-		  : Handle{make_handle(icon)},
+		  : Handle{icon},
 			Dimensions{dimensions}
 		{
 		}
@@ -38,7 +38,7 @@ namespace core::forms
 		::HICON
 		handle() const
 		{
-			return get_handle<::HICON>(this->Handle);
+			return *this->Handle;
 		}
 	
 		Rect

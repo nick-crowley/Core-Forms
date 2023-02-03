@@ -1,7 +1,7 @@
 #pragma once
 #include "library/core.Forms.h"
 #include "system/ResourceId.h"
-#include "system/SharedHandle.h"
+#include "win/SharedHandle.h"
 #include "graphics/Bitmap.h"
 #include "graphics/Icon.h"
 
@@ -9,17 +9,17 @@ namespace core::forms
 {
 	class Module 
 	{
-		SharedHandle	Handle;
+		win::SharedModule	Handle;
 
 	public:
 		explicit
-		Module(SharedHandle m) : Handle(m) {
+		Module(win::SharedModule m) : Handle{m} {
 		}
 	
 	public:
 		::HINSTANCE 
 		handle() const {
-			return get_handle<::HINSTANCE>(this->Handle);
+			return *this->Handle;
 		}
 
 		Bitmap
@@ -74,9 +74,9 @@ namespace core::forms
 	};
 
 	Module const
-	inline static ProcessModule {make_handle(::GetModuleHandleW(nullptr))};
+	inline static ProcessModule {win::SharedModule{::GetModuleHandleW(nullptr), weakref}};
 	
 	Module const
-	inline static SystemResource {nullptr};
+	inline static SystemResource {win::SharedModule{nullptr, weakref}};
 
 }	// namespace core::forms

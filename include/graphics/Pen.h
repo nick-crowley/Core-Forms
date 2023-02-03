@@ -8,20 +8,20 @@ namespace core::forms
 {
 	class Pen
 	{
-		SharedHandle  Handle;
+		SharedPen  Handle;
 
 	public:
-		Pen(Colour col, unsigned width, PenStyle s = PenStyle::Solid) {
-			if (auto const pen = ::CreatePen(static_cast<int>(s), width, win::DWord{col}); !pen)
+		Pen(Colour col, unsigned width, PenStyle s = PenStyle::Solid) 
+		  : Handle{::CreatePen(static_cast<int>(s), width, win::DWord{col})}
+		{
+			if (!this->Handle)
 				win::LastError{}.throwAlways();
-			else
-				this->Handle = make_handle(pen);
 		}
 
 		::HPEN
 		handle() const
 		{
-			return get_handle<::HPEN>(this->Handle);
+			return *this->Handle;
 		}
 	};
 }

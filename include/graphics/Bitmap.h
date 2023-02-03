@@ -23,7 +23,7 @@ namespace core::forms
 
 	class Bitmap
 	{
-		SharedHandle  Handle;
+		SharedBitmap  Handle;
 		Size          Dimensions;
 		ColourDepth   Depth;
 
@@ -32,7 +32,7 @@ namespace core::forms
 
 		explicit
 		Bitmap(::HBITMAP bmp, Size dimensions, ColourDepth depth) 
-		  : Handle{make_handle(bmp)},
+		  : Handle{bmp},
 			Dimensions{dimensions},
 			Depth{depth}
 		{
@@ -61,7 +61,7 @@ namespace core::forms
 		::HBITMAP
 		handle() const
 		{
-			return get_handle<::HBITMAP>(this->Handle);
+			return *this->Handle;
 		}
 	
 		Rect
