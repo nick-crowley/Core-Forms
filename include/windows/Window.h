@@ -761,6 +761,7 @@ namespace core::forms
 			case WM_MOUSEMOVE:
 				if (s_BeneathCursor != this) {
 					s_BeneathCursor = this;
+					// FIXME: Merge onMouseEnter() into onMouseMove() with MouseMessage::Enter to reduce # of mouse-related events
 					if (auto r = this->onMouseEnter({MouseMessage::Enter,MouseButton::None,wParam,lParam}); r != Unhandled)
 						return r;
 				}
