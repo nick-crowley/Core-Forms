@@ -9,13 +9,13 @@ namespace core::forms
 	class StaticControl : public Control {
 		class StaticWindowClass : public WindowClass {
 		public:
-			::WNDPROC	OriginalMessageHandler;
+			::WNDPROC	OriginalWndProc;
 
 		public:
 			StaticWindowClass() : WindowClass{ResourceId{WC_STATIC}}  {
-				this->name(ResourceId{L"Custom.STATIC"});
-				this->OriginalMessageHandler = std::exchange(this->lpfnWndProc, Window::DefaultMessageHandler);
-				this->register$();
+				this->Name = ResourceId{L"Custom.STATIC"};
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->register_();
 			}
 		};
 		
@@ -70,7 +70,7 @@ namespace core::forms
 
 		::LRESULT 
 		unhandledMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
-			return ::CallWindowProc(this->wndcls().OriginalMessageHandler, hWnd, message, wParam, lParam);
+			return ::CallWindowProc(this->wndcls().OriginalWndProc, hWnd, message, wParam, lParam);
 		}
 	};
 }	// namespace core::forms

@@ -9,13 +9,13 @@ namespace core::forms
 	class EditControl : public Control {
 		class EditWindowClass : public WindowClass {
 		public:
-			::WNDPROC	OriginalMessageHandler;
+			::WNDPROC	OriginalWndProc;
 
 		public:
 			EditWindowClass() : WindowClass{ResourceId{WC_EDIT}}  {
-				this->name(ResourceId{L"Custom.EDIT"});
-				this->OriginalMessageHandler = std::exchange(this->lpfnWndProc, Window::DefaultMessageHandler);
-				this->register$();
+				this->Name = ResourceId{L"Custom.EDIT"};
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->register_();
 			}
 		};
 
@@ -68,7 +68,7 @@ namespace core::forms
 
 		::LRESULT 
 		unhandledMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
-			return ::CallWindowProc(wndcls().OriginalMessageHandler, hWnd, message, wParam, lParam);
+			return ::CallWindowProc(wndcls().OriginalWndProc, hWnd, message, wParam, lParam);
 		}
 	};
 }	// namespace core::forms

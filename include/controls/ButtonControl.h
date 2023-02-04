@@ -26,13 +26,13 @@ namespace core::forms
 
 		class ButtonWindowClass : public WindowClass {
 		public:
-			::WNDPROC	OriginalMessageHandler;
+			::WNDPROC	OriginalWndProc;
 
 		public:
 			ButtonWindowClass() : WindowClass{ResourceId{WC_BUTTON}}  {
-				this->name(ResourceId{L"Custom.BUTTON"});
-				this->OriginalMessageHandler = std::exchange(this->lpfnWndProc, Window::DefaultMessageHandler);
-				this->register$();
+				this->Name = ResourceId{L"Custom.BUTTON"};
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->register_();
 			}
 		};
 	
@@ -123,7 +123,7 @@ namespace core::forms
 
 		::LRESULT 
 		unhandledMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
-			return ::CallWindowProc(this->wndcls().OriginalMessageHandler, hWnd, message, wParam, lParam);
+			return ::CallWindowProc(this->wndcls().OriginalWndProc, hWnd, message, wParam, lParam);
 		}
 	};
 } // namespace core::forms

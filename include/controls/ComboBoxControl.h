@@ -9,13 +9,13 @@ namespace core::forms
 	class ComboBoxControl : public Control {
 		class ComboBoxWindowClass : public WindowClass {
 		public:
-			::WNDPROC	OriginalMessageHandler;
+			::WNDPROC	OriginalWndProc;
 
 		public:
 			ComboBoxWindowClass() : WindowClass{ResourceId{WC_COMBOBOX}}  {
-				this->name(ResourceId{L"Custom.COMBOBOX"});
-				this->OriginalMessageHandler = std::exchange(this->lpfnWndProc, Window::DefaultMessageHandler);
-				this->register$();
+				this->Name = ResourceId{L"Custom.COMBOBOX"};
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->register_();
 			}
 		};
 	
@@ -271,7 +271,7 @@ namespace core::forms
 
 		::LRESULT 
 		unhandledMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
-			return ::CallWindowProc(this->wndcls().OriginalMessageHandler, hWnd, message, wParam, lParam);
+			return ::CallWindowProc(this->wndcls().OriginalWndProc, hWnd, message, wParam, lParam);
 		}
 	};
 }	// namespace core::forms

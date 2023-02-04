@@ -9,13 +9,13 @@ namespace core::forms
 	class ProgressBarControl : public Control {
 		class ProgressBarWindowClass : public WindowClass {
 		public:
-			::WNDPROC	OriginalMessageHandler;
+			::WNDPROC	OriginalWndProc;
 
 		public:
 			ProgressBarWindowClass() : WindowClass{ResourceId{PROGRESS_CLASS}}  {
-				this->name(ResourceId{L"Custom.PROGRESS"});
-				this->OriginalMessageHandler = std::exchange(this->lpfnWndProc, Window::DefaultMessageHandler);
-				this->register$();
+				this->Name = ResourceId{L"Custom.PROGRESS"};
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->register_();
 			}
 		};
 
@@ -45,7 +45,7 @@ namespace core::forms
 
 		::LRESULT 
 		unhandledMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
-			return ::CallWindowProc(wndcls().OriginalMessageHandler, hWnd, message, wParam, lParam);
+			return ::CallWindowProc(wndcls().OriginalWndProc, hWnd, message, wParam, lParam);
 		}
 	};
 }	// namespace core::forms

@@ -472,8 +472,8 @@ namespace core::forms
 			if (area) {
 				wnd.Area = *area;
 			}
-			wnd.Class = ResourceId::parse(this->wndcls().lpszClassName);
-			wnd.Module = this->wndcls().hInstance;
+			wnd.Class = this->wndcls().Name;
+			wnd.Module = this->wndcls().Instance;
 			wnd.Parameter = CreateWindowParameter{this};
 			wnd.Text = text;
 			wnd.Style = style;
@@ -487,8 +487,8 @@ namespace core::forms
 			CreateWindowBuilder wnd;
 			wnd.Area = area;
 			wnd.Parent = parent.handle();
-			wnd.Class = ResourceId::parse(this->wndcls().lpszClassName);
-			wnd.Module = this->wndcls().hInstance;
+			wnd.Class = this->wndcls().Name;
+			wnd.Module = this->wndcls().Instance;
 			wnd.Parameter = CreateWindowParameter{this};
 			wnd.Text = text;
 			wnd.Style = style;

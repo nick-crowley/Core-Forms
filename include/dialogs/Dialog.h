@@ -11,13 +11,13 @@ namespace core::forms
 	public:
 		class DialogWindowClass : public WindowClass {
 		public:
-			::WNDPROC	OriginalMessageHandler;
+			::WNDPROC	OriginalWndProc;
 		public:
 			DialogWindowClass() : WindowClass(ResourceId::parse(WC_DIALOG))
 			{
-				this->name(ResourceId(L"Custom.DIALOG"));
-				this->OriginalMessageHandler = std::exchange(this->lpfnWndProc, Dialog::InterceptMessageHandler);
-				this->register$();
+				this->Name = ResourceId{L"Custom.DIALOG"};
+				this->OriginalWndProc = std::exchange(this->WndProc, Dialog::InterceptMessageHandler);
+				this->register_();
 			}
 		};
 
@@ -167,7 +167,7 @@ namespace core::forms
 
 		::LRESULT 
 		virtual unhandledMessage(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
-			return ::CallWindowProc(this->wndcls().OriginalMessageHandler, hDlg, message, wParam, lParam);
+			return ::CallWindowProc(this->wndcls().OriginalWndProc, hDlg, message, wParam, lParam);
 		}
 
 		/*::LRESULT 
@@ -255,7 +255,7 @@ namespace core::forms
 		{
 			// Change the wndclass for the dialog
 			auto customTemplate = this->Template;
-			customTemplate.ClassName = ResourceId::parse(this->wndcls().lpszClassName);
+			customTemplate.ClassName = this->wndcls().Name;
 
 			// BUG: Prevent callers from wrapping more than one window handle using the same C++ object
 			

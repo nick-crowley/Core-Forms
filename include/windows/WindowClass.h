@@ -1,69 +1,80 @@
 #pragma once
 #include "library/core.Forms.h"
+#include "nstd/Bitset.h"
+#include "windows/ClassStyle.h"
+#include "system/ResourceId.h"
 #include "system/Module.h"
 #include "system/SharedHandle.h"
 #include "system/ResourceId.h"
 
 namespace core::forms
 {
-	struct WindowClass : public ::WNDCLASSEXW {
-		using base = ::WNDCLASSEXW;
-	
-	private:
-		ResourceId	Name;
-		ResourceId	Menu;
+	class WindowClass {
+	public:
+		::HBRUSH                  Background = nullptr;
+		uint32_t                  ClsExtra = 0;
+		::HCURSOR                 Cursor = nullptr;
+		::HICON                   LargeIcon = nullptr, 
+		                          SmallIcon = nullptr;
+		ResourceId                Name;
+		ResourceId                Menu;
+		::HMODULE                 Instance = nullptr;
+		nstd::bitset<ClassStyle>  Style;
+		uint32_t                  WndExtra = 0;
+		::WNDPROC                 WndProc = nullptr;
 
 	protected:
 		SharedAtom	Atom;
 
+	private:
+		::WNDCLASSEXW  Properties {sizeof(::WNDCLASSEXW)};
+
 	public:
-		WindowClass() : base({sizeof(::WNDCLASSEXW)}) {
+		WindowClass() {
 		}
 
-		WindowClass(ResourceId name, std::optional<Module> owner = std::nullopt) 
-		  : base({sizeof(::WNDCLASSEXW)}),
-			Name(name)
+		WindowClass(ResourceId name, std::optional<::HMODULE> container = std::nullopt) 
+		  : Name{name}, Instance{container.value_or(nullptr)}
 		{
-			auto module = owner ? owner->handle() : nullptr;
-			if (!::GetClassInfoExW(module, name, static_cast<base*>(this))) {
+			if (!::GetClassInfoExW(this->Instance, name, &this->Properties)) {
 				win::LastError{}.throwIfError("Cannot find '{}' window class", to_string(name));
 			}
-		}
 
-		WindowClass(ResourceId name, std::optional<Module> owner, ::WNDPROC proc) 
-			: WindowClass() 
-		{
-			this->style = CS_HREDRAW | CS_VREDRAW | (owner ? NULL : CS_GLOBALCLASS);
-			this->lpfnWndProc = proc;
-			//this->Class.cbClsExtra = 0;
-			//this->Class.cbWndExtra = 0;
-			this->hInstance = (owner ? owner->handle() : nullptr);
-			//this->Class.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_DESKTOPWIZARDAPP));
-			this->hCursor = LoadCursor(nullptr, IDC_ARROW);
-			this->hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-			//this->Class.lpszMenuName = MAKEINTRESOURCEW(IDC_DESKTOPWIZARDAPP);
-			//this->Class.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
-			this->name(name);
-			this->register$();
+			this->Background = this->Properties.hbrBackground;
+			this->ClsExtra = this->Properties.cbClsExtra;
+			this->Cursor = this->Properties.hCursor;
+			this->LargeIcon = this->Properties.hIcon;
+			this->SmallIcon = this->Properties.hIconSm;
+			this->Menu = ResourceId::parse(this->Properties.lpszMenuName);
+			this->Style = static_cast<ClassStyle>(this->Properties.style);
+			this->WndExtra = this->Properties.cbWndExtra;
+			this->WndProc = this->Properties.lpfnWndProc;
 		}
 
 	public:
 		void 
-		register$() {	
-			if (::ATOM atom = ::RegisterClassExW(static_cast<base*>(this)); !atom) {
-				win::LastError{}.throwIfError("Failed to register '{}' window class", to_string(this->lpszClassName));
-			}
-			else {
-				this->Atom.reset(atom, [inst=this->hInstance](::ATOM at) {
-					::UnregisterClassA(reinterpret_cast<gsl::czstring>(static_cast<uintptr_t>(at)), inst);
-				});
-			}
-		}
+		register_() {
+			this->Properties.hbrBackground = this->Background;
+			this->Properties.cbClsExtra = this->ClsExtra;
+			this->Properties.lpszClassName = this->Name;
+			this->Properties.hCursor = this->Cursor;
+			this->Properties.hIcon = this->LargeIcon;
+			this->Properties.hIconSm = this->SmallIcon;
+			this->Properties.hInstance = this->Instance;
+			this->Properties.lpszMenuName = this->Menu;
+			this->Properties.style = this->Style.value();
+			this->Properties.cbWndExtra = this->WndExtra;
+			this->Properties.lpfnWndProc = this->WndProc;
 
-		void 
-		name(ResourceId name) {
-			this->Name = name;
-			this->lpszClassName = this->Name;
+			if (::ATOM atom = ::RegisterClassExW(&this->Properties); !atom)
+				win::LastError{}.throwIfError("Failed to register '{}' window class", to_string(this->Name));
+			
+			else {
+				auto const releaser = [instance = this->Instance](::ATOM _atom) {
+					::UnregisterClassA(reinterpret_cast<gsl::czstring>(static_cast<uintptr_t>(_atom)), instance);
+				};
+				this->Atom.reset(atom, releaser);
+			}
 		}
 	};
 }	// namespace core::forms
