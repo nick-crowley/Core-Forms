@@ -54,6 +54,10 @@ namespace core::forms
 	public:
 		void 
 		register_() {
+			::WNDCLASSEXW  props {sizeof(::WNDCLASSEXW)};
+			if (::GetClassInfoExW(this->Instance, this->Name, &props))
+				return;
+			
 			this->Properties.hbrBackground = this->Background;
 			this->Properties.cbClsExtra = this->ClsExtra;
 			this->Properties.lpszClassName = this->Name;
