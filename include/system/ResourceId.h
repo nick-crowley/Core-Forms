@@ -73,5 +73,5 @@ namespace core::forms
 	to_string(ResourceId const& res);
 
 	std::wstring
-	to_wstring(ResourceId const& res);
+	to_wstring(ResourceId const& res) = delete;
 }	// namespace core::forms
