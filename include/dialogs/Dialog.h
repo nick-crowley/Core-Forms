@@ -295,6 +295,9 @@ namespace core::forms
 			// [MODAL] Display, block, and return result
 			if (mode == DialogMode::Modal) { 
 				auto result = ::DialogBoxIndirectW(container, blob, owner, this->DialogProc);
+				if (result == -1)
+					win::LastError{}.throwIfError("Failed to display '{}' dialog", to_string(this->DialogId));
+
 				this->DisplayMode = std::nullopt;
 				return result;
 			}
