@@ -54,10 +54,6 @@ namespace core::forms
 	public:
 		void 
 		register_() {
-			::WNDCLASSEXW  props {sizeof(::WNDCLASSEXW)};
-			if (::GetClassInfoExW(this->Instance, this->Name, &props))
-				return;
-			
 			this->Properties.hbrBackground = this->Background;
 			this->Properties.cbClsExtra = this->ClsExtra;
 			this->Properties.lpszClassName = this->Name;
@@ -70,9 +66,10 @@ namespace core::forms
 			this->Properties.cbWndExtra = this->WndExtra;
 			this->Properties.lpfnWndProc = this->WndProc;
 
-			if (::ATOM atom = ::RegisterClassExW(&this->Properties); !atom)
-				win::LastError{}.throwIfError("Failed to register '{}' window class", to_string(this->Name));
-			
+			if (::ATOM atom = ::RegisterClassExW(&this->Properties); !atom) {
+				if (auto lastError = win::LastError{}; lastError != ERROR_CLASS_ALREADY_EXISTS)
+					lastError.throwIfError("Failed to register '{}' window class", to_string(this->Name));
+			}
 			else {
 				auto const releaser = [instance = this->Instance](::ATOM _atom) {
 					::UnregisterClassA(reinterpret_cast<gsl::czstring>(static_cast<uintptr_t>(_atom)), instance);
