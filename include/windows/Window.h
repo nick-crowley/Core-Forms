@@ -612,10 +612,9 @@ namespace core::forms
 
 			// [DEBUG] Notification from child window we didn't create
 			if (args.Source == CommandEventArgs::Control) {
-				clog << "Window::onCommand : warning : WM_COMMAND Received " << to_hexString<4>(args.Notification->Code)
-				     << " from unknown window id=" << ::GetDlgCtrlID(args.Notification->Handle) 
-				     << " handle=" << to_hexString<8>((uintptr_t)args.Notification->Handle)
-				     << std::endl;
+				clog << Warning{"Window::onCommand : warning : WM_COMMAND Received {} from unknown window id={} handle={}", 
+					to_hexString<4>(args.Notification->Code), ::GetDlgCtrlID(args.Notification->Handle), 
+					to_hexString<8>((uintptr_t)args.Notification->Handle)};
 				return Unhandled;
 			}
 
