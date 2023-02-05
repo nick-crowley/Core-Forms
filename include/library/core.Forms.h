@@ -6,5 +6,9 @@
 #include <gsl/gsl>
 
 #include "core/BitwiseEnum.h"
-#include "support/to_string.h"
 #include "support/HexString.h"
+
+namespace core::forms
+{
+	using core::to_string;
+}
