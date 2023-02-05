@@ -48,7 +48,7 @@ namespace core::forms
 														LR_LOADTRANSPARENT); !icon)
 				win::LastError{}.throwAlways();
 			else
-				return Icon{icon, dimensions};
+				return Icon{SharedIcon{icon,&::DestroyIcon}, dimensions};
 		}
 
 		std::vector<std::byte> 

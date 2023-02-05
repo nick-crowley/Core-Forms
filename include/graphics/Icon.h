@@ -14,8 +14,8 @@ namespace core::forms
 		Icon() noexcept = default;
 
 		explicit
-		Icon(::HICON icon, Size dimensions) 
-		  : Handle{icon},
+		Icon(SharedIcon icon, Size dimensions) 
+		  : Handle{std::move(icon)},
 			Dimensions{dimensions}
 		{
 		}
@@ -32,7 +32,7 @@ namespace core::forms
 														LR_LOADFROMFILE|LR_LOADTRANSPARENT); !icon)
 				win::LastError{}.throwAlways();
 			else
-				return Icon{icon, dimensions};
+				return Icon{SharedIcon{icon,&::DestroyIcon}, dimensions};
 		}
 
 		::HICON
