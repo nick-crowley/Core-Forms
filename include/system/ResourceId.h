@@ -68,6 +68,9 @@ namespace core::forms
 				return std::get_if<std::wstring>(&this->Ident)->c_str(); 
 		}
 	};
+	
+	std::string
+	to_string(ResourceId const& res);
 
 	std::wstring
 	to_wstring(ResourceId const& res);
