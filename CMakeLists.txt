@@ -80,7 +80,11 @@ add_definitions(-D_ATL_ATTRIBUTES
 # Set global include folders: 
 # $ENV{BOOST_ROOT}	:	Boost headers
 # $ENV{GSL_ROOT}	:	Guideline Support Library (GSL) headers
-include_directories($ENV{BOOST_ROOT} $ENV{GSL_ROOT})
+include_directories($ENV{BOOST_ROOT} 
+	$ENV{GSL_ROOT}
+	"${BASE_FOLDER}../Core-Platform/include"
+	"${BASE_FOLDER}../Core-Com/include"
+)
 
 # Set global library folders:
 # $ENV{BOOST_ROOT}/stage/lib	: Boost libraries
@@ -191,12 +195,14 @@ target_include_directories(dllCoreForms BEFORE
 set_target_properties(dllCoreForms PROPERTIES
 					  OUTPUT_NAME "CoreForms"
 					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} -D${PROJECT_DLL_MACRO}")
-					  
+
 # Set linker dependencies
-#target_link_libraries(dllCoreForms
-#	dllCoreCom
-#	dllCorePlatform
-#)
+target_link_libraries(dllCoreForms
+	#dllCorePlatform
+	#dllCoreCom
+	"${BASE_FOLDER}../Core-Platform/build/$(Configuration)/CorePlatform.lib"
+	"${BASE_FOLDER}../Core-Com/build/$(Configuration)/CoreCom.lib"
+)
 
 # Set project dependencies
 #add_dependencies(dllCoreForms
