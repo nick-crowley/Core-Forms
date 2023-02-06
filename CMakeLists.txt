@@ -51,8 +51,7 @@ set(GSL_ASSERTION_BEHAVIOUR "GSL_THROW_ON_CONTRACT_VIOLATION")
 # /wd4684           : Disable C4684: 'no_injected_text': WARNING!! attribute may cause invalid code generation: use with caution
 # /wd4543           : Disable C4543: Injected text suppressed by attribute 'no_injected_text'
 # /wd4584           : Disable C4584: Base-class 'IUnknown' is already a base-class of 'I...'
-# /MTd				: Statically link against (debug) CRT
-set(GLOBAL_COMPILER_OPTIONS "/std:c++latest /std:c17 /permissive /Zc:preprocessor /ZI /EHa /W4 /wd4251 /wd4275 /wd4467 /wd4684 /wd4543 /wd4584 /MTd")
+set(GLOBAL_COMPILER_OPTIONS "/std:c++latest /std:c17 /permissive /Zc:preprocessor /ZI /EHa /W4 /wd4251 /wd4275 /wd4467 /wd4684 /wd4543 /wd4584")
 
 # Set compiler options used by test modules
 #set(GLOBAL_TEST_COMPILER_OPTIONS "${GLOBAL_COMPILER_OPTIONS} -DTEST_BUILD_CONTEXT -DGTEST_LINKED_AS_SHARED_LIBRARY=1")
@@ -143,9 +142,9 @@ add_library(libCoreForms STATIC
 # Include folders
 target_include_directories(libCoreForms BEFORE
     PRIVATE
-	${PROJECT_SOURCE_FOLDER} 
+	${PROJECT_SOURCE_FOLDER}
     PUBLIC
-    ${PROJECT_INCLUDE_FOLDER}            
+    ${PROJECT_INCLUDE_FOLDER}
 )
 	
 # Set linker dependencies 
@@ -156,10 +155,12 @@ target_link_libraries(libCoreForms
 	Msimg32
 )
 
-# Differentiate the filename of the static library
+# Link against CRT statically
 set_target_properties(libCoreForms PROPERTIES
-					  #OUTPUT_NAME "libCoreForms"
-					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} -D${PROJECT_LIB_MACRO}")
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} /MTd -D${PROJECT_LIB_MACRO}"
+					  #COMPILE_FLAGS_DEBUG   "${GLOBAL_COMPILER_OPTIONS} /MTd -D${PROJECT_LIB_MACRO}"
+					  #COMPILE_FLAGS_RELEASE "${GLOBAL_COMPILER_OPTIONS} /MT  -D${PROJECT_LIB_MACRO}"
+)
 
 # Set project dependencies
 #add_dependencies(libCoreForms
@@ -191,10 +192,11 @@ target_include_directories(dllCoreForms BEFORE
     ${PROJECT_INCLUDE_FOLDER}
 )
 
-# Differentiate the filename of the static library
+# Differentiate the filename of the import library
 set_target_properties(dllCoreForms PROPERTIES
 					  OUTPUT_NAME "CoreForms"
-					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} -D${PROJECT_DLL_MACRO}")
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} -D${PROJECT_DLL_MACRO}"
+)
 
 # Set linker dependencies
 target_link_libraries(dllCoreForms
