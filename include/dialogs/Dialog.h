@@ -25,6 +25,7 @@ namespace core::forms
 		enum DialogMode { Modal, NonModal };
 
 	private:
+		// BUG: Dialog::s_DialogCreationParameter cannot be __declspec(dllexport)
 		std::optional<CreateWindowParameter>
 		static /*thread_local*/ s_DialogCreationParameter;
 
