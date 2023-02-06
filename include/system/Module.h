@@ -52,7 +52,7 @@ namespace core::forms
 		}
 
 		std::vector<std::byte> 
-		loadResource(gsl::cwzstring name, gsl::cwzstring category) const
+		loadResource(ResourceId name, gsl::cwzstring category) const
 		{
 			if (::HRSRC resource = ::FindResourceW(this->handle(), name, category); !resource) {
 				win::LastError{}.throwAlways("Failed to find resource '{}'", to_string(name));
