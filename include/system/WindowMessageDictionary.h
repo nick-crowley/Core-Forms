@@ -28,7 +28,7 @@ namespace core::forms
 		{}
 	};
 
-	class WindowMessageDictionary  {
+	class FormsExport WindowMessageDictionary  {
 		using Dictionary = std::map<uint16_t, MessageProperties>;
 
 		Dictionary	Storage;

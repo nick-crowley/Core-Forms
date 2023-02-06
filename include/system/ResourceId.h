@@ -3,7 +3,7 @@
 
 namespace core::forms
 {
-	class ResourceId 
+	class FormsExport ResourceId 
 	{
 	private:
 		using Storage = std::variant<uint16_t, std::wstring>;
@@ -70,7 +70,7 @@ namespace core::forms
 	};
 	
 	std::string
-	to_string(ResourceId const& res);
+	FormsExport to_string(ResourceId const& res);
 
 	std::wstring
 	to_wstring(ResourceId const& res) = delete;

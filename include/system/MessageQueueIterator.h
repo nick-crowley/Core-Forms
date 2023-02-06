@@ -13,7 +13,8 @@ namespace core::forms
 		using base = boost::iterator_facade<MessageQueueIterator, const Message, boost::forward_traversal_tag>;
 	
 	public:
-		static const MessageQueueIterator npos;
+		MessageQueueIterator const
+		static FormsExport npos;
 
 	private:
 		Message Current;

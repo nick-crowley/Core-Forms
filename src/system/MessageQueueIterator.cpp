@@ -2,5 +2,5 @@
 using namespace core;
 using namespace forms;
 
-const MessageQueueIterator
+MessageQueueIterator const
 MessageQueueIterator::npos;

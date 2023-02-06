@@ -3,7 +3,7 @@
 
 namespace core::forms
 {
-	class ConstChildWindowIterator
+	class FormsExport ConstChildWindowIterator
 	  : public boost::iterator_facade<ConstChildWindowIterator, const ::HWND, boost::forward_traversal_tag>
 	{
 		friend class boost::iterator_core_access;
@@ -14,7 +14,8 @@ namespace core::forms
 		using Storage = std::list<::HWND>;
 
 	public:
-		static const ConstChildWindowIterator npos;
+		ConstChildWindowIterator const
+		static npos;
 
 	private:
 		std::vector<::HWND>  Children;

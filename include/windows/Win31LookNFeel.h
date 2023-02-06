@@ -3,7 +3,7 @@
 
 namespace core::forms
 {
-	struct Win31LookNFeel : public ILookNFeelProvider
+	struct FormsExport Win31LookNFeel : public ILookNFeelProvider
 	{
 		void
 		draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) override;

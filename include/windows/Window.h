@@ -18,7 +18,7 @@
 
 namespace core::forms
 {
-	class Window {
+	class FormsExport Window {
 	public:
 		class Response {
 		public:
@@ -43,7 +43,7 @@ namespace core::forms
 			);
 		};
 
-		class ChildWindowCollection {
+		class FormsExport ChildWindowCollection {
 			using const_iterator = boost::transform_iterator<std::decay_t<Window*(::HWND)>, ConstChildWindowIterator>;
 	
 		private:
@@ -120,7 +120,7 @@ namespace core::forms
 		};
 
 	protected:
-		class ExistingWindowCollection {
+		class FormsExport ExistingWindowCollection {
 			using RawHandleDictionary = std::map<::HWND, Window*>;
 			using key_t = ::HWND;
 

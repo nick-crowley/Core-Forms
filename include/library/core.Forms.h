@@ -5,6 +5,8 @@
 #include "../../src/libBoost.h"
 #include <gsl/gsl>
 
+#include "../../src/library/FormsExport.h"
+
 #include "core/BitwiseEnum.h"
 #include "support/HexString.h"
 

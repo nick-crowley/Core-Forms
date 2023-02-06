@@ -7,7 +7,7 @@
 
 namespace core::forms
 {
-	class Dialog : public Window {
+	class FormsExport Dialog : public Window {
 	public:
 		class DialogWindowClass : public WindowClass {
 		public:
@@ -26,7 +26,7 @@ namespace core::forms
 
 	private:
 		std::optional<CreateWindowParameter>
-		static thread_local s_DialogCreationParameter;
+		static /*thread_local*/ s_DialogCreationParameter;
 
 		// NB: Fields ordered for debugging convenience
 	private:

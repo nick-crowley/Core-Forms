@@ -38,7 +38,7 @@ set(PROJECT_RESOURCE_FOLDER "${BASE_FOLDER}res/")
 set(GSL_ASSERTION_BEHAVIOUR "GSL_THROW_ON_CONTRACT_VIOLATION")
 
 # Set compiler options used by all modules
-# /std:c++20		: ISO C++ 20 Standard
+# /std:c++latest	: Preview ISO C++ 23 Standard
 # /std:c17			: ISO C 17 Standard
 # /permissive		: Support non-standard Microsoft COM attributes
 # /Zc:preprocessor	: ISO C++20 Preprocessor
@@ -48,8 +48,11 @@ set(GSL_ASSERTION_BEHAVIOUR "GSL_THROW_ON_CONTRACT_VIOLATION")
 # /wd4251			: Disable W4251: Classes containing fields of STL type (CRT compatibility warning)
 # /wd4275			: Disable W4275: Classes containing bases of STL type (CRT compatibility warning)
 # /wd4467           : Disable C4467: Usage of ATL attributes is deprecated
+# /wd4684           : Disable C4684: 'no_injected_text': WARNING!! attribute may cause invalid code generation: use with caution
+# /wd4543           : Disable C4543: Injected text suppressed by attribute 'no_injected_text'
+# /wd4584           : Disable C4584: Base-class 'IUnknown' is already a base-class of 'I...'
 # /MTd				: Statically link against (debug) CRT
-set(GLOBAL_COMPILER_OPTIONS "/std:c++20 /std:c17 /permissive /Zc:preprocessor /ZI /EHa /W4 /wd4251 /wd4275 /wd4467 /MTd")
+set(GLOBAL_COMPILER_OPTIONS "/std:c++latest /std:c17 /permissive /Zc:preprocessor /ZI /EHa /W4 /wd4251 /wd4275 /wd4467 /wd4684 /wd4543 /wd4584 /MTd")
 
 # Set compiler options used by test modules
 #set(GLOBAL_TEST_COMPILER_OPTIONS "${GLOBAL_COMPILER_OPTIONS} -DTEST_BUILD_CONTEXT -DGTEST_LINKED_AS_SHARED_LIBRARY=1")
@@ -88,25 +91,11 @@ link_directories($ENV{BOOST_ROOT}/stage/lib ${OUTPUT_FOLDER})
 set(CMAKE_CONFIGURATION_TYPES Debug Release CACHE TYPE INTERNAL FORCE )
 #set(CMAKE_CONFIGURATION_TYPES Debug CACHE TYPE INTERNAL FORCE )
 
-##############################################################################
-#         _________ __          __  .__         .____    ._____.             #
-#        /   _____//  |______ _/  |_|__| ____   |    |   |__\_ |__           #
-#        \_____  \\   __\__  \\   __\  |/ ___\  |    |   |  || __ \          #
-#        /        \|  |  / __ \|  | |  \  \___  |    |___|  || \_\ \         #
-#       /_______  /|__| (____  /__| |__|\___  > |_______ \__||___  /         #
-#               \/           \/             \/          \/       \/          #
-##############################################################################
-message("StaticLib: Generating project(s) from ${PROJECT_SOURCE_FOLDER} with ${PROJECT_INCLUDE_FOLDER}")
-
-# Define macro controlling dllexport/import specifier
-set(PROJECT_DLL_MACRO "PROJECT_BUILD_DYNAMIC")
-set(PROJECT_LIB_MACRO "PROJECT_BUILD_STATIC")
-
 # Source files
 file(GLOB_RECURSE PROJECT_SOURCE_FILES
     "${PROJECT_SOURCE_FOLDER}*.h"
     "${PROJECT_SOURCE_FOLDER}*.cpp"
-    )
+)
 	
 # [OPTIMIZED] Source files to exclude by marking as header-only
 file(GLOB_RECURSE PROJECT_SOURCE_IMPL_FILES
@@ -119,19 +108,33 @@ set_source_files_properties(${PROJECT_SOURCE_IMPL_FILES} PROPERTIES
 # Optimized-build files
 file(GLOB_RECURSE PROJECT_SOURCE_CC_FILES
     "${PROJECT_SOURCE_FOLDER}*.cc"
-    )
+)
 	
 # Exported header files
 file(GLOB_RECURSE PROJECT_INCLUDE_FILES
     "${PROJECT_INCLUDE_FOLDER}*.h"
-    )
+)
+
+# Define macro controlling dllexport/import specifier
+set(PROJECT_DLL_MACRO "BuildCoreFormsDLL")
+set(PROJECT_LIB_MACRO "BuildCoreFormsStaticLib")
+
+##############################################################################
+#         _________ __          __  .__         .____    ._____.             #
+#        /   _____//  |______ _/  |_|__| ____   |    |   |__\_ |__           #
+#        \_____  \\   __\__  \\   __\  |/ ___\  |    |   |  || __ \          #
+#        /        \|  |  / __ \|  | |  \  \___  |    |___|  || \_\ \         #
+#       /_______  /|__| (____  /__| |__|\___  > |_______ \__||___  /         #
+#               \/           \/             \/          \/       \/          #
+##############################################################################
+message("StaticLib: Generating project(s) from ${PROJECT_SOURCE_FOLDER} with ${PROJECT_INCLUDE_FOLDER}")
 
 # Project: libCoreForms
 add_library(libCoreForms STATIC 
 	${PROJECT_SOURCE_FILES} 
 	${PROJECT_SOURCE_CC_FILES} 
 	${PROJECT_INCLUDE_FILES} 
-    )
+)
   
 # Include folders
 target_include_directories(libCoreForms BEFORE
@@ -139,19 +142,67 @@ target_include_directories(libCoreForms BEFORE
 	${PROJECT_SOURCE_FOLDER} 
     PUBLIC
     ${PROJECT_INCLUDE_FOLDER}            
-	)
+)
 	
 # Set linker dependencies 
 target_link_libraries(libCoreForms
 	libCoreCom
-	libCorePlatform
+	#libCorePlatform
 	UxTheme
-	Msimg32)
+	Msimg32
+)
 
 # Differentiate the filename of the static library
 set_target_properties(libCoreForms PROPERTIES
 					  #OUTPUT_NAME "libCoreForms"
 					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} -D${PROJECT_LIB_MACRO}")
+
+# Set project dependencies
+#add_dependencies(libCoreForms
+#	libCoreCOM
+#	libCorePlatform
+#)
+
+#############################################################################
+#  ________                              .__          .____    ._____.      #
+#  \______ \ ___.__. ____ _____    _____ |__| ____    |    |   |__\_ |__    #
+#   |    |  <   |  |/    \\__  \  /     \|  |/ ___\   |    |   |  || __ \   #
+#   |    `   \___  |   |  \/ __ \|  Y Y  \  \  \___   |    |___|  || \_\ \  #
+#  /_______  / ____|___|  (____  /__|_|  /__|\___  >  |_______ \__||___  /  #
+#          \/\/         \/     \/      \/        \/           \/       \/   #
+#############################################################################
+message("DynamicLib: Generating project(s) from ${PROJECT_SOURCE_FOLDER} with ${PROJECT_INCLUDE_FOLDER}")
+
+# Project: dllCoreForms
+add_library(dllCoreForms SHARED 
+	"${PROJECT_EXTRA_FOLDER}DllMain.cpp"
+	${PROJECT_SOURCE_CC_FILES} 
+)
+  
+# Include folders
+target_include_directories(dllCoreForms BEFORE
+    PRIVATE
+	${PROJECT_SOURCE_FOLDER} 
+    PUBLIC
+    ${PROJECT_INCLUDE_FOLDER}
+)
+
+# Differentiate the filename of the static library
+set_target_properties(dllCoreForms PROPERTIES
+					  OUTPUT_NAME "CoreForms"
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} -D${PROJECT_DLL_MACRO}")
+					  
+# Set linker dependencies
+#target_link_libraries(dllCoreForms
+#	dllCoreCom
+#	dllCorePlatform
+#)
+
+# Set project dependencies
+#add_dependencies(dllCoreForms
+#	dllCoreCom
+#	dllCorePlatform
+#)
 
 #################################################################################
 #     ___________.__.__           .____                                __   
@@ -162,6 +213,12 @@ set_target_properties(libCoreForms PROPERTIES
 #          \/                 \/          \/    \/\/                        
 #################################################################################
 
+# Extra files
+file(GLOB_RECURSE PROJECT_EXTRA_FILES
+    "${PROJECT_EXTRA_FOLDER}*.h"
+    "${PROJECT_EXTRA_FOLDER}*.cpp"
+)
+	
 # Project file groups
 source_group(TREE ${PROJECT_SOURCE_FOLDER}    PREFIX "Build Files"    FILES ${PROJECT_SOURCE_CC_FILES}})
 source_group(TREE ${PROJECT_EXTRA_FOLDER}     PREFIX "Extra Files"    FILES ${PROJECT_EXTRA_FILES})

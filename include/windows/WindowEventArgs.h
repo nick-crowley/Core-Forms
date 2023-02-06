@@ -83,7 +83,7 @@ namespace core::forms
 	// FIXME: Order-of-message-receipt bug with WM_GETMINMAXINFO could be solved with a static event which derived classes could listen to
 
 
-	class OwnerDrawEventArgs 
+	class FormsExport OwnerDrawEventArgs 
 	{
 	public:
 		struct ItemData {
@@ -116,7 +116,7 @@ namespace core::forms
 	using OwnerDrawEvent = ObservableEvent<OwnerDrawDelegate>;
 
 
-	class OwnerDrawMenuEventArgs 
+	class FormsExport OwnerDrawMenuEventArgs 
 	{
 	public:
 		nstd::bitset<OwnerDrawAction> Action;
@@ -324,7 +324,7 @@ namespace core::forms
 	};
 
 
-	class PaintNonClientEventArgs {
+	class FormsExport PaintNonClientEventArgs {
 	public:
 		Region                                Area;
 		Rect                                  Bounds;
@@ -366,7 +366,7 @@ namespace core::forms
 	using PaintNonClientEvent = ObservableEvent<PaintNonClientDelegate>;
 
 
-	class PaintWindowEventArgs {
+	class FormsExport PaintWindowEventArgs {
 		::PAINTSTRUCT  Data {};
 
 	public:

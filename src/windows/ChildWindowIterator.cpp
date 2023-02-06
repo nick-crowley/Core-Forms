@@ -2,7 +2,7 @@
 using namespace core;
 using namespace forms;
 
-const ConstChildWindowIterator  
+ConstChildWindowIterator const
 ConstChildWindowIterator::npos;
 
 ::BOOL 
