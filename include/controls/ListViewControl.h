@@ -15,6 +15,7 @@ namespace core::forms
 			WindowClass() : forms::WindowClass{ResourceId{WC_LISTVIEW}}  {
 				this->Name = ResourceId{L"Custom.LISTVIEW"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->Style |= ClassStyle::GlobalClass;
 				this->register_();
 			}
 		};

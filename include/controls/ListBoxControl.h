@@ -33,6 +33,7 @@ namespace core::forms
 			WindowClass() : forms::WindowClass{ResourceId{WC_LISTBOX}}  {
 				this->Name = ResourceId{L"Custom.LISTBOX"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->Style |= ClassStyle::GlobalClass;
 				this->register_();
 			}
 		};

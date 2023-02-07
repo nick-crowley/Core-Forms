@@ -16,6 +16,7 @@ namespace core::forms
 			WindowClass() : forms::WindowClass{ResourceId{PROGRESS_CLASS}}  {
 				this->Name = ResourceId{L"Custom.PROGRESS"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->Style |= ClassStyle::GlobalClass;
 				this->register_();
 			}
 		};

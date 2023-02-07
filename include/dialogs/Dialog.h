@@ -17,6 +17,7 @@ namespace core::forms
 			{
 				this->Name = ResourceId{L"Custom.DIALOG"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Dialog::InterceptMessageHandler);
+				this->Style |= ClassStyle::GlobalClass;
 				this->register_();
 			}
 		};
