@@ -6,13 +6,15 @@
 
 namespace core::forms
 {
-	class StaticControl : public Control {
-		class StaticWindowClass : public WindowClass {
+	class StaticControl : public Control 
+	{
+	public:
+		class WindowClass : public forms::WindowClass {
 		public:
 			::WNDPROC	OriginalWndProc;
 
 		public:
-			StaticWindowClass() : WindowClass{ResourceId{WC_STATIC}}  {
+			WindowClass() : forms::WindowClass{ResourceId{WC_STATIC}}  {
 				this->Name = ResourceId{L"Custom.STATIC"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->register_();
@@ -45,9 +47,9 @@ namespace core::forms
 		}
 
 	public:
-		StaticWindowClass const& 
+		WindowClass const& 
 		wndcls() override {
-			static StaticWindowClass c;
+			static WindowClass c;
 			return c;
 		}
 	

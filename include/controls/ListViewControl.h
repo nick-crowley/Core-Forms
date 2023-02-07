@@ -6,18 +6,20 @@
 namespace core::forms
 {
 	class ListViewControl : public Control {
-		class ListViewWindowClass : public WindowClass {
+	public:
+		class WindowClass : public forms::WindowClass {
 		public:
 			::WNDPROC	OriginalWndProc;
 
 		public:
-			ListViewWindowClass() : WindowClass{ResourceId{WC_LISTVIEW}}  {
+			WindowClass() : forms::WindowClass{ResourceId{WC_LISTVIEW}}  {
 				this->Name = ResourceId{L"Custom.LISTVIEW"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->register_();
 			}
 		};
-	
+
+	protected:
 		class ListViewNotificationDictionary : public MessageDictionary {
 			using base = MessageDictionary;
 		public:
@@ -72,9 +74,9 @@ namespace core::forms
 		}
 
 	public:
-		ListViewWindowClass const& 
+		WindowClass const& 
 		wndcls() override {
-			static ListViewWindowClass c;
+			static WindowClass c;
 			return c;
 		}
 

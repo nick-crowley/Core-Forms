@@ -7,12 +7,13 @@
 namespace core::forms
 {
 	class ProgressBarControl : public Control {
-		class ProgressBarWindowClass : public WindowClass {
+	public:
+		class WindowClass : public forms::WindowClass {
 		public:
 			::WNDPROC	OriginalWndProc;
 
 		public:
-			ProgressBarWindowClass() : WindowClass{ResourceId{PROGRESS_CLASS}}  {
+			WindowClass() : forms::WindowClass{ResourceId{PROGRESS_CLASS}}  {
 				this->Name = ResourceId{L"Custom.PROGRESS"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->register_();
@@ -31,9 +32,9 @@ namespace core::forms
 		}
 
 	public:
-		ProgressBarWindowClass const& 
+		WindowClass const& 
 		wndcls() override {
-			static ProgressBarWindowClass c;
+			static WindowClass c;
 			return c;
 		}
 

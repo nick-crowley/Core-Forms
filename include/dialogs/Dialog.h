@@ -9,11 +9,11 @@ namespace core::forms
 {
 	class FormsExport Dialog : public Window {
 	public:
-		class DialogWindowClass : public WindowClass {
+		class FormsExport WindowClass : public forms::WindowClass {
 		public:
 			::WNDPROC	OriginalWndProc;
 		public:
-			DialogWindowClass() : WindowClass(ResourceId::parse(WC_DIALOG))
+			WindowClass() : forms::WindowClass(ResourceId::parse(WC_DIALOG))
 			{
 				this->Name = ResourceId{L"Custom.DIALOG"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Dialog::InterceptMessageHandler);
@@ -53,9 +53,9 @@ namespace core::forms
 		}
 	
 	public:
-		DialogWindowClass const& 
+		WindowClass const& 
 		wndcls() override {
-			static DialogWindowClass c;
+			static WindowClass c;
 			return c;
 		}
 

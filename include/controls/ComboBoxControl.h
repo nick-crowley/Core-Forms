@@ -7,18 +7,20 @@
 namespace core::forms
 {
 	class ComboBoxControl : public Control {
-		class ComboBoxWindowClass : public WindowClass {
+	public:
+		class WindowClass : public forms::WindowClass {
 		public:
 			::WNDPROC	OriginalWndProc;
 
 		public:
-			ComboBoxWindowClass() : WindowClass{ResourceId{WC_COMBOBOX}}  {
+			WindowClass() : forms::WindowClass{ResourceId{WC_COMBOBOX}}  {
 				this->Name = ResourceId{L"Custom.COMBOBOX"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->register_();
 			}
 		};
-	
+		
+	protected:
 		class ComboBoxNotificationDictionary : public MessageDictionary {
 			using base = MessageDictionary;
 		public:
@@ -241,9 +243,9 @@ namespace core::forms
 			return this->Items;
 		}
 
-		ComboBoxWindowClass const& 
+		WindowClass const& 
 		wndcls() override {
-			static ComboBoxWindowClass c;
+			static WindowClass c;
 			return c;
 		}
 

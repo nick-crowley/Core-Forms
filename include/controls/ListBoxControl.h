@@ -25,12 +25,12 @@ namespace core::forms
 		};
 
 	public:
-		class ListBoxWindowClass : public WindowClass {
+		class WindowClass : public forms::WindowClass {
 		public:
 			::WNDPROC	OriginalWndProc;
 
 		public:
-			ListBoxWindowClass() : WindowClass{ResourceId{WC_LISTBOX}}  {
+			WindowClass() : forms::WindowClass{ResourceId{WC_LISTBOX}}  {
 				this->Name = ResourceId{L"Custom.LISTBOX"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->register_();
@@ -362,9 +362,9 @@ namespace core::forms
 			return Unhandled;
 		}
 
-		ListBoxWindowClass const& 
+		WindowClass const& 
 		wndcls() override {
-			static ListBoxWindowClass c;
+			static WindowClass c;
 			return c;
 		}
 

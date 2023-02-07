@@ -24,18 +24,20 @@ namespace core::forms
 	class ButtonControl : public Control {
 		using base = Control;
 
-		class ButtonWindowClass : public WindowClass {
+	public:
+		class WindowClass : public forms::WindowClass {
 		public:
 			::WNDPROC	OriginalWndProc;
 
 		public:
-			ButtonWindowClass() : WindowClass{ResourceId{WC_BUTTON}}  {
+			WindowClass() : forms::WindowClass{ResourceId{WC_BUTTON}}  {
 				this->Name = ResourceId{L"Custom.BUTTON"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->register_();
 			}
 		};
 	
+	protected:
 		class ButtonNotificationDictionary : public MessageDictionary {
 			using base = MessageDictionary;
 		public:
@@ -69,9 +71,9 @@ namespace core::forms
 		}
 
 	public:
-		ButtonWindowClass const& 
+		WindowClass const& 
 		wndcls() override {
-			static ButtonWindowClass c;
+			static WindowClass c;
 			return c;
 		}
 	

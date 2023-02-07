@@ -7,18 +7,20 @@
 namespace core::forms
 {
 	class EditControl : public Control {
-		class EditWindowClass : public WindowClass {
+	public:
+		class WindowClass : public forms::WindowClass {
 		public:
 			::WNDPROC	OriginalWndProc;
 
 		public:
-			EditWindowClass() : WindowClass{ResourceId{WC_EDIT}}  {
+			WindowClass() : forms::WindowClass{ResourceId{WC_EDIT}}  {
 				this->Name = ResourceId{L"Custom.EDIT"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->register_();
 			}
 		};
 
+	protected:
 		class EditNotificationDictionary : public MessageDictionary {
 			using base = MessageDictionary;
 		public:
@@ -53,9 +55,9 @@ namespace core::forms
 		}
 
 	public:
-		EditWindowClass const& 
+		WindowClass const& 
 		wndcls() override {
-			static EditWindowClass c;
+			static WindowClass c;
 			return c;
 		}
 
