@@ -458,10 +458,11 @@ namespace core::forms
 			return rc;
 		}
 	
-		Region
+		std::optional<Region>
 		wndRgn() const {
 			Region rgn;
-			::GetWindowRgn(this->handle(), rgn);
+			if (!::GetWindowRgn(this->handle(), rgn))
+				return std::nullopt;
 			return rgn;
 		}
 
@@ -580,6 +581,11 @@ namespace core::forms
 			::UpdateWindow(this->handle());
 		}
 		
+		void
+		wndRgn(Region rgn) const {
+			::SetWindowRgn(this->handle(), rgn.detach(), win::Boolean{true});
+		}
+
 		Response 
 		virtual onClose() {
 			return Unhandled;
