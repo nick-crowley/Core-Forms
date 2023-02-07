@@ -241,7 +241,7 @@ namespace core::forms
 				CreateWindowEventArgs args(wParam,lParam);	
 
 				::CREATESTRUCT replacement = *args.Data;
-				replacement.lpCreateParams = &Dialog::s_DialogCreationParameter.value();
+				replacement.lpCreateParams = &Dialog::s_DialogCreationParameter.value();	// BUG: Returning address which is invalidated on next line
 				Dialog::s_DialogCreationParameter = std::nullopt;
 
 				return Window::DefaultMessageHandler(hWnd, message, wParam, (LPARAM)&replacement);
