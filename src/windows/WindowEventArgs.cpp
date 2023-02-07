@@ -58,14 +58,18 @@ forms::PaintNonClientEventArgs::beginPaint()
 	if (!dc)
 		return false;
 
-	// Retrieve client rect in window co-ordinates with origin at {0,0}
-	Rect rcClient = this->Window->clientRect(nullptr);
+	// Retrieve window rect with origin at {0,0}
 	Rect rcWindow = this->Window->wndRect();
-	rcClient -= rcWindow.topLeft();
 	rcWindow -= rcWindow.topLeft();
-
-	this->Area = rcWindow;
-	this->Area -= Region{rcClient};
+	if (auto rgn = this->Window->wndRgn(); rgn)
+		this->Area = *rgn;
+	else {
+		// Retrieve client rect in window co-ordinates with origin at {0,0}
+		Rect rcClient = this->Window->clientRect(nullptr);
+		rcClient -= rcWindow.topLeft();
+		this->Area = rcWindow;
+		this->Area -= Region{rcClient};
+	}
 	this->Bounds = rcWindow;
 	this->Graphics = DeviceContext{dc, this->Window->handle()};
 	if (this->State == WindowCaptionState::Unknown)
