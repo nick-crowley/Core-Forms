@@ -217,7 +217,7 @@ namespace core::forms
 			}
 		};
 	
-	private:
+	public:
 		ItemCollection   Items;
 
 	public:
@@ -233,17 +233,6 @@ namespace core::forms
 		}
 
 	public:
-		ItemCollection const&
-		items() const {
-			return this->Items;
-		}
-
-	public:		
-		ItemCollection&
-		items() {
-			return this->Items;
-		}
-
 		WindowClass const& 
 		wndcls() override {
 			static WindowClass c;
