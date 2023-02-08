@@ -2,6 +2,7 @@
 #include "library/core.Forms.h"
 #include "controls/StaticStyle.h"
 #include "controls/ButtonStyle.h"
+#include "controls/ComboBoxStyle.h"
 #include "controls/ListBoxStyle.h"
 #include "system/ResourceId.h"
 #include "graphics/Rectangle.h"
@@ -34,12 +35,15 @@ namespace core::forms
 		setOwnerDraw() {
 			ResourceId const static CustomStatic(L"Custom.STATIC");
 			ResourceId const static CustomButton(L"Custom.BUTTON");
-			ResourceId const static CustomListBox(L"Custom.LISTBOX");
+			ResourceId const static CustomListBox(L"Custom.COMBOBOX");
+			ResourceId const static CustomComboBox(L"Custom.LISTBOX");
 
 			if (this->ClassName == CustomStatic)
 				this->Style = (this->Style & ~StaticStyle::TypeMask) | StaticStyle::OwnerDraw;
 			else if (this->ClassName == CustomButton)
 				this->Style = (this->Style & ~ButtonStyle::TypeMask) | ButtonStyle::OwnerDraw;
+			else if (this->ClassName == CustomComboBox)
+				this->Style |= ComboBoxStyle::OwnerDrawFixed | ComboBoxStyle::HasStrings;
 			else if (this->ClassName == CustomListBox)
 				this->Style |= ListBoxStyle::OwnerDrawFixed | ListBoxStyle::HasStrings;
 		}
