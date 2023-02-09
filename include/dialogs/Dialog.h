@@ -37,6 +37,9 @@ namespace core::forms
 		::DLGPROC const					DialogProc = Dialog::DefaultDialogHandler;
 		DialogTemplate const            Template;
 		
+	protected:
+		ControlDictionary   BoundControls;
+
 	public:
 		InitDialogEvent		Initialized;
 
@@ -62,42 +65,42 @@ namespace core::forms
 
 	public:
 		void 
-		virtual createEmbedded(Module source, Window& parent, Border border, ControlDictionary wrappers)
+		virtual createEmbedded(Module source, Window& parent, Border border)
 		{
 			auto const Area = parent.clientRect() - border;
-			this->createInternal(source, DialogMode::NonModal, &parent, wrappers);
+			this->createInternal(source, DialogMode::NonModal, &parent);
 			this->move(Area.topLeft());
 			this->resize(Area.size());
 		}
 
 		void 
-		virtual createEmbedded(Window& parent, Border border, ControlDictionary wrappers)
+		virtual createEmbedded(Window& parent, Border border)
 		{
-			this->createEmbedded(ProcessModule, parent, border, wrappers);
+			this->createEmbedded(ProcessModule, parent, border);
 		}
 
 		void 
-		virtual createModeless(Module source, Window* parent, ControlDictionary wrappers)
+		virtual createModeless(Module source, Window* parent)
 		{
-			this->createInternal(source, DialogMode::NonModal, parent, wrappers);
+			this->createInternal(source, DialogMode::NonModal, parent);
 		}
 		
 		void 
-		virtual createModeless(Window* parent, ControlDictionary wrappers)
+		virtual createModeless(Window* parent)
 		{
-			this->createModeless(ProcessModule, parent, wrappers);
+			this->createModeless(ProcessModule, parent);
 		}
 		
 		intptr_t 
-		virtual showModal(Module source, Window* parent, ControlDictionary wrappers)
+		virtual showModal(Module source, Window* parent)
 		{
-			return *this->createInternal(source, DialogMode::Modal, parent, wrappers);
+			return *this->createInternal(source, DialogMode::Modal, parent);
 		}
 	
 		intptr_t 
-		virtual showModal(Window* parent, ControlDictionary wrappers)
+		virtual showModal(Window* parent)
 		{
-			return this->showModal(ProcessModule, parent, wrappers);
+			return this->showModal(ProcessModule, parent);
 		}
 	
 	protected:
@@ -253,7 +256,7 @@ namespace core::forms
 
 	private:
 		std::optional<intptr_t>
-		createInternal(Module source, DialogMode mode, Window* parent, ControlDictionary wrappers)
+		createInternal(Module source, DialogMode mode, Window* parent)
 		{
 			// Change the wndclass for the dialog
 			auto customTemplate = this->Template;
@@ -262,9 +265,9 @@ namespace core::forms
 			// BUG: Prevent callers from wrapping more than one window handle using the same C++ object
 			
 			// Change the wndclass for each wrapped control
-			if (!wrappers.empty()) {
+			if (!this->BoundControls.empty()) {
 				for (auto& ctrl : customTemplate.Controls) {
-					if (ctrl.ClassName && ctrl.ClassName->is_numeric() && wrappers.contains(ctrl.Ident)) {
+					if (ctrl.ClassName && ctrl.ClassName->is_numeric() && this->BoundControls.contains(ctrl.Ident)) {
 						switch (uint16_t id = ctrl.ClassName->as_number(); id) {
 						case ClassId::Button:    ctrl.ClassName = ResourceId(L"Custom.BUTTON");    break;
 						case ClassId::Edit:      ctrl.ClassName = ResourceId(L"Custom.EDIT");      break;
@@ -275,7 +278,7 @@ namespace core::forms
 						default: throw invalid_argument{"Controls with class id #{0} not yet supported", id};
 						}
 
-						CreateWindowParameter param(wrappers[ctrl.Ident]);
+						CreateWindowParameter param(this->BoundControls[ctrl.Ident]);
 						ctrl.Data = param.asBytes();
 					}
 				}
