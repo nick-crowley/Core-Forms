@@ -5,17 +5,35 @@
 namespace core::forms
 {
 	class CheckBoxControl : public ButtonControl {
+		bool Checked = false;
 	
 	public:
 		CheckBoxControl(uint16_t id) : ButtonControl{id}
-		{}
+		{
+			this->Clicked += {*this, &CheckBoxControl::this_Clicked};
+		}
 
 	public:
 		bool
 		checked() const {
+			// Owner-draw buttons don't maintain radio-button state
+			if (this->ownerDraw()) 
+				return this->Checked;
+
 			return this->state().test(ButtonState::Checked);
 		}
 	
+	public:
+		void
+		check() {
+			Button_SetCheck(this->handle(), ButtonState::Checked);
+
+			if (this->ownerDraw()) {
+				this->Checked = true;
+				this->invalidate(true);
+			}
+		}
+		
 		Response 
 		onOwnerDraw(OwnerDrawEventArgs args) override {
 			if (args.Ident == this->ident()) {
@@ -24,6 +42,16 @@ namespace core::forms
 			}
 
 			return Unhandled;
+		}
+		
+		void
+		uncheck() {
+			Button_SetCheck(this->handle(), ButtonState::Unchecked);
+			
+			if (this->ownerDraw()) {
+				this->Checked = false;
+				this->invalidate(true);
+			}
 		}
 
 	protected:
@@ -40,5 +68,13 @@ namespace core::forms
 
 			return Unhandled;
 		}*/
+
+		void
+		this_Clicked(Window& sender) {
+			if (this->ownerDraw() && this->Checked) 
+				return this->uncheck();
+			else if (this->ownerDraw())
+				return this->check();
+		}
 	};
 }	// namespace core::forms
