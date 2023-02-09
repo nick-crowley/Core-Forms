@@ -433,13 +433,13 @@ namespace core::forms
 
 		std::wstring
 		text() const {
-			if (std::wstring::size_type capacity = ::GetWindowTextLengthW(this->handle())+1; capacity == 1) 
+			if (std::wstring::size_type const capacity = ::GetWindowTextLengthW(this->handle())+1; capacity == 1) 
 				return {};
 			else {
-				std::wstring s(capacity, L'\0');
-				::GetWindowTextW(this->handle(), s.data(), static_cast<int>(capacity));
-				s.pop_back();
-				return s;
+				std::wstring buffer(capacity, L'\0');
+				if (auto const n = ::GetWindowTextW(this->handle(), buffer.data(), win::DWord{capacity}); n != capacity)
+					buffer.erase(n, buffer.npos);
+				return buffer;
 			}
 		}
 	
@@ -990,7 +990,7 @@ namespace core::forms
 			
 				::LRESULT result;
 				// [HANDLED] Return the result provided by the handler
-				if (response.Status == Response::Handled) 			
+				if (response.Status == Response::Handled)
 					result = *response.Value;
 
 				// [UNHANDLED/ERROR] Let the C++ object managing this handle pass message to ::DefWindowProc()
