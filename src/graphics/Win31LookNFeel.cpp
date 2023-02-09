@@ -121,11 +121,10 @@ Win31LookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	auto const focused = ctrl.state().test(ButtonState::Focus);
 	
 	Rect const content = args.Item.Area - Border{SystemMetric::cxFixedFrame};
-	Rect tick {content.topLeft(), Size{20,20}};
+	Rect const tick {content.topLeft(), Size{SystemMetric::cxHThumb,SystemMetric::cyVThumb}};
 	args.Graphics.drawFrameCtrl(tick, DFC_BUTTON, DFCS_BUTTONCHECK|(checked?DFCS_CHECKED:0));
 
-	Rect areaText = content;
-	areaText.Left += 30;
+	Rect const areaText = content - Border{SystemMetric::cxHThumb,0,0,0} - Border{SystemMetric::cxEdge,0,0,0};
 	args.Graphics.setText(enabled ? SystemColour::WindowText : SystemColour::GrayText);
 	args.Graphics.setObj(StockObject::SystemFixedFont);
 	args.Graphics.drawText(ctrl.text(), areaText, calculateFlags(ctrl.style<ButtonStyle>()));
