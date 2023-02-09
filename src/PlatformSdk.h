@@ -9,6 +9,7 @@
 // NB: Add library-specific Windows dependencies here
 #include <Windowsx.h>
 #include <CommCtrl.h>
+#include <commoncontrols.h>                       //!< ImageList
 #include <vsstyle.h>                              //!< Parts and States
 #include <Vssym32.h>                              //!< Properties
 #include <Uxtheme.h>
