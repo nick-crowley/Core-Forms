@@ -9,7 +9,7 @@
 #include "graphics/DrawFlags.h"
 #include "graphics/ObjectFlags.h"
 #include "graphics/Region.h"
-#include "support/Percentage.h"
+#include "graphics/Percentage.h"
 #include "system/SharedHandle.h"
 #include "win/ApiHelpers.h"
 #pragma comment (lib, "Gdi32.lib")

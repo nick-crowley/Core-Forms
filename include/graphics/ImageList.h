@@ -6,7 +6,7 @@
 #include "graphics/Icon.h"
 #include "graphics/SizePoint.h"
 #include "graphics/Colours.h"
-#include "support/Percentage.h"
+#include "graphics/Percentage.h"
 #include "win/DWord.h"
 #pragma comment(lib, "Comctl32.lib")
 
