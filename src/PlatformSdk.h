@@ -13,4 +13,5 @@
 #include <vsstyle.h>                              //!< Parts and States
 #include <Vssym32.h>                              //!< Properties
 #include <Uxtheme.h>
+#include <shellapi.h>                             //!< ShellImageList
 #include "win/LResult.h"
