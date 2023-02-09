@@ -8,7 +8,6 @@
 #include "../../src/library/FormsExport.h"
 
 #include "core/BitwiseEnum.h"
-#include "support/HexString.h"
 
 namespace core::forms
 {
