@@ -143,8 +143,14 @@ Win31LookNFeel::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args)
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"Label #{} must be OwnerDraw", args.Ident};
 	
+	std::optional<Font> customFont;
+	if (auto textHeight = ctrl.height(); textHeight == PointSize::Default) 
+		args.Graphics.setObj(StockObject::SystemFixedFont);
+	else {
+		customFont = Font{args.Graphics.get<StockObject::OemFixedFont>(), std::nullopt, args.Graphics.getFontHeight(ctrl.height())};
+		args.Graphics.setObj(customFont->handle());
+	}
 	args.Graphics.setObj(StockObject::WhiteBrush);
-	args.Graphics.setObj(StockObject::SystemFixedFont);
 	args.Graphics.setBack(DrawingMode::Transparent);
 	args.Graphics.setText(ctrl.colour());
 

@@ -13,6 +13,7 @@ namespace core::forms
 	private:
 		HorizontalAlign TextAlignment = Left;
 		Colour          TextColour = DeviceContext::get(SystemColour::WindowText);
+		PointSize       TextHeight = PointSize::Default;
 
 	public:
 		LabelControl(uint16_t id) : StaticControl{id}
@@ -28,6 +29,11 @@ namespace core::forms
 		colour() const {
 			return this->TextColour;
 		}
+
+		PointSize
+		height() const {
+			return this->TextHeight;
+		}
 	
 	public:
 		void
@@ -38,6 +44,11 @@ namespace core::forms
 		void
 		colour(Colour col) {
 			this->TextColour = col;
+		}
+		
+		void
+		height(PointSize sz) {
+			this->TextHeight = sz;
 		}
 	
 		Response 

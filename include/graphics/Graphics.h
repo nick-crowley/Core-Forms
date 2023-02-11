@@ -304,15 +304,16 @@ namespace core::forms
 				win::LastError{}.throwAlways();
 		}
 	
-		// @returns		Height in twips
+		//! @brief    Calculate font height 
+		//! @returns  Height in logical pixels
 		int32_t 
-		getFontHeight(int32_t points) const
+		getFontHeight(PointSize points) const
 		{
 			// Query logical pixel height & convert
 			if (auto const logPixels = ::GetDeviceCaps(this->handle(), LOGPIXELSY); !logPixels)
 				win::LastError{}.throwAlways();
 			else
-				return static_cast<int32_t>(-points * logPixels / 72ll); 
+				return -static_cast<int32_t>(static_cast<int32_t>(points) * logPixels / 72ll); 
 		}
 
 		//! @brief	Measure single line of text (rendered in the currently selected font)
