@@ -34,7 +34,9 @@ calculateFlags(nstd::bitset<StaticStyle> style) noexcept
 
 	if (style.test(StaticStyle::CentreImage))
 		textAlign |= DrawTextFlags::VCentre|DrawTextFlags::SingleLine;
-
+	else
+		textAlign |= DrawTextFlags::WordBreak;
+	
 	return textAlign;
 }
 
