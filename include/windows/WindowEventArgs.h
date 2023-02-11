@@ -6,7 +6,7 @@
 
 namespace core::forms
 {
-	class Window;
+	class FormsExport Window;
 	using WindowDelegate = Delegate<void (Window&)>;
 	using WindowEvent = ObservableEvent<WindowDelegate>;
 	
