@@ -103,7 +103,7 @@ namespace core::forms
 		ItemData                    Item;
 		mutable DeviceContext       Graphics;
 		OwnerDrawControl            Type;
-		Window*                     Window;
+		std::optional<Window*>      Window;
 
 	public:
 		OwnerDrawEventArgs(::WPARAM w, ::LPARAM l);

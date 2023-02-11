@@ -133,7 +133,7 @@ namespace core::forms
 		public:
 			Window* 
 			at(key_t handle) const & {
-				if (auto pos = this->Storage.find(handle); pos == this->Storage.end())
+				if (auto const pos = this->Storage.find(handle); pos == this->Storage.end())
 					throw runtime_error{"Unrecognised window handle {}", to_hexString<8>(uintptr_t(handle))};
 				else
 					return pos->second;
@@ -142,6 +142,14 @@ namespace core::forms
 			bool 
 			contains(key_t handle) const {
 				return this->Storage.contains(handle);
+			}
+			
+			std::optional<Window*>
+			find(key_t handle) const & {
+				if (auto const pos = this->Storage.find(handle); pos == this->Storage.end())
+					return std::nullopt;
+				else
+					return pos->second;
 			}
 
 			Window* 

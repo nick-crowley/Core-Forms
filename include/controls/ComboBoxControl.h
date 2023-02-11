@@ -233,6 +233,11 @@ namespace core::forms
 		}
 
 	public:
+		Response 
+		onOwnerDraw(OwnerDrawEventArgs args) override {
+			return Unhandled;
+		}
+
 		WindowClass const& 
 		wndcls() override {
 			static WindowClass c;
