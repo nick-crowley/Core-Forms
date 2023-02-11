@@ -5,6 +5,21 @@
 
 namespace core::forms
 {
+	enum class PointSize : uint32_t 
+	{ 
+		Undefined = 0,
+		Default = 12,
+		OneInch = 72,
+	};
+	
+	namespace literals 
+	{
+		PointSize constexpr
+		operator""_pt(uint64_t n) noexcept {
+			return static_cast<PointSize>(n);
+		}
+	}
+	
 	class Font
 	{
 		SharedFont  Handle;
