@@ -307,7 +307,7 @@ namespace core::forms
 		//! @brief    Calculate font height 
 		//! @returns  Height in logical pixels
 		int32_t 
-		getFontHeight(PointSize points) const
+		measureFont(PointSize points) const
 		{
 			// Query logical pixel height & convert
 			if (auto const logPixels = ::GetDeviceCaps(this->handle(), LOGPIXELSY); !logPixels)

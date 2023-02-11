@@ -147,7 +147,7 @@ Win31LookNFeel::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args)
 	if (auto textHeight = ctrl.height(); textHeight == PointSize::Default) 
 		args.Graphics.setObj(StockObject::SystemFixedFont);
 	else {
-		customFont = Font{args.Graphics.get<StockObject::OemFixedFont>(), std::nullopt, args.Graphics.getFontHeight(ctrl.height())};
+		customFont = Font{args.Graphics.get<StockObject::OemFixedFont>(), std::nullopt, args.Graphics.measureFont(ctrl.height())};
 		args.Graphics.setObj(customFont->handle());
 	}
 	args.Graphics.setObj(StockObject::WhiteBrush);
