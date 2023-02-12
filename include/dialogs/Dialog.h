@@ -267,16 +267,19 @@ namespace core::forms
 			// Change the wndclass for each wrapped control
 			if (!this->BoundControls.empty()) {
 				for (auto& ctrl : customTemplate.Controls) {
-					if (ctrl.ClassName && ctrl.ClassName->is_numeric() && this->BoundControls.contains(ctrl.Ident)) {
-						switch (uint16_t id = ctrl.ClassName->as_number(); id) {
-						case ClassId::Button:    ctrl.ClassName = ResourceId(L"Custom.BUTTON");    break;
-						case ClassId::Edit:      ctrl.ClassName = ResourceId(L"Custom.EDIT");      break;
-						case ClassId::Static:    ctrl.ClassName = ResourceId(L"Custom.STATIC");    break;
-						case ClassId::Listbox:   ctrl.ClassName = ResourceId(L"Custom.LISTBOX");   break;
-						case ClassId::Scrollbar: ctrl.ClassName = ResourceId(L"Custom.SCROLLBAR"); break;
-						case ClassId::Combobox:  ctrl.ClassName = ResourceId(L"Custom.COMBOBOX");  break;
-						default: throw invalid_argument{"Controls with class id #{0} not yet supported", id};
-						}
+					if (ctrl.ClassName && this->BoundControls.contains(ctrl.Ident)) {
+						if (ctrl.ClassName->is_numeric())
+							switch (uint16_t id = ctrl.ClassName->as_number(); id) {
+							case ClassId::Button:    ctrl.ClassName = ResourceId(L"Custom.BUTTON");    break;
+							case ClassId::Edit:      ctrl.ClassName = ResourceId(L"Custom.EDIT");      break;
+							case ClassId::Static:    ctrl.ClassName = ResourceId(L"Custom.STATIC");    break;
+							case ClassId::Listbox:   ctrl.ClassName = ResourceId(L"Custom.LISTBOX");   break;
+							case ClassId::Scrollbar: ctrl.ClassName = ResourceId(L"Custom.SCROLLBAR"); break;
+							case ClassId::Combobox:  ctrl.ClassName = ResourceId(L"Custom.COMBOBOX");  break;
+							default: throw invalid_argument{"Controls with class id #{0} not yet supported", id};
+							}
+						else if (ctrl.ClassName == ResourceId{WC_LINK})
+							ctrl.ClassName = ResourceId(L"Custom.LINK");
 
 						CreateWindowParameter param(this->BoundControls[ctrl.Ident]);
 						ctrl.Data = param.asBytes();

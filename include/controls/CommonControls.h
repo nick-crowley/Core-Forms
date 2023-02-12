@@ -5,6 +5,7 @@
 #include "controls/CheckBoxControl.h"
 #include "controls/EditControl.h"
 #include "controls/LabelControl.h"
+#include "controls/LinkControl.h"
 #include "controls/GroupBoxControl.h"
 #include "controls/PictureControl.h"
 #include "controls/RadioButtonControl.h"
@@ -33,6 +34,7 @@ namespace core::forms
 		ButtonControl::WindowClass Buttons;
 		ComboBoxControl::WindowClass ComboBoxes;
 		EditControl::WindowClass Edits;
+		LinkControl::WindowClass Links;
 		ListBoxControl::WindowClass ListBoxes;
 		ListViewControl::WindowClass ListViews;
 		ProgressBarControl::WindowClass ProgressBars;
