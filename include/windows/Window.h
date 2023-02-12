@@ -667,8 +667,8 @@ namespace core::forms
 	
 		Response 
 		virtual onOwnerDraw(OwnerDrawEventArgs args) {
-			if (args.Window != this)
-				return args.Window->onOwnerDraw(args);
+			if (args.Window && (*args.Window) != this)
+				return (*args.Window)->onOwnerDraw(args);
 
 			return Unhandled;
 		}
