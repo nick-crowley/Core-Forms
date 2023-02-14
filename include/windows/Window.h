@@ -9,7 +9,7 @@
 #include "system/WindowMessageDictionary.h"
 #include "graphics/Region.h"
 #include "support/ObservableEvent.h"
-#include "windows/ILookNFeelProvider.h"
+#include "lookNfeel/ILookNFeelProvider.h"
 #include "windows/WindowClass.h"
 #include "windows/WindowEventArgs.h"
 #include "windows/WindowInfo.h"

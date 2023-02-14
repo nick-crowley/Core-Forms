@@ -1,16 +1,18 @@
 #pragma once
-#include "windows/LookNFeelProvider.h"
+#include "lookNfeel/LookNFeelProvider.h"
+#include "graphics/Font.h"
 
 namespace core::forms
 {
-	class FormsExport Win31LookNFeel : public LookNFeelProvider
+	class FormsExport Nt6LookNFeel : public LookNFeelProvider
 	{
 		using base = LookNFeelProvider;
 
+	private:
+		Font  SegoeUi;
+
 	public:
-		satisfies(Win31LookNFeel,
-			IsDefaultConstructible
-		);
+		Nt6LookNFeel();
 
 	public:
 		using base::draw;

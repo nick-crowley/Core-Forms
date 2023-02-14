@@ -11,8 +11,9 @@
 #include "dialogs/DialogTemplateReader.cpp"
 #include "dialogs/DialogTemplateWriter.cpp"
 
-#include "graphics/LookNFeelProvider.cpp"
-#include "graphics/Win31LookNFeel.cpp"
+#include "lookNfeel/LookNFeelProvider.cpp"
+#include "lookNfeel/Nt6LookNFeel.cpp"
+#include "lookNfeel/Win31LookNFeel.cpp"
 
 #include "system/Message.cpp"
 #include "system/MessageQueue.cpp"
