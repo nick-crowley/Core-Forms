@@ -4,18 +4,20 @@
 
 namespace core::forms
 {
-	struct InitDialogEventArgs {
+	class InitDialogEventArgs {
 		static_assert(sizeof(::LPARAM) == sizeof(void*));
 
+	public:
 		::HWND		InitialFocus;
 		::LPARAM	CustomData;
 
-		// FIXME: InitDialogEventArgs has missing access specifiers & should be declared as class not struct
+	public:
 		InitDialogEventArgs(::WPARAM focusCtrl, ::LPARAM data) 
 		  : InitialFocus(reinterpret_cast<::HWND>(focusCtrl)),
 			CustomData(data) 
 		{}
 
+	public:
 		template <typename Pointer>
 		Pointer
 		data() {
@@ -27,10 +29,12 @@ namespace core::forms
 	using InitDialogDelegate = Delegate<void (InitDialogEventArgs)>;
 	using InitDialogEvent = ObservableEvent<InitDialogDelegate>;
 
-	struct LoadDialogEventArgs 
+	class LoadDialogEventArgs 
 	{
+	public:
 		DialogTemplate&  Template;
 
+	public:
 		implicit
 		LoadDialogEventArgs(DialogTemplate& dlg) 
 		  : Template{dlg}
