@@ -1,4 +1,6 @@
 #pragma once
+#include "library/core.Forms.h"
+
 namespace core::forms
 {
 	class Window;

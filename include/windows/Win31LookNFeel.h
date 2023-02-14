@@ -1,37 +1,20 @@
 #pragma once
-#include "windows/ILookNFeelProvider.h"
+#include "windows/LookNFeelProvider.h"
 
 namespace core::forms
 {
-	struct FormsExport Win31LookNFeel : public ILookNFeelProvider
+	class FormsExport Win31LookNFeel : public LookNFeelProvider
 	{
-		void
-		draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) override;
-	
-		void
-		draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
-	
-		void
-		draw(LabelControl& ctrl, OwnerDrawEventArgs const& args) override;
-	
-		void
-		draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
-	
-		void
-		erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& args) override;
-	
-		void
-		draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
-	
-		void
-		draw(PictureControl& ctrl, OwnerDrawEventArgs const& args) override;
-	
-		void
-		draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args) override;
+		using base = LookNFeelProvider;
 
-		void
-		draw(StaticControl& ctrl, OwnerDrawEventArgs const& args) override;
-	
+	public:
+		satisfies(Win31LookNFeel,
+			IsDefaultConstructible
+		);
+
+	public:
+		using base::draw;
+
 		void
 		draw(Dialog& dlg, PaintWindowEventArgs const& args) override;
 	
