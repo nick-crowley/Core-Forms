@@ -103,7 +103,7 @@ Win31LookNFeel::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args)
 		content += Point{1,1};
 
 	args.Graphics.setText(enabled ? SystemColour::WindowText : SystemColour::GrayText);
-	args.Graphics.setObj(StockObject::SystemFixedFont);
+	args.Graphics.setObj(ctrl.font());
 	args.Graphics.drawText(ctrl.text(), content, calculateFlags(ctrl.style<ButtonStyle>()));
 
 	if (focused)
@@ -128,7 +128,7 @@ Win31LookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 
 	Rect const areaText = content - Border{SystemMetric::cxSmallIcon,0,0,0} - Border{SystemMetric::cxEdge,0,0,0};
 	args.Graphics.setText(enabled ? SystemColour::WindowText : SystemColour::GrayText);
-	args.Graphics.setObj(StockObject::SystemFixedFont);
+	args.Graphics.setObj(ctrl.font());
 	args.Graphics.drawText(ctrl.text(), areaText, calculateFlags(ctrl.style<ButtonStyle>()));
 
 	if (focused)
@@ -145,7 +145,7 @@ Win31LookNFeel::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args)
 	
 	std::optional<Font> customFont;
 	if (auto textHeight = ctrl.height(); textHeight == PointSize::Default) 
-		args.Graphics.setObj(StockObject::SystemFixedFont);
+		args.Graphics.setObj(ctrl.font());
 	else {
 		customFont = Font{args.Graphics.get<StockObject::OemFixedFont>(), std::nullopt, args.Graphics.measureFont(ctrl.height())};
 		args.Graphics.setObj(customFont->handle());
@@ -173,7 +173,7 @@ Win31LookNFeel::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	Rect const rcItem = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
 	args.Graphics.fillRect(rcItem);
 
-	args.Graphics.setObj(StockObject::SystemFixedFont);
+	args.Graphics.setObj(ctrl.font());
 	args.Graphics.setBack(DrawingMode::Transparent);
 	args.Graphics.drawText(ctrl.Items[std::get<uint32_t>(args.Item.Ident)].text(), rcItem);
 
@@ -214,7 +214,7 @@ Win31LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 
 	args.Graphics.setBack(DrawingMode::Opaque);
 	args.Graphics.setBack(SystemColour::Window);
-	args.Graphics.setObj(StockObject::SystemFixedFont);
+	args.Graphics.setObj(ctrl.font());
 	args.Graphics.setText(ctrl.colour());
 
 	auto const frameText = L' ' + text + L' ';
@@ -268,7 +268,7 @@ Win31LookNFeel::draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args)
 	Rect areaText = content;
 	areaText.Left += 30;
 	args.Graphics.setText(enabled ? SystemColour::WindowText : SystemColour::GrayText);
-	args.Graphics.setObj(StockObject::SystemFixedFont);
+	args.Graphics.setObj(ctrl.font());
 	args.Graphics.drawText(ctrl.text(), areaText, calculateFlags(ctrl.style<ButtonStyle>()));
 
 	if (focused)
@@ -350,4 +350,12 @@ Win31LookNFeel::draw(Window& wnd, PaintNonClientEventArgs const& args)
 	}
 	
 	args.Graphics->restore();
+}
+
+void
+Win31LookNFeel::initialize(Dialog& dlg, InitDialogEventArgs const& args) 
+{
+	for (Window* const ctrl : dlg.Children) {
+		ctrl->font(DeviceContext::get<StockObject::SystemFixedFont>());
+	}
 }

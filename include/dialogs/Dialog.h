@@ -122,7 +122,8 @@ namespace core::forms
 	
 		Response 
 		virtual onInitDialog(InitDialogEventArgs args) {
-			return Unhandled;
+			this->LookNFeel->initialize(*this,args);
+			return FALSE;
 		}
 	
 		Window::Response

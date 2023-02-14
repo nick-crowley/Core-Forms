@@ -37,5 +37,8 @@ namespace core::forms
 	
 		void
 		draw(Window& wnd, PaintNonClientEventArgs const& args) override;
+		
+		void
+		initialize(Dialog& dlg, InitDialogEventArgs const& args) override;
 	};
 }	// namespace core::forms

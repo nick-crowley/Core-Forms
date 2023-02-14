@@ -12,6 +12,7 @@ namespace core::forms
 	class RadioButtonControl;
 	class StaticControl;
 	class EraseBackgroundEventArgs;
+	class InitDialogEventArgs;
 	class OwnerDrawEventArgs;
 	class PaintWindowEventArgs;
 	class PaintNonClientEventArgs;
@@ -52,5 +53,8 @@ namespace core::forms
 	
 		void
 		virtual draw(Window& wnd, PaintNonClientEventArgs const& args) = 0;
+		
+		void
+		virtual initialize(Dialog& dlg, InitDialogEventArgs const& args) abstract;
 	};
 }	// namespace core::forms
