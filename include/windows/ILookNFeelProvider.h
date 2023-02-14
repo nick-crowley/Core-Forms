@@ -19,40 +19,43 @@ namespace core::forms
 
 	struct ILookNFeelProvider
 	{
-		virtual ~ILookNFeelProvider() = default;
+		satisfies(ILookNFeelProvider,
+			protected: IsDefaultConstructible,
+			public: IsPolymorphic
+		);
 
 		void
-		virtual draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) = 0;
+		virtual draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) abstract;
 	
 		void
-		virtual draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) = 0;
+		virtual draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) abstract;
 	
 		void
-		virtual draw(LabelControl& ctrl, OwnerDrawEventArgs const& args) = 0;
+		virtual draw(LabelControl& ctrl, OwnerDrawEventArgs const& args) abstract;
 	
 		void
-		virtual draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args) = 0;
+		virtual draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args) abstract;
 	
 		void
-		virtual erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& args) = 0;
+		virtual erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& args) abstract;
 	
 		void
-		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) = 0;
+		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) abstract;
 	
 		void
-		virtual draw(PictureControl& ctrl, OwnerDrawEventArgs const& args) = 0;
+		virtual draw(PictureControl& ctrl, OwnerDrawEventArgs const& args) abstract;
 	
 		void
-		virtual draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args) = 0;
+		virtual draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args) abstract;
 
 		void
-		virtual draw(StaticControl& ctrl, OwnerDrawEventArgs const& args) = 0;
+		virtual draw(StaticControl& ctrl, OwnerDrawEventArgs const& args) abstract;
 
 		void
-		virtual draw(Dialog& dlg, PaintWindowEventArgs const& args) = 0;
+		virtual draw(Dialog& dlg, PaintWindowEventArgs const& args) abstract;
 	
 		void
-		virtual draw(Window& wnd, PaintNonClientEventArgs const& args) = 0;
+		virtual draw(Window& wnd, PaintNonClientEventArgs const& args) abstract;
 		
 		void
 		virtual initialize(Dialog& dlg, InitDialogEventArgs const& args) abstract;
