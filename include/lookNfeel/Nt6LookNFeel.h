@@ -7,6 +7,10 @@ namespace core::forms
 	class FormsExport Nt6LookNFeel : public LookNFeelProvider
 	{
 		using base = LookNFeelProvider;
+		
+	public:
+		std::shared_ptr<ILookNFeelProvider> const
+		static Instance;
 
 	private:
 		Font  SegoeUi;

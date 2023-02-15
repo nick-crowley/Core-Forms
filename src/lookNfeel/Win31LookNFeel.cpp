@@ -3,6 +3,9 @@
 using namespace core;
 using namespace forms;
 
+std::shared_ptr<ILookNFeelProvider> const
+Win31LookNFeel::Instance = std::make_shared<Win31LookNFeel>();
+
 void
 Win31LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 {

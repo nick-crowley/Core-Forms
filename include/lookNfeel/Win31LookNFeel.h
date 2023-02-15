@@ -8,6 +8,10 @@ namespace core::forms
 		using base = LookNFeelProvider;
 
 	public:
+		std::shared_ptr<ILookNFeelProvider> const
+		static Instance;
+
+	public:
 		satisfies(Win31LookNFeel,
 			IsDefaultConstructible
 		);

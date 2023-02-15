@@ -2,6 +2,9 @@
 #include "controls/CommonControls.h"
 using namespace core;
 using namespace forms;
+	
+std::shared_ptr<ILookNFeelProvider> const
+Nt6LookNFeel::Instance = std::make_shared<Nt6LookNFeel>();
 
 Nt6LookNFeel::Nt6LookNFeel()
   : SegoeUi{L"Segoe UI",20}

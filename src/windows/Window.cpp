@@ -17,7 +17,7 @@ Window::s_MessageDatabase{};
 	
 Window::Window()
   : Children(*this),
-    LookNFeel{std::make_shared<Win31LookNFeel>()},
+    LookNFeel{Win31LookNFeel::Instance},
     Timers(*this)
 {
 }
