@@ -181,7 +181,9 @@ message("DynamicLib: Generating project(s) from ${PROJECT_SOURCE_FOLDER} with ${
 # Project: dllCoreForms
 add_library(dllCoreForms SHARED 
 	"${PROJECT_EXTRA_FOLDER}DllMain.cpp"
+	${PROJECT_SOURCE_FILES} 
 	${PROJECT_SOURCE_CC_FILES} 
+	${PROJECT_INCLUDE_FILES} 
 )
   
 # Include folders
