@@ -10,6 +10,11 @@ namespace core::forms
 		SharedBrush  Handle;
 
 	public:
+		explicit
+		Brush(SharedBrush h) : Handle{std::move(ThrowIfEmpty(h))}
+		{
+		}
+
 		Brush(Colour col) : Handle{::CreateSolidBrush(win::DWord{col})}
 		{
 			if (!this->Handle)

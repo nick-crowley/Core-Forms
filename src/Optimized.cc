@@ -12,6 +12,8 @@
 #include "dialogs/DialogTemplateWriter.cpp"
 
 #include "graphics/Font.cpp"
+#include "graphics/StockBrush.cpp"
+#include "graphics/SystemBrush.cpp"
 
 #include "lookNfeel/LookNFeelProvider.cpp"
 #include "lookNfeel/Nt6LookNFeel.cpp"
