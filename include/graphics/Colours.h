@@ -43,40 +43,45 @@ namespace core::forms
     //! \enum SystemColour - Defines system colours
     enum class SystemColour
     {
-        ScrollBar = 0,			            //!< Scroll bar gray area.
-        Background = 1,			            //!< Desktop.
-        ActiveCaption = 2,			        //!< Active window title bar. 
-        InactiveCaption = 3,			    //!< Inactive window caption. 
-        Menu = 4,			                //!< Menu background.
-        Window = 5,			                //!< Window background.
-        WindowFrame = 6,			        //!< Window frame.
-        MenuText = 7,			            //!< Text in menus.
-        WindowText = 8,			            //!< Text in windows.
-        CaptionText = 9,			        //!< Text in caption, size box, and scroll bar arrow box.
-        ActiveBorder = 10,			        //!< Active window border.
-        InactiveBorder = 11,			    //!< Inactive window border.
-        AppWorkspace = 12,			        //!< Background color of multiple document interface (MDI) applications.
-        Highlight = 13,			            //!< Item(s) selected in a control.
-        HighlightText = 14,			        //!< Text of item(s) selected in a control.
-        BtnFace = 15,			            //!< Face color for three-dimensional display elements and for dialog box backgrounds.
-        BtnShadow = 16,			            //!< Shadow color for three-dimensional display elements (for edges facing away from the light source).
-        GrayText = 17,			            //!< Grayed (disabled) text.
-        BtnText = 18,			            //!< Text on push buttons.
-        InactiveCaptionText = 19,			//!< Color of text in an inactive caption.
-        BtnHighlight = 20,			        //!< Highlight color for three-dimensional display elements (for edges facing the light source.)
+        Desktop = 1,                        //!< Desktop
+        AppWorkspace = 12,                  //!< Background color of multiple document interface (MDI) applications.
 
-        BtnDkShadow = 21,			        //!< Dark shadow for three-dimensional display elements.
-        BtnLight = 22,			            //!< Light color for three-dimensional display elements (for edges facing the light source.)
-        InfoText = 23,			            //!< Text color for tooltip controls.
-        InfoBk = 24,			            //!< Background color for tooltip controls.
+        ActiveCaption = 2,                  //!< Active window title bar. 
+        InactiveCaption = 3,                //!< Inactive window caption. 
+        CaptionText = 9,                    //!< Text in caption, size box, and scroll bar arrow box.
+        InactiveCaptionText = 19,           //!< Color of text in an inactive caption.
+        GradientActiveCaption = 27,         //!< [windows 5.00] Right side color in the color gradient of an active window's title bar. 
+        GradientInactiveCaption = 28,       //!< [windows 5.00] Right side color in the color gradient of an inactive window's title bar
+
+        Menu = 4,                           //!< Menu background.
+        MenuText = 7,                       //!< Text in menus.
+        MenuHilight = 29,                   //!< [windows 5.01] The color used to highlight menu items when the menu appears as a flat menu
+        MenuBar = 30,                       //!< [windows 5.01] The background color for the menu bar when menus appear as flat menus 
+
+        Window = 5,                         //!< Window background.
+        WindowFrame = 6,                    //!< Window frame.
+        WindowText = 8,                     //!< Text in windows.
+
+        ActiveBorder = 10,                  //!< Active window border.
+        InactiveBorder = 11,                //!< Inactive window border.
+
+        Highlight = 13,                     //!< Item(s) selected in a control.
+        HighlightText = 14,                 //!< Text of item(s) selected in a control.
+        GrayText = 17,                      //!< Grayed (disabled) text.
+        
+        BtnFace = 15,                       //!< Face color for three-dimensional display elements and for dialog box backgrounds.
+        BtnHighlight = 20,                  //!< Highlight color for three-dimensional display elements (for edges facing the light source.)
+        BtnShadow = 16,                     //!< Shadow color for three-dimensional display elements (for edges facing away from the light source).
+        BtnText = 18,                       //!< Text on push buttons.
+        BtnDkShadow = 21,                   //!< Dark shadow for three-dimensional display elements.
+        BtnLight = 22,                      //!< Light color for three-dimensional display elements (for edges facing the light source.)
+        
+        InfoText = 23,                      //!< Text color for tooltip controls.
+        InfoBk = 24,                        //!< Background color for tooltip controls.
     
-        Hotlight = 26,			            //!< [windows 5.00] Color for a hyperlink or hot-tracked item.
-        GradientActiveCaption = 27,			//!< [windows 5.00] Right side color in the color gradient of an active window's title bar. 
-        GradientInactiveCaption = 28,		//!< [windows 5.00] Right side color in the color gradient of an inactive window's title bar. 
-        MenuHilight = 29,			        //!< [windows 5.01] The color used to highlight menu items when the menu appears as a flat menu
-        MenuBar = 30,			            //!< [windows 5.01] The background color for the menu bar when menus appear as flat menus 
-    
-        Desktop = Background,			    //!< 
+        Hotlight = 26,                      //!< [windows 5.00] Color for a hyperlink or hot-tracked item.
+        
+        ScrollBar = 0,                      //!< Scroll bar gray area.
      };
   
     //! \enum ThemeColour - Defines themed system colours 
