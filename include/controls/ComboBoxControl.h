@@ -2,6 +2,8 @@
 #include "library/core.Forms.h"
 #include "controls/Control.h"
 #include "controls/ComboBoxStyle.h"
+//#include "controls/EditControl.h"
+//#include "controls/ListBoxControl.h"
 #include "windows/WindowClass.h"
 
 namespace core::forms
@@ -43,6 +45,7 @@ namespace core::forms
 			{}
 		};
 	
+	public:
 		class Item {
 			ComboBoxControl&  ComboBox;
 			size_t            Index;
@@ -220,12 +223,36 @@ namespace core::forms
 	public:
 		ItemCollection   Items;
 
+	protected:
+		/*ListBoxControl   DropList;
+		EditControl      ItemEdit;*/
+
 	public:
 		ComboBoxControl(uint16_t id) 
 		  : Control{id}, 
 		    Items{*this}
 		{}
 		
+	protected:
+		/*::LRESULT 
+		static CALLBACK InterceptCreationHandler(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
+		{
+			if (message == WM_CREATE) {
+				if (auto result = Window::DefaultMessageHandler(hWnd, message, wParam, lParam); result != 0)
+					return result;
+				
+				else if (::COMBOBOXINFO info{}; ::SendMessageW(hWnd, CB_GETCOMBOBOXINFO, NULL, (::LPARAM)&info))
+				{
+					auto* pThis = static_cast<ComboBoxControl*>(s_ExistingWindows[hWnd]);
+					pThis->DropList.attach(info.hwndList);
+					pThis->ItemEdit.attach(info.hwndItem);
+					return result;
+				}
+			} 
+
+			return Window::DefaultMessageHandler(hWnd, message, wParam, lParam);
+		}*/
+
 	public:
 		bool
 		ownerDraw() const override {
@@ -239,7 +266,7 @@ namespace core::forms
 		}
 
 		WindowClass const& 
-		wndcls() override {
+		wndcls() const override {
 			static WindowClass c;
 			return c;
 		}

@@ -451,6 +451,9 @@ namespace core::forms
 			}
 		}
 	
+		wndclass_constref_t
+		virtual wndcls() const abstract;
+		
 		Rect
 		wndRect() const {
 			Rect rc;
@@ -504,9 +507,6 @@ namespace core::forms
 
 			this->create(wnd);
 		}
-	
-		wndclass_constref_t
-		virtual wndcls() abstract;
 	
 	public:
 		void 

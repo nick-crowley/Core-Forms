@@ -364,7 +364,7 @@ namespace core::forms
 		}
 
 		WindowClass const& 
-		wndcls() override {
+		wndcls() const override {
 			static WindowClass c;
 			return c;
 		}
