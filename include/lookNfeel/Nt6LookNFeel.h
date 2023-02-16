@@ -1,5 +1,6 @@
 #pragma once
 #include "lookNfeel/LookNFeelProvider.h"
+#include "graphics/SystemBrush.h"
 #include "graphics/Font.h"
 
 namespace core::forms
@@ -13,6 +14,7 @@ namespace core::forms
 		static Instance;
 
 	private:
+		SystemBrush  Background = SystemBrush::Dialog;
 		Font  SegoeUi;
 
 	public:

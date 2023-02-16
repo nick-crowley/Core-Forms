@@ -1,4 +1,5 @@
 #include "windows/Window.h"
+#include "graphics/SystemBrush.h"
 #include "lookNfeel/Win31LookNFeel.h"
 using namespace core;
 using namespace forms;
@@ -17,6 +18,7 @@ Window::s_MessageDatabase{};
 	
 Window::Window()
   : Children(*this),
+    Background{SystemBrush::Dialog.handle()},
     LookNFeel{Win31LookNFeel::Instance},
     Timers(*this)
 {

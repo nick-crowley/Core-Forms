@@ -13,7 +13,7 @@ Nt6LookNFeel::Nt6LookNFeel()
 void
 Nt6LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 {
-	args.Graphics->setObj(SystemColour::ButtonFace);
+	args.Graphics->setObj(*dlg.background());
 	args.Graphics->fillRect(*args.Area);
 
 	args.Graphics->restore();
@@ -53,6 +53,7 @@ void
 Nt6LookNFeel::initialize(Dialog& dlg, InitDialogEventArgs const& args) 
 {
 	for (Window* const ctrl : dlg.Children) {
+		ctrl->background(this->Background.handle());
 		ctrl->font(this->SegoeUi.handle());
 	}
 }

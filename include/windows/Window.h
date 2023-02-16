@@ -334,6 +334,7 @@ namespace core::forms
 		//!          Therefore raw-pointers are preferable here due to simplicity.
 		::HWND                  Handle;
 		DebuggingAide           Debug;
+		std::optional<SharedBrush> Background;
 		SharedLookNFeelProvider LookNFeel;
 
 	public:
@@ -359,6 +360,13 @@ namespace core::forms
 		);
 
 	public:
+		SharedBrush
+		background() const {
+			return this->Background.value_or(
+				SharedBrush{this->wndcls().Background, weakref}
+			);
+		}
+
 		Rect
 		clientRect() const {
 			Rect rc;
@@ -450,7 +458,7 @@ namespace core::forms
 				return buffer;
 			}
 		}
-	
+		
 		wndclass_constref_t
 		virtual wndcls() const abstract;
 		
@@ -478,6 +486,12 @@ namespace core::forms
 		}
 
 	public:
+		void
+		background(SharedBrush newBackground) {
+			ThrowIfEmpty(newBackground);
+			this->Background = newBackground;
+		}
+
 		void 
 		create(std::wstring_view text, WindowStyle style, std::optional<Rect> area = std::nullopt) {
 			CreateWindowBuilder wnd;

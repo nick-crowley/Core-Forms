@@ -5,7 +5,7 @@
 
 namespace core::forms
 {
-	class Brush
+	class FormsExport Brush
 	{
 		SharedBrush  Handle;
 
@@ -21,10 +21,10 @@ namespace core::forms
 				win::LastError{}.throwAlways();
 		}
 
-		::HBRUSH
+		SharedBrush
 		handle() const
 		{
-			return *this->Handle;
+			return this->Handle;
 		}
 	};
 }

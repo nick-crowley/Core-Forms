@@ -6,6 +6,9 @@ using namespace forms;
 std::shared_ptr<ILookNFeelProvider> const
 Win31LookNFeel::Instance = std::make_shared<Win31LookNFeel>();
 
+Win31LookNFeel::Win31LookNFeel()
+{}
+
 void
 Win31LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 {
@@ -76,6 +79,7 @@ void
 Win31LookNFeel::initialize(Dialog& dlg, InitDialogEventArgs const& args) 
 {
 	for (Window* const ctrl : dlg.Children) {
+		ctrl->background(this->Background.handle());
 		ctrl->font(DeviceContext::get<StockObject::SystemFixedFont>());
 	}
 }

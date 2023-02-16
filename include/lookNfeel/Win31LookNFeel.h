@@ -1,5 +1,6 @@
 #pragma once
 #include "lookNfeel/LookNFeelProvider.h"
+#include "graphics/SystemBrush.h"
 
 namespace core::forms
 {
@@ -11,10 +12,11 @@ namespace core::forms
 		std::shared_ptr<ILookNFeelProvider> const
 		static Instance;
 
+	private:
+		SystemBrush  Background = SystemBrush::Window;
+		
 	public:
-		satisfies(Win31LookNFeel,
-			IsDefaultConstructible
-		);
+		Win31LookNFeel();
 
 	public:
 		using base::draw;

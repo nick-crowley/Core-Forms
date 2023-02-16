@@ -139,7 +139,7 @@ namespace core::forms
 				// Colour the mask red
 				DeviceContext memDc{invertedMask, nullptr};
 				Brush foreground{*blend};
-				memDc.setObj(foreground.handle());
+				memDc.setObj(*foreground.handle());
 				memDc.copyBitmap(memDc.handle(), at-at.topLeft(), RasterOp::MergeCopy);
 				memDc.restore();
 

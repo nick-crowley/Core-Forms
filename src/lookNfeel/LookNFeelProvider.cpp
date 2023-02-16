@@ -143,8 +143,8 @@ LookNFeelProvider::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args)
 		customFont = Font{args.Graphics.get<StockObject::OemFixedFont>(), std::nullopt, args.Graphics.measureFont(ctrl.height())};
 		args.Graphics.setObj(customFont->handle());
 	}
-	args.Graphics.setObj(StockObject::WhiteBrush);
-	args.Graphics.setBack(DrawingMode::Transparent);
+	args.Graphics.setObj(*ctrl.background());
+	args.Graphics.setBack(DrawingMode::Opaque);
 	args.Graphics.setText(ctrl.colour());
 
 	auto const style = (ctrl.style<StaticStyle>() & ~StaticStyle::TypeMask) | ctrl.align();
@@ -197,7 +197,7 @@ LookNFeelProvider::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	frameRect.Top += textSize.Height/2;
 	frameRect.Left++;
 
-	args.Graphics.setObj(SystemColour::Window);
+	args.Graphics.setObj(*ctrl.background());
 	args.Graphics.fillRect(args.Item.Area);
 
 	auto const thickPen = ::CreatePen(PS_SOLID, 2, (COLORREF)Colour::Black);
@@ -273,7 +273,7 @@ LookNFeelProvider::draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args
 void
 LookNFeelProvider::draw(StaticControl& ctrl, OwnerDrawEventArgs const& args)
 {
-	args.Graphics.setBack(SystemColour::Window);
+	args.Graphics.setObj(*ctrl.background());
 	args.Graphics.drawText(ctrl.text(), args.Item.Area, calculateFlags(ctrl.style<StaticStyle>()));
 	
 	args.Graphics.restore();
