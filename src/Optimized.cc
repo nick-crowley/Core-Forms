@@ -11,6 +11,8 @@
 #include "dialogs/DialogTemplateReader.cpp"
 #include "dialogs/DialogTemplateWriter.cpp"
 
+#include "graphics/Font.cpp"
+
 #include "lookNfeel/LookNFeelProvider.cpp"
 #include "lookNfeel/Nt6LookNFeel.cpp"
 #include "lookNfeel/Win31LookNFeel.cpp"
@@ -22,7 +24,6 @@
 #include "system/ResourceId.cpp"
 
 #include "windows/ChildWindowIterator.cpp"
-#include "windows/Font.cpp"
 #include "windows/Window.cpp"
 #include "windows/WindowClass.cpp"
 #include "windows/WindowEventArgs.cpp"
