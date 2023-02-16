@@ -30,7 +30,7 @@ Win31LookNFeel::draw(Window& wnd, PaintNonClientEventArgs const& args)
 	args.Graphics->frameRegion(frameEdges, DeviceContext::get<StockObject::DkGreyBrush>(), Size{2,2});
 	
 	// Caption background
-	args.Graphics->setObj(activeCaption ? SystemColour::Highlight : SystemColour::BtnDkShadow);
+	args.Graphics->setObj(activeCaption ? SystemColour::Highlight : SystemColour::ButtonDkShadow);
 	//if (args.InvalidArea)
 	//	args.Graphics->fillRegion(*args.InvalidArea);
 	//else
@@ -44,7 +44,7 @@ Win31LookNFeel::draw(Window& wnd, PaintNonClientEventArgs const& args)
 
 	// SysMenu button
 	args.Graphics->setObj(StockObject::BlackPen);
-	args.Graphics->setObj(SystemColour::BtnFace);
+	args.Graphics->setObj(SystemColour::ButtonFace);
 	args.Graphics->drawRect(components.SysMenuBtn);
 	args.Graphics->setObj(StockObject::BlackPen);
 	args.Graphics->setObj(SystemColour::Window);
@@ -55,7 +55,7 @@ Win31LookNFeel::draw(Window& wnd, PaintNonClientEventArgs const& args)
 
 	// Maximize button
 	if (wnd.style().test(WindowStyle::MaximizeBox)) {
-		args.Graphics->fillRect(components.MaximizeBtn, SystemColour::BtnFace);
+		args.Graphics->fillRect(components.MaximizeBtn, SystemColour::ButtonFace);
 		args.Graphics->drawEdge(components.MaximizeBtn, EdgeFlags::Raised);
 		args.Graphics->setText(SystemColour::WindowText);
 		args.Graphics->drawText(L"▲", components.MaximizeBtn, DrawTextFlags::SimpleCentre);
@@ -63,7 +63,7 @@ Win31LookNFeel::draw(Window& wnd, PaintNonClientEventArgs const& args)
 
 	// Minimize button
 	if (wnd.style().test(WindowStyle::MinimizeBox)) {
-		args.Graphics->fillRect(components.MinimizeBtn, SystemColour::BtnFace);
+		args.Graphics->fillRect(components.MinimizeBtn, SystemColour::ButtonFace);
 		args.Graphics->drawEdge(components.MinimizeBtn, EdgeFlags::Raised);
 		args.Graphics->setText(SystemColour::WindowText);
 		args.Graphics->drawText(L"▼", components.MinimizeBtn, DrawTextFlags::SimpleCentre);

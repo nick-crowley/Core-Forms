@@ -69,12 +69,12 @@ namespace core::forms
         HighlightText = 14,                 //!< Text of item(s) selected in a control.
         GrayText = 17,                      //!< Grayed (disabled) text.
         
-        BtnFace = 15,                       //!< Face color for three-dimensional display elements and for dialog box backgrounds.
-        BtnHighlight = 20,                  //!< Highlight color for three-dimensional display elements (for edges facing the light source.)
-        BtnShadow = 16,                     //!< Shadow color for three-dimensional display elements (for edges facing away from the light source).
-        BtnText = 18,                       //!< Text on push buttons.
-        BtnDkShadow = 21,                   //!< Dark shadow for three-dimensional display elements.
-        BtnLight = 22,                      //!< Light color for three-dimensional display elements (for edges facing the light source.)
+        ButtonFace = 15,                    //!< Face color for three-dimensional display elements and for dialog box backgrounds.
+        ButtonHighlight = 20,               //!< Highlight color for three-dimensional display elements (for edges facing the light source.)
+        ButtonShadow = 16,                  //!< Shadow color for three-dimensional display elements (for edges facing away from the light source).
+        ButtonText = 18,                    //!< Text on push buttons.
+        ButtonDkShadow = 21,                //!< Dark shadow for three-dimensional display elements.
+        ButtonLight = 22,                   //!< Light color for three-dimensional display elements (for edges facing the light source.)
         
         InfoText = 23,                      //!< Text color for tooltip controls.
         InfoBk = 24,                        //!< Background color for tooltip controls.

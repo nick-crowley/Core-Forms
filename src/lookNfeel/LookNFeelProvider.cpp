@@ -81,8 +81,8 @@ LookNFeelProvider::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args)
 	auto const focused = state.test(ButtonState::Focus);
 	
 #if 0
-	//args.Graphics.set(::GetSysColorBrush((int)(enabled ? SystemColour::BtnFace : SystemColour::GrayText)));
-	args.Graphics.fillRect(args.Item.Area, ::GetSysColorBrush((int)(enabled ? SystemColour::BtnFace : SystemColour::BtnDkShadow)));
+	//args.Graphics.set(::GetSysColorBrush((int)(enabled ? SystemColour::ButtonFace : SystemColour::GrayText)));
+	args.Graphics.fillRect(args.Item.Area, ::GetSysColorBrush((int)(enabled ? SystemColour::ButtonFace : SystemColour::ButtonDkShadow)));
 	
 	args.Graphics.drawFrameCtrl(args.Item.Area, DFC_BUTTON, pushed   ? DFCS_BUTTONPUSH|DFCS_PUSHED
 	                                                      : !enabled ? DFCS_BUTTONPUSH|DFCS_INACTIVE

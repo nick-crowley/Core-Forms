@@ -13,7 +13,7 @@ Nt6LookNFeel::Nt6LookNFeel()
 void
 Nt6LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 {
-	args.Graphics->setObj(SystemColour::BtnFace);
+	args.Graphics->setObj(SystemColour::ButtonFace);
 	args.Graphics->fillRect(*args.Area);
 
 	args.Graphics->restore();
@@ -34,7 +34,7 @@ Nt6LookNFeel::draw(Window& wnd, PaintNonClientEventArgs const& args)
 	args.Graphics->frameRegion(frameEdges, DeviceContext::get<StockObject::DkGreyBrush>(), Size{2,2});
 	
 	// Caption background
-	args.Graphics->setObj(activeCaption ? SystemColour::Highlight : SystemColour::BtnDkShadow);
+	args.Graphics->setObj(activeCaption ? SystemColour::Highlight : SystemColour::ButtonDkShadow);
 	//if (args.InvalidArea)
 	//	args.Graphics->fillRegion(*args.InvalidArea);
 	//else
