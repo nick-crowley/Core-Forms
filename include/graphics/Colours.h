@@ -45,6 +45,7 @@ namespace core::forms
     {
         Desktop = 1,                        //!< Desktop
         AppWorkspace = 12,                  //!< Background color of multiple document interface (MDI) applications.
+        Dialog = 15,                        //!< Dialog box background
 
         ActiveCaption = 2,                  //!< Active window title bar. 
         InactiveCaption = 3,                //!< Inactive window caption. 
@@ -69,7 +70,7 @@ namespace core::forms
         HighlightText = 14,                 //!< Text of item(s) selected in a control.
         GrayText = 17,                      //!< Grayed (disabled) text.
         
-        ButtonFace = 15,                    //!< Face color for three-dimensional display elements and for dialog box backgrounds.
+        ButtonFace = Dialog,                //!< Face color for three-dimensional display elements and for dialog box backgrounds.
         ButtonHighlight = 20,               //!< Highlight color for three-dimensional display elements (for edges facing the light source.)
         ButtonShadow = 16,                  //!< Shadow color for three-dimensional display elements (for edges facing away from the light source).
         ButtonText = 18,                    //!< Text on push buttons.
