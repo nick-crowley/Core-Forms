@@ -72,12 +72,12 @@ namespace core::forms
 					   || Object == StockObject::NullBrush
 					   || Object == StockObject::DcBrush
 					   || Object == StockObject::DcPen)
-				return (::HBRUSH)::GetStockObject(static_cast<int>(Object));
+				return (::HBRUSH)::GetStockObject(win::DWord{Object});
 
 			else if constexpr (Object == StockObject::WhitePen
 							|| Object == StockObject::BlackPen
 							|| Object == StockObject::NullPen)
-				return (::HPEN)::GetStockObject(static_cast<int>(Object));
+				return (::HPEN)::GetStockObject(win::DWord{Object});
 
 			else if constexpr (Object == StockObject::OemFixedFont
 							|| Object == StockObject::AnsiFixedFont
@@ -86,7 +86,7 @@ namespace core::forms
 							|| Object == StockObject::DeviceDefaultFont
 							|| Object == StockObject::SystemFixedFont
 							|| Object == StockObject::DefaultGuiFont)
-				return (::HFONT)::GetStockObject(static_cast<int>(Object));
+				return (::HFONT)::GetStockObject(win::DWord{Object});
 
 			else
 				return (::HGDIOBJ)nullptr;
@@ -231,7 +231,7 @@ namespace core::forms
 		{
 			ThrowIf(flags, flags.test(DrawTextFlags::ModifyString));
 			if (int32_t height = ::DrawTextW(this->handle(), 
-											 txt.data(), static_cast<int>(txt.size()), 
+											 txt.data(), win::DWord{txt.size()}, 
 											 const_cast<Rect&>(rc), 
 											 flags.value()); !height)
 				win::LastError{}.throwAlways("Unable to draw text");
@@ -253,7 +253,7 @@ namespace core::forms
 		void
 		fillRect(Rect const& rc, SystemColour col) const
 		{
-			this->fillRect(rc, ::GetSysColorBrush(static_cast<int>(col)));
+			this->fillRect(rc, ::GetSysColorBrush(win::DWord{col}));
 		}
 
 		//!	@brief	Fills a rectangle interior with a custom brush
@@ -277,7 +277,7 @@ namespace core::forms
 		void
 		fillRegion(Region const& rgn, SystemColour col) const
 		{
-			if (!::FillRgn(this->handle(), const_cast<Region&>(rgn), ::GetSysColorBrush(static_cast<int>(col))))
+			if (!::FillRgn(this->handle(), const_cast<Region&>(rgn), ::GetSysColorBrush(win::DWord{col})))
 				win::LastError{}.throwAlways();
 		}
 	
@@ -293,7 +293,7 @@ namespace core::forms
 		void
 		frameRegion(Region const& rgn, SystemColour col, Size const thickness) const
 		{
-			this->frameRegion(rgn, ::GetSysColorBrush(static_cast<int>(col)), thickness);
+			this->frameRegion(rgn, ::GetSysColorBrush(win::DWord{col}), thickness);
 		}
 	
 		//!	@brief	Outlines a region with a custom brush
@@ -323,7 +323,7 @@ namespace core::forms
 			Size sz;
 
 			// Measure text
-			if (!::GetTextExtentPoint32W(this->handle(), txt.data(), static_cast<int>(txt.size()), sz))
+			if (!::GetTextExtentPoint32W(this->handle(), txt.data(), win::DWord{txt.size()}, sz))
 				win::LastError{}.throwAlways();
 
 			return sz;
@@ -384,14 +384,14 @@ namespace core::forms
 			case StockObject::BlackBrush:
 			case StockObject::NullBrush:
 			case StockObject::DcBrush:
-				this->setObj((::HBRUSH)::GetStockObject(static_cast<int>(obj)));
+				this->setObj((::HBRUSH)::GetStockObject(win::DWord{obj}));
 				return;
 
 			case StockObject::DcPen:
 			case StockObject::WhitePen:
 			case StockObject::BlackPen:
 			case StockObject::NullPen:
-				this->setObj((::HPEN)::GetStockObject(static_cast<int>(obj)));
+				this->setObj((::HPEN)::GetStockObject(win::DWord{obj}));
 				return;
 
 			case StockObject::OemFixedFont:
@@ -401,7 +401,7 @@ namespace core::forms
 			case StockObject::DeviceDefaultFont:
 			case StockObject::SystemFixedFont:
 			case StockObject::DefaultGuiFont:
-				this->setObj((::HFONT)::GetStockObject(static_cast<int>(obj)));
+				this->setObj((::HFONT)::GetStockObject(win::DWord{obj}));
 				return;
 			}
 		}
@@ -427,7 +427,7 @@ namespace core::forms
 		void
 		setObj(SystemColour brush)
 		{
-			this->setObj(::GetSysColorBrush(static_cast<int>(brush)));
+			this->setObj(::GetSysColorBrush(win::DWord{brush}));
 		}
 	
 		void
@@ -453,7 +453,7 @@ namespace core::forms
 		setBack(DrawingMode mode)
 		{
 			// Change background drawing mode
-			if (auto const prev = static_cast<DrawingMode>(::SetBkMode(this->handle(), static_cast<int>(mode))); 
+			if (auto const prev = static_cast<DrawingMode>(::SetBkMode(this->handle(), win::DWord{mode})); 
 				  prev == DrawingMode::Invalid)
 				win::LastError{}.throwAlways();
 			else if (!this->Modified.PrevDrawingMode) 
