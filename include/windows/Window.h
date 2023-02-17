@@ -578,7 +578,7 @@ namespace core::forms
 
 		void
 		invalidate(Rect rc, bool redraw = false) {
-			::InvalidateRect(this->handle(), rc.operator RECT const*(), win::Boolean{redraw});
+			::InvalidateRect(this->handle(), rc, win::Boolean{redraw});
 		}
 
 		void
