@@ -119,4 +119,10 @@ namespace core::forms
         WindowFrame             = TMT_WINDOWFRAME,              //!< color of the frame around a window.
         WindowText              = TMT_WINDOWTEXT,               //!< color of text drawn in a window.
     };
+    
+	Colour
+	inline to_colour(SystemColour sc) 
+	{
+		return static_cast<Colour>(::GetSysColor(win::DWord{sc}));
+	}
 }
