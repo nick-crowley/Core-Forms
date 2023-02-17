@@ -24,10 +24,10 @@ namespace core::forms
 
 		StockBrush const
 		static White;
-
+		
 		StockBrush const
 		static Hollow;
-		
+
 	private:
 		StockBrush const
 		static Internal;
@@ -37,5 +37,20 @@ namespace core::forms
 		StockBrush(StockObject obj)
 			: base{{reinterpret_cast<::HBRUSH>(::GetStockObject(win::DWord{obj})),weakref}}
 		{}
+	
+	public:
+		std::type_identity_t<StockBrush const&>
+		static get(StockObject obj) {
+			switch (obj) {
+			default: ThrowInvalidArg(obj, "Unsupported StockObject");
+			case StockObject::WhiteBrush:   return StockBrush::White;
+			case StockObject::LtGreyBrush:  return StockBrush::LightGrey;
+			case StockObject::GreyBrush:    return StockBrush::Grey;
+			case StockObject::DkGreyBrush:  return StockBrush::DarkGrey;
+			case StockObject::BlackBrush:   return StockBrush::Black;
+			case StockObject::HollowBrush:  return StockBrush::Hollow;
+			case StockObject::DcBrush:      return StockBrush::Internal;
+			}
+		}
 	};
 }
