@@ -12,7 +12,7 @@ namespace core::forms
 
 	private:
 		HorizontalAlign TextAlignment = Left;
-		Colour          TextColour = DeviceContext::get(SystemColour::WindowText);
+		Colour          TextColour = to_colour(SystemColour::WindowText);
 		PointSize       TextHeight = PointSize::Default;
 
 	public:

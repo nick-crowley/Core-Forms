@@ -1,6 +1,6 @@
 #pragma once
 #include "lookNfeel/LookNFeelProvider.h"
-#include "graphics/SystemBrush.h"
+#include "graphics/Graphics.h"
 
 namespace core::forms
 {

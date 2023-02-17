@@ -58,10 +58,10 @@ namespace core::forms
 			return this->Depth;
 		}
 
-		::HBITMAP
+		SharedBitmap
 		handle() const
 		{
-			return *this->Handle;
+			return this->Handle;
 		}
 	
 		Rect

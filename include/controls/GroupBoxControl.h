@@ -6,7 +6,7 @@ namespace core::forms
 {
 	class GroupBoxControl : public ButtonControl
 	{
-		Colour  TextColour = DeviceContext::get(SystemColour::WindowText);
+		Colour  TextColour = to_colour(SystemColour::WindowText);
 
 	public:
 		GroupBoxControl(uint16_t id) : ButtonControl{id}

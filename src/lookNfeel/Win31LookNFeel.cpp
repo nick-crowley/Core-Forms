@@ -12,7 +12,8 @@ Win31LookNFeel::Win31LookNFeel()
 void
 Win31LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 {
-	args.Graphics->setObj(StockObject::WhiteBrush);
+	// Erase background
+	args.Graphics->setBrush(StockBrush::White);
 	args.Graphics->fillRect(*args.Area);
 
 	args.Graphics->restore();
@@ -24,51 +25,50 @@ Win31LookNFeel::draw(Window& wnd, PaintNonClientEventArgs const& args)
 	auto const activeCaption = args.State == WindowCaptionState::Active;
 	auto const components = NonClientComponentBounds{args.Bounds};
 
-	// Window frame
-	args.Graphics->setObj(DeviceContext::get<StockObject::LtGreyBrush>());
-	args.Graphics->setObj(StockObject::BlackPen);
+	// Draw window frame
+	args.Graphics->setBrush(StockBrush::LightGrey);
+	args.Graphics->setPen(StockPen::Black);
 	Rect const insideFrame = args.Bounds - 2*Border{SystemMetric::cxSizeFrame,SystemMetric::cySizeFrame};
 	Region const frameEdges = args.Area - Region{insideFrame};
 	args.Graphics->fillRegion(frameEdges);
-	args.Graphics->frameRegion(frameEdges, DeviceContext::get<StockObject::DkGreyBrush>(), Size{2,2});
+	args.Graphics->frameRegion(frameEdges, StockBrush::DarkGrey, Size{2,2});
 	
-	// Caption background
-	args.Graphics->setObj(activeCaption ? SystemColour::Highlight : SystemColour::ButtonDkShadow);
+	// Draw caption background
+	args.Graphics->setBrush(activeCaption ? SystemColour::Highlight : SystemColour::ButtonDkShadow);
 	//if (args.InvalidArea)
 	//	args.Graphics->fillRegion(*args.InvalidArea);
 	//else
 		args.Graphics->fillRect(components.Caption);
 	
-	// Caption text
-	args.Graphics->setObj(StockObject::SystemFixedFont);
-	args.Graphics->setText(SystemColour::HighlightText);
-	args.Graphics->setBack(DrawingMode::Transparent);
+	// Draw caption text
+	args.Graphics->setFont(StockObject::SystemFixedFont);
+	args.Graphics->textColour(SystemColour::HighlightText);
+	args.Graphics->backColour(transparent);
 	args.Graphics->drawText(wnd.text(), components.Title, DrawTextFlags::SimpleCentre);
 
-	// SysMenu button
-	args.Graphics->setObj(StockObject::BlackPen);
-	args.Graphics->setObj(SystemColour::ButtonFace);
+	// Draw SysMenu button
+	args.Graphics->setPen(StockPen::Black);
+	args.Graphics->setBrush(SystemBrush::Dialog);
 	args.Graphics->drawRect(components.SysMenuBtn);
-	args.Graphics->setObj(StockObject::BlackPen);
-	args.Graphics->setObj(SystemColour::Window);
-	Rect rcSysMenuBar {components.Caption.topLeft(), components.SysMenuBtn.size()};
-	rcSysMenuBar.inflate(-Size{components.SysMenuBtn.width()/6, components.SysMenuBtn.height()/2 - 2});
-	rcSysMenuBar.Left--; // Fix: Compensate for manually adjusted SysMenu hit-box to correctly align left-edge
-	args.Graphics->drawRect(rcSysMenuBar);
+	args.Graphics->setPen(StockObject::BlackPen);
+	args.Graphics->setBrush(SystemBrush::Window);
+	auto const sysMenuBorder = Border{Size{components.SysMenuBtn.width()/6, components.SysMenuBtn.height()/2 - 2}};
+	auto const sysMenuBtn = Rect{components.Caption.topLeft(), components.SysMenuBtn.size()} - sysMenuBorder - Point{1,0};
+	args.Graphics->drawRect(sysMenuBtn);
 
-	// Maximize button
+	// Draw maximize button
 	if (wnd.style().test(WindowStyle::MaximizeBox)) {
 		args.Graphics->fillRect(components.MaximizeBtn, SystemColour::ButtonFace);
 		args.Graphics->drawEdge(components.MaximizeBtn, EdgeFlags::Raised);
-		args.Graphics->setText(SystemColour::WindowText);
+		args.Graphics->textColour(SystemColour::WindowText);
 		args.Graphics->drawText(L"▲", components.MaximizeBtn, DrawTextFlags::SimpleCentre);
 	}
 
-	// Minimize button
+	// Draw minimize button
 	if (wnd.style().test(WindowStyle::MinimizeBox)) {
 		args.Graphics->fillRect(components.MinimizeBtn, SystemColour::ButtonFace);
 		args.Graphics->drawEdge(components.MinimizeBtn, EdgeFlags::Raised);
-		args.Graphics->setText(SystemColour::WindowText);
+		args.Graphics->textColour(SystemColour::WindowText);
 		args.Graphics->drawText(L"▼", components.MinimizeBtn, DrawTextFlags::SimpleCentre);
 	}
 	
@@ -80,6 +80,6 @@ Win31LookNFeel::initialize(Dialog& dlg, InitDialogEventArgs const& args)
 {
 	for (Window* const ctrl : dlg.Children) {
 		ctrl->background(this->Background.handle());
-		ctrl->font(DeviceContext::get<StockObject::SystemFixedFont>());
+		ctrl->font(StockFont::SystemFixed);
 	}
 }

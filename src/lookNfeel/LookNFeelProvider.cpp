@@ -64,7 +64,7 @@ forms::drawWindowBorder(DeviceContext& graphics, Rect const& client, nstd::bitse
 		graphics.drawEdge(client, calculateFlags(exStyle), BorderFlags::Rect);
 
 	else if (style.test(WindowStyle::Border)) {
-		graphics.setObj(StockObject::BlackPen);
+		graphics.setPen(StockPen::Black);
 		graphics.drawRect(client);
 	}
 }
@@ -84,7 +84,7 @@ LookNFeelProvider::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args)
 	//args.Graphics.set(::GetSysColorBrush((int)(enabled ? SystemColour::ButtonFace : SystemColour::GrayText)));
 	args.Graphics.fillRect(args.Item.Area, ::GetSysColorBrush((int)(enabled ? SystemColour::ButtonFace : SystemColour::ButtonDkShadow)));
 	
-	args.Graphics.drawFrameCtrl(args.Item.Area, DFC_BUTTON, pushed   ? DFCS_BUTTONPUSH|DFCS_PUSHED
+	args.Graphics.drawControl(args.Item.Area, DFC_BUTTON, pushed   ? DFCS_BUTTONPUSH|DFCS_PUSHED
 	                                                      : !enabled ? DFCS_BUTTONPUSH|DFCS_INACTIVE
 	                                                      :            DFCS_BUTTONPUSH);
 #endif
@@ -95,8 +95,9 @@ LookNFeelProvider::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args)
 	if (pushed)
 		content += Point{1,1};
 
-	args.Graphics.setText(enabled ? SystemColour::WindowText : SystemColour::GrayText);
-	args.Graphics.setObj(ctrl.font());
+	args.Graphics.textColour(enabled ? SystemColour::WindowText : SystemColour::GrayText);
+	args.Graphics.backColour(transparent);
+	args.Graphics.setFont(ctrl.font());
 	args.Graphics.drawText(ctrl.text(), content, calculateFlags(ctrl.style<ButtonStyle>()));
 
 	if (focused)
@@ -117,11 +118,12 @@ LookNFeelProvider::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	
 	Rect const content = args.Item.Area - Border{SystemMetric::cxFixedFrame};
 	Rect const tick {content.topLeft(), Size{SystemMetric::cxSmallIcon,SystemMetric::cySmallIcon}};
-	args.Graphics.drawFrameCtrl(tick, DFC_BUTTON, DFCS_BUTTONCHECK|(checked?DFCS_CHECKED:0));
+	args.Graphics.drawControl(tick, DFC_BUTTON, DFCS_BUTTONCHECK|(checked?DFCS_CHECKED:0));
 
 	Rect const areaText = content - Border{SystemMetric::cxSmallIcon,0,0,0} - Border{SystemMetric::cxEdge,0,0,0};
-	args.Graphics.setText(enabled ? SystemColour::WindowText : SystemColour::GrayText);
-	args.Graphics.setObj(ctrl.font());
+	args.Graphics.textColour(enabled ? SystemColour::WindowText : SystemColour::GrayText);
+	args.Graphics.backColour(transparent);
+	args.Graphics.setFont(ctrl.font());
 	args.Graphics.drawText(ctrl.text(), areaText, calculateFlags(ctrl.style<ButtonStyle>()));
 
 	if (focused)
@@ -138,16 +140,16 @@ LookNFeelProvider::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args)
 	
 	std::optional<Font> customFont;
 	if (auto textHeight = ctrl.height(); textHeight == PointSize::Default) 
-		args.Graphics.setObj(ctrl.font());
+		args.Graphics.setFont(ctrl.font());
 	else {
-		customFont = Font{args.Graphics.get<StockObject::OemFixedFont>(), std::nullopt, args.Graphics.measureFont(ctrl.height())};
-		args.Graphics.setObj(customFont->handle());
+		customFont = Font{*StockFont::OemFixed.handle(), std::nullopt, args.Graphics.measureFont(ctrl.height())};
+		args.Graphics.setFont(customFont->handle());
 	}
-	args.Graphics.setObj(*ctrl.background());
-	args.Graphics.setBack(DrawingMode::Opaque);
-	args.Graphics.setText(ctrl.colour());
 
+	// Draw text
 	auto const style = (ctrl.style<StaticStyle>() & ~StaticStyle::TypeMask) | ctrl.align();
+	args.Graphics.backColour(transparent);
+	args.Graphics.textColour(ctrl.colour());
 	args.Graphics.drawText(ctrl.text(), args.Item.Area, calculateFlags(style));
 
 	args.Graphics.restore();
@@ -161,13 +163,13 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 
 	bool const selected = args.Item.State.test(OwnerDrawState::Selected);
 	
-	args.Graphics.setObj(selected ? SystemColour::Highlight : SystemColour::Window);
-	args.Graphics.setText(selected ? SystemColour::HighlightText : SystemColour::WindowText);
+	args.Graphics.setBrush(selected ? SystemBrush::Highlight : SystemBrush::Window);
+	args.Graphics.textColour(selected ? SystemColour::HighlightText : SystemColour::WindowText);
 	Rect const rcItem = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
 	args.Graphics.fillRect(rcItem);
 
-	args.Graphics.setObj(ctrl.font());
-	args.Graphics.setBack(DrawingMode::Transparent);
+	args.Graphics.setFont(ctrl.font());
+	args.Graphics.backColour(transparent);
 	args.Graphics.drawText(ctrl.Items[std::get<uint32_t>(args.Item.Ident)].text(), rcItem);
 
 	args.Graphics.restore();
@@ -177,7 +179,7 @@ void
 LookNFeelProvider::erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& args) 
 {
 	Rect const rcClient = ctrl.clientRect();
-	args.Graphics.setObj(SystemColour::Window);
+	args.Graphics.setBrush(SystemBrush::Window);
 	args.Graphics.fillRect(rcClient);
 
 	drawWindowBorder(args.Graphics, rcClient, ctrl.style(), ctrl.exStyle());
@@ -191,31 +193,28 @@ LookNFeelProvider::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"GroupBox #{} must be OwnerDraw", args.Ident};
 
-	auto const text = ctrl.text();
-	auto const textSize = args.Graphics.measureText(text);
-	auto frameRect = args.Item.Area;
-	frameRect.Top += textSize.Height/2;
-	frameRect.Left++;
-
-	args.Graphics.setObj(*ctrl.background());
+	// Erase background
+	args.Graphics.setBrush(ctrl.background());
 	args.Graphics.fillRect(args.Item.Area);
 
-	auto const thickPen = ::CreatePen(PS_SOLID, 2, (COLORREF)Colour::Black);
-	args.Graphics.setObj(thickPen);
-	args.Graphics.setObj(StockObject::NullBrush);
+	// Draw frame
+	auto const text = ctrl.text();
+	auto const textSize = args.Graphics.measureText(text);
+	auto const frameRect = args.Item.Area - Border{1, textSize.Height/2, 0, 0};
+	Pen const  thickPen{Colour::Black, 2};
+	args.Graphics.setPen(thickPen);
+	args.Graphics.setBrush(StockBrush::Hollow);
 	args.Graphics.drawRect(frameRect);
 
-	args.Graphics.setBack(DrawingMode::Opaque);
-	args.Graphics.setBack(SystemColour::Window);
-	args.Graphics.setObj(ctrl.font());
-	args.Graphics.setText(ctrl.colour());
-
+	// Draw text
 	auto const frameText = L' ' + text + L' ';
 	auto const textOffset = Point{SystemMetric::cxSmallIcon,0};
+	args.Graphics.setFont(ctrl.font());
+	args.Graphics.backColour(transparent);
+	args.Graphics.textColour(ctrl.colour());
 	args.Graphics.drawText(frameText, args.Item.Area + textOffset, DrawTextFlags::Top);
 
 	args.Graphics.restore();
-	::DeleteObject(thickPen);
 }
 
 void
@@ -226,7 +225,7 @@ LookNFeelProvider::draw(PictureControl& ctrl, OwnerDrawEventArgs const& args)
 	
 	if (auto bitmap = ctrl.image(); bitmap) {
 		DeviceContext src{::CreateCompatibleDC(args.Graphics.handle()), ctrl.handle()};
-		src.setObj(bitmap->handle());
+		src.setBitmap(bitmap->handle());
 
 		Rect rcDest = args.Item.Area;
 		if (ctrl.style<StaticStyle>().test(StaticStyle::RealSizeImage)) 
@@ -254,16 +253,19 @@ LookNFeelProvider::draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args
 	auto const checked = ctrl.checked();
 	auto const focused = ctrl.state().test(ButtonState::Focus);
 	
+	// Draw radio glyph
 	Rect const content = args.Item.Area - Border{SystemMetric::cxFixedFrame};
 	Rect const radio {content.topLeft(), Size{20,20}};
-	args.Graphics.drawFrameCtrl(radio, DFC_BUTTON, DFCS_BUTTONRADIO|(checked?DFCS_CHECKED:0));
+	args.Graphics.drawControl(radio, DFC_BUTTON, DFCS_BUTTONRADIO|(checked?DFCS_CHECKED:0));
 
-	Rect areaText = content;
-	areaText.Left += 30;
-	args.Graphics.setText(enabled ? SystemColour::WindowText : SystemColour::GrayText);
-	args.Graphics.setObj(ctrl.font());
+	// Draw text
+	Rect const areaText = content - Border{30,0,0,0};
+	args.Graphics.textColour(enabled ? SystemColour::WindowText : SystemColour::GrayText);
+	args.Graphics.backColour(transparent);
+	args.Graphics.setFont(ctrl.font());
 	args.Graphics.drawText(ctrl.text(), areaText, calculateFlags(ctrl.style<ButtonStyle>()));
 
+	// Draw focus rectangle
 	if (focused)
 		args.Graphics.drawFocus(content);
 
@@ -273,7 +275,7 @@ LookNFeelProvider::draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args
 void
 LookNFeelProvider::draw(StaticControl& ctrl, OwnerDrawEventArgs const& args)
 {
-	args.Graphics.setObj(*ctrl.background());
+	args.Graphics.setBrush(ctrl.background());
 	args.Graphics.drawText(ctrl.text(), args.Item.Area, calculateFlags(ctrl.style<StaticStyle>()));
 	
 	args.Graphics.restore();

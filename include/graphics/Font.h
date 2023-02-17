@@ -25,6 +25,11 @@ namespace core::forms
 		SharedFont  Handle;
 
 	public:
+		explicit
+		Font(SharedFont existingFont) : Handle{std::move(ThrowIfEmpty(existingFont))}
+		{
+		}
+
 		Font(std::wstring_view name, 
 			 int32_t           twipsHeight, 
 			 FontWeight        weight = FontWeight::Normal, 
@@ -74,10 +79,11 @@ namespace core::forms
 				this->Handle.reset(font);
 		}
 		
-		::HFONT
+	public:
+		SharedFont
 		handle() const
 		{
-			return *this->Handle;
+			return this->Handle;
 		}
 	};
 }

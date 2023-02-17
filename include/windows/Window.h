@@ -535,13 +535,13 @@ namespace core::forms
 		}
 	
 		void
-		font(::HFONT f) {
-			SetWindowFont(this->handle(), f, FALSE);
+		font(::HFONT newFont) {
+			SetWindowFont(this->handle(), newFont, FALSE);
 		}
 	
 		void
-		font(const Font& f) {
-			SetWindowFont(this->handle(), f.handle(), FALSE);
+		font(const Font& newFont) {
+			SetWindowFont(this->handle(), *newFont.handle(), FALSE);
 		}
 		
 		void 

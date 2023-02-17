@@ -10,14 +10,38 @@
 #include "graphics/ObjectFlags.h"
 #include "graphics/Region.h"
 #include "graphics/Percentage.h"
+#include "graphics/StockBrush.h"
+#include "graphics/StockFont.h"
+#include "graphics/StockPen.h"
+#include "graphics/SystemBrush.h"
 #include "system/SharedHandle.h"
 #include "win/ApiHelpers.h"
 #pragma comment (lib, "Gdi32.lib")
 #pragma comment (lib, "UxTheme.lib")
 #pragma comment (lib, "Msimg32.lib")
 
+namespace core::meta
+{
+	struct opaque_t {} constexpr  
+	inline opaque;
+	
+	struct transparent_t {} constexpr 
+	inline transparent;
+}
+
+namespace core
+{
+	auto constexpr 
+	inline opaque = meta::opaque;
+
+	auto constexpr 
+	inline transparent = meta::transparent;
+}
+
 namespace core::forms
 {
+	using AnyColour = std::variant<Colour,SystemColour,meta::transparent_t>;
+
 	class DeviceContext 
 	{
 	public:
@@ -52,45 +76,6 @@ namespace core::forms
 		  : Context{dc}, 
 			Window{wnd}
 		{}
-
-	public:
-		Colour
-		static get(SystemColour col)
-		{
-			return static_cast<Colour>(::GetSysColor(win::DWord{col}));
-		}
-
-		template <StockObject Object>
-		auto 
-		static get()
-		{
-			if constexpr (Object == StockObject::WhiteBrush
-					   || Object == StockObject::LtGreyBrush
-					   || Object == StockObject::GreyBrush
-					   || Object == StockObject::DkGreyBrush
-					   || Object == StockObject::BlackBrush
-					   || Object == StockObject::NullBrush
-					   || Object == StockObject::DcBrush
-					   || Object == StockObject::DcPen)
-				return (::HBRUSH)::GetStockObject(win::DWord{Object});
-
-			else if constexpr (Object == StockObject::WhitePen
-							|| Object == StockObject::BlackPen
-							|| Object == StockObject::NullPen)
-				return (::HPEN)::GetStockObject(win::DWord{Object});
-
-			else if constexpr (Object == StockObject::OemFixedFont
-							|| Object == StockObject::AnsiFixedFont
-							|| Object == StockObject::AnsiVarFont
-							|| Object == StockObject::SystemFont
-							|| Object == StockObject::DeviceDefaultFont
-							|| Object == StockObject::SystemFixedFont
-							|| Object == StockObject::DefaultGuiFont)
-				return (::HFONT)::GetStockObject(win::DWord{Object});
-
-			else
-				return (::HGDIOBJ)nullptr;
-		}
 
 	public:
 		::HDC
@@ -152,6 +137,15 @@ namespace core::forms
 							  blend))
 				win::LastError{}.throwAlways();
 		}
+		
+		//! @brief	Draws component of built-in control
+		void 
+		drawControl(Rect const& rc, UINT ctrl, UINT state) const
+		{
+			// Draw control state
+			if (!::DrawFrameControl(this->handle(), const_cast<Rect&>(rc), ctrl, state))
+				win::LastError{}.throwAlways();
+		}
 
 		//! @brief	Draws one or more edges of rectangle
 		void 
@@ -169,7 +163,7 @@ namespace core::forms
 				win::LastError{}.throwAlways();
 		}
 
-		//! @brief	Fills a frame rectangle with a custom brush
+		//! @brief	Outlines a rectangle using a custom brush
 		void 
 		drawFrame(Rect const& rc, SharedBrush const& brush) const
 		{
@@ -178,15 +172,6 @@ namespace core::forms
 				win::LastError{}.throwAlways();
 		}
 	
-		//! @brief	Draws component of built-in control
-		void 
-		drawFrameCtrl(Rect const& rc, UINT ctrl, UINT state) const
-		{
-			// Draw control state
-			if (!::DrawFrameControl(this->handle(), const_cast<Rect&>(rc), ctrl, state))
-				win::LastError{}.throwAlways();
-		}
-
 		//!	@brief	Draw an icon at a position
 		void 
 		drawIcon(::HICON icon, Point const& pt, Size const& sz) const
@@ -251,16 +236,20 @@ namespace core::forms
 	
 		//!	@brief	Fills a rectangle interior with a sytem-coloured brush
 		void
-		fillRect(Rect const& rc, SystemColour col) const
-		{
-			this->fillRect(rc, ::GetSysColorBrush(win::DWord{col}));
+		fillRect(Rect const& rc, SystemColour col) const {
+			this->fillRect(rc, SystemBrush::get(col).handle());
+		}
+		
+		//!	@brief	Fills a rectangle interior with a custom brush
+		void
+		fillRect(Rect const& rc, SharedBrush const& brush) const {
+			this->fillRect(rc,*brush);
 		}
 
 		//!	@brief	Fills a rectangle interior with a custom brush
 		void
 		fillRect(Rect const& rc, ::HBRUSH brush) const
 		{
-			// Fill target rectangle with custom brush
 			if (!::FillRect(this->handle(), rc, brush))
 				win::LastError{}.throwAlways();
 		}
@@ -277,33 +266,38 @@ namespace core::forms
 		void
 		fillRegion(Region const& rgn, SystemColour col) const
 		{
-			if (!::FillRgn(this->handle(), const_cast<Region&>(rgn), ::GetSysColorBrush(win::DWord{col})))
+			if (!::FillRgn(this->handle(), const_cast<Region&>(rgn), *SystemBrush::get(col).handle()))
 				win::LastError{}.throwAlways();
 		}
 	
 		//!	@brief	Fills a region interior with a custom brush
 		void
-		fillRegion(Region const& rgn, ::HBRUSH brush) const
+		fillRegion(Region const& rgn, SharedBrush const& brush) const
 		{
-			if (!::FillRgn(this->handle(), const_cast<Region&>(rgn), brush))
+			if (!::FillRgn(this->handle(), const_cast<Region&>(rgn), *brush))
 				win::LastError{}.throwAlways();
 		}
 	
 		//!	@brief	Outlines a region with a system-coloured brush
 		void
-		frameRegion(Region const& rgn, SystemColour col, Size const thickness) const
-		{
-			this->frameRegion(rgn, ::GetSysColorBrush(win::DWord{col}), thickness);
+		frameRegion(Region const& rgn, SystemColour col, Size const thickness) const {
+			this->frameRegion(rgn, SystemBrush::get(col).handle(), thickness);
 		}
 	
 		//!	@brief	Outlines a region with a custom brush
 		void
-		frameRegion(Region const& rgn, ::HBRUSH brush, Size const thickness) const
+		frameRegion(Region const& rgn, SharedBrush const& brush, Size const thickness) const
 		{
-			if (!::FrameRgn(this->handle(), const_cast<Region&>(rgn), brush, thickness.Width, thickness.Height))
+			if (!::FrameRgn(this->handle(), const_cast<Region&>(rgn), *brush, thickness.Width, thickness.Height))
 				win::LastError{}.throwAlways();
 		}
-	
+		
+		//!	@brief	Outlines a region with a custom brush
+		void
+		frameRegion(Region const& rgn, Brush const& brush, Size const thickness) const {
+			this->frameRegion(rgn, brush.handle(), thickness);
+		}
+
 		//! @brief    Calculate font height 
 		//! @returns  Height in logical pixels
 		int32_t 
@@ -355,149 +349,215 @@ namespace core::forms
 		restore()
 		{
 			if (this->Modified.PrevBackColour) 
-				this->setBack(*this->Modified.PrevBackColour);
+				this->backColour(*this->Modified.PrevBackColour);
 			if (this->Modified.PrevTextColour)
-				this->setText(*this->Modified.PrevTextColour);
+				this->textColour(*this->Modified.PrevTextColour);
 			if (this->Modified.PrevDrawingMode)
-				this->setBack(*this->Modified.PrevDrawingMode);
+				this->backMode(*this->Modified.PrevDrawingMode);
 			if (this->Modified.PrevBitmap)
-				this->setObj(*this->Modified.PrevBitmap);
+				this->setBitmap(*this->Modified.PrevBitmap);
 			if (this->Modified.PrevBrush)
-				this->setObj(*this->Modified.PrevBrush);
+				this->setBrush(*this->Modified.PrevBrush);
 			if (this->Modified.PrevFont)
-				this->setObj(*this->Modified.PrevFont);
+				this->setFont(*this->Modified.PrevFont);
 			if (this->Modified.PrevPen)
-				this->setObj(*this->Modified.PrevPen);
+				this->setPen(*this->Modified.PrevPen);
 
 			this->Modified = {};
 		}
 
 		void
-		setObj(StockObject obj)
+		setBitmap(::HBITMAP newBitmap)
 		{
-			switch (obj)
-			{
-			case StockObject::WhiteBrush:
-			case StockObject::LtGreyBrush:
-			case StockObject::GreyBrush:
-			case StockObject::DkGreyBrush:
-			case StockObject::BlackBrush:
-			case StockObject::NullBrush:
-			case StockObject::DcBrush:
-				this->setObj((::HBRUSH)::GetStockObject(win::DWord{obj}));
-				return;
-
-			case StockObject::DcPen:
-			case StockObject::WhitePen:
-			case StockObject::BlackPen:
-			case StockObject::NullPen:
-				this->setObj((::HPEN)::GetStockObject(win::DWord{obj}));
-				return;
-
-			case StockObject::OemFixedFont:
-			case StockObject::AnsiFixedFont:
-			case StockObject::AnsiVarFont:
-			case StockObject::SystemFont:
-			case StockObject::DeviceDefaultFont:
-			case StockObject::SystemFixedFont:
-			case StockObject::DefaultGuiFont:
-				this->setObj((::HFONT)::GetStockObject(win::DWord{obj}));
-				return;
-			}
-		}
-	
-		void
-		setObj(::HBITMAP bitmap)
-		{
-			if (auto prev = (::HBITMAP)::SelectObject(this->handle(), bitmap); !prev) 
+			if (auto prev = reinterpret_cast<::HBITMAP>(::SelectObject(this->handle(), newBitmap)); !prev) 
 				win::LastError{}.throwAlways();
 			else if (!this->Modified.PrevBitmap) 
 				this->Modified.PrevBitmap = prev;
 		}
-	
+		
 		void
-		setObj(::HBRUSH brush)
+		setBitmap(SharedBitmap const& newBitmap) {
+			this->setBitmap(*newBitmap);
+		}
+
+		void
+		setBitmap(Bitmap const& newBitmap) {
+			this->setBitmap(*newBitmap.handle());
+		}
+		
+		void
+		setBrush(::HBRUSH newBrush)
 		{
-			if (auto prev = (::HBRUSH)::SelectObject(this->handle(), brush); !prev) 
+			if (auto prev = reinterpret_cast<::HBRUSH>(::SelectObject(this->handle(), newBrush)); !prev) 
 				win::LastError{}.throwAlways();
 			else if (!this->Modified.PrevBrush) 
 				this->Modified.PrevBrush = prev;
 		}
-	
+		
 		void
-		setObj(SystemColour brush)
-		{
-			this->setObj(::GetSysColorBrush(win::DWord{brush}));
+		setBrush(SharedBrush newBrush) {
+			this->setBrush(*newBrush);
 		}
-	
+		
 		void
-		setObj(::HFONT font)
+		setBrush(StockObject stockBrush) {
+			this->setBrush(*StockBrush::get(stockBrush).handle());
+		}
+		
+		void
+		setBrush(SystemColour newColour) {
+			this->setBrush(*SystemBrush::get(newColour).handle());
+		}
+		
+		void
+		setBrush(Colour col) {
+			this->setBrush(StockObject::DcBrush);
+			if (auto const prev = (Colour)::SetDCBrushColor(this->handle(), static_cast<::COLORREF>(col)); prev == Colour::Invalid)
+				win::LastError{}.throwAlways();
+		}
+		
+		void
+		setBrush(Brush const& b) {
+			this->setBrush(b.handle());
+		}
+		
+		void
+		setFont(::HFONT newFont)
 		{
-			if (auto prev = (::HFONT)::SelectObject(this->handle(), font); !prev) 
+			if (auto prev = reinterpret_cast<::HFONT>(::SelectObject(this->handle(), newFont)); !prev) 
 				win::LastError{}.throwAlways();
 			else if (!this->Modified.PrevFont) 
 				this->Modified.PrevFont = prev;
 		}
-	
+		
 		void
-		setObj(::HPEN pen)
+		setFont(SharedFont newFont) {
+			this->setFont(*newFont);
+		}
+		
+		void
+		setFont(StockObject stockFont) {
+			this->setFont(*StockFont::get(stockFont).handle());
+		}
+		
+		void
+		setFont(Font const& newFont) {
+			this->setFont(*newFont.handle());
+		}
+		
+		void
+		setPen(::HPEN newPen)
 		{
-			if (auto prev = (::HPEN)::SelectObject(this->handle(), pen); !prev) 
+			if (auto prev = reinterpret_cast<::HPEN>(::SelectObject(this->handle(), newPen)); !prev) 
 				win::LastError{}.throwAlways();
 			else if (!this->Modified.PrevPen) 
 				this->Modified.PrevPen = prev;
 		}
-	
+		
+		void
+		setPen(SharedPen newPen) {
+			this->setPen(*newPen);
+		}
+		
+		void
+		setPen(StockObject stockPen) {
+			this->setPen(*StockPen::get(stockPen).handle());
+		}
+		
+		void
+		setPen(Colour newcolour) {
+			this->setPen(StockObject::DcPen);
+			if (auto const prev = (Colour)::SetDCPenColor(this->handle(), static_cast<::COLORREF>(newcolour)); prev == Colour::Invalid)
+				win::LastError{}.throwAlways();
+		}
+		
+		void
+		setPen(Pen const& newPen) {
+			this->setPen(*newPen.handle());
+		}
+		
 		//! @brief	Changes the background drawing mode
 		void
-		setBack(DrawingMode mode)
+		backColour(meta::transparent_t) {
+			this->backMode(DrawingMode::Transparent);
+		}
+
+		//! @brief	Changes the background drawing mode
+		void
+		backColour(meta::opaque_t) {
+			this->backMode(DrawingMode::Opaque);
+		}
+
+		//! @brief	Changes the background colour (used for text backgrounds and non-solid pen backgrounds)
+		void
+		backColour(Colour newcolour)
 		{
-			// Change background drawing mode
-			if (auto const prev = static_cast<DrawingMode>(::SetBkMode(this->handle(), win::DWord{mode})); 
-				  prev == DrawingMode::Invalid)
+			auto const prev = static_cast<Colour>(::SetBkColor(this->handle(), win::DWord{newcolour}));
+			if (prev == Colour::Invalid)
+				win::LastError{}.throwAlways();
+			else if (!this->Modified.PrevBackColour) 
+				this->Modified.PrevBackColour = prev;
+
+			this->backMode(DrawingMode::Opaque);
+		}
+
+		void
+		backColour(SystemColour newcolour) {
+			this->backColour(to_colour(newcolour));
+		}
+
+		//! @brief	Sets the text colour and transparent background
+		//! @throws	Text colour is transparent
+		void
+		textColour(AnyColour foreground)
+		{
+			ThrowIf(foreground, std::holds_alternative<meta::transparent_t>(foreground));
+
+			auto const* colour = std::get_if<Colour>(&foreground);
+			this->setTextColour(colour ? *colour : to_colour(std::get<SystemColour>(foreground)));
+			this->backMode(DrawingMode::Transparent);
+		}
+		
+		//! @brief	Set the text colour
+		//! @throws	Text colour is transparent
+		void
+		textColour(AnyColour foreground, AnyColour background) 
+		{
+			ThrowIf(foreground, std::holds_alternative<meta::transparent_t>(foreground));
+
+			auto const* colour = std::get_if<Colour>(&foreground);
+			this->setTextColour(colour ? *colour : to_colour(std::get<SystemColour>(foreground)));
+
+			if (std::holds_alternative<meta::transparent_t>(background))
+				this->backMode(DrawingMode::Transparent);
+			else {
+				colour = std::get_if<Colour>(&background);
+				this->setTextColour(colour ? *colour : to_colour(std::get<SystemColour>(background)));
+				this->backMode(DrawingMode::Opaque);
+			}
+		}
+
+	protected:
+		//! @brief	Changes the background drawing mode
+		void
+		backMode(DrawingMode mode)
+		{
+			auto const prev = static_cast<DrawingMode>(::SetBkMode(this->handle(), win::DWord{mode}));
+			if (prev == DrawingMode::Invalid)
 				win::LastError{}.throwAlways();
 			else if (!this->Modified.PrevDrawingMode) 
 				this->Modified.PrevDrawingMode = prev;
 		}
-
-		//! @brief	Changes the background colour (used for text backgrounds and non-solid pen backgrounds)
-		//! @return	Previous colour
+		
+		//! @brief	Changes the current text colour
 		void
-		setBack(Colour col)
+		setTextColour(Colour col)
 		{
-			// Change background colour
-			if (auto const prev = static_cast<Colour>(::SetBkColor(this->handle(), win::DWord{col})); 
-				  prev == Colour::Invalid)
-				win::LastError{}.throwAlways();
-			else if (!this->Modified.PrevBackColour) 
-				this->Modified.PrevBackColour = prev;
-		}
-
-		void
-		setBack(SystemColour col)
-		{
-			this->setBack(DeviceContext::get(col));
-		}
-
-		//! @brief	Changes the current text colour (Used for text foregrounds)
-		//! @return Previous colour
-		void
-		setText(Colour col)
-		{
-			// Change text colour
-			if (auto const prev = static_cast<Colour>(::SetTextColor(this->handle(), win::DWord{col}));
-				  prev == Colour::Invalid)
+			auto const prev = static_cast<Colour>(::SetTextColor(this->handle(), win::DWord{col})); 
+			if (prev == Colour::Invalid)
 				win::LastError{}.throwAlways();
 			else if (!this->Modified.PrevTextColour) 
 				this->Modified.PrevTextColour = prev;
-		}
-	
-		//! @brief	Changes the current text colour (Used for text foregrounds)
-		//! @return Previous colour
-		void
-		setText(SystemColour col)
-		{
-			this->setText(DeviceContext::get(col));
 		}
 	};
 }
