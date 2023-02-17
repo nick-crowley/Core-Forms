@@ -57,30 +57,30 @@ constdata bool core::meta::Settings<core::bitwise_enum, core::forms::BorderFlags
 //! \enum DrawTextFlags - Defines DrawText flags
 enum class core::forms::DrawTextFlags : uint32_t
 {
-    Top = 0x00000000,                          //!< 
-    Left = 0x00000000,                         //!< 
-    Centre = 0x00000001,                       //!< 
-    Right = 0x00000002,                        //!< 
-    VCentre = 0x00000004,                      //!< 
-    Bottom = 0x00000008,                       //!< 
-    WordBreak = 0x00000010,                    //!< 
-    SingleLine = 0x00000020,                   //!< 
-    ExpandTabs = 0x00000040,                   //!< 
-    TabStop = 0x00000080,                      //!< 
-    NoClip = 0x00000100,                       //!< 
-    ExternalLeading = 0x00000200,              //!< 
-    CalcRect = 0x00000400,                     //!< 
-    NoPrefix = 0x00000800,                     //!< 
-    Internal = 0x00001000,                     //!< 
-    EditControl = 0x00002000,                  //!< 
-    PathEllipsis = 0x00004000,                 //!< 
-    EndElipsis = 0x00008000,                   //!< 
-    ModifyString = 0x00010000,                 //!< 
-    RtlReading = 0x00020000,                   //!< 
-    WordElipsis = 0x00040000,                  //!< 
-    NoFullWidthCharBreak = 0x00080000,         //!< [windows 5.00]
-    HidePrefix = 0x00100000,                   //!< [windows 5.00]
-    PrefixOnly = 0x00200000,                   //!< [windows 5.00]
+    Top = DT_TOP,                                    //!< 
+    Left = Top,                                      //!< 
+    Centre = DT_CENTER,                              //!< 
+    Right = DT_RIGHT,                                //!< 
+    VCentre = DT_VCENTER,                            //!< 
+    Bottom = DT_BOTTOM,                              //!< 
+    WordBreak = DT_WORDBREAK,                        //!< 
+    SingleLine = DT_SINGLELINE,                      //!< 
+    ExpandTabs = DT_EXPANDTABS,                      //!< 
+    TabStop = DT_TABSTOP,                            //!< 
+    NoClip = DT_NOCLIP,                              //!< 
+    ExternalLeading = DT_EXTERNALLEADING,            //!< 
+    CalcRect = DT_CALCRECT,                          //!< 
+    NoPrefix = DT_NOPREFIX,                          //!< 
+    Internal = DT_INTERNAL,                          //!< 
+    EditControl = DT_EDITCONTROL,                    //!< 
+    PathEllipsis = DT_PATH_ELLIPSIS,                 //!< 
+    EndElipsis = DT_END_ELLIPSIS,                    //!< 
+    ModifyString = DT_MODIFYSTRING,                  //!< 
+    RtlReading = DT_RTLREADING,                      //!< 
+    WordElipsis = DT_WORD_ELLIPSIS,                  //!< 
+    NoFullWidthCharBreak = DT_NOFULLWIDTHCHARBREAK,  //!< [windows 5.00]
+    HidePrefix = DT_HIDEPREFIX,                      //!< [windows 5.00]
+    PrefixOnly = DT_PREFIXONLY,                      //!< [windows 5.00]
 
     SimpleLeft = Left|VCentre|SingleLine,
     SimpleCentre = Centre|VCentre|SingleLine,
@@ -96,27 +96,27 @@ namespace core::forms
     enum class DrawingMode : uint32_t
     {
         Invalid = 0,                 //!< 
-        Transparent = 1,             //!< Transparent background
-        Opaque = 2,                  //!< Opaque background
+        Transparent = TRANSPARENT,   //!< Transparent background
+        Opaque = OPAQUE,             //!< Opaque background
     };
   
     //! \enum DrawObjectType - Defines drawing object types 
     enum class DrawObjectType : uint32_t
     {
-        Pen = 1,                //!< 
-        Brush = 2,              //!< 
-        Dc = 3,                 //!< 
-        MetaDc = 4,             //!< 
-        Pal = 5,                //!< 
-        Font = 6,               //!< 
-        Bitmap = 7,             //!< 
-        Region = 8,             //!< 
-        MetaFile = 9,           //!< 
-        MemDc = 10,             //!< 
-        ExtPen = 11,            //!< 
-        EnhMetaDc = 12,         //!< 
-        EnhMetaFile = 13,       //!< 
-        ColorSpace = 14,        //!< 
+        Pen = OBJ_PEN,                       //!< 
+        ExtendedPen = OBJ_EXTPEN,            //!< 
+        Brush = OBJ_BRUSH,                   //!< 
+        Font = OBJ_FONT,                     //!< 
+        Bitmap = OBJ_BITMAP,                 //!< 
+        Region = OBJ_REGION,                 //!< 
+        Palette = OBJ_PAL,                   //!< 
+        ColorSpace = OBJ_COLORSPACE,         //!< 
+        DeviceContext = OBJ_DC,              //!< 
+        MemoryDC = OBJ_MEMDC,                //!< 
+        Metafile = OBJ_METAFILE,             //!< 
+        MetafileDC = OBJ_METADC,             //!< 
+        EnhancedMetafile = OBJ_ENHMETAFILE,  //!< 
+        EnhancedMetafileDC = OBJ_ENHMETADC,  //!< 
     };
   
     //! \enum OwnerDrawAction - Defines owner drawing requests
@@ -188,26 +188,25 @@ namespace core::forms
     //! \enum StockObject - Defines stock drawing objects
     enum class StockObject : int32_t
     {
-        WhiteBrush = 0,                  //!< 
-        LtGreyBrush = 1,                 //!< 
-        GreyBrush = 2,                   //!< 
-        DkGreyBrush = 3,                 //!< 
-        BlackBrush = 4,                  //!< 
-        NullBrush = 5,                   //!< 
-        HollowBrush = NullBrush,         //!< 
-        WhitePen = 6,                    //!< 
-        BlackPen = 7,                    //!< 
-        NullPen = 8,                     //!< 
-        OemFixedFont = 10,               //!< 
-        AnsiFixedFont = 11,              //!< 
-        AnsiVarFont = 12,                //!< 
-        SystemFont = 13,                 //!< 
-        DeviceDefaultFont = 14,          //!< 
-        DefaultPalette = 15,             //!< 
-        SystemFixedFont = 16,            //!< 
-        DefaultGuiFont = 17,             //!< 
-        DcBrush = 18,                    //!< [windows 2000]
-        DcPen = 19,                      //!< [windows 2000]
+        WhiteBrush = WHITE_BRUSH,                 //!< 
+        LtGreyBrush = LTGRAY_BRUSH,               //!< 
+        GreyBrush = GRAY_BRUSH,                   //!< 
+        DkGreyBrush = DKGRAY_BRUSH,               //!< 
+        BlackBrush = BLACK_BRUSH,                 //!< 
+        HollowBrush = HOLLOW_BRUSH,               //!< 
+        WhitePen = WHITE_PEN,                     //!< 
+        BlackPen = BLACK_PEN,                     //!< 
+        HollowPen = NULL_PEN,                     //!< 
+        OemFixedFont = OEM_FIXED_FONT,            //!< 
+        AnsiFixedFont = ANSI_FIXED_FONT,          //!< 
+        AnsiVarFont = ANSI_VAR_FONT,              //!< 
+        SystemFont = SYSTEM_FONT,                 //!< 
+        DeviceDefaultFont = DEVICE_DEFAULT_FONT,  //!< 
+        DefaultPalette = DEFAULT_PALETTE,         //!< 
+        SystemFixedFont = SYSTEM_FIXED_FONT,      //!< 
+        DefaultGuiFont = DEFAULT_GUI_FONT,        //!< 
+        DcBrush = DC_BRUSH,                       //!< [windows 2000]
+        DcPen = DC_PEN,                           //!< [windows 2000]
     };
 
     //! \enum SystemMetric - System metrics
