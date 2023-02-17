@@ -12,4 +12,4 @@ StockPen const
 StockPen::Hollow{StockObject::HollowPen};
 
 StockPen const
-StockPen::Internal{StockObject::DcPen};
+StockPen::Internal{StockObject::InternalPen};

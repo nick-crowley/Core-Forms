@@ -21,4 +21,4 @@ StockBrush const
 StockBrush::Hollow{StockObject::HollowBrush};
 
 StockBrush const
-StockBrush::Internal{StockObject::DcBrush};
+StockBrush::Internal{StockObject::InternalBrush};

@@ -205,8 +205,8 @@ namespace core::forms
         DefaultPalette = DEFAULT_PALETTE,         //!< 
         SystemFixedFont = SYSTEM_FIXED_FONT,      //!< 
         DefaultGuiFont = DEFAULT_GUI_FONT,        //!< 
-        DcBrush = DC_BRUSH,                       //!< [windows 2000]
-        DcPen = DC_PEN,                           //!< [windows 2000]
+        InternalBrush = DC_BRUSH,                 //!< [windows 2000]
+        InternalPen = DC_PEN,                     //!< [windows 2000]
     };
 
     //! \enum SystemMetric - System metrics

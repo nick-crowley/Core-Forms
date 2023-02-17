@@ -34,10 +34,10 @@ namespace core::forms
 		static get(StockObject obj) {
 			switch (obj) {
 			default: ThrowInvalidArg(obj, "Unsupported StockObject");
-			case StockObject::BlackPen:  return StockPen::Black;
-			case StockObject::WhitePen:  return StockPen::White;
-			case StockObject::HollowPen: return StockPen::Hollow;
-			case StockObject::DcPen:     return StockPen::Internal;
+			case StockObject::BlackPen:    return StockPen::Black;
+			case StockObject::WhitePen:    return StockPen::White;
+			case StockObject::HollowPen:   return StockPen::Hollow;
+			case StockObject::InternalPen: return StockPen::Internal;
 			}
 		}
 	};

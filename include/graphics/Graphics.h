@@ -411,7 +411,7 @@ namespace core::forms
 		
 		void
 		setBrush(Colour col) {
-			this->setBrush(StockObject::DcBrush);
+			this->setBrush(StockObject::InternalBrush);
 			if (auto const prev = (Colour)::SetDCBrushColor(this->handle(), static_cast<::COLORREF>(col)); prev == Colour::Invalid)
 				win::LastError{}.throwAlways();
 		}
@@ -466,7 +466,7 @@ namespace core::forms
 		
 		void
 		setPen(Colour newcolour) {
-			this->setPen(StockObject::DcPen);
+			this->setPen(StockObject::InternalPen);
 			if (auto const prev = (Colour)::SetDCPenColor(this->handle(), static_cast<::COLORREF>(newcolour)); prev == Colour::Invalid)
 				win::LastError{}.throwAlways();
 		}
