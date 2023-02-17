@@ -12,7 +12,6 @@ namespace core::forms
 
 	private:
 		HorizontalAlign TextAlignment = Left;
-		Colour          TextColour = to_colour(SystemColour::WindowText);
 		PointSize       TextHeight = PointSize::Default;
 
 	public:
@@ -23,11 +22,6 @@ namespace core::forms
 		HorizontalAlign
 		align() const {
 			return this->TextAlignment;
-		}
-
-		Colour
-		colour() const {
-			return this->TextColour;
 		}
 
 		PointSize
@@ -41,11 +35,6 @@ namespace core::forms
 			this->TextAlignment = horz;
 		}
 
-		void
-		colour(Colour col) {
-			this->TextColour = col;
-		}
-		
 		void
 		height(PointSize sz) {
 			this->TextHeight = sz;

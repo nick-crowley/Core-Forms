@@ -1,17 +1,17 @@
 #pragma once
 #include "library/core.Forms.h"
+#include "graphics/SystemBrush.h"
 #include "nstd/Bitset.h"
 #include "windows/ClassStyle.h"
 #include "system/ResourceId.h"
 #include "system/Module.h"
-#include "system/SharedHandle.h"
 #include "system/ResourceId.h"
 
 namespace core::forms
 {
 	class WindowClass {
 	public:
-		::HBRUSH                  Background = nullptr;
+		SharedBrush               Background;
 		uint32_t                  ClsExtra = 0;
 		::HCURSOR                 Cursor = nullptr;
 		::HICON                   LargeIcon = nullptr, 
@@ -39,8 +39,12 @@ namespace core::forms
 			if (!::GetClassInfoExW(this->Instance, name, &this->Properties)) {
 				win::LastError{}.throwIfError("Cannot find '{}' window class", to_string(name));
 			}
-
-			this->Background = this->Properties.hbrBackground;
+			if (this->Properties.hbrBackground) {
+				if (auto const sysCol = reinterpret_cast<uintptr_t>(this->Properties.hbrBackground); sysCol <= STOCK_LAST)
+					this->Background = SystemBrush::get(static_cast<SystemColour>(sysCol-1)).handle();
+				else
+					this->Background = SharedBrush{this->Properties.hbrBackground, weakref};
+			}
 			this->ClsExtra = this->Properties.cbClsExtra;
 			this->Cursor = this->Properties.hCursor;
 			this->LargeIcon = this->Properties.hIcon;
@@ -54,7 +58,7 @@ namespace core::forms
 	public:
 		void 
 		register_() {
-			this->Properties.hbrBackground = this->Background;
+			this->Properties.hbrBackground = this->Background.get();
 			this->Properties.cbClsExtra = this->ClsExtra;
 			this->Properties.lpszClassName = this->Name;
 			this->Properties.hCursor = this->Cursor;

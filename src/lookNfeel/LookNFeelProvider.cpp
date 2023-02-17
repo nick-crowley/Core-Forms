@@ -74,12 +74,15 @@ LookNFeelProvider::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args)
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"Button #{} must be OwnerDraw", args.Ident};
+	
+	// Erase background
+	args.Graphics.setBrush(ctrl.backColour());
+	args.Graphics.fillRect(args.Item.Area);
 
-	auto const enabled = ctrl.enabled();
+	// Draw edges
 	auto const state = ctrl.state();
 	auto const pushed = state.test(ButtonState::Pushed);
-	auto const focused = state.test(ButtonState::Focus);
-	
+	args.Graphics.drawEdge(args.Item.Area, pushed ? EdgeFlags::Sunken : EdgeFlags::Raised);
 #if 0
 	//args.Graphics.set(::GetSysColorBrush((int)(enabled ? SystemColour::ButtonFace : SystemColour::GrayText)));
 	args.Graphics.fillRect(args.Item.Area, ::GetSysColorBrush((int)(enabled ? SystemColour::ButtonFace : SystemColour::ButtonDkShadow)));
@@ -88,18 +91,16 @@ LookNFeelProvider::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args)
 	                                                      : !enabled ? DFCS_BUTTONPUSH|DFCS_INACTIVE
 	                                                      :            DFCS_BUTTONPUSH);
 #endif
-	
-	args.Graphics.drawEdge(args.Item.Area, pushed ? EdgeFlags::Sunken : EdgeFlags::Raised);
 
-	Rect content = args.Item.Area - Border{SystemMetric::cxFixedFrame};
-	if (pushed)
-		content += Point{1,1};
-
-	args.Graphics.textColour(enabled ? SystemColour::WindowText : SystemColour::GrayText);
-	args.Graphics.backColour(transparent);
+	// Draw text
+	auto const enabled = ctrl.enabled();
+	Rect const content = args.Item.Area - Border{SystemMetric::cxFixedFrame} + (pushed ? Point{1,1} : Point::Zero);
 	args.Graphics.setFont(ctrl.font());
+	args.Graphics.textColour(enabled ? ctrl.textColour() : SystemColour::GrayText, ctrl.backColour());
 	args.Graphics.drawText(ctrl.text(), content, calculateFlags(ctrl.style<ButtonStyle>()));
 
+	// Draw focus rectangle
+	auto const focused = state.test(ButtonState::Focus);
 	if (focused)
 		args.Graphics.drawFocus(content);
 
@@ -111,21 +112,26 @@ LookNFeelProvider::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"CheckBox #{} must be OwnerDraw", args.Ident};
-
-	auto const enabled = ctrl.enabled();
-	auto const checked = ctrl.checked();
-	auto const focused = ctrl.state().test(ButtonState::Focus);
 	
+	// Erase background
+	args.Graphics.setBrush(ctrl.backColour());
+	args.Graphics.fillRect(args.Item.Area);
+
+	// Draw check
+	auto const checked = ctrl.checked();
 	Rect const content = args.Item.Area - Border{SystemMetric::cxFixedFrame};
 	Rect const tick {content.topLeft(), Size{SystemMetric::cxSmallIcon,SystemMetric::cySmallIcon}};
 	args.Graphics.drawControl(tick, DFC_BUTTON, DFCS_BUTTONCHECK|(checked?DFCS_CHECKED:0));
-
+	
+	// Draw text
+	auto const enabled = ctrl.enabled();
 	Rect const areaText = content - Border{SystemMetric::cxSmallIcon,0,0,0} - Border{SystemMetric::cxEdge,0,0,0};
-	args.Graphics.textColour(enabled ? SystemColour::WindowText : SystemColour::GrayText);
-	args.Graphics.backColour(transparent);
 	args.Graphics.setFont(ctrl.font());
+	args.Graphics.textColour(enabled ? ctrl.textColour() : SystemColour::GrayText, ctrl.backColour());
 	args.Graphics.drawText(ctrl.text(), areaText, calculateFlags(ctrl.style<ButtonStyle>()));
-
+	
+	// Draw focus rectangle
+	auto const focused = ctrl.state().test(ButtonState::Focus);
 	if (focused)
 		args.Graphics.drawFocus(content);
 
@@ -148,8 +154,7 @@ LookNFeelProvider::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args)
 
 	// Draw text
 	auto const style = (ctrl.style<StaticStyle>() & ~StaticStyle::TypeMask) | ctrl.align();
-	args.Graphics.backColour(transparent);
-	args.Graphics.textColour(ctrl.colour());
+	args.Graphics.textColour(ctrl.textColour(), ctrl.backColour());
 	args.Graphics.drawText(ctrl.text(), args.Item.Area, calculateFlags(style));
 
 	args.Graphics.restore();
@@ -163,13 +168,15 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 
 	bool const selected = args.Item.State.test(OwnerDrawState::Selected);
 	
-	args.Graphics.setBrush(selected ? SystemBrush::Highlight : SystemBrush::Window);
-	args.Graphics.textColour(selected ? SystemColour::HighlightText : SystemColour::WindowText);
+	// Draw item background
 	Rect const rcItem = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
+	args.Graphics.setBrush(selected ? SystemBrush::Highlight : SystemBrush::Window);
 	args.Graphics.fillRect(rcItem);
 
+	// Draw item text
 	args.Graphics.setFont(ctrl.font());
-	args.Graphics.backColour(transparent);
+	args.Graphics.textColour(selected ? SystemColour::HighlightText : ctrl.textColour(),
+	                         selected ? SystemColour::Highlight : ctrl.backColour());
 	args.Graphics.drawText(ctrl.Items[std::get<uint32_t>(args.Item.Ident)].text(), rcItem);
 
 	args.Graphics.restore();
@@ -178,10 +185,12 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 void
 LookNFeelProvider::erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& args) 
 {
+	// Erase background
 	Rect const rcClient = ctrl.clientRect();
 	args.Graphics.setBrush(SystemBrush::Window);
 	args.Graphics.fillRect(rcClient);
 
+	// Draw window border
 	drawWindowBorder(args.Graphics, rcClient, ctrl.style(), ctrl.exStyle());
 
 	args.Graphics.restore();
@@ -194,7 +203,7 @@ LookNFeelProvider::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		throw runtime_error{"GroupBox #{} must be OwnerDraw", args.Ident};
 
 	// Erase background
-	args.Graphics.setBrush(ctrl.background());
+	args.Graphics.setBrush(ctrl.backColour());
 	args.Graphics.fillRect(args.Item.Area);
 
 	// Draw frame
@@ -210,8 +219,7 @@ LookNFeelProvider::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	auto const frameText = L' ' + text + L' ';
 	auto const textOffset = Point{SystemMetric::cxSmallIcon,0};
 	args.Graphics.setFont(ctrl.font());
-	args.Graphics.backColour(transparent);
-	args.Graphics.textColour(ctrl.colour());
+	args.Graphics.textColour(ctrl.textColour(), ctrl.backColour());
 	args.Graphics.drawText(frameText, args.Item.Area + textOffset, DrawTextFlags::Top);
 
 	args.Graphics.restore();
@@ -260,9 +268,8 @@ LookNFeelProvider::draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args
 
 	// Draw text
 	Rect const areaText = content - Border{30,0,0,0};
-	args.Graphics.textColour(enabled ? SystemColour::WindowText : SystemColour::GrayText);
-	args.Graphics.backColour(transparent);
 	args.Graphics.setFont(ctrl.font());
+	args.Graphics.textColour(enabled ? ctrl.textColour() : SystemColour::GrayText, ctrl.backColour());
 	args.Graphics.drawText(ctrl.text(), areaText, calculateFlags(ctrl.style<ButtonStyle>()));
 
 	// Draw focus rectangle

@@ -79,7 +79,8 @@ void
 Win31LookNFeel::initialize(Dialog& dlg, InitDialogEventArgs const& args) 
 {
 	for (Window* const ctrl : dlg.Children) {
-		ctrl->background(this->Background.handle());
+		ctrl->backColour(SystemColour::Window);
+		ctrl->textColour(SystemColour::WindowText);
 		ctrl->font(StockFont::SystemFixed);
 	}
 }

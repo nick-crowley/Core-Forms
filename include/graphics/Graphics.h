@@ -20,28 +20,8 @@
 #pragma comment (lib, "UxTheme.lib")
 #pragma comment (lib, "Msimg32.lib")
 
-namespace core::meta
-{
-	struct opaque_t {} constexpr  
-	inline opaque;
-	
-	struct transparent_t {} constexpr 
-	inline transparent;
-}
-
-namespace core
-{
-	auto constexpr 
-	inline opaque = meta::opaque;
-
-	auto constexpr 
-	inline transparent = meta::transparent;
-}
-
 namespace core::forms
 {
-	using AnyColour = std::variant<Colour,SystemColour,meta::transparent_t>;
-
 	class DeviceContext 
 	{
 	public:
@@ -417,6 +397,16 @@ namespace core::forms
 		}
 		
 		void
+		setBrush(AnyColour newColour) {
+			if (std::holds_alternative<SystemColour>(newColour))
+				this->setBrush(std::get<SystemColour>(newColour));
+			else if (std::holds_alternative<Colour>(newColour))
+				this->setBrush(std::get<Colour>(newColour));
+			else
+				this->setBrush(StockBrush::Hollow);
+		}
+		
+		void
 		setBrush(Brush const& b) {
 			this->setBrush(b.handle());
 		}
@@ -532,7 +522,7 @@ namespace core::forms
 				this->backMode(DrawingMode::Transparent);
 			else {
 				colour = std::get_if<Colour>(&background);
-				this->setTextColour(colour ? *colour : to_colour(std::get<SystemColour>(background)));
+				this->backColour(colour ? *colour : to_colour(std::get<SystemColour>(background)));
 				this->backMode(DrawingMode::Opaque);
 			}
 		}

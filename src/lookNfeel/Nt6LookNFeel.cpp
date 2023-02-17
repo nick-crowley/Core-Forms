@@ -14,7 +14,7 @@ void
 Nt6LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 {
 	// Erase background
-	args.Graphics->setBrush(dlg.background());
+	args.Graphics->setBrush(SystemBrush::Dialog);
 	args.Graphics->fillRect(*args.Area);
 
 	args.Graphics->restore();
@@ -42,9 +42,8 @@ Nt6LookNFeel::draw(Window& wnd, PaintNonClientEventArgs const& args)
 		args.Graphics->fillRect(components.Caption);
 	
 	// Draw caption text
-	args.Graphics->setFont(StockObject::SystemFixedFont);
-	args.Graphics->textColour(SystemColour::HighlightText);
-	args.Graphics->backColour(transparent);
+	args.Graphics->setFont(StockFont::SystemFixed);
+	args.Graphics->textColour(SystemColour::HighlightText, transparent);
 	args.Graphics->drawText(wnd.text(), components.Title, DrawTextFlags::SimpleCentre);
 
 	args.Graphics->restore();
@@ -54,7 +53,8 @@ void
 Nt6LookNFeel::initialize(Dialog& dlg, InitDialogEventArgs const& args) 
 {
 	for (Window* const ctrl : dlg.Children) {
-		ctrl->background(this->Background.handle());
-		ctrl->font(*this->SegoeUi.handle());
+		ctrl->backColour(SystemColour::Dialog);
+		ctrl->textColour(SystemColour::WindowText);
+		ctrl->font(this->SegoeUi);
 	}
 }

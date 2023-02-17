@@ -5,6 +5,7 @@
 #include "core/FunctionLogging.h"
 #include "dialogs/DialogTemplateReader.h"
 #include "dialogs/DialogTemplateWriter.h"
+#include "graphics/Colours.h"
 #include "graphics/Font.h"
 #include "system/WindowMessageDictionary.h"
 #include "graphics/Region.h"
@@ -308,8 +309,6 @@ namespace core::forms
 
 	private:
 		using SharedLookNFeelProvider = std::shared_ptr<ILookNFeelProvider>;
-		using wndclass_constref_t = WindowClass const&;
-		using const_pointer = Window const*;
 
 	private:
 		std::type_identity_t<Window const*>
@@ -328,13 +327,17 @@ namespace core::forms
 		WindowMessageDictionary 
 		static s_MessageDatabase;
 
+	private:
+		AnyColour           BackColour = SystemColour::Window;
+		AnyColour           TextColour = SystemColour::WindowText;
+
 	protected:
 		//! @remarks Due to message handling being re-entrant there is a significant delay 
 		//!          between releasing smart-pointer and the release delegate returning.
 		//!          Therefore raw-pointers are preferable here due to simplicity.
 		::HWND                  Handle;
+		std::optional<Brush>    Background;
 		DebuggingAide           Debug;
-		std::optional<SharedBrush> Background;
 		SharedLookNFeelProvider LookNFeel;
 
 	public:
@@ -362,9 +365,18 @@ namespace core::forms
 	public:
 		SharedBrush
 		background() const {
-			return this->Background.value_or(
-				SharedBrush{this->wndcls().Background, weakref}
-			);
+			if (this->Background)
+				return this->Background->handle();
+
+			if (std::holds_alternative<SystemColour>(this->BackColour))
+				return SystemBrush::get(std::get<SystemColour>(this->BackColour)).handle();
+			
+			return this->wndcls().Background;
+		}
+
+		AnyColour
+		backColour() const {
+			return this->BackColour;
 		}
 
 		Rect
@@ -459,6 +471,11 @@ namespace core::forms
 			}
 		}
 		
+		AnyColour
+		textColour() const {
+			return this->TextColour;
+		}
+		
 		std::type_identity_t<WindowClass const&>
 		virtual wndcls() const abstract;
 		
@@ -487,9 +504,14 @@ namespace core::forms
 
 	public:
 		void
+		backColour(AnyColour newColour) {
+			this->BackColour = newColour;
+		}
+		
+		void
 		background(SharedBrush newBackground) {
 			ThrowIfEmpty(newBackground);
-			this->Background = newBackground;
+			this->Background = Brush{newBackground};
 		}
 
 		void 
@@ -596,6 +618,12 @@ namespace core::forms
 		void
 		text(std::wstring_view s)  {
 			::SetWindowTextW(this->handle(), s.data());
+		}
+
+		void
+		textColour(AnyColour newColour) {
+			ThrowIf(newColour, std::holds_alternative<meta::transparent_t>(newColour));
+			this->TextColour = newColour;
 		}
 
 		void

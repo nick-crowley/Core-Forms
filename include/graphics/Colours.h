@@ -1,6 +1,24 @@
 #pragma once
 #include "library/core.Forms.h"
 
+namespace core::meta
+{
+	struct opaque_t {} constexpr  
+	inline opaque;
+	
+	struct transparent_t {} constexpr 
+	inline transparent;
+}
+
+namespace core
+{
+	auto constexpr 
+	inline opaque = meta::opaque;
+
+	auto constexpr 
+	inline transparent = meta::transparent;
+}
+
 namespace core::forms
 {
     //! \enum Colour - Defines common RGB colours
@@ -125,4 +143,6 @@ namespace core::forms
 	{
 		return static_cast<Colour>(::GetSysColor(win::DWord{sc}));
 	}
+
+	using AnyColour = std::variant<Colour,SystemColour,meta::transparent_t>;
 }
