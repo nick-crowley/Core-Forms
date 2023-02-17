@@ -9,24 +9,29 @@ namespace core::forms
 		int Value;
 
 	public:
-		constexpr
-		GuiMeasurement() noexcept = delete;
-
 		template <std::integral Integral>
 		constexpr
-		/*implicit*/
+		implicit
 		GuiMeasurement(Integral n) noexcept
 		  : Value{static_cast<int>(n)}
 		{}
 
-		/*implicit*/
+		implicit
 		GuiMeasurement(SystemMetric metric) noexcept
 		  : Value{::GetSystemMetrics(static_cast<int>(metric))}
 		{}
+		
+		satisfies(GuiMeasurement,
+			constexpr NotDefaultConstructible noexcept,
+			constexpr IsCopyable noexcept,
+			constexpr IsEqualityComparable noexcept,
+			constexpr IsSortable noexcept
+		);
 
+	public:
 		template <std::integral Integral>
 		constexpr
-		/*implicit*/ operator
+		implicit operator
 		Integral() const noexcept {
 			return static_cast<Integral>(this->Value);
 		}
@@ -58,7 +63,7 @@ namespace core::forms
 
 		//! @brief	Construct from Windows POINT (ie. LONG pair)
 		constexpr
-		/*implicit*/
+		implicit
 		Point(::POINT const& pt) noexcept
 		  : X{static_cast<::LONG>(pt.x)}, 
 			Y{static_cast<::LONG>(pt.y)}
@@ -96,7 +101,7 @@ namespace core::forms
 		}
 
 		/*constexpr*/ 
-		operator 
+		implicit operator 
 		::POINT const*() const noexcept {
 			return reinterpret_cast<POINT const*>(this);
 		}
@@ -108,7 +113,7 @@ namespace core::forms
 			this->Y += r.Y;
 		}
 	
-		/*implicit*/ operator 
+		implicit operator 
 		::POINT*() noexcept {
 			return reinterpret_cast<POINT*>(this);
 		}
@@ -152,7 +157,7 @@ namespace core::forms
 
 		//! @brief	Construct from Windows SIZE (ie. LONG pair)
 		constexpr
-		/*implicit*/
+		implicit
 		Size(::SIZE const& sz) noexcept
 		  : Width{static_cast<::LONG>(sz.cx)}, 
 			Height{static_cast<::LONG>(sz.cy)}
@@ -190,7 +195,7 @@ namespace core::forms
 					static_cast<::LONG>(this->Height*scale)};
 		}
 	
-		/*implicit*/ operator 
+		implicit operator 
 		::SIZE const*() const noexcept {
 			return reinterpret_cast<::SIZE const*>(this);
 		}
@@ -220,7 +225,7 @@ namespace core::forms
 			return *this;
 		}
 
-		/*implicit*/ operator 
+		implicit operator 
 		::SIZE*() noexcept {
 			return reinterpret_cast<::SIZE*>(this);
 		}
