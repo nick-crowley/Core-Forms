@@ -26,8 +26,9 @@ namespace core::forms
             };
         };
 
+        template <typename RawHandle>
         struct GdiObjectTraits {
-            ::HGDIOBJ constexpr
+            RawHandle constexpr
             inline static empty = nullptr;
 
             auto constexpr
@@ -44,22 +45,22 @@ namespace core::forms
     }
 	
     //! @brief  Shared @c ::HBITMAP released using @c ::DeleteObject()
-    using SharedBitmap = SmartHandle<::HBITMAP, detail::GdiObjectTraits>;
+    using SharedBitmap = SmartHandle<::HBITMAP, detail::GdiObjectTraits<::HBITMAP>>;
     
     //! @brief  Shared @c ::HBRUSH released using @c ::DeleteObject()
-    using SharedBrush = SmartHandle<::HBRUSH, detail::GdiObjectTraits>;
+    using SharedBrush = SmartHandle<::HBRUSH, detail::GdiObjectTraits<::HBRUSH>>;
     
     //! @brief  Shared @c ::HFONT released using @c ::DeleteObject()
-    using SharedFont = SmartHandle<::HFONT, detail::GdiObjectTraits>;
+    using SharedFont = SmartHandle<::HFONT, detail::GdiObjectTraits<::HFONT>>;
     
     //! @brief  Shared @c ::HGDIOBJ released using @c ::DeleteObject()
-    using SharedObject = SmartHandle<::HGDIOBJ, detail::GdiObjectTraits>;
+    using SharedObject = SmartHandle<::HGDIOBJ, detail::GdiObjectTraits<::HGDIOBJ>>;
     
     //! @brief  Shared @c ::HICON released using @c ::DeleteObject()
-    using SharedIcon = SmartHandle<::HICON, detail::GdiObjectTraits>;
+    using SharedIcon = SmartHandle<::HICON, detail::GdiObjectTraits<::HICON>>;
     
     //! @brief  Shared @c ::HPEN released using @c ::DeleteObject()
-    using SharedPen = SmartHandle<::HPEN, detail::GdiObjectTraits>;
+    using SharedPen = SmartHandle<::HPEN, detail::GdiObjectTraits<::HPEN>>;
     
 	//! @brief  Shared @c ::ATOM released using @c ::UnregisterClassA()
     using SharedAtom = SmartHandle<::ATOM, detail::AtomTraits>;
