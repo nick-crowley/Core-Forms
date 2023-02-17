@@ -356,7 +356,7 @@ namespace core::forms
 			NotMovable,
 			NotEqualityComparable,
 			NotSortable,
-			virtual IsDestructible
+			IsPolymorphic
 		);
 
 	public:
