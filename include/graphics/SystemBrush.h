@@ -27,6 +27,12 @@ namespace core::forms
 		SystemBrush const
 		static Dialog;
 
+		SystemBrush const
+		static Highlight;
+		
+		SystemBrush const
+		static HighlightText;
+
 	protected:
 		implicit
 		SystemBrush(SystemColour col) 

@@ -3,13 +3,22 @@ using namespace core;
 using namespace forms;
 
 StockBrush const
-StockBrush::BlackBrush{StockObject::BlackBrush};
+StockBrush::Black{StockObject::BlackBrush};
 		
 StockBrush const
-StockBrush::GreyBrush{StockObject::GreyBrush};
+StockBrush::DarkGrey{StockObject::DkGreyBrush};
 
 StockBrush const
-StockBrush::WhiteBrush{StockObject::WhiteBrush};
+StockBrush::Grey{StockObject::GreyBrush};
 
 StockBrush const
-StockBrush::NullBrush{StockObject::NullBrush};
+StockBrush::LightGrey{StockObject::LtGreyBrush};
+
+StockBrush const
+StockBrush::White{StockObject::WhiteBrush};
+
+StockBrush const
+StockBrush::Hollow{StockObject::HollowBrush};
+
+StockBrush const
+StockBrush::Internal{StockObject::DcBrush};

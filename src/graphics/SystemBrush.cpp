@@ -19,3 +19,9 @@ SystemBrush::WindowText{SystemColour::WindowText};
 
 SystemBrush const
 SystemBrush::Dialog{SystemColour::Dialog};
+
+SystemBrush const
+SystemBrush::Highlight{SystemColour::Highlight};
+		
+SystemBrush const
+SystemBrush::HighlightText{SystemColour::HighlightText};

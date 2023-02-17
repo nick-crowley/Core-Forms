@@ -11,16 +11,26 @@ namespace core::forms
 
 	public:
 		StockBrush const
-		static BlackBrush;
+		static Black;
 		
 		StockBrush const
-		static GreyBrush;
+		static DarkGrey;
 
 		StockBrush const
-		static WhiteBrush;
+		static Grey;
 		
 		StockBrush const
-		static NullBrush;
+		static LightGrey;
+
+		StockBrush const
+		static White;
+
+		StockBrush const
+		static Hollow;
+		
+	private:
+		StockBrush const
+		static Internal;
 
 	protected:
 		implicit
