@@ -21,7 +21,7 @@ namespace core::forms
 {
 	class FormsExport Window {
 	public:
-		class Response {
+		class FormsExport Response {
 		public:
 			enum Result { Invalid, Handled, Unhandled, Error };
 
@@ -93,7 +93,7 @@ namespace core::forms
 		};
 
 		//! Encapsulates registered window timers
-		class TimerCollection
+		class FormsExport TimerCollection
 		{
 			Window& Owner;
 
@@ -173,7 +173,7 @@ namespace core::forms
 #		pragma pack (push, 1)
 		//! @brief	Represents custom data provided at Window construction
 		//! @remarks	Modifying layout will break ABI compatibility
-		class CreateWindowParameter {
+		class FormsExport CreateWindowParameter {
 			uint16_t   Length = 0;
 			uint16_t   DuplicateLength = 0;		// Fix: Required for ABI compatibility with DialogBoxIndirectParamW()
 			Window*    Parameter = nullptr;
@@ -203,7 +203,7 @@ namespace core::forms
 		};
 #		pragma pack (pop)
 
-		class CreateWindowBuilder {
+		class FormsExport CreateWindowBuilder {
 		public:
 			Rect Area {CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT };
 			ResourceId Class;
@@ -218,7 +218,7 @@ namespace core::forms
 			CreateWindowBuilder() = default;
 		};
 	
-		class WindowProcLoggingSentry {
+		class FormsExport WindowProcLoggingSentry {
 		private:
 			std::string  Text;
 			bool		 Common = false;
@@ -254,7 +254,7 @@ namespace core::forms
 		};
 	
 		//! @brief	Tracks the Window life-cycle and identifies current high-level processing loop
-		class ProcessingState {
+		class FormsExport ProcessingState {
 		public:
 			enum CurrentState { NotApplicable, BeingCreated, BeingDestroyed, Idle, 
 				DefaultProcessing, DialogProcessing, MessageProcessing, EventProcessing, NotificationProcessing };
@@ -275,7 +275,7 @@ namespace core::forms
 		};
 
 		//! @brief	Identifies the window, its state, and its current message-processing loop
-		class DebuggingAide 
+		class FormsExport DebuggingAide 
 		{
 			uint32_t const       MagicNumber = 12345678;
 			std::array<char,16>  Class {};
