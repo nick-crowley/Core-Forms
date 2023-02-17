@@ -11,6 +11,11 @@ namespace core::forms
 		SharedPen  Handle;
 
 	public:
+		explicit
+		Pen(SharedPen existingPen) : Handle{std::move(ThrowIfEmpty(existingPen))}
+		{
+		}
+
 		Pen(Colour col, unsigned width, PenStyle s = PenStyle::Solid) 
 		  : Handle{::CreatePen(static_cast<int>(s), width, win::DWord{col})}
 		{
@@ -18,10 +23,11 @@ namespace core::forms
 				win::LastError{}.throwAlways();
 		}
 
-		::HPEN
+	public:
+		SharedPen
 		handle() const
 		{
-			return *this->Handle;
+			return this->Handle;
 		}
 	};
 }
