@@ -13,6 +13,7 @@
 
 #include "graphics/Font.cpp"
 #include "graphics/StockBrush.cpp"
+#include "graphics/StockFont.cpp"
 #include "graphics/SystemBrush.cpp"
 
 #include "lookNfeel/LookNFeelProvider.cpp"
