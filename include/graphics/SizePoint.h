@@ -100,10 +100,9 @@ namespace core::forms
 			return Point{this->X*scale, this->Y*scale};
 		}
 
-		/*constexpr*/ 
 		implicit operator 
 		::POINT const*() const noexcept {
-			return reinterpret_cast<POINT const*>(this);
+			return reinterpret_cast<::POINT const*>(this);
 		}
 
 	public:
@@ -115,7 +114,7 @@ namespace core::forms
 	
 		implicit operator 
 		::POINT*() noexcept {
-			return reinterpret_cast<POINT*>(this);
+			return reinterpret_cast<::POINT*>(this);
 		}
 	};
 
