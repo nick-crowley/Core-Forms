@@ -312,7 +312,7 @@ namespace core::forms
 		using const_pointer = Window const*;
 
 	private:
-		const_pointer
+		std::type_identity_t<Window const*>
 		static s_BeneathCursor;
 
 	public:
@@ -459,7 +459,7 @@ namespace core::forms
 			}
 		}
 		
-		wndclass_constref_t
+		std::type_identity_t<WindowClass const&>
 		virtual wndcls() const abstract;
 		
 		Rect

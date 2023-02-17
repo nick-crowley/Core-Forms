@@ -4,7 +4,7 @@
 using namespace core;
 using namespace forms;
 
-Window::const_pointer
+Window const*
 Window::s_BeneathCursor{};
 
 Window::ExistingWindowCollection 
