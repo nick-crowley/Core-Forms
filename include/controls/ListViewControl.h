@@ -73,6 +73,11 @@ namespace core::forms
 		ownerDraw() const override {
 			return false;		// FIXME: Implement ListViewControl::ownerDraw()
 		}
+		
+		WindowRole
+		role() const override {
+			return WindowRole::List;
+		}
 
 	public:
 		WindowClass const& 

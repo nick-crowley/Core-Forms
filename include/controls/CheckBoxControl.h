@@ -22,7 +22,12 @@ namespace core::forms
 
 			return this->state().test(ButtonState::Checked);
 		}
-	
+		
+		WindowRole
+		role() const override {
+			return WindowRole::CheckButton;
+		}
+
 	public:
 		void
 		check() {

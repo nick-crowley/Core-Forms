@@ -43,6 +43,11 @@ namespace core::forms
 		ownerDraw() const override {
 			return false;
 		}
+		
+		WindowRole
+		role() const override {
+			return WindowRole::Link;
+		}
 
 	public:
 		WindowClass const& 

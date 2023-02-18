@@ -258,6 +258,11 @@ namespace core::forms
 		ownerDraw() const override {
 			return this->style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawFixed|ComboBoxStyle::OwnerDrawVariable);
 		}
+		
+		WindowRole
+		role() const override {
+			return WindowRole::ComboBox;
+		}
 
 	public:
 		Response 

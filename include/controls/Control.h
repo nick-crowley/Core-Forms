@@ -22,7 +22,7 @@ namespace core::forms
 		
 		bool
 		virtual ownerDraw() const abstract;
-	
+		
 	protected:
 		gsl::czstring
 		virtual notificationName(::UINT notification) abstract;

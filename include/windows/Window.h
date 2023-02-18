@@ -11,6 +11,7 @@
 #include "graphics/Region.h"
 #include "support/ObservableEvent.h"
 #include "lookNfeel/ILookNFeelProvider.h"
+#include "windows/AccessibilityFlags.h"
 #include "windows/WindowClass.h"
 #include "windows/WindowEventArgs.h"
 #include "windows/WindowInfo.h"
@@ -446,6 +447,9 @@ namespace core::forms
 		post(std::optional<::WPARAM> first = std::nullopt, std::optional<::LPARAM> second = std::nullopt) const {
 			return ::PostMessageW(this->handle(), MessageId, first.value_or(0), second.value_or(0));
 		}
+		
+		WindowRole
+		virtual role() const abstract;
 
 		template <unsigned MessageId>
 		::LRESULT

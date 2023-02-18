@@ -46,6 +46,11 @@ namespace core::forms
 		ownerDraw() const override {
 			return (this->style<StaticStyle>() & StaticStyle::TypeMask).test(StaticStyle::OwnerDraw);
 		}
+		
+		WindowRole
+		role() const override {
+			return WindowRole::StaticText;
+		}
 
 	public:
 		WindowClass const& 

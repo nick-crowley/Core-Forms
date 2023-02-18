@@ -33,7 +33,12 @@ namespace core::forms
 			else
 				return *bitmap;
 		}
-	
+		
+		WindowRole
+		role() const override {
+			return WindowRole::Graphic;
+		}
+
 	public:
 		void
 		icon(Icon icon) {

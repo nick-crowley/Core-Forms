@@ -18,6 +18,12 @@ namespace core::forms
 			return this->TextColour;
 		}
 	
+		WindowRole
+		role() const override {
+			return WindowRole::Grouping;
+		}
+
+	public:
 		void
 		colour(Colour col) {
 			this->TextColour = col;

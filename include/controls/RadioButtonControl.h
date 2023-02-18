@@ -21,6 +21,11 @@ namespace core::forms
 			return this->state().test(ButtonState::Checked);
 		}
 		
+		WindowRole
+		role() const override {
+			return WindowRole::RadioButton;
+		}
+
 	public:
 		void
 		check() {

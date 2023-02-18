@@ -63,12 +63,19 @@ namespace core::forms
 	public:
 		ButtonControl(uint16_t id)
 		  : Control{id}
-		{}
+		{
+			this->backColour(SystemColour::ButtonFace);
+		}
 		
 	public:
 		bool
 		ownerDraw() const override {
 			return (this->style<ButtonStyle>() & ButtonStyle::TypeMask).test(ButtonStyle::OwnerDraw);
+		}
+		
+		WindowRole
+		role() const override {
+			return WindowRole::PushButton;
 		}
 
 	public:

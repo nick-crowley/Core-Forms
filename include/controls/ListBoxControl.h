@@ -327,7 +327,12 @@ namespace core::forms
 		ownerDraw() const override {
 			return this->style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawFixed|ListBoxStyle::OwnerDrawVariable);
 		}
-	
+		
+		WindowRole
+		role() const override {
+			return WindowRole::List;
+		}
+
 	public:
 		void 
 		caret(size_t idx) {

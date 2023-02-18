@@ -57,6 +57,11 @@ namespace core::forms
 		}
 	
 	public:
+		WindowRole
+		role() const override {
+			return WindowRole::Dialog;
+		}
+
 		WindowClass const& 
 		wndcls() const override {
 			static WindowClass c;
