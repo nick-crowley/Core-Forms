@@ -546,7 +546,6 @@ namespace core::forms
 			this->create(wnd);
 		}
 	
-	public:
 		void 
 		destroy() {
 			if (::DestroyWindow(this->handle()))
