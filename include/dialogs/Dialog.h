@@ -1,11 +1,11 @@
 #pragma once
 #include "library/core.Forms.h"
 #include "controls/ControlDictionary.h"
-#include "windows/ClassId.h"
-#include "windows/Window.h"
 #include "dialogs/DialogEventArgs.h"
 #include "dialogs/DialogTemplateReader.h"
 #include "dialogs/DialogTemplateWriter.h"
+#include "windows/ClassId.h"
+#include "windows/Window.h"
 
 namespace core::forms
 {
