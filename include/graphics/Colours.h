@@ -61,10 +61,6 @@ namespace core::forms
     //! \enum SystemColour - Defines system colours
     enum class SystemColour
     {
-        Desktop = 1,                        //!< Desktop
-        AppWorkspace = 12,                  //!< Background color of multiple document interface (MDI) applications.
-        Dialog = 15,                        //!< Dialog box background
-
         ActiveCaption = 2,                  //!< Active window title bar. 
         InactiveCaption = 3,                //!< Inactive window caption. 
         CaptionText = 9,                    //!< Text in caption, size box, and scroll bar arrow box.
@@ -74,9 +70,12 @@ namespace core::forms
 
         Menu = 4,                           //!< Menu background.
         MenuText = 7,                       //!< Text in menus.
-        MenuHilight = 29,                   //!< [windows 5.01] The color used to highlight menu items when the menu appears as a flat menu
+        MenuHighlight = 29,                 //!< [windows 5.01] The color used to highlight menu items when the menu appears as a flat menu
         MenuBar = 30,                       //!< [windows 5.01] The background color for the menu bar when menus appear as flat menus 
-
+        
+        AppWorkspace = 12,                  //!< Background color of multiple document interface (MDI) applications.
+        Desktop = 1,                        //!< Desktop
+        Dialog = 15,                        //!< Dialog box background
         Window = 5,                         //!< Window background.
         WindowFrame = 6,                    //!< Window frame.
         WindowText = 8,                     //!< Text in windows.
@@ -96,7 +95,7 @@ namespace core::forms
         ButtonLight = 22,                   //!< Light color for three-dimensional display elements (for edges facing the light source.)
         
         InfoText = 23,                      //!< Text color for tooltip controls.
-        InfoBk = 24,                        //!< Background color for tooltip controls.
+        Info = 24,                          //!< Background color for tooltip controls.
     
         Hotlight = 26,                      //!< [windows 5.00] Color for a hyperlink or hot-tracked item.
         
