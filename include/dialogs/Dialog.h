@@ -4,6 +4,8 @@
 #include "windows/ClassId.h"
 #include "windows/Window.h"
 #include "dialogs/DialogEventArgs.h"
+#include "dialogs/DialogTemplateReader.h"
+#include "dialogs/DialogTemplateWriter.h"
 
 namespace core::forms
 {

@@ -4,6 +4,8 @@
 
 namespace core::forms
 {
+	class DialogTemplate;
+
 	class InitDialogEventArgs {
 		static_assert(sizeof(::LPARAM) == sizeof(void*));
 

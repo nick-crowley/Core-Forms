@@ -3,8 +3,6 @@
 #include "windows/ChildWindowIterator.h"
 #include "core/DebugStream.h"
 #include "core/FunctionLogging.h"
-#include "dialogs/DialogTemplateReader.h"
-#include "dialogs/DialogTemplateWriter.h"
 #include "graphics/Colours.h"
 #include "graphics/Font.h"
 #include "system/WindowMessageDictionary.h"

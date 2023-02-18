@@ -8,8 +8,9 @@
 
 namespace core::forms
 {
-	struct DialogTemplate 
+	class DialogTemplate 
 	{
+	public:
 		std::optional<uint32_t>         HelpId;
 		nstd::bitset<ExWindowStyle>     ExtendedStyle;
 		nstd::bitset<WindowStyle>       Style;
