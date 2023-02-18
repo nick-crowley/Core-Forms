@@ -13,26 +13,38 @@ namespace core::forms
 			: Bytes(std::move(src))
 		{}
 
-		template <typename InputIterator>
-		DialogTemplateBlob(InputIterator start, InputIterator end) 
+		template <std::input_iterator InputIterator>
+		DialogTemplateBlob(InputIterator const start, InputIterator const end) 
 			: Bytes(start, end)
 		{}
 
+		satisfies(DialogTemplateBlob,
+			NotDefaultConstructible,
+			IsCopyable,
+			IsMovable,
+			IsEqualityComparable,
+			NotSortable
+		);
+		
 	public:
-		// FIXME: DialogTemplateBlob needs reformatting
-		operator const DLGTEMPLATE* () const {
-			return reinterpret_cast<const ::DLGTEMPLATE*>(this->Bytes.data());
+		implicit operator 
+		::DLGTEMPLATE const* () const {
+			return reinterpret_cast<::DLGTEMPLATE const*>(this->Bytes.data());
 		}
 	
-		operator const std::byte* () const {
+		implicit operator 
+		std::byte const* () const {
 			return this->Bytes.data();
 		}
 
-		operator DLGTEMPLATE* () {
+	public:
+		implicit operator 
+		::DLGTEMPLATE const* () {
 			return reinterpret_cast<::DLGTEMPLATE*>(this->Bytes.data());
 		}
 
-		operator std::byte* () {
+		implicit operator 
+		std::byte const* () {
 			return this->Bytes.data();
 		}
 	};
