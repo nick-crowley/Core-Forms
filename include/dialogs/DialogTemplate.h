@@ -25,5 +25,11 @@ namespace core::forms
 		std::optional<uint8_t>          Italic;
 		std::optional<uint8_t>          CharSet;
 		std::vector<DialogItemTemplate> Controls;
+
+	public:
+		satisfies(DialogTemplate,
+			IsRegular,
+			NotSortable
+		);
 	};
 }

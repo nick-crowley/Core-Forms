@@ -24,6 +24,12 @@ namespace core::forms
 		std::vector<std::byte>       Data;
 
 	public:
+		satisfies(DialogItemTemplate,
+			IsRegular,
+			NotSortable
+		);
+
+	public:
 		bool
 		subclassed() const {
 			return this->ClassName 
