@@ -306,6 +306,7 @@ namespace core::forms
 		ItemCollection				Items;
 
 	public:
+		implicit
 		ListBoxControl(uint16_t id) 
 		  : Control{id}, 
 		    SelectedItems(*this), 

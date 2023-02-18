@@ -22,6 +22,7 @@ namespace core::forms
 		};
 
 	public:
+		implicit
 		ProgressBarControl(uint16_t id) 
 		  : Control{id}
 		{}

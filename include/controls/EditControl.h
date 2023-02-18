@@ -45,6 +45,7 @@ namespace core::forms
 		};
 
 	public:
+		implicit
 		EditControl(uint16_t id) 
 		  : Control{id}
 		{}

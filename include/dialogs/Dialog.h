@@ -46,6 +46,7 @@ namespace core::forms
 		InitDialogEvent		Initialized;
 
 	protected:
+		implicit
 		Dialog(ResourceId resource, Module source = ProcessModule)
 		  : DialogId{resource},
 		    Template{DialogTemplateReader{source.loadResource(resource, RT_DIALOG)}.read_template()}

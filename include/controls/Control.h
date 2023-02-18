@@ -10,6 +10,7 @@ namespace core::forms
 		uint16_t const  Ident;
 
 	public:
+		implicit
 		Control(uint16_t id)
 		  : Ident{id}
 		{}

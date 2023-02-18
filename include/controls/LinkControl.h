@@ -34,6 +34,7 @@ namespace core::forms
 		};
 
 	public:
+		implicit
 		LinkControl(uint16_t id) 
 		  : Control{id}
 		{}

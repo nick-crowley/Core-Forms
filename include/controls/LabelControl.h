@@ -15,6 +15,7 @@ namespace core::forms
 		PointSize       TextHeight = PointSize::Default;
 
 	public:
+		implicit
 		LabelControl(uint16_t id) : StaticControl{id}
 		{}
 	

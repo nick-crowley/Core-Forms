@@ -8,6 +8,7 @@ namespace core::forms
 		bool Checked = false;
 	
 	public:
+		implicit
 		CheckBoxControl(uint16_t id) : ButtonControl{id}
 		{
 			this->Clicked += {*this, &CheckBoxControl::this_Clicked};

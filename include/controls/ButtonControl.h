@@ -61,6 +61,7 @@ namespace core::forms
 		};
 
 	public:
+		implicit
 		ButtonControl(uint16_t id)
 		  : Control{id}
 		{

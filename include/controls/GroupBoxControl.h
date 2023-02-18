@@ -9,6 +9,7 @@ namespace core::forms
 		Colour  TextColour = to_colour(SystemColour::WindowText);
 
 	public:
+		implicit
 		GroupBoxControl(uint16_t id) : ButtonControl{id}
 		{}
 	

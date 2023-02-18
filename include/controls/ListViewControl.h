@@ -64,6 +64,7 @@ namespace core::forms
 		};
 
 	public:
+		implicit
 		ListViewControl(uint16_t id) 
 		  : Control{id}
 		{}

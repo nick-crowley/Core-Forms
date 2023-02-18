@@ -37,6 +37,7 @@ namespace core::forms
 		};
 
 	public:
+		implicit
 		StaticControl(uint16_t id) 
 		  : Control{id}
 		{}

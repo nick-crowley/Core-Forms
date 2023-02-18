@@ -228,6 +228,7 @@ namespace core::forms
 		EditControl      ItemEdit;*/
 
 	public:
+		implicit
 		ComboBoxControl(uint16_t id) 
 		  : Control{id}, 
 		    Items{*this}
