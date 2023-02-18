@@ -243,7 +243,7 @@ namespace core::forms
 				
 				else if (::COMBOBOXINFO info{}; ::SendMessageW(hWnd, CB_GETCOMBOBOXINFO, NULL, (::LPARAM)&info))
 				{
-					auto* pThis = static_cast<ComboBoxControl*>(s_ExistingWindows[hWnd]);
+					auto* pThis = static_cast<ComboBoxControl*>(Window::ExistingWindows[hWnd]);
 					pThis->DropList.attach(info.hwndList);
 					pThis->ItemEdit.attach(info.hwndItem);
 					return result;

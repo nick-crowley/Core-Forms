@@ -26,7 +26,7 @@ forms::OwnerDrawEventArgs::OwnerDrawEventArgs(::DRAWITEMSTRUCT& data)
 	Item{data},
 	Graphics{data.hDC, data.hwndItem},
 	Type{static_cast<OwnerDrawControl>(data.CtlType)},
-	Window{Window::s_ExistingWindows.find(data.hwndItem)}
+	Window{Window::ExistingWindows.find(data.hwndItem)}
 {
 }
 

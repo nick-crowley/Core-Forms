@@ -26,9 +26,9 @@ namespace core::forms
 		enum DialogMode { Modal, NonModal };
 
 	private:
-		// BUG: Dialog::s_DialogCreationParameter cannot be __declspec(dllexport)
+		// BUG: Dialog::DialogCreationParameter cannot be __declspec(dllexport)
 		std::optional<CreateWindowParameter>
-		static /*thread_local*/ s_DialogCreationParameter;
+		static /*thread_local*/ DialogCreationParameter;
 
 		// NB: Fields ordered for debugging convenience
 	private:
@@ -192,13 +192,13 @@ namespace core::forms
 			WindowProcLoggingSentry log_entry(__FUNCTION__, message);
 			// FIXME: This method needs documenting
 			try {
-				gsl::czstring const name = s_MessageDatabase.name(message);
+				gsl::czstring const name = Window::MessageDatabase.name(message);
 				Response response;
 				Dialog* dlg {};
 			
-				if (s_ExistingWindows.contains(hDlg)) 
+				if (Window::ExistingWindows.contains(hDlg)) 
 				{
-					dlg = static_cast<Dialog*>(s_ExistingWindows[hDlg]);
+					dlg = static_cast<Dialog*>(Window::ExistingWindows[hDlg]);
 
 					{
 						auto const on_exit = dlg->Debug.setTemporaryState({ProcessingState::DialogProcessing,name});
@@ -242,12 +242,12 @@ namespace core::forms
 			// into the synthetic WM_INITDIALOG message, which is raised post the creation of child windows.
 			// In order to manage the dialog handle throughout its lifetime, we intercept WM_NCCREATE and
 			// manually pass a custom parameter stored (temporarily) in a threadlocal variable by showModal()
-			if (message == WM_NCCREATE && Dialog::s_DialogCreationParameter) {
+			if (message == WM_NCCREATE && Dialog::DialogCreationParameter) {
 				CreateWindowEventArgs args(wParam,lParam);	
 
 				::CREATESTRUCT replacement = *args.Data;
-				replacement.lpCreateParams = &Dialog::s_DialogCreationParameter.value();	// BUG: Returning address which is invalidated on next line
-				Dialog::s_DialogCreationParameter = std::nullopt;
+				replacement.lpCreateParams = &Dialog::DialogCreationParameter.value();	// BUG: Returning address which is invalidated on next line
+				Dialog::DialogCreationParameter = std::nullopt;
 
 				return Window::DefaultMessageHandler(hWnd, message, wParam, (LPARAM)&replacement);
 			} 
@@ -292,7 +292,7 @@ namespace core::forms
 			this->onLoadDialog(customTemplate);
 
 			// Pre-creation state
-			Dialog::s_DialogCreationParameter = CreateWindowParameter(this);
+			Dialog::DialogCreationParameter = CreateWindowParameter(this);
 			this->DisplayMode.emplace(mode);
 			auto const on_exit = this->Debug.setTemporaryState(ProcessingState::BeingCreated);
 		

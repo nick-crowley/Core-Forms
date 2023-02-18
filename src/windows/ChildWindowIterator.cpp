@@ -17,7 +17,7 @@ CALLBACK ConstChildWindowIterator::on_next_child_window(::HWND child, ::LPARAM i
 		return CONTINUE;
 
 	// Exclude windows we didn't create
-	if (!Window::s_ExistingWindows.contains(child))
+	if (!Window::ExistingWindows.contains(child))
 		return CONTINUE;
 	
 	pThis->Children.push_back(child);

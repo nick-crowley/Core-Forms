@@ -59,7 +59,7 @@ namespace core::forms
 			begin() const {
 				return boost::make_transform_iterator(
 					ConstChildWindowIterator{ this->Parent.handle() }, 
-					[](::HWND w) { return Window::s_ExistingWindows[w]; }
+					[](::HWND w) { return Window::ExistingWindows[w]; }
 				);
 			}
 
@@ -67,13 +67,13 @@ namespace core::forms
 			end() const {
 				return boost::make_transform_iterator(
 					ConstChildWindowIterator::npos, 
-					[](::HWND w) { return Window::s_ExistingWindows[w]; }
+					[](::HWND w) { return Window::ExistingWindows[w]; }
 				);
 			}
 
 			bool
 			contains(uint16_t const id) const {
-				return Window::s_ExistingWindows.contains(this->handle(id));	//!< BUG: Returns `true` for any managed window
+				return Window::ExistingWindows.contains(this->handle(id));	//!< BUG: Returns `true` for any managed window
 			}
 		
 			bool
@@ -88,7 +88,7 @@ namespace core::forms
 
 			Window&
 			operator[](uint16_t const id) const {
-				return *Window::s_ExistingWindows[this->handle(id)];
+				return *Window::ExistingWindows[this->handle(id)];
 			}
 		};
 
@@ -226,10 +226,10 @@ namespace core::forms
 		public:
 			WindowProcLoggingSentry(gsl::czstring func, ::UINT message) {
 				using namespace std::literals;
-				if (!s_MessageDatabase.contains(message)) 
+				if (!Window::MessageDatabase.contains(message)) 
 					this->Text = func + " : Processing unrecognised message "s + to_hexString<4>(message) + " ";
-				else if (!s_MessageDatabase[message].Common)
-					this->Text = func + " : Processing "s + s_MessageDatabase[message].Name + " ";
+				else if (!Window::MessageDatabase[message].Common)
+					this->Text = func + " : Processing "s + Window::MessageDatabase[message].Name + " ";
 				else
 					this->Common = true;
 			}
@@ -312,7 +312,7 @@ namespace core::forms
 
 	private:
 		std::type_identity_t<Window const*>
-		static s_BeneathCursor;
+		static BeneathCursor;
 
 	public:
 		Response const  
@@ -322,10 +322,10 @@ namespace core::forms
 		static inline Error { Response::Error };
 
 		ExistingWindowCollection 
-		static s_ExistingWindows; 
+		static ExistingWindows; 
 
 		WindowMessageDictionary 
-		static s_MessageDatabase;
+		static MessageDatabase;
 
 	private:
 		AnyColour           BackColour = SystemColour::Window;
@@ -438,7 +438,7 @@ namespace core::forms
 		Window*
 		parent() const {
 			auto const wnd = ::GetParent(this->handle());
-			return wnd ? s_ExistingWindows[wnd] : nullptr;
+			return wnd ? Window::ExistingWindows[wnd] : nullptr;
 		}
 		
 		template <unsigned MessageId>
@@ -663,8 +663,8 @@ namespace core::forms
 		{
 			// [CONTROL] Reflect notification back to child control
 			if (args.Source == CommandEventArgs::Control) 
-				if (s_ExistingWindows.contains(args.Notification->Handle))
-					return s_ExistingWindows[args.Notification->Handle]->offerNotification(args.Notification->Code);
+				if (Window::ExistingWindows.contains(args.Notification->Handle))
+					return Window::ExistingWindows[args.Notification->Handle]->offerNotification(args.Notification->Code);
 
 			// [DEBUG] Notification from child window we didn't create
 			if (args.Source == CommandEventArgs::Control) {
@@ -814,8 +814,8 @@ namespace core::forms
 				return this->onMouseLeave();
 			
 			case WM_MOUSEMOVE:
-				if (s_BeneathCursor != this) {
-					s_BeneathCursor = this;
+				if (Window::BeneathCursor != this) {
+					Window::BeneathCursor = this;
 					// FIXME: Merge onMouseEnter() into onMouseMove() with MouseMessage::Enter to reduce # of mouse-related events
 					if (auto r = this->onMouseEnter({MouseMessage::Enter,MouseButton::None,wParam,lParam}); r != Unhandled)
 						return r;
@@ -912,7 +912,7 @@ namespace core::forms
 		::LRESULT
 		performDefaultProcessing(::UINT message, ::WPARAM wParam, ::LPARAM lParam)
 		{
-			auto const on_exit = this->Debug.setTemporaryState({ProcessingState::DefaultProcessing,s_MessageDatabase.name(message)});
+			auto const on_exit = this->Debug.setTemporaryState({ProcessingState::DefaultProcessing,Window::MessageDatabase.name(message)});
 			return this->unhandledMessage(this->handle(), message, wParam, lParam);
 		}
 
@@ -939,14 +939,14 @@ namespace core::forms
 
 		//void
 		//onFirstSight(::HWND hWnd) {
-		//	s_ExistingWindows.add(hWnd, this);
+		//	Window::ExistingWindows.add(hWnd, this);
 		//	this->Handle = hWnd;	// this->Handle = make_handle(hWnd);
 		//	this->DebugState = {ProcessingState::BeingCreated};	// Not yet set for dialog controls
 		//}
 	
 		void
 		onLastSight(::HWND hWnd) {
-			s_ExistingWindows.remove(hWnd);
+			Window::ExistingWindows.remove(hWnd);
 			this->Debug.setState(ProcessingState::NotApplicable);
 		}
 	
@@ -970,8 +970,8 @@ namespace core::forms
 			auto* const param = args.data<CreateWindowParameter*>();
 			Window* pThis = param->get();
 		
-			s_ExistingWindows.add(hWnd, pThis);
-			assert(s_ExistingWindows[hWnd] != nullptr);
+			Window::ExistingWindows.add(hWnd, pThis);
+			assert(Window::ExistingWindows[hWnd] != nullptr);
 
 			pThis->Handle = hWnd;
 			pThis->Debug.setState(ProcessingState::BeingCreated,
@@ -990,11 +990,11 @@ namespace core::forms
 				return Window::onMinMaxInfo({wParam,lParam});
 			}
 			else {
-				if (message == WM_MOUSEMOVE && Window::s_BeneathCursor)
-					Window::s_BeneathCursor = nullptr;
+				if (message == WM_MOUSEMOVE && Window::Window::BeneathCursor)
+					Window::Window::BeneathCursor = nullptr;
 				
 				using namespace std::literals;
-				throw runtime_error{"Received {} for unrecognised window {}", s_MessageDatabase.name(message), 
+				throw runtime_error{"Received {} for unrecognised window {}", Window::MessageDatabase.name(message), 
 					to_hexString((uintptr_t)hWnd)};
 			}
 		}
@@ -1005,7 +1005,7 @@ namespace core::forms
 		{
 			WindowProcLoggingSentry log_entry(__FUNCTION__, message);
 			try {
-				gsl::czstring const name = s_MessageDatabase.name(message);
+				gsl::czstring const name = Window::MessageDatabase.name(message);
 				Window* wnd {};
 				Response response;
 
@@ -1014,10 +1014,10 @@ namespace core::forms
 					Window::onFirstSight(hWnd, {wParam,lParam});
 			
 				// Search for the C++ object managing this handle
-				if (!s_ExistingWindows.contains(hWnd)) 
+				if (!Window::ExistingWindows.contains(hWnd)) 
 					response = onUnexpectedMessage(hWnd, message, wParam, lParam);
 				else {
-					wnd = s_ExistingWindows[hWnd];
+					wnd = Window::ExistingWindows[hWnd];
 
 					// Window lifetime tracking
 					if (message == WM_DESTROY) 
@@ -1068,7 +1068,7 @@ namespace core::forms
 			// [ERROR] Return a value indicating we didn't handle the message (usually anything but zero)
 			catch (const std::exception& e) {
 				log_entry.setException(e);
-				return s_MessageDatabase[message].Unhandled;
+				return Window::MessageDatabase[message].Unhandled;
 			}
 		}
 	};

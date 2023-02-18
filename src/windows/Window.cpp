@@ -5,13 +5,13 @@ using namespace core;
 using namespace forms;
 
 Window const*
-Window::s_BeneathCursor{};
+Window::BeneathCursor{};
 
 Window::ExistingWindowCollection 
-Window::s_ExistingWindows{};
+Window::ExistingWindows{};
 
 WindowMessageDictionary 
-Window::s_MessageDatabase{};
+Window::MessageDatabase{};
 
 //Window const
 //Window::s_Desktop;
