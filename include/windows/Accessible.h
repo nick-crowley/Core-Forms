@@ -158,41 +158,4 @@ namespace core::forms
         }
 #pragma endregion
 	};
-
-#ifdef UNUSED
-	class FormsExport AccessibleAdapter : public com::adapter<::IAccessible> {
-		using base = com::adapter<interface_type>;
-
-	public:
-		const_property_t<::IDispatch*>                       accParent;
-		const_property_t<long>                               accChildCount;
-		method_t<1, ::::VARIANT, com::out_t<::IDispatch*>>     accChild;
-		method_t<1, ::::VARIANT, com::out_t<::::BSTR>>           accName;
-		method_t<1, ::::VARIANT, com::out_t<::::BSTR>>           accValue;
-		method_t<1, ::::VARIANT, com::out_t<::::BSTR>>           accDescription;
-		method_t<1, ::::VARIANT, com::out_t<::::VARIANT>>        accRole;
-		/*method_t<1, ::::VARIANT, com::out_t<::::VARIANT>>        accState;
-		method_t<1, ::::VARIANT, com::out_t<::::BSTR>>           accHelp;
-		method_t<1, ::::VARIANT, com::out_t<::::BSTR>>           accKeyboardShortcut;
-		const_property_t<::::VARIANT>                          accFocus;
-		const_property_t<::::VARIANT>                          accSelection;
-		method_t<1, ::::VARIANT, com::out_t<::::BSTR>>           accDefaultAction;
-		method_t<1, long, ::::VARIANT, com::out_t<::::VARIANT>>  accNavigate;
-		method_t<1, long, long, com::out_t<::::VARIANT>>       accHitTest;
-		method_t<0, ::::VARIANT>                               accDoDefaultAction;
-		method_t<0, com::out_t<long>, com::out_t<long>, com::out_t<long>, com::out_t<long> ::::VARIANT>   accLocation;*/
-
-	public:
-		AccessibleAdapter(com::shared_ptr<interface_type> ptr) 
-		  : base{ptr},
-			accParent{this->property(&interface_type::get_accParent)},
-			accChildCount{this->property(&interface_type::get_accChildCount)},
-			accChild{this->method<1>(&interface_type::get_accChild)},
-			accName{this->method<1>(&interface_type::get_accName)},
-			accValue{this->method<1>(&interface_type::get_accValue)},
-			accDescription{this->method<1>(&interface_type::get_accDescription)},
-			accRole{this->method<1>(&interface_type::get_accRole)}
-		{}
-	};
-#endif
 }
