@@ -1,4 +1,8 @@
+#include "com/Implements.h"
 #include <windows.h>
+
+std::atomic_long
+core::com::g_numInstances = 0;
 
 extern "C"
 BOOL

@@ -6,7 +6,7 @@
 	
 namespace core::forms
 {
-	class FormsExport AccessibleDecorator : public ::IAccessible {
+	class FormsExport AccessibleDecorator : public com::implements<::IAccessible,::IDispatch,::IUnknown> {
 		using base = ::IAccessible;
 		
 	private:
@@ -18,6 +18,7 @@ namespace core::forms
 		{}
 
 	public:
+#pragma region IAccessible methods
         ::HRESULT
         PASCAL accSelect(long flagsSelect, ::VARIANT varChild) override {
 			return this->m_impl->accSelect(flagsSelect,varChild);
@@ -126,7 +127,9 @@ namespace core::forms
         PASCAL get_accDefaultAction(::VARIANT child, com::out_t<::BSTR> defaultAction) override {
 			return this->m_impl->get_accDefaultAction(child,defaultAction);
 		}
+#pragma endregion
 		
+#pragma region IDispatch methods
         ::HRESULT 
         PASCAL GetTypeInfoCount(com::retval_t<::UINT> count) override {
 			return this->m_impl->GetTypeInfoCount(count);
@@ -153,21 +156,7 @@ namespace core::forms
                       com::out_t<::UINT>       argErr) override {
             return this->m_impl->Invoke(member, iid, lcid, flags, params, result, except, argErr);
         }
-
-		::HRESULT
-		PASCAL QueryInterface(::IID const& iid, void** ppv) override {
-			return this->m_impl->QueryInterface(iid,ppv);
-        }
-
-		::ULONG
-		PASCAL AddRef() override {
-			return this->m_impl->AddRef();
-        }
-	
-		::ULONG
-		PASCAL Release() override {
-			return this->m_impl->Release();
-        }
+#pragma endregion
 	};
 
 #ifdef UNUSED
