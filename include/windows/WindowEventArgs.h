@@ -2,6 +2,7 @@
 #include "library/core.Forms.h"
 #include "support/ObservableEvent.h"
 #include "graphics/Graphics.h"
+#include "windows/AccessibilityFlags.h"
 #include "windows/WindowInfo.h"
 
 namespace core::forms
@@ -81,6 +82,22 @@ namespace core::forms
 	};
 
 	// FIXME: Order-of-message-receipt bug with WM_GETMINMAXINFO could be solved with a static event which derived classes could listen to
+
+
+	class GetObjectEventArgs {
+	public:
+		::WPARAM    Flags;
+		ObjectId    Object;
+
+	public:
+		GetObjectEventArgs(::WPARAM w, ::LPARAM l)
+		  : Flags{w},
+			Object{static_cast<ObjectId>(l)}
+		{}
+	};
+	
+	using GetObjectDelegate = Delegate<void (Window&,GetObjectEventArgs)>;
+	using GetObjectEvent = ObservableEvent<GetObjectDelegate>;
 
 
 	class FormsExport OwnerDrawEventArgs 

@@ -2,19 +2,21 @@
 #include "library/core.Forms.h"
 #include "core/DebugStream.h"
 #include "core/FunctionLogging.h"
+#include "com/SharedPtr.h"
 #include "graphics/Colours.h"
 #include "graphics/Font.h"
 #include "graphics/Region.h"
 #include "lookNfeel/ILookNFeelProvider.h"
 #include "support/ObservableEvent.h"
 #include "system/WindowMessageDictionary.h"
-#include "windows/AccessibilityFlags.h"
+#include "windows/Accessible.h"
 #include "windows/ChildWindowIterator.h"
 #include "windows/WindowClass.h"
 #include "windows/WindowEventArgs.h"
 #include "windows/WindowInfo.h"
 #include "windows/WindowStyle.h"
 #include "win/Boolean.h"
+#pragma comment (lib, "OleAcc.lib")
 
 namespace core::forms
 {
@@ -120,6 +122,31 @@ namespace core::forms
 		};
 
 	protected:
+		class FormsExport Accessible : public AccessibleDecorator {
+			using base = AccessibleDecorator;
+
+		private:
+			Window&  Window;
+
+		public:
+			Accessible(forms::Window& wnd, com::shared_ptr<::IAccessible> impl) 
+			  : base{std::move(impl)}, 
+			    Window{wnd}
+			{}
+		
+		public:
+			::HRESULT
+			PASCAL get_accRole(::VARIANT child, com::out_t<::VARIANT> role) override {
+				
+				if (!this->Window.Children.contains(child.iVal))
+					return E_INVALIDARG;
+
+				role->vt = VT_I4;
+				role->lVal = static_cast<long>(this->Window.Children[child.iVal].role());
+				return S_OK;
+			}
+		};
+
 		class FormsExport ExistingWindowCollection {
 			using RawHandleDictionary = std::map<::HWND, Window*>;
 			using key_t = ::HWND;
@@ -545,7 +572,7 @@ namespace core::forms
 
 			this->create(wnd);
 		}
-	
+
 		void 
 		destroy() {
 			if (::DestroyWindow(this->handle()))
@@ -684,6 +711,41 @@ namespace core::forms
 		}
 		
 		Response
+		virtual onGetObject(GetObjectEventArgs args) {
+			if (args.Object != ObjectId::Client)
+				return Unhandled;
+
+			gsl::cwzstring clsName {};
+			switch (this->role())
+			{
+			case WindowRole::CheckButton:    clsName = WC_BUTTON; break;
+			case WindowRole::ComboBox:		 clsName = WC_COMBOBOX; break;
+			case WindowRole::Dialog:		 clsName = WC_DIALOG; break;
+			case WindowRole::Graphic:		 clsName = WC_STATIC; break;
+			case WindowRole::Grouping:		 clsName = WC_BUTTON; break;
+			case WindowRole::Link:			 clsName = WC_LINK; break;
+			case WindowRole::List:			 clsName = WC_LISTBOX; break;
+			case WindowRole::ProgressBar:	 clsName = PROGRESS_CLASS; break;
+			case WindowRole::PushButton:	 clsName = WC_BUTTON; break;
+			case WindowRole::RadioButton:	 clsName = WC_BUTTON; break;
+			case WindowRole::StaticText:	 clsName = WC_STATIC; break;
+			case WindowRole::Text:			 clsName = WC_EDIT; break;
+
+			default:
+				return Unhandled;
+			}
+
+			com::shared_ptr<::IAccessible> accessible;
+			if (clsName)
+				com::ThrowingHResult hr = ::CreateStdAccessibleProxyW(this->handle(), clsName, args.Flags, IID_IAccessible, std::out_ptr(accessible, adopt));
+			else
+				com::ThrowingHResult hr = ::CreateStdAccessibleObject(this->handle(), args.Flags, IID_IAccessible, std::out_ptr(accessible, adopt));
+
+			com::shared_ptr<::IAccessible> decorator = com::make_shared<Accessible,::IAccessible>(*this,accessible);
+			return ::LresultFromObject(IID_IAccessible, args.Flags, decorator);
+		}
+
+		Response
 		virtual onMouseDown(MouseEventArgs args) {
 			return Unhandled;
 		}
@@ -808,6 +870,9 @@ namespace core::forms
 			case WM_ERASEBKGND:
 				return this->onEraseBackground({hWnd,wParam,lParam});
 				
+			case WM_GETOBJECT:
+				return this->onGetObject({wParam,lParam});
+			
 			case WM_LBUTTONDOWN:
 				return this->onMouseDown({MouseMessage::ButtonDown,MouseButton::Left,wParam,lParam});
 			
