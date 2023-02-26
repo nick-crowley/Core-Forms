@@ -41,44 +41,45 @@ namespace core::forms
 			using base = com::adapter<interface_type>;
 
 		public:
-			method_t<1,::HBITMAP,::HBITMAP,com::out_t<int>> Add;
-			method_t<0,com::in_t<::IMAGELISTDRAWPARAMS>>    Draw;
-			method_t<1,com::out_t<::COLORREF>>              GetBkColour;
-			method_t<1,int,unsigned,com::out_t<::HICON>>    GetIcon;
-			method_t<1,com::out_t<int>>                     GetImageCount;
-			method_t<1,int,com::out_t<::IMAGEINFO>>         GetImageInfo;
-			method_t<1,int,com::out_t<::RECT>>              GetImageRect;
-			method_t<2,com::out_t<int>,com::out_t<int>>     GetIconSize;
-			method_t<1,int,com::out_t<int>>                 GetOverlayImage;
-			method_t<0,int,int,::UINT,int,int>              Initialize;
-			method_t<0,int>                                 Remove;
-			method_t<1,int,::HICON,com::out_t<int>>         ReplaceIcon;
-			method_t<1,::COLORREF,com::out_t<::COLORREF>>   SetBkColour;
-			method_t<0,int,int>                             SetIconSize;
-			method_t<0,unsigned>                            SetImageCount;
-			method_t<0,int,int>                             SetOverlayImage;
+			method_t<1,&interface_type::Add>              add;
+			method_t<0,&interface_type::Draw>             draw;
+			method_t<1,&interface_type::GetBkColor>       getBkColour;
+			method_t<1,&interface_type::GetIcon>          getIcon;
+			method_t<1,&interface_type::GetImageCount>    getImageCount;
+			method_t<1,&interface_type::GetImageInfo>     getImageInfo;
+			method_t<1,&interface_type::GetImageRect>     getImageRect;
+			method_t<2,&interface_type::GetIconSize>      getIconSize;
+			method_t<1,&interface_type::GetOverlayImage>  getOverlayImage;
+			method_t<0,&interface_type::Initialize>       initialize;
+			method_t<0,&interface_type::Remove>           remove;
+			method_t<1,&interface_type::ReplaceIcon>      replaceIcon;
+			method_t<1,&interface_type::SetBkColor>       setBkColour;
+			method_t<0,&interface_type::SetIconSize>      setIconSize;
+			method_t<0,&interface_type::SetImageCount>    setImageCount;
+			method_t<0,&interface_type::SetOverlayImage>  setOverlayImage;
 
 		public:
 			CoImageListImpl(com::shared_ptr<interface_type> ptr) 
 			  : base{ptr},
-				Add{this->method<1>(&interface_type::Add)},
-				Draw{this->method(&interface_type::Draw)},
-				GetBkColour{this->method<1>(&interface_type::GetBkColor)},
-				GetIcon{this->method<1>(&interface_type::GetIcon)},
-				GetImageCount{this->method<1>(&interface_type::GetImageCount)},
-				GetImageInfo{this->method<1>(&interface_type::GetImageInfo)},
-				GetImageRect{this->method<1>(&interface_type::GetImageRect)},
-				GetIconSize{this->method<2>(&interface_type::GetIconSize)},
-				GetOverlayImage{this->method<1>(&interface_type::GetOverlayImage)},
-				Initialize{this->method(&interface_type::Initialize)},
-				Remove{this->method(&interface_type::Remove)},
-				ReplaceIcon{this->method<1>(&interface_type::ReplaceIcon)},
-				SetBkColour{this->method<1>(&interface_type::SetBkColor)},
-				SetIconSize{this->method(&interface_type::SetIconSize)},
-				SetImageCount{this->method(&interface_type::SetImageCount)},
-				SetOverlayImage{this->method(&interface_type::SetOverlayImage)}
+				add{this->method<1>(&interface_type::Add)},
+				draw{this->method<0>(&interface_type::Draw)},
+				getBkColour{this->method<1>(&interface_type::GetBkColor)},
+				getIcon{this->method<1>(&interface_type::GetIcon)},
+				getImageCount{this->method<1>(&interface_type::GetImageCount)},
+				getImageInfo{this->method<1>(&interface_type::GetImageInfo)},
+				getImageRect{this->method<1>(&interface_type::GetImageRect)},
+				getIconSize{this->method<2>(&interface_type::GetIconSize)},
+				getOverlayImage{this->method<1>(&interface_type::GetOverlayImage)},
+				initialize{this->method<0>(&interface_type::Initialize)},
+				remove{this->method<0>(&interface_type::Remove)},
+				replaceIcon{this->method<1>(&interface_type::ReplaceIcon)},
+				setBkColour{this->method<1>(&interface_type::SetBkColor)},
+				setIconSize{this->method<0>(&interface_type::SetIconSize)},
+				setImageCount{this->method<0>(&interface_type::SetImageCount)},
+				setOverlayImage{this->method<0>(&interface_type::SetOverlayImage)}
 			{}
 		};
+
 	private:
 		CoImageListImpl m_impl;
 
@@ -86,7 +87,7 @@ namespace core::forms
 		ImageList(Size imageSize, unsigned capacity, std::optional<unsigned> growCount = std::nullopt)
 		  : m_impl{com::make_shared<CLSID_ImageList,::IImageList2>(CLSCTX_INPROC_SERVER)}
 		{
-			this->m_impl.Initialize(imageSize.Width, imageSize.Height, ILC_COLOR32|ILC_MASK, capacity, growCount.value_or(0));
+			this->m_impl.initialize(imageSize.Width, imageSize.Height, ILC_COLOR32|ILC_MASK, capacity, growCount.value_or(0));
 		}
 		
 		explicit
@@ -97,7 +98,7 @@ namespace core::forms
 	public:
 		void
 		appendIcon(Icon const& icon) {
-			this->m_impl.ReplaceIcon(-1, icon.handle());
+			this->m_impl.replaceIcon(-1, icon.handle());
 		}
 
 		void
@@ -107,7 +108,7 @@ namespace core::forms
 			params.rgbBk = CLR_NONE;
 			params.rgbFg = CLR_NONE;
 
-			this->m_impl.Draw(&params);
+			this->m_impl.draw(&params);
 		}
 		
 #if 0
@@ -134,7 +135,7 @@ namespace core::forms
 				params.dwRop = NOTSRCCOPY;
 				params.rgbBk = CLR_NONE;
 				params.rgbFg = CLR_NONE;
-				this->m_impl.Draw(&params);
+				this->m_impl.draw(&params);
 
 				// Colour the mask red
 				DeviceContext memDc{invertedMask, nullptr};
@@ -149,7 +150,7 @@ namespace core::forms
 				params.dwRop = SRCCOPY;
 				params.rgbBk = CLR_NONE;
 				params.rgbFg = CLR_NONE;
-				this->m_impl.Draw(&params);
+				this->m_impl.draw(&params);
 
 				DeviceContext destDc{dest, nullptr};
 				destDc.copyBitmap(memDc.handle(), at, RasterOp::SrcPaint);
@@ -176,7 +177,7 @@ namespace core::forms
 				params.fState = ILS_ALPHA;
 				params.Frame = alpha * 255u;
 			}
-			this->m_impl.Draw(&params);
+			this->m_impl.draw(&params);
 		}
 		
 		::HIMAGELIST
@@ -187,20 +188,20 @@ namespace core::forms
 		forms::Icon
 		getIcon(unsigned idx) const {
 			return forms::Icon{
-				forms::SharedIcon{this->m_impl.GetIcon(idx,ILD_TRANSPARENT), &::DestroyIcon}, 
+				forms::SharedIcon{this->m_impl.getIcon(idx,ILD_TRANSPARENT), &::DestroyIcon}, 
 				this->getIconSize()
 			};
 		}
 		
 		forms::Size
 		getIconSize() const {
-			auto [cx,cy] = this->m_impl.GetIconSize();
+			auto [cx,cy] = this->m_impl.getIconSize();
 			return {cx,cy};
 		}
 		
 		void
 		setIcon(unsigned idx, Icon const& icon) {
-			this->m_impl.ReplaceIcon(idx, icon.handle());
+			this->m_impl.replaceIcon(idx, icon.handle());
 		}
 
 	private:
