@@ -2,7 +2,7 @@
 #include <windows.h>
 
 std::atomic_long
-core::com::g_numInstances = 0;
+core::com::numInstances = 0;
 
 extern "C"
 BOOL
