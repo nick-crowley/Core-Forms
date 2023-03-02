@@ -610,6 +610,11 @@ namespace core::forms
 		}
 
 		void
+		lookNfeel(SharedLookNFeelProvider newFeel) {
+			this->LookNFeel = ThrowIfEmpty(newFeel);
+		}
+
+		void
 		order(::HWND after) {
 			::SetWindowPos(this->handle(), after, -1, -1, -1, -1, 
 				SWP_NOMOVE|SWP_NOSIZE|SWP_NOACTIVATE);
