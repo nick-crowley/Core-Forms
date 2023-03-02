@@ -180,12 +180,19 @@ namespace core::forms
 				win::LastError{}.throwAlways("Unable to draw icon");
 		}
 	
-		//! @brief	Draws a filled rectangle with the current brush and pen
+		//! @brief	Draws a filled rectangle using the current brush and pen
 		void  
 		drawRect(Rect const& rc) const
 		{
-			// Outline source rectangle with current pen
 			if (!::Rectangle(this->handle(), rc.Left, rc.Top, rc.Right, rc.Bottom))
+				win::LastError{}.throwAlways();
+		}
+		
+		//! @brief	Draws a filled rectangle with rounded corners using the current brush and pen
+		void  
+		drawRoundRect(Rect const& rc, Size const corners) const
+		{
+			if (!::RoundRect(this->handle(), rc.Left, rc.Top, rc.Right, rc.Bottom, corners.Width, corners.Height))
 				win::LastError{}.throwAlways();
 		}
 
