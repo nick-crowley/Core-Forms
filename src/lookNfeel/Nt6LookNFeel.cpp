@@ -11,6 +11,35 @@ Nt6LookNFeel::Nt6LookNFeel()
 {}
 
 void
+Nt6LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) 
+{
+	if (!ctrl.ownerDraw())
+		throw runtime_error{"GroupBox #{} must be OwnerDraw", args.Ident};
+
+	// Erase background
+	args.Graphics.setBrush(ctrl.backColour());
+	args.Graphics.fillRect(args.Item.Area);
+
+	// Draw frame
+	auto const text = ctrl.text();
+	auto const textSize = args.Graphics.measureText(text);
+	auto const frameRect = args.Item.Area - Border{1, textSize.Height/2, 0, 0};
+	Pen const  thickPen{SystemColour::ButtonShadow, 2};
+	args.Graphics.setPen(thickPen);
+	args.Graphics.setBrush(StockBrush::Hollow);
+	args.Graphics.drawRoundRect(frameRect, Size{16,16});
+
+	// Draw text
+	auto const frameText = L' ' + text + L' ';
+	auto const textOffset = Point{SystemMetric::cxSmallIcon,0};
+	args.Graphics.setFont(ctrl.font());
+	args.Graphics.textColour(ctrl.textColour(), ctrl.backColour());
+	args.Graphics.drawText(frameText, args.Item.Area + textOffset, DrawTextFlags::Top);
+
+	args.Graphics.restore();
+}
+
+void
 Nt6LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 {
 	// Erase background

@@ -21,7 +21,10 @@ namespace core::forms
 
 	public:
 		using base::draw;
-
+		
+		void
+		draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
+	
 		void
 		draw(Dialog& dlg, PaintWindowEventArgs const& args) override;
 	

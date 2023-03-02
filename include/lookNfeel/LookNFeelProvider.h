@@ -37,9 +37,6 @@ namespace core::forms
 		erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& args) override;
 	
 		void
-		draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
-	
-		void
 		draw(PictureControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
 		void
