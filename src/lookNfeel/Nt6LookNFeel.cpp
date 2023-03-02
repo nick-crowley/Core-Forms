@@ -57,5 +57,6 @@ Nt6LookNFeel::initialize(Dialog& dlg, InitDialogEventArgs const& args)
 			ctrl->backColour(SystemColour::Dialog);
 		ctrl->textColour(SystemColour::WindowText);
 		ctrl->font(this->SegoeUi);
+		ctrl->lookNfeel(this->shared_from_this());
 	}
 }

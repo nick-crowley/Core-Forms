@@ -83,5 +83,6 @@ Win31LookNFeel::initialize(Dialog& dlg, InitDialogEventArgs const& args)
 			ctrl->backColour(SystemColour::Window);
 		ctrl->textColour(SystemColour::WindowText);
 		ctrl->font(StockFont::SystemFixed);
+		ctrl->lookNfeel(this->shared_from_this());
 	}
 }

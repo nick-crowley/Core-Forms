@@ -4,7 +4,8 @@
 
 namespace core::forms
 {
-	class FormsExport Win31LookNFeel : public LookNFeelProvider
+	class FormsExport Win31LookNFeel : public LookNFeelProvider, 
+	                                   public std::enable_shared_from_this<ILookNFeelProvider>
 	{
 		using base = LookNFeelProvider;
 
