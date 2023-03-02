@@ -334,9 +334,6 @@ namespace core::forms
 		};
 
 	private:
-		using SharedLookNFeelProvider = std::shared_ptr<ILookNFeelProvider>;
-
-	private:
 		std::type_identity_t<Window const*>
 		static BeneathCursor;
 

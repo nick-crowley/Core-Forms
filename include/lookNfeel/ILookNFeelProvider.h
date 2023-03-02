@@ -62,4 +62,7 @@ namespace core::forms
 		void
 		virtual initialize(Dialog& dlg, InitDialogEventArgs const& args) abstract;
 	};
+
+	using SharedLookNFeelProvider = std::shared_ptr<ILookNFeelProvider>;
+
 }	// namespace core::forms
