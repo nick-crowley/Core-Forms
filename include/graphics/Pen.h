@@ -22,6 +22,10 @@ namespace core::forms
 			if (!this->Handle)
 				win::LastError{}.throwAlways();
 		}
+		
+		Pen(SystemColour col, unsigned width, PenStyle s = PenStyle::Solid) 
+			: Pen{to_colour(col), width, s}
+		{}
 
 	public:
 		SharedPen
