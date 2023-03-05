@@ -144,6 +144,10 @@ LookNFeelProvider::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args)
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"Label #{} must be OwnerDraw", args.Ident};
 	
+	// Erase background
+	args.Graphics.setBrush(ctrl.backColour());
+	args.Graphics.fillRect(args.Item.Area);
+
 	std::optional<Font> customFont;
 	if (auto textHeight = ctrl.height(); textHeight == PointSize::Default) 
 		args.Graphics.setFont(ctrl.font());
