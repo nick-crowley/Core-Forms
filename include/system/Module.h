@@ -37,11 +37,8 @@ namespace core::forms
 		}
 	
 		Icon
-		loadIcon(ResourceId name) const
-		{	
-			Size const 
-			static dimensions{SystemMetric::cxIcon,SystemMetric::cyIcon};
-		
+		loadIcon(ResourceId name, Size dimensions = Size{SystemMetric::cxIcon,SystemMetric::cyIcon}) const
+		{
 			if (auto const icon = (::HICON)::LoadImageW(this->handle(), name, 
 														IMAGE_ICON, 
 														dimensions.Width, dimensions.Height, 
