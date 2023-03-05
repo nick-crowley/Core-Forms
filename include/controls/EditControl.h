@@ -43,6 +43,9 @@ namespace core::forms
 				})
 			{}
 		};
+		
+	public:
+		WindowEvent    TextChanged;
 
 	public:
 		implicit
@@ -73,6 +76,21 @@ namespace core::forms
 		notificationName(::UINT notification) override {
 			static const EditNotificationDictionary names;
 			return names.at(notification);
+		}
+		
+		Response
+		offerNotification(::UINT notification) override {
+			auto const on_exit = this->Debug.setTemporaryState(
+				{ProcessingState::NotificationProcessing, this->notificationName(notification)}
+			); 
+
+			switch (notification) {
+			case EN_CHANGE:
+				this->TextChanged.raise(*this);
+				return 0;
+			}
+
+			return Unhandled;
 		}
 
 		::LRESULT 
