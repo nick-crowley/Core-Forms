@@ -21,4 +21,4 @@ namespace core::forms
 	};
 }	// namespace core::forms
 
-constdata bool core::meta::Settings<core::bitwise_enum, core::forms::ClassStyle> = true;
+metadata bool core::meta::Settings<core::bitwise_enum, core::forms::ClassStyle> = true;

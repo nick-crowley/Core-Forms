@@ -26,7 +26,7 @@ enum class core::forms::EdgeFlags : uint32_t
     None = 0,
 };
 
-constdata bool core::meta::Settings<core::bitwise_enum, core::forms::EdgeFlags> = true;
+metadata bool core::meta::Settings<core::bitwise_enum, core::forms::EdgeFlags> = true;
 
 //! \enum BorderFlags - Defines DrawText border flags
 enum class core::forms::BorderFlags : uint32_t
@@ -52,7 +52,7 @@ enum class core::forms::BorderFlags : uint32_t
     TopRight = BF_TOPRIGHT,                             //!< Top and right side of border rectangle.
 };
 
-constdata bool core::meta::Settings<core::bitwise_enum, core::forms::BorderFlags> = true;
+metadata bool core::meta::Settings<core::bitwise_enum, core::forms::BorderFlags> = true;
 
 //! \enum DrawTextFlags - Defines DrawText flags
 enum class core::forms::DrawTextFlags : uint32_t
@@ -88,7 +88,7 @@ enum class core::forms::DrawTextFlags : uint32_t
     None = Top
 };
   
-constdata bool core::meta::Settings<core::bitwise_enum, core::forms::DrawTextFlags> = true;
+metadata bool core::meta::Settings<core::bitwise_enum, core::forms::DrawTextFlags> = true;
 
 namespace core::forms
 {
@@ -159,7 +159,7 @@ enum class core::forms::OwnerDrawState : uint16_t
     Selected = ODS_SELECTED,            //!< The menu item's status is selected.
 };
   
-constdata bool core::meta::Settings<core::bitwise_enum, core::forms::OwnerDrawState> = true;
+metadata bool core::meta::Settings<core::bitwise_enum, core::forms::OwnerDrawState> = true;
 
 namespace core::forms
 {

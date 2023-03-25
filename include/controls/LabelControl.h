@@ -53,6 +53,6 @@ namespace core::forms
 	};
 }	// namespace core::forms
 
-constdata bool core::meta::Settings<core::bitwise_enum, core::forms::LabelControl::HorizontalAlign> = true;
-constdata bool core::meta::Settings<core::compatible_enum, core::forms::StaticStyle, core::forms::LabelControl::HorizontalAlign> = true;
-constdata bool core::meta::Settings<core::compatible_enum, core::forms::LabelControl::HorizontalAlign, core::forms::StaticStyle> = true;
+metadata bool core::meta::Settings<core::bitwise_enum, core::forms::LabelControl::HorizontalAlign> = true;
+metadata bool core::meta::Settings<core::compatible_enum, core::forms::StaticStyle, core::forms::LabelControl::HorizontalAlign> = true;
+metadata bool core::meta::Settings<core::compatible_enum, core::forms::LabelControl::HorizontalAlign, core::forms::StaticStyle> = true;
