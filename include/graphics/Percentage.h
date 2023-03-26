@@ -13,7 +13,7 @@ namespace core::forms
 		float   m_value;
 
 	public:
-		template <meta::RealNumber T>
+		template <nstd::RealNumber T>
 		constexpr
 		explicit  
 		Percentage(T v) : m_value{static_cast<float>(v)}
@@ -31,12 +31,12 @@ namespace core::forms
 		);
 
 	public:
-		template <meta::RealNumber Result> 
+		template <nstd::RealNumber Result> 
 		implicit operator Result() const {
 			return static_cast<Result>(this->m_value);
 		}
 
-		template <meta::RealNumber Result> 
+		template <nstd::RealNumber Result> 
 		Result
 		operator*(Result const rhs) const
 		{

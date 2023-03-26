@@ -430,7 +430,7 @@ namespace core::forms
 			return ::IsWindowEnabled(this->handle()) != FALSE;
 		}
 	
-		template <meta::Enumeration Style = ExWindowStyle>
+		template <nstd::Enumeration Style = ExWindowStyle>
 		nstd::bitset<Style>
 		exStyle() const {
 			return static_cast<Style>(::GetWindowLongW(this->handle(),GWL_EXSTYLE));
@@ -479,7 +479,7 @@ namespace core::forms
 			return ::SendMessageW(this->handle(), MessageId, first.value_or(0), second.value_or(0));
 		}
 
-		template <meta::Enumeration Style = WindowStyle>
+		template <nstd::Enumeration Style = WindowStyle>
 		nstd::bitset<Style>
 		style() const {
 			return static_cast<Style>(::GetWindowLongW(this->handle(),GWL_STYLE));
