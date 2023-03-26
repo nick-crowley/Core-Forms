@@ -15,7 +15,7 @@ namespace core::com
 	//FIX: CLSID_ImageList isn't registered in practice ::CoCreateInstance() will never succeed
 	template <>
 	shared_ptr<::IImageList>
-	inline make_shared<CLSID_ImageList,::IImageList>(DWORD /*context*/)
+	inline make_shared<::IImageList,CLSID_ImageList>(DWORD /*context*/)
 	{
 		shared_ptr<::IImageList> object;
 		ThrowingHResult hr = ::ImageList_CoCreateInstance(CLSID_ImageList, nullptr, IID_IImageList, std::out_ptr(object,adopt));
@@ -24,7 +24,7 @@ namespace core::com
 	
 	template <>
 	shared_ptr<::IImageList2>
-	inline make_shared<CLSID_ImageList,::IImageList2>(DWORD /*context*/)
+	inline make_shared<::IImageList2,CLSID_ImageList>(DWORD /*context*/)
 	{
 		shared_ptr<::IImageList2> object;
 		ThrowingHResult hr = ::ImageList_CoCreateInstance(CLSID_ImageList, nullptr, IID_IImageList2, std::out_ptr(object,adopt));
@@ -85,7 +85,7 @@ namespace core::forms
 
 	public:
 		ImageList(Size imageSize, unsigned capacity, std::optional<unsigned> growCount = std::nullopt)
-		  : m_impl{com::make_shared<CLSID_ImageList,::IImageList2>(CLSCTX_INPROC_SERVER)}
+		  : m_impl{com::make_shared<::IImageList2,CLSID_ImageList>(CLSCTX_INPROC_SERVER)}
 		{
 			this->m_impl.initialize(imageSize.Width, imageSize.Height, ILC_COLOR32|ILC_MASK, capacity, growCount.value_or(0));
 		}

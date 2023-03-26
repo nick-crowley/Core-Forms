@@ -743,7 +743,7 @@ namespace core::forms
 			else
 				com::ThrowingHResult hr = ::CreateStdAccessibleObject(this->handle(), args.Flags, IID_IAccessible, std::out_ptr(accessible, adopt));
 
-			com::shared_ptr<::IAccessible> decorator = com::make_shared<Accessible,::IAccessible>(*this,accessible);
+			com::shared_ptr<::IAccessible> decorator = com::make_shared<::IAccessible,Accessible>(*this,accessible);
 			return ::LresultFromObject(IID_IAccessible, args.Flags, decorator);
 		}
 
