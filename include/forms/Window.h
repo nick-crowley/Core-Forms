@@ -9,12 +9,12 @@
 #include "lookNfeel/ILookNFeelProvider.h"
 #include "support/ObservableEvent.h"
 #include "system/WindowMessageDictionary.h"
-#include "windows/Accessible.h"
-#include "windows/ChildWindowIterator.h"
-#include "windows/WindowClass.h"
-#include "windows/WindowEventArgs.h"
-#include "windows/WindowInfo.h"
-#include "windows/WindowStyle.h"
+#include "forms/Accessible.h"
+#include "forms/ChildWindowIterator.h"
+#include "forms/WindowClass.h"
+#include "forms/WindowEventArgs.h"
+#include "forms/WindowInfo.h"
+#include "forms/WindowStyle.h"
 #include "win/Boolean.h"
 #pragma comment (lib, "OleAcc.lib")
 

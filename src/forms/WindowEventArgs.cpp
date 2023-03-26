@@ -1,5 +1,5 @@
-#include "windows/WindowEventArgs.h"
-#include "windows/Window.h"
+#include "forms/WindowEventArgs.h"
+#include "forms/Window.h"
 using namespace core;
 using namespace forms;
 

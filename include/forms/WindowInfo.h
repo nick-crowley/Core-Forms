@@ -1,6 +1,6 @@
 #pragma once
-#include "windows/ExWindowStyle.h"
-#include "windows/WindowStyle.h"
+#include "forms/ExWindowStyle.h"
+#include "forms/WindowStyle.h"
 #include "graphics/SizePoint.h"
 #include "graphics/Rectangle.h"
 

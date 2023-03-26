@@ -3,8 +3,8 @@
 #include "dialogs/DialogItemTemplate.h"
 #include "system/ResourceId.h"
 #include "graphics/Rectangle.h"
-#include "windows/WindowStyle.h"
-#include "windows/ExWindowStyle.h"
+#include "forms/WindowStyle.h"
+#include "forms/ExWindowStyle.h"
 
 namespace core::forms
 {

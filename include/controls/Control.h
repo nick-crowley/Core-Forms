@@ -1,7 +1,7 @@
 #pragma once
 #include "library/core.Forms.h"
 #include "system/MessageDictionary.h"
-#include "windows/Window.h"
+#include "forms/Window.h"
 
 namespace core::forms 
 {

@@ -1,6 +1,6 @@
 #pragma once
 #include "library/core.Forms.h"
-#include "windows/WindowStyle.h"
+#include "forms/WindowStyle.h"
 
 namespace core::forms
 {

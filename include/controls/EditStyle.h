@@ -1,5 +1,5 @@
 #pragma once
-#include "windows/WindowStyle.h"
+#include "forms/WindowStyle.h"
 
 namespace core::forms
 {

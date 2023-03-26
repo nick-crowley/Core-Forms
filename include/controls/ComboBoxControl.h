@@ -4,7 +4,7 @@
 #include "controls/ComboBoxStyle.h"
 //#include "controls/EditControl.h"
 //#include "controls/ListBoxControl.h"
-#include "windows/WindowClass.h"
+#include "forms/WindowClass.h"
 
 namespace core::forms
 {

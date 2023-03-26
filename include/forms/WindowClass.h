@@ -2,7 +2,7 @@
 #include "library/core.Forms.h"
 #include "graphics/SystemBrush.h"
 #include "nstd/Bitset.h"
-#include "windows/ClassStyle.h"
+#include "forms/ClassStyle.h"
 #include "system/ResourceId.h"
 #include "system/Module.h"
 #include "system/ResourceId.h"

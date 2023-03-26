@@ -2,8 +2,9 @@
 #include "library/core.Forms.h"
 #include "support/ObservableEvent.h"
 #include "graphics/Graphics.h"
-#include "windows/AccessibilityFlags.h"
-#include "windows/WindowInfo.h"
+#include "forms/AccessibilityFlags.h"
+#include "forms/WindowInfo.h"
+#include "system/ResourceId.h"
 
 namespace core::forms
 {

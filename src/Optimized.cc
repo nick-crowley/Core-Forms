@@ -27,7 +27,7 @@
 #include "system/Module.cpp"
 #include "system/ResourceId.cpp"
 
-#include "windows/ChildWindowIterator.cpp"
-#include "windows/Window.cpp"
-#include "windows/WindowClass.cpp"
-#include "windows/WindowEventArgs.cpp"
+#include "forms/ChildWindowIterator.cpp"
+#include "forms/Window.cpp"
+#include "forms/WindowClass.cpp"
+#include "forms/WindowEventArgs.cpp"

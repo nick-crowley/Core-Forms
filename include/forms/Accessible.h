@@ -2,7 +2,7 @@
 #include "library/core.Forms.h"
 #include "com/Annotations.h"
 #include "com/Dispatch.h"
-#include "windows/AccessibilityFlags.h"
+#include "forms/AccessibilityFlags.h"
 	
 namespace core::forms
 {

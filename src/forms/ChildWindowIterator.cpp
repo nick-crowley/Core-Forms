@@ -1,4 +1,5 @@
-#include "windows/ChildWindowIterator.h"
+#include "forms/ChildWindowIterator.h"
+#include "forms/Window.h"
 using namespace core;
 using namespace forms;
 

@@ -2,7 +2,7 @@
 #include "library/core.Forms.h"
 #include "controls/Control.h"
 #include "controls/LinkStyle.h"
-#include "windows/WindowClass.h"
+#include "forms/WindowClass.h"
 
 namespace core::forms
 {
