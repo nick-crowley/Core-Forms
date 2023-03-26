@@ -47,7 +47,7 @@ forms::OwnerDrawMenuEventArgs::OwnerDrawMenuEventArgs(::DRAWITEMSTRUCT& data)
 bool
 forms::PaintNonClientEventArgs::beginPaint()
 {
-	auto constinit
+	auto constexpr
 	static Flags = DCX_WINDOW|DCX_CACHE|DCX_LOCKWINDOWUPDATE;
 
 	::HDC dc {};
