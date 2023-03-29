@@ -22,7 +22,8 @@ namespace core::forms
 
 		ControlDictionary(std::initializer_list<Control*> controls)
 		{
-			Invariant(ranges::none_of(controls, lambda(=, const* c, c->ident() == /*IDC_STATIC*/ -1)));
+			ThrowIf(controls, ranges::any_of(controls, lambda(=, const* c, c->ident() == /*IDC_STATIC*/ -1)));
+
 			for (auto* c : controls)
 				this->m_items[c->ident()] = c; 
 		}
