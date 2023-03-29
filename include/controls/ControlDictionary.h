@@ -28,12 +28,12 @@ namespace core::forms
 		}
 
 	public:
-		auto 
+		Dictionary::const_iterator 
 		begin() const { 
 			return this->m_items.begin(); 
 		}
 
-		auto 
+		Dictionary::const_iterator
 		end() const { 
 			return this->m_items.end(); 
 		}
@@ -48,7 +48,7 @@ namespace core::forms
 			return this->m_items.empty();
 		}
 
-		auto 
+		Dictionary::size_type
 		size() const { 
 			return this->m_items.size();  
 		}
