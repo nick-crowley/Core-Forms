@@ -96,7 +96,7 @@ namespace core::forms
 			return nstd::sizeof_v<uint32_t,ExWindowStyle,WindowStyle,SmallRect,uint32_t> 
 			     + DialogTemplateWriter::measureResourceIdent(ctrl.ClassName)
 			     + DialogTemplateWriter::measureResourceIdent(ctrl.Title)
-			     + DialogTemplateWriter::measureBinaryData(ctrl.Data.data(), ctrl.Data.data() + ctrl.Data.size());
+			     + DialogTemplateWriter::measureBinaryData(ctrl.Data);
 		}
 
 		size_t
@@ -113,12 +113,12 @@ namespace core::forms
 		}
 		
 		size_t
-		static measureBinaryData(std::byte const* start, std::byte const* finish) 
+		static measureBinaryData(std::span<std::byte const> data) 
 		{	
-			if (start == finish)
+			if (data.empty())
 				return sizeof(MissingIdent);
 			else 
-				return nstd::sizeof_v<uint16_t,uint16_t> + nstd::sizeof_n<uint8_t>(finish-start);
+				return nstd::sizeof_v<uint16_t,uint16_t> + data.size();
 		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -220,7 +220,7 @@ namespace core::forms
 			//   https://learn.microsoft.com/en-us/windows/win32/api/Winuser/ns-winuser-dlgitemtemplate
 			this->writeResourceIdent(ctrl.ClassName);
 			this->writeResourceIdent(ctrl.Title);
-			this->writeBinaryData(ctrl.Data.data(), ctrl.Data.data() + ctrl.Data.size());
+			this->writeBinaryData(ctrl.Data);
 		}
 
 		template <typename Object>
@@ -228,9 +228,9 @@ namespace core::forms
 		writeObject(Object const& value) {
 			Invariant(this->bufferRemaining.size() >= sizeof(Object));
 
-			auto const* const object = reinterpret_cast<std::byte const*>(&value);
+			auto const bytes = std::as_bytes(std::span(&value,1));
 			this->bufferRemaining = {
-				std::copy(object, object + sizeof(Object), this->bufferRemaining.begin()),
+				ranges::copy(bytes, this->bufferRemaining.begin()).out,
 				this->bufferRemaining.end()
 			};
 		}
@@ -255,18 +255,18 @@ namespace core::forms
 		}
 		
 		void
-		writeBinaryData(std::byte const* start, std::byte const* finish) 
+		writeBinaryData(std::span<std::byte const> data) 
 		{	
-			Invariant(this->bufferRemaining.size() >= measureBinaryData(start,finish));
+			Invariant(this->bufferRemaining.size() >= measureBinaryData(data));
 
-			if (start == finish)
+			if (data.data())
 				this->writeObject<MissingIdent>({});
 			else {
 				// Duplicate the creation-data array size
-				this->writeObject<uint16_t>(static_cast<uint16_t>(finish - start + sizeof(uint16_t)));
-				this->writeObject<uint16_t>(static_cast<uint16_t>(finish - start + sizeof(uint16_t)));		// ABI compatibility with CREATESTRUCT
+				this->writeObject<uint16_t>(static_cast<uint16_t>(data.size() + sizeof(uint16_t)));
+				this->writeObject<uint16_t>(static_cast<uint16_t>(data.size() + sizeof(uint16_t)));		// ABI compatibility with CREATESTRUCT
 				this->bufferRemaining = {
-					std::copy(start, finish, this->bufferRemaining.begin()),
+					ranges::copy(data, this->bufferRemaining.begin()).out,
 					this->bufferRemaining.end()
 				};
 			}
