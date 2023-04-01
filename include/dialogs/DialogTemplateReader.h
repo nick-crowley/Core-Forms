@@ -131,7 +131,7 @@ namespace core::forms
 			}
 			else {
 				std::wstring name = r->String.Text;
-				this->Position += sizeof(wchar_t) * (name.length() + 1);
+				this->Position += nstd::sizeof_n<wchar_t>(name.length() + 1);
 				return std::make_optional<ResourceId>(std::move(name));
 			}
 		}
