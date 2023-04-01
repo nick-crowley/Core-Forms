@@ -8,6 +8,10 @@ namespace core::forms
 {
 	class DialogTemplateWriter : public DialogTemplateTypes
 	{
+		bool constexpr
+		inline static AlwaysUseDlgTemplateEx = true;
+
+	private:
 		std::span<std::byte>	bufferRemaining;
 
 	public:
@@ -78,11 +82,8 @@ namespace core::forms
 			std::vector<std::byte> buffer(DialogTemplateWriter::measureDialogTemplate(dlg));
 			this->bufferRemaining = buffer;
 
-			// TODO: Query whether layout requires DLG-TEMPLATE-EX
-			bool const extended = true;
-
 			// DLG-TEMPLATE
-			if (extended) {
+			if (DialogTemplateWriter::AlwaysUseDlgTemplateEx) {
 				this->writeObject<TemplateIdent>(DLG_TEMPLATE_EX);
 				this->writeObject<uint32_t>(*dlg.HelpId);
 				this->writeObject<ExWindowStyle>(dlg.ExtendedStyle);
@@ -110,7 +111,7 @@ namespace core::forms
 			// [style & DS_FONT] short ptSize, wchar font-name[]
 			if (dlg.Style.test(DialogStyle::SetFont|DialogStyle::ShellFont)) {
 				this->writeObject<uint16_t>(*dlg.Height);
-				if (extended) {
+				if (DialogTemplateWriter::AlwaysUseDlgTemplateEx) {
 					this->writeObject<uint16_t>(*dlg.Weight);
 					this->writeObject<uint8_t>(*dlg.Italic);
 					this->writeObject<uint8_t>(*dlg.CharSet);
@@ -139,10 +140,7 @@ namespace core::forms
 		writeItemTemplate(DialogItemTemplate const& ctrl) {
 			Invariant(this->bufferRemaining.size() >= measureItemTemplate(ctrl));
 			
-			// TODO: Query whether layout requires DLG-TEMPLATE-EX
-			bool const extended = true;
-			
-			if (extended) {
+			if (DialogTemplateWriter::AlwaysUseDlgTemplateEx) {
 				this->writeObject<uint32_t>(*ctrl.HelpId);
 				this->writeObject<ExWindowStyle>(ctrl.ExtendedStyle);
 				this->writeObject<WindowStyle>(ctrl.Style);
@@ -159,7 +157,7 @@ namespace core::forms
 				static_cast<int16_t>(ctrl.Area.height()) 
 			});
 
-			if (extended) {
+			if (DialogTemplateWriter::AlwaysUseDlgTemplateEx) {
 				this->writeObject<uint32_t>(ctrl.Ident);
 			}
 			else {
