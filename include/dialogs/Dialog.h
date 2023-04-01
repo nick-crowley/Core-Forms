@@ -49,7 +49,7 @@ namespace core::forms
 		implicit
 		Dialog(ResourceId resource, Module source = ProcessModule)
 		  : DialogId{resource},
-		    Template{DialogTemplateReader{source.loadResource(resource, RT_DIALOG)}.read_template()}
+		    Template{DialogTemplateReader{source.loadResource(resource, RT_DIALOG)}.readTemplate()}
 		{
 		}
 	
@@ -305,7 +305,7 @@ namespace core::forms
 			auto const on_exit = this->Debug.setTemporaryState(ProcessingState::BeingCreated);
 		
 			// Generate template with our customizations
-			DialogTemplateBlob blob = DialogTemplateWriter{}.write_template(customTemplate);
+			DialogTemplateBlob blob = DialogTemplateWriter{}.writeTemplate(customTemplate);
 			auto const container = source.handle();
 			auto const owner = parent ? parent->handle() : nullptr;
 			

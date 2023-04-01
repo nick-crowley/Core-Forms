@@ -18,9 +18,8 @@ namespace core::forms
 		{}
 
 	public:
-		// FIXME: DialogTemplateReader methods need changing to lower camel-case
 		DialogTemplate
-		read_template() 
+		readTemplate() 
 		{
 			TemplateIdent constexpr
 			static DLG_TEMPLATE_EX {1};
@@ -28,42 +27,42 @@ namespace core::forms
 			DialogTemplate dlg {};
 		
 			// Ensure layout is DLG-TEMPLATE-EX
-			auto* ver = this->peek_template_ident();
+			auto* ver = this->peekTemplateIdent();
 			bool const extended = *ver == DLG_TEMPLATE_EX;
 
 			// DLG-TEMPLATE
 			if (extended) {
-				this->read_object<TemplateIdent>();
-				dlg.HelpId = this->read_object<uint32_t>();
-				dlg.ExtendedStyle = this->read_object<ExWindowStyle>();
-				dlg.Style = this->read_object<WindowStyle>();
+				this->readObject<TemplateIdent>();
+				dlg.HelpId = this->readObject<uint32_t>();
+				dlg.ExtendedStyle = this->readObject<ExWindowStyle>();
+				dlg.Style = this->readObject<WindowStyle>();
 			}
 			else {
-				dlg.Style = this->read_object<WindowStyle>();
-				dlg.ExtendedStyle = this->read_object<ExWindowStyle>();
+				dlg.Style = this->readObject<WindowStyle>();
+				dlg.ExtendedStyle = this->readObject<ExWindowStyle>();
 			}
 		
-			dlg.NumControls = this->read_object<uint16_t>();
+			dlg.NumControls = this->readObject<uint16_t>();
 		
 			{
-				auto const rc = this->read_object<SmallRect>(); 
+				auto const rc = this->readObject<SmallRect>(); 
 				dlg.Area = Rect{{rc.Left, rc.Top}, {rc.Width, rc.Height}};
 			}
 		
 			// wchar menu[], wchar class[], wchar title[]
-			dlg.Menu = this->read_resource_ident();
-			dlg.ClassName = this->read_resource_ident();
-			dlg.Title = this->read_resource_ident();
+			dlg.Menu = this->readResourceIdent();
+			dlg.ClassName = this->readResourceIdent();
+			dlg.Title = this->readResourceIdent();
 
 			// [style & DS_FONT] short ptSize, wchar font-name[]
 			if (dlg.Style.test(DialogStyle::SetFont|DialogStyle::ShellFont)) {
-				dlg.Height = this->read_object<uint16_t>();
+				dlg.Height = this->readObject<uint16_t>();
 				if (extended) {
-					dlg.Weight = this->read_object<uint16_t>();
-					dlg.Italic = this->read_object<uint8_t>();
-					dlg.CharSet = this->read_object<uint8_t>();
+					dlg.Weight = this->readObject<uint16_t>();
+					dlg.Italic = this->readObject<uint8_t>();
+					dlg.CharSet = this->readObject<uint8_t>();
 				}
-				dlg.Font = this->read_resource_ident();
+				dlg.Font = this->readResourceIdent();
 			}
 		
 			// DLG-ITEM-TEMPLATE(s)
@@ -75,32 +74,32 @@ namespace core::forms
 				this->Position += (reinterpret_cast<uintptr_t>(this->Position) % sizeof(uint32_t));
 			
 				if (extended) {
-					ctrl.HelpId = this->read_object<uint32_t>();
-					ctrl.ExtendedStyle = this->read_object<ExWindowStyle>();
-					ctrl.Style = this->read_object<WindowStyle>();
+					ctrl.HelpId = this->readObject<uint32_t>();
+					ctrl.ExtendedStyle = this->readObject<ExWindowStyle>();
+					ctrl.Style = this->readObject<WindowStyle>();
 				}
 				else {
-					ctrl.Style = this->read_object<WindowStyle>();
-					ctrl.ExtendedStyle = this->read_object<ExWindowStyle>();
+					ctrl.Style = this->readObject<WindowStyle>();
+					ctrl.ExtendedStyle = this->readObject<ExWindowStyle>();
 				}
 			
 				{
-					auto rc = this->read_object<SmallRect>(); 
+					auto rc = this->readObject<SmallRect>(); 
 					ctrl.Area = Rect{{rc.Left, rc.Top}, {rc.Width, rc.Height}};
 				}
 			
 				if (extended) {
-					ctrl.Ident = this->read_object<uint32_t>();
+					ctrl.Ident = this->readObject<uint32_t>();
 				}
 				else {
-					ctrl.Ident = this->read_object<uint16_t>();
+					ctrl.Ident = this->readObject<uint16_t>();
 				}
 			
 				// Class & Title & Data fields must be aligned on 16-bit boundary
 				//   https://learn.microsoft.com/en-us/windows/win32/api/Winuser/ns-winuser-dlgitemtemplate
-				ctrl.ClassName = this->read_resource_ident();
-				ctrl.Title = this->read_resource_ident();
-				ctrl.Data = this->read_binary_data();
+				ctrl.ClassName = this->readResourceIdent();
+				ctrl.Title = this->readResourceIdent();
+				ctrl.Data = this->readBinaryData();
 
 				// Done
 				dlg.Controls.push_back(ctrl);
@@ -111,14 +110,14 @@ namespace core::forms
 
 	protected:
 		const TemplateIdent*
-		peek_template_ident() const
+		peekTemplateIdent() const
 		{
 			return reinterpret_cast<TemplateIdent const*>(this->Position);
 		}
 
 	protected:
 		std::optional<ResourceId>
-		read_resource_ident() 
+		readResourceIdent() 
 		{
 			auto* r = reinterpret_cast<VarLengthField const*>(this->Position);
 
@@ -138,7 +137,7 @@ namespace core::forms
 		}
 	
 		std::vector<std::byte>
-		read_binary_data() 
+		readBinaryData() 
 		{
 			auto* r = reinterpret_cast<VarLengthField const*>(this->Position);
 
@@ -155,7 +154,7 @@ namespace core::forms
 
 		template <typename Object>
 		Object
-		read_object() 
+		readObject() 
 		{
 			Object const* obj = reinterpret_cast<Object const*>(this->Position);
 			this->Position += sizeof(Object);
