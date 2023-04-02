@@ -12,5 +12,5 @@ forms::to_string(ResourceId const& res)
 	if (res.is_numeric())
 		return '#' + std::to_string(res.as_number());
 	else 
-		return core::to_string(res.as_string());
+		return as_string(res.as_string());
 }

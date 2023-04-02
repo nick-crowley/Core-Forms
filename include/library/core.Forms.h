@@ -8,8 +8,3 @@
 #include "../../src/library/FormsExport.h"
 
 #include "core/BitwiseEnum.h"
-
-namespace core::forms
-{
-	using core::to_string;
-}
