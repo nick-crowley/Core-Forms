@@ -259,7 +259,7 @@ namespace core::forms
 		{	
 			Invariant(this->bufferRemaining.size() >= measureBinaryData(data));
 
-			if (data.data())
+			if (data.empty())
 				this->writeObject<MissingIdent>({});
 			else {
 				// Duplicate the creation-data array size
