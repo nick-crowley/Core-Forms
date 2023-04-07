@@ -225,7 +225,7 @@ namespace core::forms
 					throw runtime_error{"No associated dialog object"};
 				}
 
-				assert(response.Status != Response::Invalid);
+				Invariant(response.Status != Response::Invalid);
 			
 				if (response.Status == Response::Handled) 
 				{

@@ -1037,13 +1037,13 @@ namespace core::forms
 				       << std::endl;
 				return;
 			}
-
-			assert(args.data<CreateWindowParameter*>() != nullptr);
+			
+			Invariant(args.data<CreateWindowParameter*>() != nullptr);
 			auto* const param = args.data<CreateWindowParameter*>();
 			Window* pThis = param->get();
 		
 			Window::ExistingWindows.add(hWnd, pThis);
-			assert(Window::ExistingWindows[hWnd] != nullptr);
+			Invariant(Window::ExistingWindows[hWnd] != nullptr);
 
 			pThis->Handle = hWnd;
 			pThis->Debug.setState(ProcessingState::BeingCreated,
@@ -1108,7 +1108,7 @@ namespace core::forms
 					}
 				}
 
-				assert(response.Status != Response::Invalid);
+				Invariant(response.Status != Response::Invalid);
 			
 				::LRESULT result;
 				// [HANDLED] Return the result provided by the handler
@@ -1131,7 +1131,7 @@ namespace core::forms
 					wnd->onConstructionFinished();
 				}
 				else if (message == WM_NCDESTROY) {
-					assert(wnd != nullptr);
+					Invariant(wnd != nullptr);
 					wnd->onLastSight(hWnd);
 				}
 						
