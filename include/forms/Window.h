@@ -1031,8 +1031,12 @@ namespace core::forms
 	private:
 		void
 		static onFirstSight(::HWND hWnd, CreateWindowEventArgs args) {
-			if (!args.Data->lpCreateParams) 
+			if (!args.Data->lpCreateParams) {
+				cdebug << "Observed creation of native '" << args.Data->lpszClass << '\''
+				       << "Window: title='" << (args.Data->lpszName ? L"" : args.Data->lpszName ) << '\''
+				       << std::endl;
 				return;
+			}
 
 			assert(args.data<CreateWindowParameter*>() != nullptr);
 			auto* const param = args.data<CreateWindowParameter*>();
