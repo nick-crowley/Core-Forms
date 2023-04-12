@@ -30,7 +30,6 @@
 #include "dialogs/DialogTemplate.h"
 #include "dialogs/DialogTemplateBlob.h"
 #include "dialogs/DialogTemplateTypes.h"
-
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
