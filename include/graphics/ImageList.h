@@ -18,7 +18,7 @@ namespace core::com
 	inline make_shared<::IImageList,CLSID_ImageList>(DWORD /*context*/)
 	{
 		shared_ptr<::IImageList> object;
-		ThrowingHResult hr = ::ImageList_CoCreateInstance(CLSID_ImageList, nullptr, IID_IImageList, std::out_ptr(object,adopt));
+		win::ThrowingHResult hr = ::ImageList_CoCreateInstance(CLSID_ImageList, nullptr, IID_IImageList, std::out_ptr(object,adopt));
 		return object;
 	}
 	
@@ -27,7 +27,7 @@ namespace core::com
 	inline make_shared<::IImageList2,CLSID_ImageList>(DWORD /*context*/)
 	{
 		shared_ptr<::IImageList2> object;
-		ThrowingHResult hr = ::ImageList_CoCreateInstance(CLSID_ImageList, nullptr, IID_IImageList2, std::out_ptr(object,adopt));
+		win::ThrowingHResult hr = ::ImageList_CoCreateInstance(CLSID_ImageList, nullptr, IID_IImageList2, std::out_ptr(object,adopt));
 		return object;
 	}
 }

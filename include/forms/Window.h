@@ -739,9 +739,9 @@ namespace core::forms
 
 			com::shared_ptr<::IAccessible> accessible;
 			if (clsName)
-				com::ThrowingHResult hr = ::CreateStdAccessibleProxyW(this->handle(), clsName, args.Flags, IID_IAccessible, std::out_ptr(accessible, adopt));
+				win::ThrowingHResult hr = ::CreateStdAccessibleProxyW(this->handle(), clsName, args.Flags, IID_IAccessible, std::out_ptr(accessible, adopt));
 			else
-				com::ThrowingHResult hr = ::CreateStdAccessibleObject(this->handle(), args.Flags, IID_IAccessible, std::out_ptr(accessible, adopt));
+				win::ThrowingHResult hr = ::CreateStdAccessibleObject(this->handle(), args.Flags, IID_IAccessible, std::out_ptr(accessible, adopt));
 
 			com::shared_ptr<::IAccessible> decorator = com::make_shared<::IAccessible,Accessible>(*this,accessible);
 			return ::LresultFromObject(IID_IAccessible, args.Flags, decorator);
