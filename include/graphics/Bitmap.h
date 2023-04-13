@@ -15,7 +15,7 @@ namespace core::forms
 		bpp32 = 32,
 	};
 
-	ColourDepth constexpr
+	ColourDepth consteval
 	operator""_bpp(uint64_t n)
 	{
 		return static_cast<ColourDepth>(n);

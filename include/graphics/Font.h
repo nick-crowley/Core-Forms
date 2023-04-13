@@ -14,7 +14,7 @@ namespace core::forms
 	
 	namespace literals 
 	{
-		PointSize constexpr
+		PointSize consteval
 		operator""_pt(uint64_t n) noexcept {
 			return static_cast<PointSize>(n);
 		}

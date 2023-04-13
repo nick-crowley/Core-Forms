@@ -62,12 +62,12 @@ namespace core::forms
 
 	namespace literals
 	{
-		Percentage constexpr
+		Percentage consteval
 		operator""_px(unsigned long long n) {
 			return Percentage{n};
 		}
 
-		Percentage constexpr
+		Percentage consteval
 		operator""_px(long double n) {
 			return Percentage{n};
 		}
