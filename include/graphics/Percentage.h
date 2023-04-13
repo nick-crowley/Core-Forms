@@ -7,7 +7,17 @@ namespace core::forms
 	{
 	public:
 		Percentage const
-		static Min, Max;
+		static Min;
+
+		Percentage const
+		static Max;
+		
+	private:
+		float constexpr
+		inline static MinValue = 0.0f;
+
+		float constexpr
+		inline static MaxValue = 100.0f;
 
 	private:
 		float   m_value;
@@ -18,10 +28,10 @@ namespace core::forms
 		explicit  
 		Percentage(T v) : m_value{static_cast<float>(v)}
 		{
-			if (*this < Min)
-				this->m_value = Min;
-			if (*this > Max)
-				this->m_value = Max;
+			if (this->m_value < Percentage::MinValue)
+				this->m_value = Percentage::MinValue;
+			if (this->m_value > Percentage::MaxValue)
+				this->m_value = Percentage::MaxValue;
 		}
 
 		satisfies(Percentage,
@@ -55,10 +65,10 @@ namespace core::forms
 	};
 
 	Percentage const
-	inline Percentage::Min{0.0f};
+	inline Percentage::Min{Percentage::MinValue};
 
 	Percentage const
-	inline Percentage::Max{100.0f};
+	inline Percentage::Max{Percentage::MaxValue};
 
 	namespace literals
 	{
