@@ -117,7 +117,7 @@ namespace core::forms
 		}
 
 	public:
-		std::type_identity_t<SystemBrush const&>
+		nstd::return_t<SystemBrush const&>
 		static get(SystemColour col) {
 			switch (col) {
 			default: ThrowInvalidArg(col, "Unsupported SystemColour");

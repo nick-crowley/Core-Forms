@@ -334,7 +334,7 @@ namespace core::forms
 		};
 
 	private:
-		std::type_identity_t<Window const*>
+		nstd::return_t<Window const*>
 		static BeneathCursor;
 
 	public:
@@ -502,7 +502,7 @@ namespace core::forms
 			return this->TextColour;
 		}
 		
-		std::type_identity_t<WindowClass const&>
+		nstd::return_t<WindowClass const&>
 		virtual wndcls() const abstract;
 		
 		Rect

@@ -30,7 +30,7 @@ namespace core::forms
 		{}
 		
 	public:
-		std::type_identity_t<StockPen const&>
+		nstd::return_t<StockPen const&>
 		static get(StockObject obj) {
 			switch (obj) {
 			default: ThrowInvalidArg(obj, "Unsupported StockObject");
