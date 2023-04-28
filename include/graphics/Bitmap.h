@@ -113,7 +113,7 @@ namespace core::forms
 namespace core::forms
 {
 	ColourDepth consteval
-	operator""_bpp(uint64_t n)
+	operator""_bpp(uint64_t n)	// TODO: _bpp operator should be within `literals` inline namespace
 	{
 		return static_cast<ColourDepth>(n);
 	}
