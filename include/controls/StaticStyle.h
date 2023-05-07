@@ -48,5 +48,4 @@ namespace core::meta
 {
 	metadata bool Settings<bitwise_enum, core::forms::StaticStyle> = true;
 	metadata bool Settings<compatible_enum, core::forms::StaticStyle, core::forms::WindowStyle> = true;
-	metadata bool Settings<compatible_enum, core::forms::WindowStyle, core::forms::StaticStyle> = true;
 }

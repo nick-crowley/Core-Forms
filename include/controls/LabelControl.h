@@ -55,4 +55,3 @@ namespace core::forms
 
 metadata bool core::meta::Settings<core::bitwise_enum, core::forms::LabelControl::HorizontalAlign> = true;
 metadata bool core::meta::Settings<core::compatible_enum, core::forms::StaticStyle, core::forms::LabelControl::HorizontalAlign> = true;
-metadata bool core::meta::Settings<core::compatible_enum, core::forms::LabelControl::HorizontalAlign, core::forms::StaticStyle> = true;

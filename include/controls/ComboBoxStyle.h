@@ -26,5 +26,4 @@ namespace core::meta
 {
 	metadata bool Settings<bitwise_enum, core::forms::ComboBoxStyle> = true;
 	metadata bool Settings<compatible_enum, core::forms::ComboBoxStyle, core::forms::WindowStyle> = true;
-	metadata bool Settings<compatible_enum, core::forms::WindowStyle, core::forms::ComboBoxStyle> = true;
 }

@@ -46,5 +46,4 @@ namespace core::meta
 {
 	metadata bool Settings<bitwise_enum, core::forms::ButtonStyle> = true;
 	metadata bool Settings<compatible_enum, core::forms::ButtonStyle, core::forms::WindowStyle> = true;
-	metadata bool Settings<compatible_enum, core::forms::WindowStyle, core::forms::ButtonStyle> = true;
 }

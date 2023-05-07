@@ -27,5 +27,4 @@ namespace core::meta
 {
 	metadata bool Settings<bitwise_enum, core::forms::EditStyle> = true;
 	metadata bool Settings<compatible_enum, core::forms::EditStyle, core::forms::WindowStyle> = true;
-	metadata bool Settings<compatible_enum, core::forms::WindowStyle, core::forms::EditStyle> = true;
 }

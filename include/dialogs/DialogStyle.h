@@ -30,5 +30,4 @@ namespace core::meta
 {
 	metadata bool Settings<bitwise_enum, core::forms::DialogStyle> = true;
 	metadata bool Settings<compatible_enum, core::forms::DialogStyle, core::forms::WindowStyle> = true;
-	metadata bool Settings<compatible_enum, core::forms::WindowStyle, core::forms::DialogStyle> = true;
 }

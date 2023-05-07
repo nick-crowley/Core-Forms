@@ -17,5 +17,4 @@ namespace core::meta
 {
 	metadata bool Settings<bitwise_enum, core::forms::ProgressBarStyle> = true;
 	metadata bool Settings<compatible_enum, core::forms::ProgressBarStyle, core::forms::WindowStyle> = true;
-	metadata bool Settings<compatible_enum, core::forms::WindowStyle, core::forms::ProgressBarStyle> = true;
 }

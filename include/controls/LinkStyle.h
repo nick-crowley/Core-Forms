@@ -19,5 +19,4 @@ namespace core::meta
 {
 	metadata bool Settings<bitwise_enum, core::forms::LinkStyle> = true;
 	metadata bool Settings<compatible_enum, core::forms::LinkStyle, core::forms::WindowStyle> = true;
-	metadata bool Settings<compatible_enum, core::forms::WindowStyle, core::forms::LinkStyle> = true;
 }
