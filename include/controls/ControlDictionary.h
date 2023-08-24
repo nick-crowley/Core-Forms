@@ -41,11 +41,24 @@ namespace core::forms
 {
 	class ControlDictionary
 	{
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
 		using Dictionary = std::map<uint16_t,Control*>;
-
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		Dictionary m_items;
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		ControlDictionary(std::initializer_list<Control*> controls)
+		{
+			ThrowIf(controls, ranges::any_of(controls, lambda(=, const* c, c->ident() == /*IDC_STATIC*/ -1)));
 
+			for (auto* c : controls)
+				this->m_items[c->ident()] = c; 
+		}
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(ControlDictionary,
 			IsDefaultConstructible,
@@ -54,15 +67,9 @@ namespace core::forms
 			//IsEqualityComparable,
 			NotSortable
 		);
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
-		ControlDictionary(std::initializer_list<Control*> controls)
-		{
-			ThrowIf(controls, ranges::any_of(controls, lambda(=, const* c, c->ident() == /*IDC_STATIC*/ -1)));
-
-			for (auto* c : controls)
-				this->m_items[c->ident()] = c; 
-		}
-
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Dictionary::const_iterator 
 		begin() const { 
@@ -98,7 +105,8 @@ namespace core::forms
 		operator+(ControlDictionary const& other) const {
 			return ControlDictionary{*this} += other;
 		}
-
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		ControlDictionary&
 		operator+=(ControlDictionary const& other) {
