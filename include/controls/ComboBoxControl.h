@@ -43,7 +43,9 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class ComboBoxControl : public Control {
+	class ComboBoxControl : public Control 
+	{
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		class WindowClass : public forms::WindowClass {
 		public:
@@ -255,13 +257,15 @@ namespace core::forms
 			}
 		};
 	
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		ItemCollection   Items;
 
 	protected:
 		/*ListBoxControl   DropList;
 		EditControl      ItemEdit;*/
-
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		implicit
 		ComboBoxControl(uint16_t id) 
@@ -269,6 +273,11 @@ namespace core::forms
 		    Items{*this}
 		{}
 		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
 		/*::LRESULT 
 		static CALLBACK InterceptCreationHandler(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
@@ -299,7 +308,8 @@ namespace core::forms
 		role() const override {
 			return WindowRole::ComboBox;
 		}
-
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Response 
 		onOwnerDraw(OwnerDrawEventArgs args) override {

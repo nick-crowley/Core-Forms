@@ -43,6 +43,7 @@ namespace core::forms
 {
 	class StaticControl : public Control 
 	{
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		class WindowClass : public forms::WindowClass {
 		public:
@@ -70,13 +71,20 @@ namespace core::forms
 				})
 			{}
 		};
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		implicit
 		StaticControl(uint16_t id) 
 		  : Control{id}
 		{}
-	
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		bool
 		ownerDraw() const override {
@@ -88,13 +96,14 @@ namespace core::forms
 			return WindowRole::StaticText;
 		}
 
-	public:
 		WindowClass const& 
 		wndcls() const override {
 			static WindowClass c;
 			return c;
 		}
-	
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
 		Response 
 		onOwnerDraw(OwnerDrawEventArgs args) override {
 			if (args.Ident == this->ident()) {

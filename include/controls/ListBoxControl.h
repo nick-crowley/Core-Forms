@@ -41,7 +41,9 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class ListBoxControl : public Control {
+	class ListBoxControl : public Control 
+	{
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
 		class ListBoxNotificationDictionary : public MessageDictionary {
 			using base = MessageDictionary;
@@ -335,11 +337,12 @@ namespace core::forms
 				return (size_t)ListBox_GetSelCount(this->ListBox.handle());
 			}
 		};
-
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		SelectedIndexCollection		SelectedItems;
 		ItemCollection				Items;
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		implicit
 		ListBoxControl(uint16_t id) 
@@ -348,6 +351,11 @@ namespace core::forms
 		    Items(*this)
 		{}
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		size_t 
 		caret() const {
@@ -368,7 +376,8 @@ namespace core::forms
 		role() const override {
 			return WindowRole::List;
 		}
-
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void 
 		caret(size_t idx) {
