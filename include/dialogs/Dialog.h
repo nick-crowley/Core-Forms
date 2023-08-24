@@ -44,7 +44,9 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class FormsExport Dialog : public Window {
+	class FormsExport Dialog : public Window 
+	{
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		class FormsExport WindowClass : public forms::WindowClass {
 		public:
@@ -66,9 +68,10 @@ namespace core::forms
 		// BUG: Dialog::DialogCreationParameter cannot be __declspec(dllexport)
 		std::optional<CreateWindowParameter>
 		static /*thread_local*/ DialogCreationParameter;
-
-		// NB: Fields ordered for debugging convenience
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
+		// NB: Fields ordered for debugging convenience
 		ResourceId const                DialogId;
 		std::optional<DialogMode const>	DisplayMode;
 		::DLGPROC const					DialogProc = Dialog::DefaultDialogHandler;
@@ -79,7 +82,8 @@ namespace core::forms
 
 	public:
 		InitDialogEvent		Initialized;
-
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
 		implicit
 		Dialog(ResourceId resource, Module source = forms::ProcessModule)
@@ -87,13 +91,17 @@ namespace core::forms
 		    Template{DialogTemplateReader{source.loadResource(resource, RT_DIALOG)}.readTemplate()}
 		{
 		}
-	
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Response 
 		static onSetFont(SetFontEventArgs args) {
 			return TRUE;
 		}
-	
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		WindowRole
 		role() const override {
@@ -106,6 +114,7 @@ namespace core::forms
 			return c;
 		}
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void 
 		virtual createEmbedded(Module source, Window& parent, Border border)

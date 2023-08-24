@@ -55,7 +55,9 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class FormsExport Window {
+	class FormsExport Window 
+	{
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		class FormsExport Response {
 		public:
@@ -384,7 +386,8 @@ namespace core::forms
 
 		WindowMessageDictionary 
 		static MessageDatabase;
-
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		AnyColour           BackColour = SystemColour::Window;
 		AnyColour           TextColour = SystemColour::WindowText;
@@ -409,9 +412,11 @@ namespace core::forms
 		PaintWindowEvent	Painted;
 		WindowEvent         Clicked;
 	
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Window();
-
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		satisfies(Window,
 			NotCopyable,
 			NotMovable,
@@ -419,7 +424,9 @@ namespace core::forms
 			NotSortable,
 			IsPolymorphic
 		);
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		SharedBrush
 		background() const {
@@ -562,7 +569,8 @@ namespace core::forms
 				return std::nullopt;
 			return rgn;
 		}
-
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
 		backColour(AnyColour newColour) {
