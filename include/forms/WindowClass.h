@@ -102,7 +102,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void 
-		register_() {
+		registér() {
 			this->Properties.hbrBackground = this->Background.get();
 			this->Properties.cbClsExtra = this->ClsExtra;
 			this->Properties.lpszClassName = this->Name;

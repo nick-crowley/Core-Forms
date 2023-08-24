@@ -52,7 +52,7 @@ namespace core::forms
 				this->Name = ResourceId{L"Custom.LINK"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
-				this->register_();
+				this->registér();
 			}
 		};
 
