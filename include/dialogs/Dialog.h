@@ -82,7 +82,7 @@ namespace core::forms
 
 	protected:
 		implicit
-		Dialog(ResourceId resource, Module source = ProcessModule)
+		Dialog(ResourceId resource, Module source = forms::ProcessModule)
 		  : DialogId{resource},
 		    Template{DialogTemplateReader{source.loadResource(resource, RT_DIALOG)}.readTemplate()}
 		{
@@ -119,7 +119,7 @@ namespace core::forms
 		void 
 		virtual createEmbedded(Window& parent, Border border)
 		{
-			this->createEmbedded(ProcessModule, parent, border);
+			this->createEmbedded(forms::ProcessModule, parent, border);
 		}
 
 		void 
@@ -131,7 +131,7 @@ namespace core::forms
 		void 
 		virtual createModeless(Window* parent)
 		{
-			this->createModeless(ProcessModule, parent);
+			this->createModeless(forms::ProcessModule, parent);
 		}
 		
 		intptr_t 
@@ -143,7 +143,7 @@ namespace core::forms
 		intptr_t 
 		virtual showModal(Window* parent)
 		{
-			return this->showModal(ProcessModule, parent);
+			return this->showModal(forms::ProcessModule, parent);
 		}
 	
 	protected:
