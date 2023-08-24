@@ -193,7 +193,7 @@ namespace core::forms
 			switch (notification) {
 			case IDOK:
 			case IDCANCEL:
-				if (this->DisplayMode == Modal) {
+				if (this->DisplayMode == DialogMode::Modal) {
 					this->endModal(notification);
 					return TRUE;
 				}
