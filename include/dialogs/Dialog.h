@@ -101,6 +101,81 @@ namespace core::forms
 			return TRUE;
 		}
 
+	protected:
+		/*::INT_PTR 
+		static CALLBACK FallbackDialogHandler(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) {
+			return ::DefDlgProcW(hDlg, message, wParam, lParam);
+		}*/
+
+		::INT_PTR 
+		static CALLBACK DefaultDialogHandler(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
+		{
+			WindowProcLoggingSentry log_entry(__FUNCTION__, message);
+			// FIXME: This method needs documenting
+			try {
+				gsl::czstring const name = Window::MessageDatabase.name(message);
+				Response response;
+				Dialog* dlg {};
+			
+				if (Window::ExistingWindows.contains(hDlg)) 
+				{
+					dlg = static_cast<Dialog*>(Window::ExistingWindows[hDlg]);
+
+					{
+						auto const on_exit = dlg->Debug.setTemporaryState({ProcessingState::DialogProcessing,name});
+						response = dlg->offerMessage(hDlg, message, wParam, lParam);
+					}
+
+					{
+						auto const on_exit = dlg->Debug.setTemporaryState({ProcessingState::EventProcessing,name});
+						dlg->raiseMessageEvent(hDlg, message, wParam, lParam);
+					}
+				}
+				else if (message == WM_SETFONT) {
+					response = Dialog::onSetFont({wParam,lParam});
+				}
+				else {
+					throw runtime_error{"No associated dialog object"};
+				}
+
+				Invariant(response.Status != Response::Invalid);
+			
+				if (response.Status == Response::Handled) 
+				{
+					log_entry.setResult(Response::Handled, *response.Value);
+					return *response.Value;
+				}
+
+				log_entry.setResult(Response::Unhandled, FALSE);
+				return FALSE;
+			} 
+			catch (const std::exception& e) {
+				log_entry.setException(e);
+				return (INT_PTR)FALSE;
+			}
+		}
+
+		::LRESULT 
+		static CALLBACK InterceptMessageHandler(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
+		{
+			// The documented dialog box Windows API functions do not provide a way of passing a custom
+			// parameter into the creation of dialogs; they only provide a facility to pass a parameter
+			// into the synthetic WM_INITDIALOG message, which is raised post the creation of child windows.
+			// In order to manage the dialog handle throughout its lifetime, we intercept WM_NCCREATE and
+			// manually pass a custom parameter stored (temporarily) in a threadlocal variable by showModal()
+			if (message == WM_NCCREATE && Dialog::DialogCreationParameter) {
+				CreateWindowEventArgs args(wParam,lParam);	
+
+				::CREATESTRUCT replacement = *args.Data;
+				replacement.lpCreateParams = &Dialog::DialogCreationParameter.value();	// BUG: Returning address which is invalidated on next line
+				Dialog::DialogCreationParameter = std::nullopt;
+
+				return Window::DefaultMessageHandler(hWnd, message, wParam, (LPARAM)&replacement);
+			} 
+
+			return Window::DefaultMessageHandler(hWnd, message, wParam, lParam);
+		}
+		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		WindowRole
@@ -232,81 +307,6 @@ namespace core::forms
 		unhandledMessage(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
 			return Dialog::FallbackDialogHandler(hDlg, message, wParam, lParam);
 		}*/
-
-		/*::INT_PTR 
-		static CALLBACK FallbackDialogHandler(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) {
-			return ::DefDlgProcW(hDlg, message, wParam, lParam);
-		}*/
-
-		::INT_PTR 
-		static CALLBACK DefaultDialogHandler(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
-		{
-			WindowProcLoggingSentry log_entry(__FUNCTION__, message);
-			// FIXME: This method needs documenting
-			try {
-				gsl::czstring const name = Window::MessageDatabase.name(message);
-				Response response;
-				Dialog* dlg {};
-			
-				if (Window::ExistingWindows.contains(hDlg)) 
-				{
-					dlg = static_cast<Dialog*>(Window::ExistingWindows[hDlg]);
-
-					{
-						auto const on_exit = dlg->Debug.setTemporaryState({ProcessingState::DialogProcessing,name});
-						response = dlg->offerMessage(hDlg, message, wParam, lParam);
-					}
-
-					{
-						auto const on_exit = dlg->Debug.setTemporaryState({ProcessingState::EventProcessing,name});
-						dlg->raiseMessageEvent(hDlg, message, wParam, lParam);
-					}
-				}
-				else if (message == WM_SETFONT) {
-					response = Dialog::onSetFont({wParam,lParam});
-				}
-				else {
-					throw runtime_error{"No associated dialog object"};
-				}
-
-				Invariant(response.Status != Response::Invalid);
-			
-				if (response.Status == Response::Handled) 
-				{
-					log_entry.setResult(Response::Handled, *response.Value);
-					return *response.Value;
-				}
-
-				log_entry.setResult(Response::Unhandled, FALSE);
-				return FALSE;
-			} 
-			catch (const std::exception& e) {
-				log_entry.setException(e);
-				return (INT_PTR)FALSE;
-			}
-		}
-
-		::LRESULT 
-		static CALLBACK InterceptMessageHandler(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
-		{
-			// The documented dialog box Windows API functions do not provide a way of passing a custom
-			// parameter into the creation of dialogs; they only provide a facility to pass a parameter
-			// into the synthetic WM_INITDIALOG message, which is raised post the creation of child windows.
-			// In order to manage the dialog handle throughout its lifetime, we intercept WM_NCCREATE and
-			// manually pass a custom parameter stored (temporarily) in a threadlocal variable by showModal()
-			if (message == WM_NCCREATE && Dialog::DialogCreationParameter) {
-				CreateWindowEventArgs args(wParam,lParam);	
-
-				::CREATESTRUCT replacement = *args.Data;
-				replacement.lpCreateParams = &Dialog::DialogCreationParameter.value();	// BUG: Returning address which is invalidated on next line
-				Dialog::DialogCreationParameter = std::nullopt;
-
-				return Window::DefaultMessageHandler(hWnd, message, wParam, (LPARAM)&replacement);
-			} 
-
-			return Window::DefaultMessageHandler(hWnd, message, wParam, lParam);
-		}
-
 	private:
 		std::optional<intptr_t>
 		createInternal(Module source, DialogMode mode, Window* parent)

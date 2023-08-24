@@ -425,7 +425,121 @@ namespace core::forms
 			IsPolymorphic
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		void
+		static onFirstSight(::HWND hWnd, CreateWindowEventArgs args) {
+			if (!args.Data->lpCreateParams) {
+				cdebug << "Observed creation of native '" << args.Data->lpszClass << '\''
+				       << "Window: title='" << (args.Data->lpszName ? L"" : args.Data->lpszName ) << '\''
+				       << std::endl;
+				return;
+			}
+			
+			Invariant(args.data<CreateWindowParameter*>() != nullptr);
+			auto* const param = args.data<CreateWindowParameter*>();
+			Window* pThis = param->get();
+		
+			Window::ExistingWindows.add(hWnd, pThis);
+			Invariant(Window::ExistingWindows[hWnd] != nullptr);
 
+			pThis->Handle = hWnd;
+			pThis->Debug.setState(ProcessingState::BeingCreated,
+								  args.Data->lpszClass, 
+								  args.Data->lpszName);	// Not yet set for dialog controls
+		}
+	
+		Response 
+		static onMinMaxInfo(MinMaxEventArgs args) {
+			return Unhandled;
+		}
+	
+		Response
+		static onUnexpectedMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) {
+			if (message == WM_GETMINMAXINFO) {
+				return Window::onMinMaxInfo({wParam,lParam});
+			}
+			else {
+				if (message == WM_MOUSEMOVE && Window::Window::BeneathCursor)
+					Window::Window::BeneathCursor = nullptr;
+				
+				using namespace std::literals;
+				throw runtime_error{"Received {} for unrecognised window {}", Window::MessageDatabase.name(message), 
+					to_hexString((uintptr_t)hWnd)};
+			}
+		}
+	
+	protected:
+		::LRESULT 
+		static CALLBACK DefaultMessageHandler(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
+		{
+			WindowProcLoggingSentry log_entry(__FUNCTION__, message);
+			try {
+				gsl::czstring const name = Window::MessageDatabase.name(message);
+				Window* wnd {};
+				Response response;
+
+				// Window lifetime tracking
+				if (message == WM_NCCREATE) 
+					Window::onFirstSight(hWnd, {wParam,lParam});
+			
+				// Search for the C++ object managing this handle
+				if (!Window::ExistingWindows.contains(hWnd)) 
+					response = onUnexpectedMessage(hWnd, message, wParam, lParam);
+				else {
+					wnd = Window::ExistingWindows[hWnd];
+
+					// Window lifetime tracking
+					if (message == WM_DESTROY) 
+						wnd->onDestructionStarted();
+
+					{
+						// Offer the message to the C++ object managing this handle
+						auto const on_exit = wnd->Debug.setTemporaryState({ProcessingState::MessageProcessing, name});
+						response = wnd->offerMessage(hWnd, message, wParam, lParam);
+					}
+
+					{
+						// [POST] Raise the associated event, if any
+						auto const on_exit = wnd->Debug.setTemporaryState({ProcessingState::EventProcessing, name});
+						wnd->raiseMessageEvent(hWnd, message, wParam, lParam);
+					}
+				}
+
+				Invariant(response.Status != Response::Invalid);
+			
+				::LRESULT result;
+				// [HANDLED] Return the result provided by the handler
+				if (response.Status == Response::Handled)
+					result = *response.Value;
+
+				// [UNHANDLED/ERROR] Let the C++ object managing this handle pass message to ::DefWindowProc()
+				else if (wnd) {	
+					auto const on_exit = wnd->Debug.setTemporaryState({ProcessingState::DefaultProcessing, name});
+					result = wnd->unhandledMessage(hWnd, message, wParam, lParam);
+				}
+				// [UNHANDLED/ERROR] Pass message to ::DefWindowProc()
+				else 
+					result = ::DefWindowProc(hWnd, message, wParam, lParam);
+
+				log_entry.setResult(response.Status == Response::Handled ? response.Status : Response::Unhandled, result);
+
+				// Window lifetime tracking
+				if (message == WM_CREATE) {
+					wnd->onConstructionFinished();
+				}
+				else if (message == WM_NCDESTROY) {
+					Invariant(wnd != nullptr);
+					wnd->onLastSight(hWnd);
+				}
+						
+				return result;
+			} 
+			// [ERROR] Return a value indicating we didn't handle the message (usually anything but zero)
+			catch (const std::exception& e) {
+				log_entry.setException(e);
+				return Window::MessageDatabase[message].Unhandled;
+			}
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		SharedBrush
@@ -1069,122 +1183,6 @@ namespace core::forms
 		void
 		onDestructionStarted() {
 			this->Debug.setState(ProcessingState::BeingDestroyed);
-		}
-
-	private:
-		void
-		static onFirstSight(::HWND hWnd, CreateWindowEventArgs args) {
-			if (!args.Data->lpCreateParams) {
-				cdebug << "Observed creation of native '" << args.Data->lpszClass << '\''
-				       << "Window: title='" << (args.Data->lpszName ? L"" : args.Data->lpszName ) << '\''
-				       << std::endl;
-				return;
-			}
-			
-			Invariant(args.data<CreateWindowParameter*>() != nullptr);
-			auto* const param = args.data<CreateWindowParameter*>();
-			Window* pThis = param->get();
-		
-			Window::ExistingWindows.add(hWnd, pThis);
-			Invariant(Window::ExistingWindows[hWnd] != nullptr);
-
-			pThis->Handle = hWnd;
-			pThis->Debug.setState(ProcessingState::BeingCreated,
-								  args.Data->lpszClass, 
-								  args.Data->lpszName);	// Not yet set for dialog controls
-		}
-	
-		Response 
-		static onMinMaxInfo(MinMaxEventArgs args) {
-			return Unhandled;
-		}
-	
-		Response
-		static onUnexpectedMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) {
-			if (message == WM_GETMINMAXINFO) {
-				return Window::onMinMaxInfo({wParam,lParam});
-			}
-			else {
-				if (message == WM_MOUSEMOVE && Window::Window::BeneathCursor)
-					Window::Window::BeneathCursor = nullptr;
-				
-				using namespace std::literals;
-				throw runtime_error{"Received {} for unrecognised window {}", Window::MessageDatabase.name(message), 
-					to_hexString((uintptr_t)hWnd)};
-			}
-		}
-	
-	protected:
-		::LRESULT 
-		static CALLBACK DefaultMessageHandler(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
-		{
-			WindowProcLoggingSentry log_entry(__FUNCTION__, message);
-			try {
-				gsl::czstring const name = Window::MessageDatabase.name(message);
-				Window* wnd {};
-				Response response;
-
-				// Window lifetime tracking
-				if (message == WM_NCCREATE) 
-					Window::onFirstSight(hWnd, {wParam,lParam});
-			
-				// Search for the C++ object managing this handle
-				if (!Window::ExistingWindows.contains(hWnd)) 
-					response = onUnexpectedMessage(hWnd, message, wParam, lParam);
-				else {
-					wnd = Window::ExistingWindows[hWnd];
-
-					// Window lifetime tracking
-					if (message == WM_DESTROY) 
-						wnd->onDestructionStarted();
-
-					{
-						// Offer the message to the C++ object managing this handle
-						auto const on_exit = wnd->Debug.setTemporaryState({ProcessingState::MessageProcessing, name});
-						response = wnd->offerMessage(hWnd, message, wParam, lParam);
-					}
-
-					{
-						// [POST] Raise the associated event, if any
-						auto const on_exit = wnd->Debug.setTemporaryState({ProcessingState::EventProcessing, name});
-						wnd->raiseMessageEvent(hWnd, message, wParam, lParam);
-					}
-				}
-
-				Invariant(response.Status != Response::Invalid);
-			
-				::LRESULT result;
-				// [HANDLED] Return the result provided by the handler
-				if (response.Status == Response::Handled)
-					result = *response.Value;
-
-				// [UNHANDLED/ERROR] Let the C++ object managing this handle pass message to ::DefWindowProc()
-				else if (wnd) {	
-					auto const on_exit = wnd->Debug.setTemporaryState({ProcessingState::DefaultProcessing, name});
-					result = wnd->unhandledMessage(hWnd, message, wParam, lParam);
-				}
-				// [UNHANDLED/ERROR] Pass message to ::DefWindowProc()
-				else 
-					result = ::DefWindowProc(hWnd, message, wParam, lParam);
-
-				log_entry.setResult(response.Status == Response::Handled ? response.Status : Response::Unhandled, result);
-
-				// Window lifetime tracking
-				if (message == WM_CREATE) {
-					wnd->onConstructionFinished();
-				}
-				else if (message == WM_NCDESTROY) {
-					Invariant(wnd != nullptr);
-					wnd->onLastSight(hWnd);
-				}
-						
-				return result;
-			} 
-			// [ERROR] Return a value indicating we didn't handle the message (usually anything but zero)
-			catch (const std::exception& e) {
-				log_entry.setException(e);
-				return Window::MessageDatabase[message].Unhandled;
-			}
 		}
 	};
 } // namespace core::forms
