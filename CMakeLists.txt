@@ -122,8 +122,9 @@ file(GLOB_RECURSE PROJECT_INCLUDE_FILES
 )
 
 # Define macro controlling dllexport/import specifier
-set(PROJECT_DLL_MACRO "BuildCoreFormsDLL")
-set(PROJECT_LIB_MACRO "BuildCoreFormsStaticLib")
+set(PROJECT_EXPORT_MACRO "CoreFormsExport")
+set(PROJECT_IMPORT_MACRO "CoreFormsImport")
+set(PROJECT_STATIC_MACRO "CoreFormsStatic")
 
 ##############################################################################
 #         _________ __          __  .__         .____    ._____.             #
@@ -160,9 +161,14 @@ target_link_libraries(libCoreForms
 
 # Link against CRT statically
 set_target_properties(libCoreForms PROPERTIES
-					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} /MTd -D${PROJECT_LIB_MACRO}"
-					  #COMPILE_FLAGS_DEBUG   "${GLOBAL_COMPILER_OPTIONS} /MTd -D${PROJECT_LIB_MACRO}"
-					  #COMPILE_FLAGS_RELEASE "${GLOBAL_COMPILER_OPTIONS} /MT  -D${PROJECT_LIB_MACRO}"
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} /MTd"
+)
+
+# Set export macros to 'static library' (same for all dependencies)
+target_compile_definitions(libCoreForms
+	PUBLIC ${PROJECT_STATIC_MACRO}
+	PUBLIC CoreComStatic
+	PUBLIC CorePlatformStatic
 )
 
 # Set project dependencies
@@ -200,7 +206,7 @@ target_include_directories(dllCoreForms BEFORE
 # Differentiate the filename of the import library
 set_target_properties(dllCoreForms PROPERTIES
 					  OUTPUT_NAME "CoreForms"
-					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} -D${PROJECT_DLL_MACRO}"
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
 )
 
 # Set linker dependencies
@@ -209,6 +215,13 @@ target_link_libraries(dllCoreForms
 	#dllCoreCom
 	"${BASE_FOLDER}../Core-Platform/build/$(Configuration)/CorePlatform.lib"
 	"${BASE_FOLDER}../Core-Com/build/$(Configuration)/CoreCom.lib"
+)
+
+# Set export macros to 'export DLL' and set dependencies to 'import DLL'
+target_compile_definitions(dllCoreForms
+	PUBLIC ${PROJECT_EXPORT_MACRO}
+	PUBLIC CoreComImport
+	PUBLIC CorePlatformImport
 )
 
 # Set project dependencies
@@ -261,12 +274,12 @@ set_target_properties(appBasicForm PROPERTIES
 					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS} /SUBSYSTEM:CONSOLE"
 					  OUTPUT_NAME "appBasicForm")
 
-# Set CORE libraries header export macro to static library
+# Set export macros for static-library for all dependencies
 target_compile_definitions(appBasicForm
-	PRIVATE BuildCorePlatformStaticLib BuildCoreComStaticLib BuildCoreFormsStaticLib
+	PRIVATE CorePlatformStatic CoreComStatic CoreFormsStatic
 )
 
-# Link CRT statically
+# Link CRT according to build configuration
 target_compile_options(appBasicForm
 	PRIVATE $<$<CONFIG:Release>:/MT>
 	PRIVATE $<$<CONFIG:Debug>:/MTd>

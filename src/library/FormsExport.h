@@ -32,15 +32,17 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#if defined(BuildCoreFormsStaticLib)
+#if defined(CoreFormsStatic)
 	//! @brief	Core-Forms symbol
 #	define FormsExport 
-#elif defined(BuildCoreFormsDLL)
+#elif defined(CoreFormsExport)
 	//! @brief	Core-Forms exported symbol
 #	define FormsExport __declspec(dllexport)
-#else
+#elif defined(CoreFormsImport)
 	//! @brief	Core-Forms imported symbol
 #	define FormsExport __declspec(dllimport)
+#else
+#	error Cannot build Core-Forms without specifying import-lib, dynamic-lib, or static-lib
 #endif
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
