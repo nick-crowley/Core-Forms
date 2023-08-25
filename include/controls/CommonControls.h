@@ -113,7 +113,7 @@ namespace core::forms
 		{
 			// Optionally register ComCtl32.dll v6 controls
 			if (this->version() >= com::Version{6,0})
-				registerLinks();
+				ControlRegistration::registerLinks();
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
