@@ -215,6 +215,66 @@ target_link_libraries(dllCoreForms
 #	dllCorePlatform
 #)
 
+##############################################################
+#  ___________              __       _____                   #
+#  \__    ___/___   _______/  |_    /  _  \ ______ ______    #
+#    |    |_/ __ \ /  ___/\   __\  /  /_\  \\____ \\____ \   #
+#    |    |\  ___/ \___ \  |  |   /    |    \  |_> >  |_> >  #
+#    |____| \___  >____  > |__|   \____|__  /   __/|   __/   #
+#               \/     \/                 \/|__|   |__|      #
+##############################################################
+
+# Resource files
+file(GLOB_RECURSE PROJECT_RESOURCE_FILES
+    "${PROJECT_RESOURCE_FOLDER}*.*"
+)
+
+# Project: appBasicForm
+add_executable(appBasicForm
+	"${PROJECT_EXTRA_FOLDER}appBasicForm.cpp"
+	${PROJECT_RESOURCE_FILES}
+    )
+
+# Include folders
+target_include_directories(appBasicForm BEFORE
+    PRIVATE
+	${PROJECT_EXTRA_FOLDER} 
+	${PROJECT_RESOURCE_FOLDER} 
+    PUBLIC
+    ${PROJECT_INCLUDE_FOLDER}            
+	)
+	
+# Set linker dependencies
+target_link_libraries(appBasicForm
+	#dllCorePlatform
+	#dllCoreCom
+	"${BASE_FOLDER}../Core-Platform/build/$(Configuration)/libCorePlatform.lib"
+	"${BASE_FOLDER}../Core-Com/build/$(Configuration)/libCoreCom.lib"
+	"${BASE_FOLDER}../Core-Forms/build/$(Configuration)/libCoreForms.lib"
+)
+
+# Set compiler & linker flags
+set_target_properties(appBasicForm PROPERTIES
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
+					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS} /SUBSYSTEM:CONSOLE"
+					  OUTPUT_NAME "appBasicForm")
+
+# Set CORE libraries header export macro to static library
+target_compile_definitions(appBasicForm
+	PRIVATE BuildCorePlatformStaticLib BuildCoreComStaticLib BuildCoreFormsStaticLib
+)
+
+# Link CRT statically
+target_compile_options(appBasicForm
+	PRIVATE $<$<CONFIG:Release>:/MT>
+	PRIVATE $<$<CONFIG:Debug>:/MTd>
+)
+
+# Set project dependencies
+add_dependencies(appBasicForm
+	libCoreForms
+)
+
 #################################################################################
 #     ___________.__.__           .____                                __   
 #     \_   _____/|__|  |   ____   |    |   _____  ___.__. ____  __ ___/  |_ 
