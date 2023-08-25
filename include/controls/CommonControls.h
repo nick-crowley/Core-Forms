@@ -57,7 +57,7 @@ namespace core::forms
 {
 	namespace detail 
 	{
-		class CommCtrl32Registration 
+		class ComCtl32Registration
 		{
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -66,7 +66,7 @@ namespace core::forms
 			com::Version Current;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			CommCtrl32Registration() 
+			ComCtl32Registration() 
 			{
 				// Query version of ComCtl32.dll 
 				win::SharedLibrary libCommonControls{L"ComCtl32.dll"};
@@ -104,7 +104,7 @@ namespace core::forms
 		};
 	}
 
-	class ControlRegistration : private detail::CommCtrl32Registration
+	class ControlRegistration : private detail::ComCtl32Registration
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
