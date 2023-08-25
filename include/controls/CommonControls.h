@@ -28,7 +28,6 @@
 #pragma comment(lib, "Comctl32.lib")
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
-#include "dialogs/Dialog.h"
 #include "controls/ButtonControl.h"
 #include "controls/CheckBoxControl.h"
 #include "controls/EditControl.h"
@@ -66,30 +65,8 @@ namespace core::forms
 			com::Version Current;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			ComCtl32Registration() 
-			{
-				// Query version of ComCtl32.dll 
-				win::SharedLibrary libCommonControls{L"ComCtl32.dll"};
-				if (auto dllGetVersion = libCommonControls.loadFunction<::HRESULT __stdcall(::DLLVERSIONINFO*)>("DllGetVersion"); !dllGetVersion) 
-					throw runtime_error{"ComCtl32.dll is corrupt"};
-				else {
-					::DLLVERSIONINFO2 dv{sizeof ::DLLVERSIONINFO2};
-					if (win::HResult hr = dllGetVersion(&dv.info1); !hr)
-						hr.throwIfError("Failed to query version of ComCtl32.dll");
-					this->Current = com::Version{(uint16_t)dv.info1.dwMajorVersion, (uint16_t)dv.info1.dwMinorVersion};
-					clog << core::Verbose{"Running with ComCtl32.dll = v{}.{}", this->Current.Major, this->Current.Minor};
-				}
-				
-				// Enable ComCtl32.dll v5 controls
-				::INITCOMMONCONTROLSEX cmnControls{sizeof ::INITCOMMONCONTROLSEX, ICC_WIN95_CLASSES};
-				if (!::InitCommonControlsEx(&cmnControls))
-					win::LastError{}.throwIfError("Failed to enable Windows 95 common controls");
+			ComCtl32Registration();
 
-				// Enable ComCtl32.dll v6 controls
-				if (this->Current >= com::Version{6,0}) 
-					if (cmnControls.dwICC = ICC_LINK_CLASS; !::InitCommonControlsEx(&cmnControls))
-						win::LastError{}.throwIfError("Failed to enable SysLink common controls");
-			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -109,24 +86,10 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	private:
-		Dialog::WindowClass Dialogs;
-		ButtonControl::WindowClass Buttons;
-		ComboBoxControl::WindowClass ComboBoxes;
-		EditControl::WindowClass Edits;
-		ListBoxControl::WindowClass ListBoxes;
-		ListViewControl::WindowClass ListViews;
-		ProgressBarControl::WindowClass ProgressBars;
-		StaticControl::WindowClass Statics;
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		ControlRegistration()
-		{
-			// Optionally register ComCtl32.dll v6 controls
-			if (this->version() >= com::Version{6,0})
-				ControlRegistration::registerLinks();
-		}
+		ControlRegistration();
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -138,11 +101,11 @@ namespace core::forms
 		);
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	private:
+	public:
 		void
-		static registerLinks()
+		static ensureRegistered()
 		{
-			static LinkControl::WindowClass [[maybe_unused]] obj;
+			static ControlRegistration [[maybe_unused]] obj;
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o

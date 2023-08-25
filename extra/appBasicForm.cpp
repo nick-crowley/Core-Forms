@@ -49,7 +49,6 @@ try
 {
 	clog.attach(std::cout);
 	startupBanner();
-	forms::ControlRegistration registerControls;
 	
 	BasicForm mainDlg;
 	return mainDlg.showModal(nullptr);

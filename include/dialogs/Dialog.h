@@ -28,6 +28,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
 #include "controls/ControlDictionary.h"
+#include "controls/CommonControls.h"
 #include "dialogs/DialogEventArgs.h"
 #include "dialogs/DialogTemplateReader.h"
 #include "dialogs/DialogTemplateWriter.h"
@@ -90,6 +91,7 @@ namespace core::forms
 		  : DialogId{resource},
 		    Template{DialogTemplateReader{source.loadResource(resource, RT_DIALOG)}.readTemplate()}
 		{
+			ControlRegistration::ensureRegistered();
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o

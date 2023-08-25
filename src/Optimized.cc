@@ -6,6 +6,7 @@
 #include "controls/ListBoxControl.cpp"
 #include "controls/ListViewControl.cpp"
 #include "controls/ProgressBarControl.cpp"
+#include "controls/CommonControls.cpp"
 
 #include "dialogs/Dialog.cpp"
 #include "dialogs/DialogTemplateReader.cpp"
