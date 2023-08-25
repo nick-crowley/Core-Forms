@@ -6,10 +6,6 @@
 #include "Resource.h"
 using namespace core;
 
-// Provide storage for reference counts for COM objects created directly or indirectly by this app
-std::atomic_long
-com::numInstances = 0;
-
 //! @brief	
 metadata std::string_view meta::Settings<program_name> = "Basic Core.Forms Application";
 metadata std::string_view meta::Settings<program_version> = "Demo";
@@ -42,6 +38,10 @@ private:
 		this->endModal(sender.ident());
 	}
 };
+
+// Provide storage for reference counts for COM objects created [in]directly by this app
+std::atomic_long
+com::numInstances = 0;
 
 // Display modal dialog
 int main() 
