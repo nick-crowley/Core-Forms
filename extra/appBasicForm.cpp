@@ -10,6 +10,10 @@ using namespace core;
 std::atomic_long
 com::numInstances = 0;
 
+//! @brief	
+metadata std::string_view meta::Settings<program_name> = "Basic Core.Forms Application";
+metadata std::string_view meta::Settings<program_version> = "Demo";
+
 // Define primitive form capable of running "IDD_BASICFORM"
 class BasicForm : public forms::Dialog
 {
@@ -44,6 +48,7 @@ int main()
 try 
 {
 	clog.attach(std::cout);
+	startupBanner();
 	forms::ControlRegistration registerControls;
 	
 	BasicForm mainDlg;
