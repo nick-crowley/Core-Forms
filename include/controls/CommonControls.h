@@ -55,12 +55,19 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	namespace detail {
-		class CommCtrl32Registration {
-			com::Version Current;
+	namespace detail 
+	{
+		class CommCtrl32Registration 
+		{
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			com::Version Current;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			CommCtrl32Registration() {
+			CommCtrl32Registration() 
+			{
 				// Query version of ComCtl32.dll 
 				win::SharedLibrary libCommonControls{L"ComCtl32.dll"};
 				if (auto dllGetVersion = libCommonControls.loadFunction<::HRESULT __stdcall(::DLLVERSIONINFO*)>("DllGetVersion"); !dllGetVersion) 
@@ -83,12 +90,17 @@ namespace core::forms
 					if (cmnControls.dwICC = ICC_LINK_CLASS; !::InitCommonControlsEx(&cmnControls))
 						win::LastError{}.throwIfError("Failed to enable SysLink common controls");
 			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			com::Version
 			version() const {
 				return this->Current;
 			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 	}
 
