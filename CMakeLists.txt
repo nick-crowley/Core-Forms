@@ -62,6 +62,7 @@ set(GLOBAL_LINKER_OPTIONS "${GLOBAL_LINKER_OPTIONS} /SAFESEH:NO")
 # Set global preprocessor directives:
 # _ATL_ATTRIBUTES                           : Enable non-standard Microsoft COM attributes
 # BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE 	: Disable MSVC-2017 forward-compatibility warning
+# _SILENCE_CXX20_CODECVT_FACETS_DEPRECAT... : Disable C++20 codecvt deprecation warning
 # _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS 	: Disable C++17 deprecation warnings
 # _CRT_SECURE_NO_WARNINGS 					: Disable warnings about documented behaviour of CRT functions
 # _SCL_SECURE_NO_WARNINGS					: Disable warnings about documented behaviour of C++ library functions
