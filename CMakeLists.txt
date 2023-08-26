@@ -159,9 +159,9 @@ target_link_libraries(libCoreForms
 	Msimg32
 )
 
-# Link against CRT statically
+# Set compile flags
 set_target_properties(libCoreForms PROPERTIES
-					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS} /MTd"
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
 )
 
 # Set export macros to 'static library' (same for all dependencies)
@@ -169,6 +169,12 @@ target_compile_definitions(libCoreForms
 	PUBLIC ${PROJECT_STATIC_MACRO}
 	PUBLIC CORE_COM_STATIC
 	PUBLIC CORE_PLATFORM_STATIC
+)
+
+# Link CRT statically
+target_compile_options(libCoreForms
+	PRIVATE $<$<CONFIG:Release>:/MT>
+	PRIVATE $<$<CONFIG:Debug>:/MTd>
 )
 
 # Set project dependencies
@@ -222,6 +228,12 @@ target_compile_definitions(dllCoreForms
 	PUBLIC ${PROJECT_EXPORT_MACRO}
 	PUBLIC CORE_COM_IMPORT
 	PUBLIC CORE_PLATFORM_IMPORT
+)
+
+# Link CRT dynamically
+target_compile_options(dllCoreForms
+	PRIVATE $<$<CONFIG:Release>:/MD>
+	PRIVATE $<$<CONFIG:Debug>:/MDd>
 )
 
 # Set project dependencies
@@ -279,7 +291,7 @@ target_compile_definitions(appBasicForm
 	PRIVATE CORE_PLATFORM_STATIC CORE_COM_STATIC CORE_FORMS_STATIC
 )
 
-# Link CRT according to build configuration
+# Link CRT statically
 target_compile_options(appBasicForm
 	PRIVATE $<$<CONFIG:Release>:/MT>
 	PRIVATE $<$<CONFIG:Debug>:/MTd>
