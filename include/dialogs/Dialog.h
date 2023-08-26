@@ -86,7 +86,6 @@ namespace core::forms
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
-		implicit
 		Dialog(ResourceId resource, Module source = forms::ProcessModule)
 		  : DialogId{resource},
 		    Template{DialogTemplateReader{source.loadResource(resource, RT_DIALOG)}.readTemplate()}
