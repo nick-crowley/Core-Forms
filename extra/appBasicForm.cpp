@@ -37,10 +37,6 @@ private:
 	}
 };
 
-// Provide storage for reference counts for COM objects created [in]directly by this app
-std::atomic_long
-com::numInstances = 0;
-
 // Display modal dialog
 int main() 
 try 
