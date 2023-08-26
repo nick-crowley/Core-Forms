@@ -32,13 +32,13 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#if defined(CoreFormsStatic)
+#if defined(CORE_FORMS_STATIC)
 	//! @brief	Core-Forms symbol
 #	define FormsExport 
-#elif defined(CoreFormsExport)
+#elif defined(CORE_FORMS_EXPORT)
 	//! @brief	Core-Forms exported symbol
 #	define FormsExport __declspec(dllexport)
-#elif defined(CoreFormsImport)
+#elif defined(CORE_FORMS_IMPORT)
 	//! @brief	Core-Forms imported symbol
 #	define FormsExport __declspec(dllimport)
 #else
