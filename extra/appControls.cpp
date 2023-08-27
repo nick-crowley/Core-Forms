@@ -9,7 +9,7 @@ metadata std::string_view meta::Settings<program_name> = "Core-Forms Controls De
 metadata std::string_view meta::Settings<program_version> = "1.0";
 
 // Define form to run "IDD_CONTROLS"
-class BasicForm : public forms::Dialog
+class ControlsForm : public forms::Dialog
 {
 	using base = forms::Dialog;
 	
@@ -27,7 +27,7 @@ private:
 	forms::ButtonControl OkBtn = IDOK;
 
 public:
-	BasicForm() : base{forms::ResourceId{IDD_CONTROLS}, 
+	ControlsForm() : base{forms::ResourceId{IDD_CONTROLS}, 
 		EarlyBoundControlCollection{
 			&this->ListGroup,
 			&this->StringList,
@@ -40,8 +40,8 @@ public:
 			&this->OkBtn
 		}}
 	{
-		this->OkBtn.Clicked += {*this, &BasicForm::OkBtn_Clicked};
-		this->PopulateBtn.Clicked += {*this, &BasicForm::PopulateBtn_Clicked};
+		this->OkBtn.Clicked += {*this, &ControlsForm::OkBtn_Clicked};
+		this->PopulateBtn.Clicked += {*this, &ControlsForm::PopulateBtn_Clicked};
 
 		using enum forms::Side;
 		this->OkBtn.anchors(Right|Bottom);
@@ -77,7 +77,7 @@ try
 	clog.attach(std::cout);
 	startupBanner();
 	
-	BasicForm mainDlg;
+	ControlsForm mainDlg;
 	return mainDlg.showModal();
 }
 catch (std::exception const& e)
