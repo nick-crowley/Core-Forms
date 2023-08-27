@@ -1,6 +1,5 @@
 #include "library/core.forms.h"
 #include "dialogs/Dialog.h"
-#include "lookNfeel/Nt6LookNFeel.h"
 #include <windows.h>
 #include "Resource.h"
 using namespace core;
@@ -49,8 +48,6 @@ public:
 		this->EditGroup.anchors(Left|Top|Right|Bottom);
 		this->SingleLineEdit.anchors(Left|Top|Right);
 		this->MultiLineEdit.anchors(Left|Top|Right|Bottom);
-
-		this->LookNFeel = forms::Nt6LookNFeel::Instance;
 	}
 
 private:
