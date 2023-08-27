@@ -36,7 +36,14 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+namespace core::forms 
+{
+	enum class Side { None, Left = 1, Top = 2, Right = 4, Bottom = 8 };	
+}
+namespace core::meta
+{
+	metadata bool Settings<bitwise_enum, forms::Side> = true;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms 
 {
@@ -47,6 +54,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		uint16_t const  Ident;
+		nstd::bitset<Side>  Anchors = Side::Left|Side::Top;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -60,6 +68,11 @@ namespace core::forms
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		nstd::bitset<Side>
+		anchors() const {
+			return this->Anchors;
+		}
+
 		uint16_t
 		ident() const {
 			return this->Ident;
@@ -69,6 +82,12 @@ namespace core::forms
 		virtual ownerDraw() const abstract;
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		void
+		anchors(nstd::bitset<Side> newAnchors) {
+			this->Anchors = newAnchors;
+		}
+
 	protected:
 		gsl::czstring
 		virtual notificationName(::UINT notification) abstract;

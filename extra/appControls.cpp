@@ -44,6 +44,12 @@ public:
 		this->OkBtn.Clicked += {*this, &BasicForm::OkBtn_Clicked};
 		this->PopulateBtn.Clicked += {*this, &BasicForm::PopulateBtn_Clicked};
 
+		using enum forms::Side;
+		this->OkBtn.anchors(Right|Bottom);
+		this->EditGroup.anchors(Left|Top|Right|Bottom);
+		this->SingleLineEdit.anchors(Left|Top|Right);
+		this->MultiLineEdit.anchors(Left|Top|Right|Bottom);
+
 		this->LookNFeel = forms::Nt6LookNFeel::Instance;
 	}
 
