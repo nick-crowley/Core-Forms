@@ -280,13 +280,13 @@ namespace core::forms
 		}
 
 		void 
-		virtual createModeless(Module source, Window* parent)
+		virtual createModeless(Module source, Window* parent = nullptr)
 		{
 			this->createInternal(source, DialogMode::NonModal, parent);
 		}
 		
 		void 
-		virtual createModeless(Window* parent)
+		virtual createModeless(Window* parent = nullptr)
 		{
 			this->createModeless(forms::ProcessModule, parent);
 		}
@@ -338,13 +338,13 @@ namespace core::forms
 		}
 	
 		intptr_t 
-		virtual showModal(Module source, Window* parent)
+		virtual showModal(Module source, Window* parent = nullptr)
 		{
 			return *this->createInternal(source, DialogMode::Modal, parent);
 		}
 	
 		intptr_t 
-		virtual showModal(Window* parent)
+		virtual showModal(Window* parent = nullptr)
 		{
 			return this->showModal(forms::ProcessModule, parent);
 		}
