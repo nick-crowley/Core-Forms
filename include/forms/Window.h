@@ -614,7 +614,7 @@ namespace core::forms
 		handle() const {
 			return this->Handle;
 		}
-
+		
 		Window*
 		parent() const {
 			auto const wnd = ::GetParent(this->handle());

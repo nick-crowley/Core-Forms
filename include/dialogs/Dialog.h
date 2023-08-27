@@ -245,6 +245,12 @@ namespace core::forms
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		Rect
+		mapRect(Rect rc) const {
+			::MapDialogRect(this->handle(), rc);
+			return rc;
+		}
+	
 		WindowRole
 		role() const override {
 			return WindowRole::Dialog;
@@ -285,6 +291,52 @@ namespace core::forms
 			this->createModeless(forms::ProcessModule, parent);
 		}
 		
+		Response 
+		onResize(ResizeWindowEventArgs args) override 
+		{
+			auto const origDimensions = this->mapRect(this->Template.Area).size();
+			auto const newDimensions = args.Dimensions;
+
+			for (auto const& kvp : this->BoundControls)
+			{
+				uint16_t id = kvp.first;
+				Control* ctrl = kvp.second;
+				
+				// Skip controls whose sides aren't anchored 
+				// Skip controls which aren't present in the dialog template
+				if (auto const anchors = ctrl->anchors(); anchors == Side::None)
+					continue;
+				else if (auto const original = ranges::find_if(this->Template.Controls, lambda(=, const& c, c.Ident == id)); 
+					     original == this->Template.Controls.end())
+					continue;
+				else {
+					Rect const origPosition = this->mapRect(original->Area);
+					Rect newPosition = ctrl->wndRect(*this);
+					
+					// [RIGHT] Maintain original distance to dialog's right-edge  (ie. horizontal stretch)
+					if (anchors.test(Side::Right))
+					{
+						newPosition.Right = newDimensions.Width - (origDimensions.Width - origPosition.Right);
+						// [¬LEFT] Move right to maintain original size
+						if (!anchors.test(Side::Left))
+							newPosition.Left = newPosition.Right - origPosition.width();
+					}
+					// [BOTTOM] Maintain original distance to dialog's bottom-edge  (ie. vertical stretch)
+					if (anchors.test(Side::Bottom))
+					{
+						newPosition.Bottom = newDimensions.Height - (origDimensions.Height - origPosition.Bottom);
+						// [¬TOP] Move down to maintain original size
+						if (!anchors.test(Side::Top))
+							newPosition.Top = newPosition.Bottom - origPosition.height();
+					}
+
+					ctrl->reposition(newPosition);
+				}
+			}
+
+			return 0;
+		}
+	
 		intptr_t 
 		virtual showModal(Module source, Window* parent)
 		{
