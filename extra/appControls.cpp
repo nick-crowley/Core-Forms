@@ -1,6 +1,5 @@
 #include "library/core.forms.h"
 #include "dialogs/Dialog.h"
-#include <windows.h>
 #include "Resource.h"
 using namespace core;
 
