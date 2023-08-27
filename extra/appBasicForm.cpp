@@ -4,7 +4,7 @@
 #include "Resource.h"
 using namespace core;
 
-//! @brief	
+// Define program meta-data
 metadata std::string_view meta::Settings<program_name> = "Basic Core.Forms Application";
 metadata std::string_view meta::Settings<program_version> = "Demo";
 
