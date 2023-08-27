@@ -43,11 +43,11 @@ namespace core::forms
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		using Dictionary = std::map<uint16_t,Control*>;
+		using IdentDictionary = std::map<uint16_t,Control*>;
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		Dictionary m_items;
+		IdentDictionary m_items;
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -71,12 +71,12 @@ namespace core::forms
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		Dictionary::const_iterator 
+		IdentDictionary::const_iterator 
 		begin() const { 
 			return this->m_items.begin(); 
 		}
 
-		Dictionary::const_iterator
+		IdentDictionary::const_iterator
 		end() const { 
 			return this->m_items.end(); 
 		}
@@ -91,7 +91,7 @@ namespace core::forms
 			return this->m_items.empty();
 		}
 
-		Dictionary::size_type
+		IdentDictionary::size_type
 		size() const { 
 			return this->m_items.size();  
 		}
