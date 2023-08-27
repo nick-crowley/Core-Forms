@@ -121,6 +121,11 @@ file(GLOB_RECURSE PROJECT_INCLUDE_FILES
     "${PROJECT_INCLUDE_FOLDER}*.h"
 )
 
+# Resource files
+file(GLOB_RECURSE PROJECT_RESOURCE_FILES
+    "${PROJECT_RESOURCE_FOLDER}*.*"
+)
+
 # Define macro controlling dllexport/import specifier
 set(PROJECT_EXPORT_MACRO "CORE_FORMS_EXPORT")
 set(PROJECT_IMPORT_MACRO "CORE_FORMS_IMPORT")
@@ -242,19 +247,14 @@ target_compile_options(dllCoreForms
 #	dllCorePlatform
 #)
 
-##############################################################
-#  ___________              __       _____                   #
-#  \__    ___/___   _______/  |_    /  _  \ ______ ______    #
-#    |    |_/ __ \ /  ___/\   __\  /  /_\  \\____ \\____ \   #
-#    |    |\  ___/ \___ \  |  |   /    |    \  |_> >  |_> >  #
-#    |____| \___  >____  > |__|   \____|__  /   __/|   __/   #
-#               \/     \/                 \/|__|   |__|      #
-##############################################################
-
-# Resource files
-file(GLOB_RECURSE PROJECT_RESOURCE_FILES
-    "${PROJECT_RESOURCE_FOLDER}*.*"
-)
+#########################################################################
+#  __________               .__         ___________                     #
+#  \______   \_____    _____|__| ____   \_   _____/__________  _____    #
+#   |    |  _/\__  \  /  ___/  |/ ___\   |    __)/  _ \_  __ \/     \   #
+#   |    |   \ / __ \_\___ \|  \  \___   |     \(  <_> )  | \/  Y Y  \  #
+#   |______  /(____  /____  >__|\___  >  \___  / \____/|__|  |__|_|  /  #
+#          \/      \/     \/        \/       \/                    \/   #
+#########################################################################
 
 # Project: appBasicForm
 add_executable(appBasicForm
@@ -273,8 +273,6 @@ target_include_directories(appBasicForm BEFORE
 	
 # Set linker dependencies
 target_link_libraries(appBasicForm
-	#dllCorePlatform
-	#dllCoreCom
 	"${BASE_FOLDER}../Core-Platform/build/$(Configuration)/libCorePlatform.lib"
 	"${BASE_FOLDER}../Core-Com/build/$(Configuration)/libCoreCom.lib"
 	"${BASE_FOLDER}../Core-Forms/build/$(Configuration)/libCoreForms.lib"
@@ -299,6 +297,59 @@ target_compile_options(appBasicForm
 
 # Set project dependencies
 add_dependencies(appBasicForm
+	libCoreForms
+)
+
+##############################################################
+#  _________                __                .__          	 #
+#  \_   ___ \  ____   _____/  |________  ____ |  |   ______	 #
+#  /    \  \/ /  _ \ /    \   __\_  __ \/  _ \|  |  /  ___/	 #
+#  \     \___(  <_> )   |  \  |  |  | \(  <_> )  |__\___ \ 	 #
+#   \______  /\____/|___|  /__|  |__|   \____/|____/____  >	 #
+#          \/            \/                             \/ 	 #
+##############################################################
+
+# Project: appControls
+add_executable(appControls
+	"${PROJECT_EXTRA_FOLDER}appControls.cpp"
+	${PROJECT_RESOURCE_FILES}
+    )
+
+# Include folders
+target_include_directories(appControls BEFORE
+    PRIVATE
+	${PROJECT_EXTRA_FOLDER} 
+	${PROJECT_RESOURCE_FOLDER} 
+    PUBLIC
+    ${PROJECT_INCLUDE_FOLDER}            
+	)
+	
+# Set linker dependencies
+target_link_libraries(appControls
+	"${BASE_FOLDER}../Core-Platform/build/$(Configuration)/libCorePlatform.lib"
+	"${BASE_FOLDER}../Core-Com/build/$(Configuration)/libCoreCom.lib"
+	"${BASE_FOLDER}../Core-Forms/build/$(Configuration)/libCoreForms.lib"
+)
+
+# Set compiler & linker flags
+set_target_properties(appControls PROPERTIES
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
+					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS} /SUBSYSTEM:CONSOLE"
+					  OUTPUT_NAME "appControls")
+
+# Set export macros for static-library for all dependencies
+target_compile_definitions(appControls
+	PRIVATE CORE_PLATFORM_STATIC CORE_COM_STATIC CORE_FORMS_STATIC
+)
+
+# Link CRT statically
+target_compile_options(appControls
+	PRIVATE $<$<CONFIG:Release>:/MT>
+	PRIVATE $<$<CONFIG:Debug>:/MTd>
+)
+
+# Set project dependencies
+add_dependencies(appControls
 	libCoreForms
 )
 
