@@ -48,6 +48,64 @@ namespace core::forms
 	class FormsExport Dialog : public Window 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		//! @brief	Temporary storage for controls of _derived_ classes 
+		//! 
+		//! @remarks These are passed to this class prior to their constructors being executed so
+		//!  they cannot be used immediately (but they can be stored)
+		class EarlyBoundControlCollection
+		{
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			using ControlAddressCollection = std::vector<Control*>;
+			
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			ControlAddressCollection  Controls;
+			
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			template <nstd::InputRangeOf<Control*> AnyCollection>
+			explicit
+			EarlyBoundControlCollection(AnyCollection&& controls)
+				: Controls(controls)
+			{}
+			
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			satisfies(EarlyBoundControlCollection,
+				NotDefaultConstructible,
+				IsCopyable,
+				IsMovable noexcept
+			);
+			
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			ControlAddressCollection::const_iterator
+			begin() const noexcept { 
+				return this->Controls.begin(); 
+			}
+
+			ControlAddressCollection::const_iterator
+			end() const noexcept { 
+				return this->Controls.end(); 
+			}
+
+			ControlAddressCollection::size_type
+			size() const noexcept { 
+				return this->Controls.size();  
+			}
+
+			ControlDictionary
+			to_dictionary() const {
+				return ControlDictionary{this->Controls};
+			}
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		};
+
 	public:
 		class FormsExport WindowClass : public forms::WindowClass {
 		public:
@@ -77,18 +135,23 @@ namespace core::forms
 		std::optional<DialogMode const>	DisplayMode;
 		::DLGPROC const					DialogProc = Dialog::DefaultDialogHandler;
 		DialogTemplate const            Template;
-		
-	protected:
-		ControlDictionary   BoundControls;
+		EarlyBoundControlCollection const EarlyBoundControls;
+		ControlDictionary               BoundControls;
 
 	public:
 		InitDialogEvent		Initialized;
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
-		Dialog(ResourceId resource, Module source = forms::ProcessModule)
+		Dialog(ResourceId resource, std::initializer_list<Control*> controls = {})
+		  : Dialog{resource, forms::ProcessModule, controls}
+		{
+		}
+
+		Dialog(ResourceId resource, Module source, std::initializer_list<Control*> controls = {})
 		  : DialogId{resource},
-		    Template{DialogTemplateReader{source.loadResource(resource, RT_DIALOG)}.readTemplate()}
+		    Template{DialogTemplateReader{source.loadResource(resource, RT_DIALOG)}.readTemplate()},
+			EarlyBoundControls{controls}
 		{
 			ControlRegistration::ensureRegistered();
 		}
@@ -318,6 +381,9 @@ namespace core::forms
 
 			// BUG: Prevent callers from wrapping more than one window handle using the same C++ object
 			
+			// Late-bind any controls provided at class construction-time
+			this->BoundControls += this->EarlyBoundControls.to_dictionary();
+
 			// Change the wndclass for each wrapped control
 			if (!this->BoundControls.empty()) {
 				for (auto& ctrl : customTemplate.Controls) {

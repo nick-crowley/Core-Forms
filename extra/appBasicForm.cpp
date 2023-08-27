@@ -18,15 +18,10 @@ private:
 	forms::ButtonControl CancelBtn = IDCANCEL;
 
 public:
-	BasicForm() : base{forms::ResourceId{IDD_BASICFORM}}
+	BasicForm() : base{forms::ResourceId{IDD_BASICFORM}, {&this->OkBtn, &this->CancelBtn}}
 	{
 		this->OkBtn.Clicked += {*this, &BasicForm::Button_Clicked};
 		this->CancelBtn.Clicked += {*this, &BasicForm::Button_Clicked};
-		
-		this->BoundControls += forms::ControlDictionary{
-			&this->OkBtn, 
-			&this->CancelBtn
-		};
 	}
 
 private:

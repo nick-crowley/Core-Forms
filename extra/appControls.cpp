@@ -28,21 +28,20 @@ private:
 	forms::ButtonControl OkBtn = IDOK;
 
 public:
-	BasicForm() : base{forms::ResourceId{IDD_CONTROLS}}
+	BasicForm() : base{forms::ResourceId{IDD_CONTROLS}, {
+		&this->ListGroup,
+		&this->StringList,
+		&this->PopulateGroup,
+		&this->ReverseCheck,
+		&this->PopulateBtn,
+		&this->EditGroup,
+		&this->SingleLineEdit,
+		&this->MultiLineEdit,
+		&this->OkBtn
+	}}
 	{
 		this->OkBtn.Clicked += {*this, &BasicForm::Button_Clicked};
 		this->LookNFeel = forms::Nt6LookNFeel::Instance;
-		this->BoundControls += forms::ControlDictionary{
-			&this->ListGroup,
-			&this->StringList,
-			&this->PopulateGroup,
-			&this->ReverseCheck,
-			&this->PopulateBtn,
-			&this->EditGroup,
-			&this->SingleLineEdit,
-			&this->MultiLineEdit,
-			&this->OkBtn
-		};
 	}
 
 private:

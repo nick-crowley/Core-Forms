@@ -51,8 +51,9 @@ namespace core::forms
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		template <nstd::InputRangeOf<Control*> AnyCollection>
 		explicit
-		ControlDictionary(std::initializer_list<Control*> controls)
+		ControlDictionary(AnyCollection&& controls)
 		{
 			ThrowIf(controls, ranges::any_of(controls, lambda(=, const* c, c->ident() == /*IDC_STATIC*/ -1)));
 
