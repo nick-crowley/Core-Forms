@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
+	<Type Name="core::forms::ResourceId">
+		<Intrinsic Name="index" Expression="(int)Ident._Which"/>
+		<DisplayString Condition="index() == 0" Optional="true">{{ #{Ident._Head} }}</DisplayString>
+		<DisplayString Condition="index() == 1" Optional="true">{{ {Ident._Head._Tail,su} }}</DisplayString>
+		<DisplayString>&lt;Cannot determine&gt;</DisplayString>
+	</Type>
+
 	<Type Name="core::forms::Window::ProcessingState">
 		<DisplayString Condition="strlen(Message)">{State,en} ({Message,su})</DisplayString>
 		<DisplayString>{State,en}</DisplayString>
