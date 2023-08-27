@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+	<Type Name="core::forms::Window">
+		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
+		<DisplayString Condition="!Handle">{{ &lt;Not a window&gt; }}</DisplayString>
+		<DisplayString>{{ {Debug} }}</DisplayString>
+	</Type>
+	
+	<Type Name="core::forms::Control">
+		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
+		<DisplayString Condition="!Handle">{{ id={Ident} &lt;Not a window&gt; }}</DisplayString>
+		<DisplayString>{{ id={Ident} {Debug} }}</DisplayString>
+	</Type>
+</AutoVisualizer>
