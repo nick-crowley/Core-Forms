@@ -186,6 +186,21 @@ namespace core::forms
 
 	using OwnerDrawMenuDelegate = Delegate<void (Window&,OwnerDrawMenuEventArgs)>;
 	using OwnerDrawMenuEvent = ObservableEvent<OwnerDrawMenuDelegate>;
+	
+
+	struct ResizeWindowEventArgs {
+		unsigned  Flags;		// FIXME: Define enum for WM_SIZE flags https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-size
+		Size      Dimensions;
+
+		ResizeWindowEventArgs(::WPARAM w, ::LPARAM l) 
+		  : Flags{(unsigned)w},
+			Dimensions{LOWORD(l), HIWORD(l)}
+		{
+		}
+	};
+
+	using ResizeWindowDelegate = Delegate<void (Window&,ResizeWindowEventArgs)>;
+	using ResizeWindowEvent = ObservableEvent<ResizeWindowDelegate>;
 
 
 	struct TimerEventArgs 

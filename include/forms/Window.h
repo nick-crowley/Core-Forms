@@ -410,6 +410,7 @@ namespace core::forms
 		ShowWindowEvent		Shown;
 		ShowWindowEvent		Hidden;
 		PaintWindowEvent	Painted;
+		ResizeWindowEvent   Resized;
 		WindowEvent         Clicked;
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -946,7 +947,12 @@ namespace core::forms
 		virtual onPaint(PaintWindowEventArgs args) {
 			return Unhandled;
 		}
-
+		
+		Response 
+		virtual onResize(ResizeWindowEventArgs args) {
+			return Unhandled;
+		}
+	
 		Response 
 		virtual onShow(ShowWindowEventArgs args) {
 			return Unhandled;
@@ -1061,6 +1067,9 @@ namespace core::forms
 				return wParam ? this->onShow({wParam,lParam})
 							  : this->onHide({wParam,lParam});
 		
+			case WM_SIZE:
+				return this->onResize({wParam,lParam});
+			
 			case WM_COMMAND:
 				return this->onCommand({wParam, lParam});
 		
@@ -1127,7 +1136,11 @@ namespace core::forms
 					this->Hidden.raise(*this, ShowWindowEventArgs{wParam,lParam});
 				}
 				return;
-
+				
+			case WM_SIZE:
+				this->Resized.raise(*this, ResizeWindowEventArgs{wParam,lParam});
+				return;
+			
 			case WM_PAINT:
 				this->Painted.raise(*this, PaintWindowEventArgs{this});
 				return;
