@@ -39,7 +39,7 @@ try
 	startupBanner();
 	
 	BasicForm mainDlg;
-	return mainDlg.showModal(nullptr);
+	return mainDlg.showModal();
 }
 catch (std::exception const& e)
 {
