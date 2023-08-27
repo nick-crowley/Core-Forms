@@ -396,7 +396,7 @@ namespace core::forms
 		//! @remarks Due to message handling being re-entrant there is a significant delay 
 		//!          between releasing smart-pointer and the release delegate returning.
 		//!          Therefore raw-pointers are preferable here due to simplicity.
-		::HWND                  Handle;
+		::HWND                  Handle = nullptr;
 		std::optional<Brush>    Background;
 		DebuggingAide           Debug;
 		SharedLookNFeelProvider LookNFeel;
