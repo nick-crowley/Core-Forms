@@ -48,7 +48,7 @@ namespace core::forms
 	class FormsExport Dialog : public Window 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	private:
+	protected:
 		//! @brief	Temporary storage for controls of _derived_ classes 
 		//! 
 		//! @remarks These are passed to this class prior to their constructors being executed so
@@ -65,18 +65,21 @@ namespace core::forms
 			
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			template <nstd::InputRangeOf<Control*> AnyCollection>
+			template <nstd::InputRangeConvertibleTo<Control*> AnyCollection>
 			explicit
 			EarlyBoundControlCollection(AnyCollection&& controls)
+				: Controls(std::from_range, std::forward<AnyCollection>(controls))
+			{}
+			
+			explicit
+			EarlyBoundControlCollection(std::initializer_list<Control*> controls)
 				: Controls(controls)
 			{}
 			
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			satisfies(EarlyBoundControlCollection,
-				NotDefaultConstructible,
-				IsCopyable,
-				IsMovable noexcept
+				IsSemiRegular
 			);
 			
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -143,12 +146,12 @@ namespace core::forms
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
-		Dialog(ResourceId resource, std::initializer_list<Control*> controls = {})
+		Dialog(ResourceId resource, EarlyBoundControlCollection controls = {})
 		  : Dialog{resource, forms::ProcessModule, controls}
 		{
 		}
 
-		Dialog(ResourceId resource, Module source, std::initializer_list<Control*> controls = {})
+		Dialog(ResourceId resource, Module source, EarlyBoundControlCollection controls = {})
 		  : DialogId{resource},
 		    Template{DialogTemplateReader{source.loadResource(resource, RT_DIALOG)}.readTemplate()},
 			EarlyBoundControls{controls}

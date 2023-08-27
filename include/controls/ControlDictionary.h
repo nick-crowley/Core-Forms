@@ -51,7 +51,7 @@ namespace core::forms
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		template <nstd::InputRangeOf<Control*> AnyCollection>
+		template <nstd::InputRangeConvertibleTo<Control*> AnyCollection>
 		explicit
 		ControlDictionary(AnyCollection&& controls)
 		{
