@@ -1,5 +1,6 @@
 #include "library/core.forms.h"
 #include "dialogs/Dialog.h"
+#include "lookNfeel/Nt6LookNFeel.h"
 #include <windows.h>
 #include "Resource.h"
 using namespace core;
@@ -14,14 +15,32 @@ class BasicForm : public forms::Dialog
 	using base = forms::Dialog;
 	
 private:
+	forms::GroupBoxControl ListGroup = IDC_GROUP1;
+	forms::ListBoxControl StringList = IDC_LIST1;
+	forms::GroupBoxControl PopulateGroup = IDC_GROUP2;
+	forms::CheckBoxControl ReverseCheck = IDC_CHECK1;
+	forms::ButtonControl PopulateBtn = IDC_BUTTON1;
+	
+	forms::GroupBoxControl EditGroup = IDC_GROUP3;
+	forms::EditControl SingleLineEdit = IDC_EDIT1;
+	forms::EditControl MultiLineEdit = IDC_EDIT2;
+
 	forms::ButtonControl OkBtn = IDOK;
 
 public:
 	BasicForm() : base{forms::ResourceId{IDD_CONTROLS}}
 	{
 		this->OkBtn.Clicked += {*this, &BasicForm::Button_Clicked};
-		
+		this->LookNFeel = forms::Nt6LookNFeel::Instance;
 		this->BoundControls += forms::ControlDictionary{
+			&this->ListGroup,
+			&this->StringList,
+			&this->PopulateGroup,
+			&this->ReverseCheck,
+			&this->PopulateBtn,
+			&this->EditGroup,
+			&this->SingleLineEdit,
+			&this->MultiLineEdit,
 			&this->OkBtn
 		};
 	}
