@@ -41,15 +41,29 @@ public:
 			&this->OkBtn
 		}}
 	{
-		this->OkBtn.Clicked += {*this, &BasicForm::Button_Clicked};
+		this->OkBtn.Clicked += {*this, &BasicForm::OkBtn_Clicked};
+		this->PopulateBtn.Clicked += {*this, &BasicForm::PopulateBtn_Clicked};
+
 		this->LookNFeel = forms::Nt6LookNFeel::Instance;
 	}
 
 private:
 	void
-	Button_Clicked(Window& sender)
+	OkBtn_Clicked(Window& sender)
 	{
 		this->endModal(sender.ident());
+	}
+	
+	void
+	PopulateBtn_Clicked(Window& sender)
+	{
+		std::vector indexes {1,2,3,4,5,6,7,8};
+
+		if (this->ReverseCheck.checked())
+			std::reverse(indexes.begin(), indexes.end());
+		
+		for (unsigned idx : indexes)
+			this->StringList.Items.push_back(std::format(L"Item #{}", idx));
 	}
 };
 
