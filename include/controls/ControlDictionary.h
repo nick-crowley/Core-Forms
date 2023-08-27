@@ -51,6 +51,7 @@ namespace core::forms
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		explicit
 		ControlDictionary(std::initializer_list<Control*> controls)
 		{
 			ThrowIf(controls, ranges::any_of(controls, lambda(=, const* c, c->ident() == /*IDC_STATIC*/ -1)));
