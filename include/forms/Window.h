@@ -493,13 +493,13 @@ namespace core::forms
 					if (message == WM_DESTROY) 
 						wnd->onDestructionStarted();
 
-					{
+					scoped {
 						// Offer the message to the C++ object managing this handle
 						auto const on_exit = wnd->Debug.setTemporaryState({ProcessingState::MessageProcessing, name});
 						response = wnd->offerMessage(hWnd, message, wParam, lParam);
 					}
 
-					{
+					scoped {
 						// [POST] Raise the associated event, if any
 						auto const on_exit = wnd->Debug.setTemporaryState({ProcessingState::EventProcessing, name});
 						wnd->raiseMessageEvent(hWnd, message, wParam, lParam);
