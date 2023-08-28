@@ -45,7 +45,7 @@ namespace core::forms
 		Rect const
 		static Empty;
 
-		enum Origin { FromTopLeft, FromTopRight, FromCentre };
+		enum Origin { FromTopLeft, FromTopRight, FromCentre, FromBottomLeft, FromBottomRight };
 
 	private:
 		using type = Rect;
@@ -84,9 +84,11 @@ namespace core::forms
 		Rect(Point const& pt, Size const& sz, Origin origin) noexcept
 		{
 			switch (origin) {
-			case Origin::FromTopLeft:  *this = {pt.X, pt.Y, pt.X+sz.Width, pt.Y+sz.Height}; break;
-			case Origin::FromTopRight: *this = {pt.X-sz.Width, pt.Y, pt.X, pt.Y+sz.Height}; break;
-			case Origin::FromCentre:   *this = {pt.X-(sz.Width/2), pt.Y-(sz.Height/2), 
+			case Origin::FromTopLeft:     *this = {pt.X, pt.Y, pt.X+sz.Width, pt.Y+sz.Height}; break;
+			case Origin::FromTopRight:    *this = {pt.X-sz.Width, pt.Y, pt.X, pt.Y+sz.Height}; break;
+			case Origin::FromBottomLeft:  *this = {pt.X, pt.Y-sz.Height, pt.X+sz.Width, pt.Y}; break;
+			case Origin::FromBottomRight: *this = {pt.X-sz.Width, pt.Y-sz.Height, pt.X, pt.Y}; break;
+			case Origin::FromCentre:      *this = {pt.X-(sz.Width/2), pt.Y-(sz.Height/2), 
 												pt.X+(sz.Width/2), pt.Y+(sz.Height/2)}; break;
 			}
 		}
@@ -108,6 +110,16 @@ namespace core::forms
 		);
 	
 	public:
+		Point constexpr
+		bottomLeft() const noexcept {
+			return {this->Left, this->Bottom};
+		}
+	
+		Point constexpr
+		bottomRight() const noexcept {
+			return {this->Right, this->Bottom};
+		}
+
 		Point constexpr
 		centre() const noexcept {
 			return {this->Left + this->width()/2, 
