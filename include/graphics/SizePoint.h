@@ -41,8 +41,12 @@ namespace core::forms
 {
 	class GuiMeasurement
 	{
-		int Value;
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		int Value;
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		template <std::integral Integral>
 		constexpr
@@ -55,14 +59,18 @@ namespace core::forms
 		GuiMeasurement(SystemMetric metric) noexcept
 		  : Value{::GetSystemMetrics(static_cast<int>(metric))}
 		{}
-		
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
 		satisfies(GuiMeasurement,
 			constexpr NotDefaultConstructible noexcept,
 			constexpr IsCopyable noexcept,
 			constexpr IsEqualityComparable noexcept,
 			constexpr IsSortable noexcept
 		);
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		template <std::integral Integral>
 		constexpr
@@ -70,18 +78,23 @@ namespace core::forms
 		Integral() const noexcept {
 			return static_cast<Integral>(this->Value);
 		}
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 
 	class Point 
 	{
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Point const
 		static Zero;
-
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		::LONG X = 0;
 		::LONG Y = 0;
-
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		//! @brief	Construct from (any combination of) values or system-metrics
 		constexpr
@@ -98,12 +111,15 @@ namespace core::forms
 			Y{static_cast<::LONG>(pt.y)}
 		{}
 	
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(Point,
 			constexpr IsRegular noexcept,
 			constexpr NotSortable noexcept
 		);
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		//! @brief	Negation operator
 		Point constexpr
@@ -133,7 +149,8 @@ namespace core::forms
 		::POINT const*() const noexcept {
 			return reinterpret_cast<::POINT const*>(this);
 		}
-
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void constexpr 
 		translate(Point const& r) noexcept {
@@ -153,6 +170,8 @@ namespace core::forms
 	static_assert(sizeof(Point)==sizeof(::POINT));
 
 	class Size {
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
 		using type = Size;
 		using reference = Size&;
 
@@ -160,10 +179,12 @@ namespace core::forms
 		Size const
 		static Zero;
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		::LONG Width = 0;
 		::LONG Height = 0;
-
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		//! @brief	Construct from (any combination of) values or system-metrics
 		constexpr
@@ -180,12 +201,16 @@ namespace core::forms
 			Height{static_cast<::LONG>(sz.cy)}
 		{}
 	
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(Size,
 			constexpr IsRegular noexcept,
 			constexpr NotSortable noexcept
 		);
 	
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		//! @brief	Negation operator
 		Size constexpr
@@ -216,7 +241,8 @@ namespace core::forms
 		::SIZE const*() const noexcept {
 			return reinterpret_cast<::SIZE const*>(this);
 		}
-
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		//! @brief	Increase size by @p r
 		reference constexpr
