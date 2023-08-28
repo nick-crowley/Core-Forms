@@ -264,6 +264,7 @@ namespace core::forms
 				return this->Parameter;
 			}
 		};
+		static_assert(sizeof(CreateWindowParameter) == nstd::sizeof_v<Window*> + nstd::sizeof_n<uint16_t>(2));
 #		pragma pack (pop)
 
 		class FormsExport CreateWindowBuilder {
