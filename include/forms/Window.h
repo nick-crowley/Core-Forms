@@ -173,7 +173,7 @@ namespace core::forms
 		
 		public:
 			::HRESULT
-			PASCAL get_accRole(::VARIANT child, com::out_t<::VARIANT> role) override {
+			COMAPI get_accRole(::VARIANT child, com::out_t<::VARIANT> role) override {
 				
 				if (!this->Window.Children.contains(child.iVal))
 					return E_INVALIDARG;

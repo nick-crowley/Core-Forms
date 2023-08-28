@@ -63,12 +63,12 @@ namespace core::forms
 	public:
 #pragma region IAccessible methods
         ::HRESULT
-        PASCAL accSelect(long flagsSelect, ::VARIANT varChild) override {
+        COMAPI accSelect(long flagsSelect, ::VARIANT varChild) override {
 			return this->m_impl->accSelect(flagsSelect,varChild);
 		}
         
         ::HRESULT
-        PASCAL accLocation(com::out_t<long> pxLeft,
+        COMAPI accLocation(com::out_t<long> pxLeft,
                            com::out_t<long> pyTop,
                            com::out_t<long> pcxWidth,
                            com::out_t<long> pcyHeight,
@@ -77,119 +77,119 @@ namespace core::forms
 		}
         
         ::HRESULT
-        PASCAL accNavigate(long navDir, ::VARIANT start, com::out_t<::VARIANT> endUpAt) override {
+        COMAPI accNavigate(long navDir, ::VARIANT start, com::out_t<::VARIANT> endUpAt) override {
 			return this->m_impl->accNavigate(navDir,start,endUpAt);
 		}
         
         ::HRESULT
-        PASCAL accHitTest(long xLeft, long yTop, com::out_t<::VARIANT> child) override {
+        COMAPI accHitTest(long xLeft, long yTop, com::out_t<::VARIANT> child) override {
 			return this->m_impl->accHitTest(xLeft,yTop,child);
 		}
         
         ::HRESULT
-        PASCAL accDoDefaultAction(::VARIANT child) override {
+        COMAPI accDoDefaultAction(::VARIANT child) override {
 			return this->m_impl->accDoDefaultAction(child);
 		}
         
         ::HRESULT
-        PASCAL get_accParent(com::out_t<::IDispatch*> parent) override {
+        COMAPI get_accParent(com::out_t<::IDispatch*> parent) override {
 			return this->m_impl->get_accParent(parent);
 		}
         
         ::HRESULT
-        PASCAL get_accChildCount(com::out_t<long> count) override {
+        COMAPI get_accChildCount(com::out_t<long> count) override {
 			return this->m_impl->get_accChildCount(count);
 		}
         
         ::HRESULT
-        PASCAL get_accChild(::VARIANT child, com::out_t<::IDispatch*> ppv) override {
+        COMAPI get_accChild(::VARIANT child, com::out_t<::IDispatch*> ppv) override {
 			return this->m_impl->get_accChild(child,ppv);
 		}
         
         ::HRESULT
-        PASCAL get_accName(::VARIANT child, com::out_t<::BSTR> name) override {
+        COMAPI get_accName(::VARIANT child, com::out_t<::BSTR> name) override {
 			return this->m_impl->get_accName(child,name);
 		}
         
         ::HRESULT
-        PASCAL put_accName(::VARIANT child, ::BSTR name) override {
+        COMAPI put_accName(::VARIANT child, ::BSTR name) override {
 			return this->m_impl->put_accName(child,name);
 		}
         
         ::HRESULT
-        PASCAL get_accValue(::VARIANT child, com::out_t<::BSTR> value) override {
+        COMAPI get_accValue(::VARIANT child, com::out_t<::BSTR> value) override {
 			return this->m_impl->get_accValue(child,value);
 		}
         
         ::HRESULT
-        PASCAL put_accValue( ::VARIANT child, ::BSTR value) override {
+        COMAPI put_accValue( ::VARIANT child, ::BSTR value) override {
 			return this->m_impl->put_accValue(child,value);
 		}
 
         ::HRESULT
-        PASCAL get_accDescription(::VARIANT child, com::out_t<::BSTR> description) override {
+        COMAPI get_accDescription(::VARIANT child, com::out_t<::BSTR> description) override {
 			return this->m_impl->get_accDescription(child,description);
 		}
         
         ::HRESULT
-        PASCAL get_accRole(::VARIANT child, com::out_t<::VARIANT> role) override {
+        COMAPI get_accRole(::VARIANT child, com::out_t<::VARIANT> role) override {
 			return this->m_impl->get_accRole(child,role);
 		}
         
         ::HRESULT
-        PASCAL get_accState(::VARIANT child, com::out_t<::VARIANT> state) override {
+        COMAPI get_accState(::VARIANT child, com::out_t<::VARIANT> state) override {
 			return this->m_impl->get_accState(child,state);
 		}
         
         ::HRESULT
-        PASCAL get_accHelp(::VARIANT child, com::out_t<::BSTR> help) override {
+        COMAPI get_accHelp(::VARIANT child, com::out_t<::BSTR> help) override {
 			return this->m_impl->get_accHelp(child,help);
 		}
         
         ::HRESULT
-        PASCAL get_accHelpTopic(com::out_t<::BSTR> helpFile, ::VARIANT child, com::out_t<long> idTopic) override {
+        COMAPI get_accHelpTopic(com::out_t<::BSTR> helpFile, ::VARIANT child, com::out_t<long> idTopic) override {
 			return this->m_impl->get_accHelpTopic(helpFile,child,idTopic);
 		}
         
         ::HRESULT
-        PASCAL get_accKeyboardShortcut(::VARIANT child, com::out_t<::BSTR> keyboardShortcut) override {
+        COMAPI get_accKeyboardShortcut(::VARIANT child, com::out_t<::BSTR> keyboardShortcut) override {
 			return this->m_impl->get_accKeyboardShortcut(child,keyboardShortcut);
 		}
         
         ::HRESULT
-        PASCAL get_accFocus(com::out_t<::VARIANT> child) override {
+        COMAPI get_accFocus(com::out_t<::VARIANT> child) override {
 			return this->m_impl->get_accFocus(child);
 		}
         
         ::HRESULT
-        PASCAL get_accSelection(com::out_t<::VARIANT> children) override {
+        COMAPI get_accSelection(com::out_t<::VARIANT> children) override {
 			return this->m_impl->get_accSelection(children);
 		}
         
         ::HRESULT
-        PASCAL get_accDefaultAction(::VARIANT child, com::out_t<::BSTR> defaultAction) override {
+        COMAPI get_accDefaultAction(::VARIANT child, com::out_t<::BSTR> defaultAction) override {
 			return this->m_impl->get_accDefaultAction(child,defaultAction);
 		}
 #pragma endregion
 		
 #pragma region IDispatch methods
         ::HRESULT 
-        PASCAL GetTypeInfoCount(com::retval_t<::UINT> count) override {
+        COMAPI GetTypeInfoCount(com::retval_t<::UINT> count) override {
 			return this->m_impl->GetTypeInfoCount(count);
         }
         
         ::HRESULT 
-        PASCAL GetTypeInfo(::UINT iTInfo, ::LCID lcid, com::retval_t<::ITypeInfo*> ppv) override {
+        COMAPI GetTypeInfo(::UINT iTInfo, ::LCID lcid, com::retval_t<::ITypeInfo*> ppv) override {
 			return this->m_impl->GetTypeInfo(iTInfo,lcid,ppv);
         }
         
         ::HRESULT
-        PASCAL GetIDsOfNames(::GUID const& iid, com::in_t<wchar_t*> names, ::UINT count, ::LCID lcid, com::retval_t<::DISPID> ppv) override {
+        COMAPI GetIDsOfNames(::GUID const& iid, com::in_t<wchar_t*> names, ::UINT count, ::LCID lcid, com::retval_t<::DISPID> ppv) override {
 			return this->m_impl->GetIDsOfNames(iid,names,count,lcid,ppv);
         }
         
         ::HRESULT 
-        PASCAL Invoke(::DISPID                 member, 
+        COMAPI Invoke(::DISPID                 member, 
                       ::GUID const&            iid, 
                       ::LCID                   lcid, 
                       ::WORD                   flags, 
