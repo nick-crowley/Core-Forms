@@ -46,6 +46,12 @@ Nt6LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 	args.Graphics->setBrush(SystemBrush::Dialog);
 	args.Graphics->fillRect(*args.Area);
 
+	// [SIZE-GRIP]
+	if (dlg.style().test(WindowStyle::SizeBox)) {
+		Rect rc{args.Area->bottomRight(), Size{SystemMetric::cxHThumb, SystemMetric::cyVThumb}, Rect::FromBottomRight};
+		args.Graphics->drawControl(rc, DFC_SCROLL, DFCS_SCROLLSIZEGRIP);
+	}
+
 	args.Graphics->restore();
 }
 
