@@ -95,7 +95,7 @@ namespace core::forms
 	
 		//! @brief	Construct from Windows RECT (ie. LONG 4-tuple)
 		constexpr
-		/*implicit*/
+		implicit
 		Rect(::RECT const& rc) noexcept
 		  : Left{static_cast<::LONG>(rc.left)}, 
 			Top{static_cast<::LONG>(rc.top)}, 
@@ -197,7 +197,7 @@ namespace core::forms
 			return r;
 		}
 	
-		/*implicit*/ operator 
+		implicit operator 
 		::RECT const*() const noexcept {
 			return reinterpret_cast<::RECT const*>(this);
 		}
@@ -259,7 +259,7 @@ namespace core::forms
 			return *this;
 		}
 	
-		/*implicit*/ operator 
+		implicit operator 
 		::RECT*() noexcept {
 			return reinterpret_cast<::RECT*>(this);
 		}
