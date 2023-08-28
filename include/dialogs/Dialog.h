@@ -372,7 +372,7 @@ namespace core::forms
 			return FALSE;
 		}
 	
-		Window::Response
+		Response
 		virtual onPaint(PaintWindowEventArgs args) override {
 			args.beginPaint();
 			this->LookNFeel->draw(*this, args);
