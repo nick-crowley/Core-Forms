@@ -287,7 +287,7 @@ namespace core::forms
 			bool		 Common = false;
 
 		public:
-			WindowProcLoggingSentry(gsl::czstring func, ::UINT message) {
+			WindowProcLoggingSentry(::UINT message, const char* func = __builtin_FUNCTION()) {
 				using namespace std::literals;
 				if (!Window::MessageDatabase.contains(message)) 
 					this->Text = func + " : Processing unrecognised message "s + to_hexString<4>(message) + " ";
@@ -473,7 +473,7 @@ namespace core::forms
 		::LRESULT 
 		static CALLBACK DefaultMessageHandler(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
 		{
-			WindowProcLoggingSentry log_entry(__FUNCTION__, message);
+			WindowProcLoggingSentry log_entry(message);
 			try {
 				gsl::czstring const name = Window::MessageDatabase.name(message);
 				Window* wnd {};
