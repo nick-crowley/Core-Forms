@@ -292,7 +292,7 @@ namespace core::forms
 		}
 		
 		Response 
-		onResize(ResizeWindowEventArgs args) override 
+		virtual onResize(ResizeWindowEventArgs args) override 
 		{
 			auto const origDimensions = this->mapRect(this->Template.Area).size();
 			auto const newDimensions = args.Dimensions;
