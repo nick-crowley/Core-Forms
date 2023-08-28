@@ -41,22 +41,25 @@
 namespace core::forms
 {
 	class Rect {
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		using type = Rect;
+		using reference = Rect&;
+
 	public:
 		Rect const
 		static Empty;
 
 		enum Origin { FromTopLeft, FromTopRight, FromCentre, FromBottomLeft, FromBottomRight };
 
-	private:
-		using type = Rect;
-		using reference = Rect&;
-
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		::LONG Left = 0;
 		::LONG Top = 0;
 		::LONG Right = 0;
 		::LONG Bottom = 0;
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		//! @brief	Construct from (any combination of) values or system-metrics
 		constexpr
@@ -102,13 +105,17 @@ namespace core::forms
 			Right{static_cast<::LONG>(rc.right)}, 
 			Bottom{static_cast<::LONG>(rc.bottom)} 
 		{}
-	
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(Rect,
 			constexpr IsRegular noexcept,
 			constexpr NotSortable noexcept
 		);
-	
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Point constexpr
 		bottomLeft() const noexcept {
@@ -202,6 +209,7 @@ namespace core::forms
 			return reinterpret_cast<::RECT const*>(this);
 		}
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void constexpr
 		inflate(::LONG amount) noexcept {
