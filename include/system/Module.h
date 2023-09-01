@@ -107,7 +107,7 @@ namespace core::forms
 				win::LastError{}.throwAlways("Failed to lock resource '{}'", to_string(name));
 			}
 			else {
-				final_act(=) { UnlockResource(block); };
+				final_act(=) noexcept { UnlockResource(block); };
 				return { data, data + size };
 			}
 		}
