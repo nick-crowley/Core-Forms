@@ -36,7 +36,12 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	std::add_pointer_t<char const> constexpr 
+	namespace detail {
+		nstd::return_t<char const*> constexpr 
+		UndefinedMessage = "<undefined>";
+	}
+
+	gsl::czstring constexpr 
 	g_WindowMessageNames[] 
 	{
 		"WM_NULL",
