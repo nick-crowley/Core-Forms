@@ -96,6 +96,7 @@ namespace core::forms
 		}
 	};
 
+	//! @brief	Parameterless event
 	using NullaryEvent = ObservableEvent<NullaryDelegate>;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

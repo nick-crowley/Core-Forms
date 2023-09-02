@@ -42,6 +42,7 @@ namespace core::forms
 	template <nstd::Function Signature>
 	using Delegate = nstd::function<Signature>;
 
+	//! @brief	Parameterless delegate without return
 	using NullaryDelegate = Delegate<void()>;
 	
 	namespace detail 
