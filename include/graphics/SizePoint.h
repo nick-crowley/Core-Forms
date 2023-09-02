@@ -147,6 +147,7 @@ namespace core::forms
 
 		implicit operator 
 		::POINT const*() const noexcept {
+			static_assert(sizeof(Point)==sizeof(::POINT));
 			return reinterpret_cast<::POINT const*>(this);
 		}
 		
@@ -160,6 +161,7 @@ namespace core::forms
 	
 		implicit operator 
 		::POINT*() noexcept {
+			static_assert(sizeof(Point)==sizeof(::POINT));
 			return reinterpret_cast<::POINT*>(this);
 		}
 	};
@@ -167,7 +169,6 @@ namespace core::forms
 	Point const
 	inline Point::Zero{0,0};
 
-	static_assert(sizeof(Point)==sizeof(::POINT));
 
 	class Size {
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -239,6 +240,7 @@ namespace core::forms
 	
 		implicit operator 
 		::SIZE const*() const noexcept {
+			static_assert(sizeof(Size)==sizeof(::SIZE));
 			return reinterpret_cast<::SIZE const*>(this);
 		}
 		
@@ -270,14 +272,13 @@ namespace core::forms
 
 		implicit operator 
 		::SIZE*() noexcept {
+			static_assert(sizeof(Size)==sizeof(::SIZE));
 			return reinterpret_cast<::SIZE*>(this);
 		}
 	};
 
 	Size const
 	inline Size::Zero{0,0};
-
-	static_assert(sizeof(Size)==sizeof(::SIZE));
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms

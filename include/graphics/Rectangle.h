@@ -206,6 +206,7 @@ namespace core::forms
 	
 		implicit operator 
 		::RECT const*() const noexcept {
+			static_assert(sizeof(Rect)==sizeof(::RECT));
 			return reinterpret_cast<::RECT const*>(this);
 		}
 
@@ -269,14 +270,13 @@ namespace core::forms
 	
 		implicit operator 
 		::RECT*() noexcept {
+			static_assert(sizeof(Rect)==sizeof(::RECT));
 			return reinterpret_cast<::RECT*>(this);
 		}
 	};
 
 	Rect const
 	inline Rect::Empty{0,0,0,0};
-
-	static_assert(sizeof(Rect)==sizeof(::RECT));
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
