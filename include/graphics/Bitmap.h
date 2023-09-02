@@ -63,8 +63,6 @@ namespace core::forms
 		ColourDepth   Depth;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		Bitmap() noexcept = default;
-
 		explicit
 		Bitmap(SharedBitmap bmp, Size dimensions, ColourDepth depth) 
 		  : Handle{std::move(ThrowIfEmpty(bmp))},
@@ -86,7 +84,14 @@ namespace core::forms
 			}
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		satisfies(Bitmap,
+			NotDefaultConstructible,
+			IsCopyable,
+			IsMovable noexcept,
+			IsEqualityComparable,
+			NotSortable
+		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Bitmap

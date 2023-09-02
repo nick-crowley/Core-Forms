@@ -51,8 +51,6 @@ namespace core::forms
 		Size          Dimensions;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		Icon() noexcept = default;
-
 		explicit
 		Icon(SharedIcon icon, Size dimensions) 
 		  : Handle{std::move(ThrowIfEmpty(icon))},
@@ -60,7 +58,14 @@ namespace core::forms
 		{
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		satisfies(Icon,
+			NotDefaultConstructible,
+			IsCopyable,
+			IsMovable noexcept,
+			IsEqualityComparable,
+			NotSortable
+		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Icon
