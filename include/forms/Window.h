@@ -299,7 +299,7 @@ namespace core::forms
 
 			~WindowProcLoggingSentry() {
 				if (!this->Common) 
-					cdebug << this->Text << std::endl;
+					cdebugger << this->Text << std::endl;
 			}
 
 		public:
@@ -519,9 +519,9 @@ namespace core::forms
 		void
 		static onFirstSight(::HWND hWnd, CreateWindowEventArgs args) {
 			if (!args.Data->lpCreateParams) {
-				cdebug << "Observed creation of native '" << args.Data->lpszClass << '\''
-				       << "Window: title='" << (args.Data->lpszName ? L"" : args.Data->lpszName ) << '\''
-				       << std::endl;
+				cdebugger << "Observed creation of native '" << args.Data->lpszClass << '\''
+				          << "Window: title='" << (args.Data->lpszName ? L"" : args.Data->lpszName ) << '\''
+				          << std::endl;
 				return;
 			}
 			
