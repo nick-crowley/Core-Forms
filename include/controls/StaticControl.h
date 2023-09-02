@@ -58,8 +58,8 @@ namespace core::forms
 			}
 		};
 		
-		class StaticNotificationDictionary : public MessageDictionary {
-			using base = MessageDictionary;
+		class StaticNotificationDictionary : public forms::MessageDictionary {
+			using base = forms::MessageDictionary;
 		public:
 			StaticNotificationDictionary() : base({
 	#define MakeMessageName(msg)  { msg, #msg }

@@ -59,8 +59,8 @@ namespace core::forms
 		};
 
 	protected:
-		class EditNotificationDictionary : public MessageDictionary {
-			using base = MessageDictionary;
+		class EditNotificationDictionary : public forms::MessageDictionary {
+			using base = forms::MessageDictionary;
 		public:
 			EditNotificationDictionary() : base({
 	#define MakeMessageName(msg)  { msg, #msg }

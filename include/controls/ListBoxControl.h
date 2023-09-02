@@ -45,8 +45,8 @@ namespace core::forms
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
-		class ListBoxNotificationDictionary : public MessageDictionary {
-			using base = MessageDictionary;
+		class ListBoxNotificationDictionary : public forms::MessageDictionary {
+			using base = forms::MessageDictionary;
 		public:
 			ListBoxNotificationDictionary() : base({
 	#define MakeMessageName(msg)  { msg, #msg }

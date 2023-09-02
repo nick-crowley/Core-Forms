@@ -61,8 +61,8 @@ namespace core::forms
 		};
 		
 	protected:
-		class ComboBoxNotificationDictionary : public MessageDictionary {
-			using base = MessageDictionary;
+		class ComboBoxNotificationDictionary : public forms::MessageDictionary {
+			using base = forms::MessageDictionary;
 		public:
 			ComboBoxNotificationDictionary() : base({
 	#define MakeMessageName(msg)  { msg, #msg }

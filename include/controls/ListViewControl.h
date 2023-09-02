@@ -59,8 +59,8 @@ namespace core::forms
 		};
 
 	protected:
-		class ListViewNotificationDictionary : public MessageDictionary {
-			using base = MessageDictionary;
+		class ListViewNotificationDictionary : public forms::MessageDictionary {
+			using base = forms::MessageDictionary;
 		public:
 			ListViewNotificationDictionary() : base({
 	#define MakeMessageName(msg)  { msg, #msg }
