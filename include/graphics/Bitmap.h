@@ -54,10 +54,14 @@ namespace core::forms
 {
 	class Bitmap
 	{
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
 		SharedBitmap  Handle;
 		Size          Dimensions;
 		ColourDepth   Depth;
-
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Bitmap() noexcept = default;
 
@@ -81,7 +85,10 @@ namespace core::forms
 				this->Depth = static_cast<ColourDepth>(info.bmBitsPixel);
 			}
 		}
-		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
 		Bitmap
 		static load(std::wstring_view path) 
 		{
@@ -107,7 +114,8 @@ namespace core::forms
 			else 
 				return Bitmap{SharedBitmap{bitmap}};
 		}
-	
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
 		ColourDepth
 		depth() const
 		{
@@ -131,6 +139,8 @@ namespace core::forms
 		{
 			return this->Dimensions;
 		}
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
