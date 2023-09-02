@@ -212,7 +212,7 @@ namespace core::forms
 				this->writeObject<uint32_t>(ctrl.Ident);
 			}
 			else {
-				this->writeObject<uint16_t>(ctrl.Ident);
+				this->writeObject(static_cast<uint16_t>(ctrl.Ident));
 			}
 
 			// Class & Title & Data fields must be aligned on 16-bit boundary

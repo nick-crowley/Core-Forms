@@ -689,7 +689,7 @@ namespace core::forms
 
 		uint16_t
 		ident() const {
-			return ::GetDlgCtrlID(this->handle());
+			return static_cast<uint16_t>(::GetDlgCtrlID(this->handle()));
 		}
 	
 		WindowInfo

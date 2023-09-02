@@ -77,7 +77,7 @@ try
 	startupBanner();
 	
 	ControlsForm mainDlg;
-	return mainDlg.showModal();
+	return static_cast<int>(mainDlg.showModal());
 }
 catch (std::exception const& e)
 {

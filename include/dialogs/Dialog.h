@@ -397,7 +397,7 @@ namespace core::forms
 			case IDOK:
 			case IDCANCEL:
 				if (this->DisplayMode == DialogMode::Modal) {
-					this->endModal(notification);
+					this->endModal(static_cast<uint16_t>(notification));
 					return TRUE;
 				}
 			}

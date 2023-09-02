@@ -122,12 +122,12 @@ namespace core::forms
 
 	class GetObjectEventArgs {
 	public:
-		::WPARAM    Flags;
+		long        Flags;
 		ObjectId    Object;
 
 	public:
 		GetObjectEventArgs(::WPARAM w, ::LPARAM l)
-		  : Flags{w},
+		  : Flags{static_cast<long>(w)},
 			Object{static_cast<ObjectId>(l)}
 		{}
 	};

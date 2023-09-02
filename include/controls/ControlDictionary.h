@@ -83,9 +83,10 @@ namespace core::forms
 			return this->m_items.end(); 
 		}
 
+		template <std::integral Ident>
 		bool
-		contains(uint16_t id) const {
-			return this->m_items.contains(id);
+		contains(Ident id) const {
+			return this->m_items.contains(static_cast<uint16_t>(id));
 		}
 		
 		bool
@@ -98,9 +99,10 @@ namespace core::forms
 			return this->m_items.size();  
 		}
 		
+		template <std::integral Ident>
 		Control*
-		operator[](uint16_t id) const {
-			return this->m_items.at(id);
+		operator[](Ident id) const {
+			return this->m_items.at(static_cast<uint16_t>(id));
 		}
 		
 		ControlDictionary
