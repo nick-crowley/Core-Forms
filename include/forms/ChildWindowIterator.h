@@ -56,7 +56,7 @@ namespace core::forms
 	private:
 		std::vector<::HWND>  Children;
 		::HWND	  Parent = nullptr;
-		unsigned Index = -1;
+		unsigned  Index = UINT32_MAX;
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	 public:
@@ -66,7 +66,7 @@ namespace core::forms
 		{
 			::EnumChildWindows(parent, &on_next_child_window, (::LPARAM)(uintptr_t)this);
 			if (this->Children.empty())
-				this->Index = -1;
+				this->Index = UINT32_MAX;
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -99,7 +99,7 @@ namespace core::forms
 		void 
 		increment() { 
 			if (++this->Index == this->Children.size()) {
-				this->Index = -1;
+				this->Index = UINT32_MAX;
 			}
 		}
 	};
