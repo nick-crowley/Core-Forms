@@ -65,7 +65,7 @@ namespace core::forms
 	public:
 		std::optional<Icon>
 		icon() const {
-			if (auto* icon = this->Image ? std::get_if<Icon>(&*this->Image) : nullptr; !icon)
+			if (Icon const* icon = (this->Image ? std::get_if<Icon>(&*this->Image) : nullptr); !icon)
 				return {};
 			else
 				return *icon;
@@ -73,7 +73,7 @@ namespace core::forms
 	
 		std::optional<Bitmap>
 		image() const {
-			if (auto* bitmap = this->Image ? std::get_if<Bitmap>(&*this->Image) : nullptr; !bitmap)
+			if (Bitmap const* bitmap = (this->Image ? std::get_if<Bitmap>(&*this->Image) : nullptr); !bitmap)
 				return {};
 			else
 				return *bitmap;
