@@ -39,7 +39,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	template <typename Signature>
+	template <nstd::Function Signature>
 	using Delegate = nstd::function<Signature>;
 
 	using NullaryDelegate = Delegate<void()>;
