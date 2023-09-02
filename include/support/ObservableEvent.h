@@ -51,11 +51,14 @@ namespace core::forms
 		std::vector<Delegate>	Observers;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		ObservableEvent() = default;
-
+	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		satisfies(ObservableEvent,
+			IsSemiRegular,
+			NotEqualityComparable,
+			NotSortable
+		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -70,20 +73,24 @@ namespace core::forms
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		void subscribe(const Delegate& d) {
+		void
+		subscribe(const Delegate& d) {
 			this->Observers.push_back(d);
 		}
 
-		bool unsubscribe(const Delegate& d) {
+		bool 
+		unsubscribe(const Delegate& d) {
 			return std::erase(this->Observers, d) != 0;
 		}
 
-		type& operator+=(const Delegate& d) {
+		type& 
+		operator+=(const Delegate& d) {
 			this->subscribe(d);
 			return *this;
 		}
 	
-		type& operator-=(const Delegate& d) {
+		type& 
+		operator-=(const Delegate& d) {
 			this->unsubscribe(d);
 			return *this;
 		}
