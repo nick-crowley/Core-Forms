@@ -62,19 +62,19 @@ namespace core::forms
 		Bitmap() noexcept = default;
 
 		explicit
-		Bitmap(::HBITMAP bmp, Size dimensions, ColourDepth depth) 
-		  : Handle{bmp},
+		Bitmap(SharedBitmap bmp, Size dimensions, ColourDepth depth) 
+		  : Handle{std::move(ThrowIfEmpty(bmp))},
 			Dimensions{dimensions},
 			Depth{depth}
 		{
 		}
 		
 		explicit
-		Bitmap(::HBITMAP bmp)
-		  : Handle{ThrowIfNull(bmp)},
+		Bitmap(SharedBitmap bmp)
+		  : Handle{std::move(ThrowIfEmpty(bmp))},
 			Depth{ColourDepth::bpp1}
 		{
-			if (::BITMAP info{}; !::GetObject(bmp, sizeof(info), &info))
+			if (::BITMAP info{}; !::GetObject(*bmp, sizeof(info), &info))
 				win::LastError{}.throwAlways();
 			else {
 				this->Dimensions = {info.bmWidth,info.bmHeight};
@@ -83,15 +83,17 @@ namespace core::forms
 		}
 		
 		Bitmap
-		static load(std::wstring_view path) {
-		
-			if (auto const bitmap = (HBITMAP)::LoadImageW(nullptr, path.data(), 
-														  IMAGE_BITMAP, 
-														  0, 0, 
-														  LR_LOADFROMFILE); !bitmap)
-				win::LastError{}.throwAlways();
+		static load(std::wstring_view path) 
+		{
+			ThrowIfEmpty(path);
+
+			if (auto const bitmap = (::HBITMAP)::LoadImageW(nullptr, path.data(), 
+														    IMAGE_BITMAP, 
+														    0, 0, 
+														    LR_LOADFROMFILE); !bitmap)
+				win::LastError{}.throwAlways("LoadImage({}) failed", to_utf8(path));
 			else 
-				return Bitmap{bitmap};
+				return Bitmap{SharedBitmap{bitmap}};
 		}
 		
 		Bitmap
@@ -103,7 +105,7 @@ namespace core::forms
 														    NULL); !bitmap)
 				win::LastError{}.throwAlways("LoadImage({:#06x}, {}) failed", (void*)source.handle(), to_string(name));
 			else 
-				return Bitmap{bitmap};
+				return Bitmap{SharedBitmap{bitmap}};
 		}
 	
 		ColourDepth

@@ -51,14 +51,16 @@ namespace core::forms
 
 		explicit
 		Icon(SharedIcon icon, Size dimensions) 
-		  : Handle{std::move(icon)},
+		  : Handle{std::move(ThrowIfEmpty(icon))},
 			Dimensions{dimensions}
 		{
 		}
 
 		Icon
-		static load(std::wstring_view path) {
-		
+		static load(std::wstring_view path) 
+		{
+			ThrowIfEmpty(path);
+
 			Size const 
 			static dimensions{SystemMetric::cxIcon,SystemMetric::cyIcon};
 
@@ -66,7 +68,7 @@ namespace core::forms
 														IMAGE_ICON, 
 														dimensions.Width, dimensions.Height, 
 														LR_LOADFROMFILE|LR_LOADTRANSPARENT); !icon)
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("LoadImage({}) failed", to_utf8(path));
 			else
 				return Icon{SharedIcon{icon,&::DestroyIcon}, dimensions};
 		}
