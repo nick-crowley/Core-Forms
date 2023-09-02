@@ -281,13 +281,13 @@ namespace core::forms
 			CreateWindowBuilder() = default;
 		};
 	
-		class FormsExport WindowProcLoggingSentry {
+		class FormsExport WndProcLoggingSentry {
 		private:
 			std::string  Text;
 			bool		 Common = false;
 
 		public:
-			WindowProcLoggingSentry(::UINT message, const char* func = __builtin_FUNCTION()) {
+			WndProcLoggingSentry(::UINT message, const char* func = __builtin_FUNCTION()) {
 				using namespace std::literals;
 				if (!Window::MessageDatabase.contains(message)) 
 					this->Text = func + " : Processing unrecognised message "s + to_hexString<4>(message) + " ";
@@ -297,7 +297,7 @@ namespace core::forms
 					this->Common = true;
 			}
 
-			~WindowProcLoggingSentry() {
+			~WndProcLoggingSentry() {
 				if (!this->Common) 
 					cdebugger << this->Text << std::endl;
 			}
@@ -562,7 +562,7 @@ namespace core::forms
 		::LRESULT 
 		static CALLBACK DefaultMessageHandler(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
 		{
-			WindowProcLoggingSentry log_entry(message);
+			WndProcLoggingSentry log_entry(message);
 			try {
 				gsl::czstring const name = Window::MessageDatabase.name(message);
 				Window* wnd {};

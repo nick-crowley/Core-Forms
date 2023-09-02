@@ -177,7 +177,7 @@ namespace core::forms
 		::INT_PTR 
 		static CALLBACK DefaultDialogHandler(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
 		{
-			WindowProcLoggingSentry log_entry(message);
+			WndProcLoggingSentry log_entry(message);
 			// FIXME: This method needs documenting
 			try {
 				gsl::czstring const name = Window::MessageDatabase.name(message);
