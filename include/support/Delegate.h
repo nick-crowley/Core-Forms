@@ -39,6 +39,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
+	//! @brief	Delegate of arbitrary signature to static function, class method, or lambda
 	template <nstd::Function Signature>
 	using Delegate = nstd::function<Signature>;
 
