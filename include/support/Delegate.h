@@ -43,6 +43,19 @@ namespace core::forms
 	using Delegate = nstd::function<Signature>;
 
 	using NullaryDelegate = Delegate<void()>;
+	
+	namespace detail 
+	{
+		template <typename T>
+		metafunc is_delegate : std::false_type {};
+
+		template <typename T>
+		metafunc is_delegate<nstd::function<T>> : std::true_type {};
+
+		template <typename T>
+		bool constexpr
+		inline is_delegate_v = is_delegate<T>::value;
+	}
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

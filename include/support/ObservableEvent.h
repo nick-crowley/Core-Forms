@@ -40,6 +40,7 @@
 namespace core::forms
 {
 	template <typename Delegate>
+		requires detail::is_delegate_v<Delegate>
 	class ObservableEvent {
 		using type = ObservableEvent<Delegate>;
 
@@ -50,11 +51,10 @@ namespace core::forms
 		ObservableEvent() = default;
 
 	public:
-		template <typename... Arguments>
+		template <typename... Arguments> 
+			requires std::is_invocable_v<Delegate,Arguments...>
 		void
 		raise(Arguments&&... args) const {
-			static_assert(std::is_invocable_v<Delegate,Arguments...>);
-
 			for (auto& fx : this->Observers) {
 				fx.invoke(std::forward<Arguments>(args)...);
 			}
