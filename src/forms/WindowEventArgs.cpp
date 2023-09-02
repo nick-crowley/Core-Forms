@@ -11,7 +11,7 @@ forms::OwnerDrawEventArgs::ItemData::ItemData(::DRAWITEMSTRUCT& data)
 	if (data.CtlType != ODT_MENU)
 		this->Ident = static_cast<uint32_t>(data.itemID);
 	else
-		this->Ident = ResourceId{static_cast<uint16_t>(data.itemID)};
+		this->Ident = win::ResourceId{static_cast<uint16_t>(data.itemID)};
 }
 
 forms::OwnerDrawEventArgs::OwnerDrawEventArgs(::WPARAM id, ::LPARAM data) 

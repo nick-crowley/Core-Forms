@@ -50,8 +50,8 @@ namespace core::forms
 			::WNDPROC	OriginalWndProc;
 
 		public:
-			WindowClass() : forms::WindowClass{ResourceId{WC_LINK}}  {
-				this->Name = ResourceId{L"Custom.LINK"};
+			WindowClass() : forms::WindowClass{win::ResourceId{WC_LINK}}  {
+				this->Name = win::ResourceId{L"Custom.LINK"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();

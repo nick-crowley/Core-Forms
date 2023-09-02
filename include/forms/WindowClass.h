@@ -30,9 +30,8 @@
 #include "graphics/SystemBrush.h"
 #include "nstd/Bitset.h"
 #include "forms/ClassStyle.h"
-#include "system/ResourceId.h"
-#include "system/Module.h"
-#include "system/ResourceId.h"
+#include "win/ResourceId.h"
+#include "win/Module.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -54,8 +53,8 @@ namespace core::forms
 		::HCURSOR                 Cursor = nullptr;
 		::HICON                   LargeIcon = nullptr, 
 		                          SmallIcon = nullptr;
-		ResourceId                Name;
-		ResourceId                Menu;
+		win::ResourceId           Name;
+		win::ResourceId           Menu;
 		::HMODULE                 Instance = nullptr;
 		nstd::bitset<ClassStyle>  Style;
 		uint32_t                  WndExtra = 0;
@@ -72,7 +71,7 @@ namespace core::forms
 		WindowClass() {
 		}
 
-		WindowClass(ResourceId name, std::optional<::HMODULE> container = std::nullopt) 
+		WindowClass(win::ResourceId name, std::optional<::HMODULE> container = std::nullopt) 
 		  : Name{name}, Instance{container.value_or(nullptr)}
 		{
 			if (!::GetClassInfoExW(this->Instance, name, &this->Properties)) {
@@ -88,7 +87,7 @@ namespace core::forms
 			this->Cursor = this->Properties.hCursor;
 			this->LargeIcon = this->Properties.hIcon;
 			this->SmallIcon = this->Properties.hIconSm;
-			this->Menu = ResourceId::parse(this->Properties.lpszMenuName);
+			this->Menu = win::ResourceId::parse(this->Properties.lpszMenuName);
 			this->Style = static_cast<ClassStyle>(this->Properties.style);
 			this->WndExtra = this->Properties.cbWndExtra;
 			this->WndProc = this->Properties.lpfnWndProc;

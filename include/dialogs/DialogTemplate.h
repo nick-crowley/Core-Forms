@@ -28,10 +28,10 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
 #include "dialogs/DialogItemTemplate.h"
-#include "system/ResourceId.h"
 #include "graphics/Rectangle.h"
 #include "forms/WindowStyle.h"
 #include "forms/ExWindowStyle.h"
+#include "win/ResourceId.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -51,10 +51,10 @@ namespace core::forms
 		nstd::bitset<WindowStyle>       Style;
 		uint16_t                        NumControls;
 		Rect                            Area;
-		std::optional<ResourceId>       Menu;
-		std::optional<ResourceId>       ClassName;
-		std::optional<ResourceId>       Title;
-		std::optional<ResourceId>       Font;
+		std::optional<win::ResourceId>  Menu;
+		std::optional<win::ResourceId>  ClassName;
+		std::optional<win::ResourceId>  Title;
+		std::optional<win::ResourceId>  Font;
 		std::optional<uint16_t>         Height;
 		std::optional<uint16_t>         Weight;
 		std::optional<uint8_t>          Italic;

@@ -29,6 +29,7 @@
 #include "library/core.Forms.h"
 #include "graphics/Rectangle.h"
 #include "system/SharedHandle.h"
+#include "win/Module.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -56,7 +57,7 @@ namespace core::forms
 		}
 
 		Icon
-		static loadFromFile(std::wstring_view path) {
+		static load(std::wstring_view path) {
 		
 			Size const 
 			static dimensions{SystemMetric::cxIcon,SystemMetric::cyIcon};
@@ -66,6 +67,18 @@ namespace core::forms
 														dimensions.Width, dimensions.Height, 
 														LR_LOADFROMFILE|LR_LOADTRANSPARENT); !icon)
 				win::LastError{}.throwAlways();
+			else
+				return Icon{SharedIcon{icon,&::DestroyIcon}, dimensions};
+		}
+		
+		Icon
+		static load(win::Module source, win::ResourceId name, Size dimensions = Size{SystemMetric::cxIcon,SystemMetric::cyIcon})
+		{
+			if (auto const icon = (::HICON)::LoadImageW(source.handle(), name, 
+														IMAGE_ICON, 
+														dimensions.Width, dimensions.Height, 
+														LR_LOADTRANSPARENT); !icon)
+				win::LastError{}.throwAlways("LoadImage({:#06x}, {}, {}) failed", (void*)source.handle(), to_string(name), to_string(dimensions));
 			else
 				return Icon{SharedIcon{icon,&::DestroyIcon}, dimensions};
 		}

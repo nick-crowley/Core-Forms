@@ -31,10 +31,10 @@
 #include "controls/ButtonStyle.h"
 #include "controls/ComboBoxStyle.h"
 #include "controls/ListBoxStyle.h"
-#include "system/ResourceId.h"
 #include "graphics/Rectangle.h"
 #include "forms/WindowStyle.h"
 #include "forms/ExWindowStyle.h"
+#include "win/ResourceId.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -54,8 +54,8 @@ namespace core::forms
 		nstd::bitset<WindowStyle>    Style;
 		Rect                         Area;
 		uint32_t                     Ident;
-		std::optional<ResourceId>    Title;
-		std::optional<ResourceId>    ClassName;
+		std::optional<win::ResourceId> Title;
+		std::optional<win::ResourceId> ClassName;
 		std::vector<std::byte>       Data;
 
 	public:
@@ -75,10 +75,10 @@ namespace core::forms
 	public:
 		void
 		setOwnerDraw() {
-			ResourceId const static CustomStatic(L"Custom.STATIC");
-			ResourceId const static CustomButton(L"Custom.BUTTON");
-			ResourceId const static CustomListBox(L"Custom.COMBOBOX");
-			ResourceId const static CustomComboBox(L"Custom.LISTBOX");
+			win::ResourceId const static CustomStatic(L"Custom.STATIC");
+			win::ResourceId const static CustomButton(L"Custom.BUTTON");
+			win::ResourceId const static CustomListBox(L"Custom.COMBOBOX");
+			win::ResourceId const static CustomComboBox(L"Custom.LISTBOX");
 
 			if (this->ClassName == CustomStatic)
 				this->Style = (this->Style & ~StaticStyle::TypeMask) | StaticStyle::OwnerDraw;

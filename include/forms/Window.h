@@ -270,7 +270,7 @@ namespace core::forms
 		class FormsExport CreateWindowBuilder {
 		public:
 			Rect Area {CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT };
-			ResourceId Class;
+			win::ResourceId Class;
 			std::wstring_view Text;
 			WindowStyle Style = WindowStyle::None;
 			::HWND Parent = nullptr;

@@ -99,7 +99,7 @@ namespace core::forms
 		}
 
 		size_t
-		static measureResourceIdent(std::optional<ResourceId> const& r) 
+		static measureResourceIdent(std::optional<win::ResourceId> const& r) 
 		{	
 			if (!r) {
 				return sizeof(MissingIdent);
@@ -235,7 +235,7 @@ namespace core::forms
 		}
 	
 		void
-		writeResourceIdent(std::optional<ResourceId> const& r) 
+		writeResourceIdent(std::optional<win::ResourceId> const& r) 
 		{	
 			Invariant(this->bufferRemaining.size() >= measureResourceIdent(r));
 

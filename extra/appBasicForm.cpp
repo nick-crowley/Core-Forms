@@ -17,7 +17,7 @@ private:
 	forms::ButtonControl CancelBtn = IDCANCEL;
 
 public:
-	BasicForm() : base{forms::ResourceId{IDD_BASICFORM}, EarlyBoundControlCollection{&this->OkBtn, &this->CancelBtn}}
+	BasicForm() : base{win::ResourceId{IDD_BASICFORM}, EarlyBoundControlCollection{&this->OkBtn, &this->CancelBtn}}
 	{
 		this->OkBtn.Clicked += {*this, &BasicForm::Button_Clicked};
 		this->CancelBtn.Clicked += {*this, &BasicForm::Button_Clicked};

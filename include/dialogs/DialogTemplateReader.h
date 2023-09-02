@@ -151,7 +151,7 @@ namespace core::forms
 		}
 
 	protected:
-		std::optional<ResourceId>
+		std::optional<win::ResourceId>
 		readResourceIdent() 
 		{
 			auto* r = reinterpret_cast<VarLengthField const*>(this->Position);
@@ -162,12 +162,12 @@ namespace core::forms
 			}
 			else if (r->Type == ElementId::Stock) {
 				this->Position += sizeof(NumericIdent);
-				return std::make_optional<ResourceId>(r->Numeric.Ordinal);
+				return std::make_optional<win::ResourceId>(r->Numeric.Ordinal);
 			}
 			else {
 				std::wstring name = r->String.Text;
 				this->Position += nstd::sizeof_n<wchar_t>(name.length() + 1);
-				return std::make_optional<ResourceId>(std::move(name));
+				return std::make_optional<win::ResourceId>(std::move(name));
 			}
 		}
 	

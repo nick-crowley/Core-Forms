@@ -31,7 +31,7 @@
 #include "graphics/Graphics.h"
 #include "forms/AccessibilityFlags.h"
 #include "forms/WindowInfo.h"
-#include "system/ResourceId.h"
+#include "win/ResourceId.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -140,7 +140,7 @@ namespace core::forms
 	{
 	public:
 		struct ItemData {
-			using IdentOrIndex = std::variant<ResourceId,uint32_t>;
+			using IdentOrIndex = std::variant<win::ResourceId,uint32_t>;
 
 			ItemData(::DRAWITEMSTRUCT& data);
 

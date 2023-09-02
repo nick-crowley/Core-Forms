@@ -50,8 +50,8 @@ namespace core::forms
 			::WNDPROC	OriginalWndProc;
 
 		public:
-			WindowClass() : forms::WindowClass{ResourceId{PROGRESS_CLASS}}  {
-				this->Name = ResourceId{L"Custom.PROGRESS"};
+			WindowClass() : forms::WindowClass{win::ResourceId{PROGRESS_CLASS}}  {
+				this->Name = win::ResourceId{L"Custom.PROGRESS"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();

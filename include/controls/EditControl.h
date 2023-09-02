@@ -50,8 +50,8 @@ namespace core::forms
 			::WNDPROC	OriginalWndProc;
 
 		public:
-			WindowClass() : forms::WindowClass{ResourceId{WC_EDIT}}  {
-				this->Name = ResourceId{L"Custom.EDIT"};
+			WindowClass() : forms::WindowClass{win::ResourceId{WC_EDIT}}  {
+				this->Name = win::ResourceId{L"Custom.EDIT"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();

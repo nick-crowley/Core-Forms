@@ -29,6 +29,7 @@
 #include "library/core.Forms.h"
 #include "graphics/Rectangle.h"
 #include "system/SharedHandle.h"
+#include "win/Module.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -67,21 +68,44 @@ namespace core::forms
 			Depth{depth}
 		{
 		}
-
+		
+		explicit
+		Bitmap(::HBITMAP bmp)
+		  : Handle{ThrowIfNull(bmp)},
+			Depth{ColourDepth::bpp1}
+		{
+			if (::BITMAP info{}; !::GetObject(bmp, sizeof(info), &info))
+				win::LastError{}.throwAlways();
+			else {
+				this->Dimensions = {info.bmWidth,info.bmHeight};
+				this->Depth = static_cast<ColourDepth>(info.bmBitsPixel);
+			}
+		}
+		
 		Bitmap
-		static loadFromFile(std::wstring_view path) {
+		static load(std::wstring_view path) {
 		
 			if (auto const bitmap = (HBITMAP)::LoadImageW(nullptr, path.data(), 
 														  IMAGE_BITMAP, 
 														  0, 0, 
 														  LR_LOADFROMFILE); !bitmap)
 				win::LastError{}.throwAlways();
-			else if (::BITMAP info{}; !::GetObject(bitmap, sizeof(info), &info))
-				win::LastError{}.throwAlways();
-			else
-				return Bitmap{bitmap, {info.bmWidth,info.bmHeight}, static_cast<ColourDepth>(info.bmBitsPixel)};
+			else 
+				return Bitmap{bitmap};
 		}
-
+		
+		Bitmap
+		static load(win::Module source, win::ResourceId name) 
+		{
+			if (auto const bitmap = (::HBITMAP)::LoadImageW(source.handle(), name, 
+														    IMAGE_BITMAP, 
+														    0, 0, 
+														    NULL); !bitmap)
+				win::LastError{}.throwAlways("LoadImage({:#06x}, {}) failed", (void*)source.handle(), to_string(name));
+			else 
+				return Bitmap{bitmap};
+		}
+	
 		ColourDepth
 		depth() const
 		{

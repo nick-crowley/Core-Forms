@@ -50,8 +50,8 @@ namespace core::forms
 			::WNDPROC	OriginalWndProc;
 
 		public:
-			WindowClass() : forms::WindowClass{ResourceId{WC_LISTVIEW}}  {
-				this->Name = ResourceId{L"Custom.LISTVIEW"};
+			WindowClass() : forms::WindowClass{win::ResourceId{WC_LISTVIEW}}  {
+				this->Name = win::ResourceId{L"Custom.LISTVIEW"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();

@@ -67,8 +67,8 @@ namespace core::forms
 			::WNDPROC	OriginalWndProc;
 
 		public:
-			WindowClass() : forms::WindowClass{ResourceId{WC_LISTBOX}}  {
-				this->Name = ResourceId{L"Custom.LISTBOX"};
+			WindowClass() : forms::WindowClass{win::ResourceId{WC_LISTBOX}}  {
+				this->Name = win::ResourceId{L"Custom.LISTBOX"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();

@@ -67,8 +67,8 @@ namespace core::forms
 			::WNDPROC	OriginalWndProc;
 
 		public:
-			WindowClass() : forms::WindowClass{ResourceId{WC_BUTTON}}  {
-				this->Name = ResourceId{L"Custom.BUTTON"};
+			WindowClass() : forms::WindowClass{win::ResourceId{WC_BUTTON}}  {
+				this->Name = win::ResourceId{L"Custom.BUTTON"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();

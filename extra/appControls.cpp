@@ -26,7 +26,7 @@ private:
 	forms::ButtonControl OkBtn = IDOK;
 
 public:
-	ControlsForm() : base{forms::ResourceId{IDD_CONTROLS}, 
+	ControlsForm() : base{win::ResourceId{IDD_CONTROLS}, 
 		EarlyBoundControlCollection{
 			&this->ListGroup,
 			&this->StringList,

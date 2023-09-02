@@ -114,9 +114,9 @@ namespace core::forms
 		public:
 			::WNDPROC	OriginalWndProc;
 		public:
-			WindowClass() : forms::WindowClass(ResourceId::parse(WC_DIALOG))
+			WindowClass() : forms::WindowClass(win::ResourceId::parse(WC_DIALOG))
 			{
-				this->Name = ResourceId{L"Custom.DIALOG"};
+				this->Name = win::ResourceId{L"Custom.DIALOG"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Dialog::InterceptMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();
@@ -134,7 +134,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		// NB: Fields ordered for debugging convenience
-		ResourceId const                DialogId;
+		win::ResourceId const           DialogId;
 		std::optional<DialogMode const>	DisplayMode;
 		::DLGPROC const					DialogProc = Dialog::DefaultDialogHandler;
 		DialogTemplate const            Template;
@@ -146,12 +146,12 @@ namespace core::forms
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
-		Dialog(ResourceId resource, EarlyBoundControlCollection controls = {})
-		  : Dialog{resource, forms::ProcessModule, controls}
+		Dialog(win::ResourceId resource, EarlyBoundControlCollection controls = {})
+		  : Dialog{resource, win::ProcessModule, controls}
 		{
 		}
 
-		Dialog(ResourceId resource, Module source, EarlyBoundControlCollection controls = {})
+		Dialog(win::ResourceId resource, win::Module source, EarlyBoundControlCollection controls = {})
 		  : DialogId{resource},
 		    Template{DialogTemplateReader{source.loadResource(resource, RT_DIALOG)}.readTemplate()},
 			EarlyBoundControls{controls}
@@ -265,7 +265,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void 
-		virtual createEmbedded(Module source, Window& parent, Border border)
+		virtual createEmbedded(win::Module source, Window& parent, Border border)
 		{
 			auto const Area = parent.clientRect() - border;
 			this->createInternal(source, DialogMode::NonModal, &parent);
@@ -276,11 +276,11 @@ namespace core::forms
 		void 
 		virtual createEmbedded(Window& parent, Border border)
 		{
-			this->createEmbedded(forms::ProcessModule, parent, border);
+			this->createEmbedded(win::ProcessModule, parent, border);
 		}
 
 		void 
-		virtual createModeless(Module source, Window* parent = nullptr)
+		virtual createModeless(win::Module source, Window* parent = nullptr)
 		{
 			this->createInternal(source, DialogMode::NonModal, parent);
 		}
@@ -288,7 +288,7 @@ namespace core::forms
 		void 
 		virtual createModeless(Window* parent = nullptr)
 		{
-			this->createModeless(forms::ProcessModule, parent);
+			this->createModeless(win::ProcessModule, parent);
 		}
 		
 		Response 
@@ -338,7 +338,7 @@ namespace core::forms
 		}
 	
 		intptr_t 
-		virtual showModal(Module source, Window* parent = nullptr)
+		virtual showModal(win::Module source, Window* parent = nullptr)
 		{
 			return *this->createInternal(source, DialogMode::Modal, parent);
 		}
@@ -346,7 +346,7 @@ namespace core::forms
 		intptr_t 
 		virtual showModal(Window* parent = nullptr)
 		{
-			return this->showModal(forms::ProcessModule, parent);
+			return this->showModal(win::ProcessModule, parent);
 		}
 	
 	protected:
@@ -428,7 +428,7 @@ namespace core::forms
 		}*/
 	private:
 		std::optional<intptr_t>
-		createInternal(Module source, DialogMode mode, Window* parent)
+		createInternal(win::Module source, DialogMode mode, Window* parent)
 		{
 			// Change the wndclass for the dialog
 			auto customTemplate = this->Template;
@@ -445,16 +445,16 @@ namespace core::forms
 					if (ctrl.ClassName && this->BoundControls.contains(ctrl.Ident)) {
 						if (ctrl.ClassName->is_numeric())
 							switch (uint16_t id = ctrl.ClassName->as_number(); id) {
-							case ClassId::Button:    ctrl.ClassName = ResourceId(L"Custom.BUTTON");    break;
-							case ClassId::Edit:      ctrl.ClassName = ResourceId(L"Custom.EDIT");      break;
-							case ClassId::Static:    ctrl.ClassName = ResourceId(L"Custom.STATIC");    break;
-							case ClassId::Listbox:   ctrl.ClassName = ResourceId(L"Custom.LISTBOX");   break;
-							case ClassId::Scrollbar: ctrl.ClassName = ResourceId(L"Custom.SCROLLBAR"); break;
-							case ClassId::Combobox:  ctrl.ClassName = ResourceId(L"Custom.COMBOBOX");  break;
+							case ClassId::Button:    ctrl.ClassName = win::ResourceId(L"Custom.BUTTON");    break;
+							case ClassId::Edit:      ctrl.ClassName = win::ResourceId(L"Custom.EDIT");      break;
+							case ClassId::Static:    ctrl.ClassName = win::ResourceId(L"Custom.STATIC");    break;
+							case ClassId::Listbox:   ctrl.ClassName = win::ResourceId(L"Custom.LISTBOX");   break;
+							case ClassId::Scrollbar: ctrl.ClassName = win::ResourceId(L"Custom.SCROLLBAR"); break;
+							case ClassId::Combobox:  ctrl.ClassName = win::ResourceId(L"Custom.COMBOBOX");  break;
 							default: throw invalid_argument{"Controls with class id #{0} not yet supported", id};
 							}
-						else if (ctrl.ClassName == ResourceId{WC_LINK})
-							ctrl.ClassName = ResourceId(L"Custom.LINK");
+						else if (ctrl.ClassName == win::ResourceId{WC_LINK})
+							ctrl.ClassName = win::ResourceId(L"Custom.LINK");
 
 						CreateWindowParameter param(this->BoundControls[ctrl.Ident]);
 						ctrl.Data = param.asBytes();
