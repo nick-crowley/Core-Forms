@@ -340,6 +340,7 @@ namespace core::forms
 		intptr_t 
 		virtual showModal(win::Module source, Window* parent = nullptr)
 		{
+			// FIXME: It'd be preferable if Dialog::showModal() were not virtual so it could be a template
 			return *this->createInternal(source, DialogMode::Modal, parent);
 		}
 	
