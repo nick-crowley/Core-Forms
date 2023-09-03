@@ -402,16 +402,24 @@ namespace core::forms
 			}
 		};
 		
-		//! @brief	Virtual collection of direct-child windows
+		//! @brief	Collection of (direct) child windows
+		//! @details  Enumeration occurs over a fixed-length snapshot taken by @c begin()
 		//! @remarks  Requires the declaration of @c HierarchyIterator, above
 		class FormsExport ChildWindowCollection 
 		{
+			template <nstd::AnyOf<Window,Window const> MaybeConstWindow>
+			using iterator_t = boost::transform_iterator<std::decay_t<MaybeConstWindow&(::HWND)>, HierarchyIterator>;
+
+			template <typename From, typename To>
+				requires std::is_reference_v<From>
+			using mirror_cv_ref_t = nstd::mirror_cv_t<std::remove_reference_t<From>, To>;
+
 		public:
-			using const_iterator = boost::transform_iterator<std::decay_t<Window*(::HWND)>, HierarchyIterator>;
-			using iterator = const_iterator;
-			using value_type = Window*;
-			using reference = Window*&;
-			using const_reference = Window* const&;
+			using const_iterator = iterator_t<Window const>;
+			using iterator = iterator_t<Window>;
+			using value_type = Window;
+			using reference = Window&;
+			using const_reference = Window const&;
 			using size_type = size_t;
 			using difference_type = ptrdiff_t;
 	
@@ -422,27 +430,48 @@ namespace core::forms
 			ChildWindowCollection(const Window& owner) : Parent{owner}
 			{}
 
-		private:
-			static Window*
-			lookupWindow(::HWND handle) {
-				return Window::ExistingWindows[handle];
+		public:
+			template <typename Self>
+			iterator_t<mirror_cv_ref_t<Self,Window>>
+			begin(this Self&& self) {
+				Invariant(self.Parent.exists());
+				return boost::make_transform_iterator(
+					HierarchyIterator{ self.Parent.handle(), HierarchyIterator::DirectDescendants }, 
+					&ChildWindowCollection::lookupWindow<mirror_cv_ref_t<Self,Window>>
+				);
 			}
 
+			template <typename Self>
+			iterator_t<mirror_cv_ref_t<Self,Window>>
+			end(this Self&& self) {
+				return boost::make_transform_iterator(
+					HierarchyIterator{}, 
+					&ChildWindowCollection::lookupWindow<mirror_cv_ref_t<Self,Window>>
+				);
+			}
+			
+			template <typename Self>
+			nstd::return_t<mirror_cv_ref_t<Self, Window>&>
+			operator[](this Self&& self, uint16_t const id)  {
+				return *Window::ExistingWindows[self.handle(id)];
+			}
+
+		private:
+			template <nstd::AnyOf<Window,Window const> ReturnType>
+			nstd::return_t<ReturnType&>
+			static lookupWindow(::HWND handle) {
+				return *Window::ExistingWindows[handle];
+			}
+			
 		public:
 			const_iterator
-			begin() const {
-				Invariant(this->Parent.exists());
-				return boost::make_transform_iterator(
-					HierarchyIterator{ this->Parent.handle(), HierarchyIterator::DirectDescendants }, 
-					&ChildWindowCollection::lookupWindow
-				);
+			cbegin() const {
+				return this->begin();
 			}
 
 			const_iterator
-			end() const {
-				return boost::make_transform_iterator(
-					HierarchyIterator{}, &ChildWindowCollection::lookupWindow
-				);
+			cend() const {
+				return this->end();
 			}
 
 			bool
@@ -463,11 +492,6 @@ namespace core::forms
 
 			size_type
 			size() const = delete;
-
-			Window&
-			operator[](uint16_t const id) const {
-				return *Window::ExistingWindows[this->handle(id)];
-			}
 		};
 	
 		//! @brief	Enhances message results with state indicating whether they were handled at all
@@ -1044,12 +1068,8 @@ namespace core::forms
 	
 		Response 
 		virtual onDestroy() {
-			// NB: Destroying child controls while iterating over them would invalidate the 
-			//     iterators because child-control collection is a virtual view
-			std::list<Window*> const controls { this->Children.begin(), this->Children.end() };
-			for (Window* const c : controls) {   // FIXME: Should ChildWindowCollection be std::ranges::view instead?
-				c->destroy();
-			}
+			for (Window& c : this->Children)
+				c.destroy();
 
 			return Unhandled;
 		}
