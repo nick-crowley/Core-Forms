@@ -138,34 +138,6 @@ namespace core::forms
 			}
 		};
 
-		//! @brief	Virtual collection of registered timers for this window
-		class FormsExport TimerCollection
-		{
-			Window& Owner;
-
-		public:
-			TimerCollection(Window& wnd) : Owner{wnd}
-			{}
-		
-			satisfies(TimerCollection,
-				NotCopyable,
-				NotEqualityComparable
-			);
-
-		public:
-			void
-			add(uintptr_t ident, chrono::milliseconds period) {
-				if (!::SetTimer(this->Owner.handle(), ident, win::DWord{period.count()}, nullptr))
-					win::LastError{}.throwAlways("Failed to set timer #{}", std::to_string(ident));
-			}
-		
-			void
-			remove(uintptr_t ident) {
-				if (!::KillTimer(this->Owner.handle(), ident))
-					win::LastError{}.throwAlways("Failed to cancel timer #{}", std::to_string(ident));
-			}
-		};
-
 	protected:
 		//! @brief	Extends MSAA implementation to provide this window's _accessibility role_
 		class FormsExport Accessible : public AccessibleDecorator {
@@ -350,6 +322,34 @@ namespace core::forms
 			}
 		};
 		
+		//! @brief	Virtual collection of registered timers for this window
+		class FormsExport TimerCollection
+		{
+			Window& Owner;
+
+		public:
+			TimerCollection(Window& wnd) : Owner{wnd}
+			{}
+		
+			satisfies(TimerCollection,
+				NotCopyable,
+				NotEqualityComparable
+			);
+
+		public:
+			void
+			add(uintptr_t ident, chrono::milliseconds period) {
+				if (!::SetTimer(this->Owner.handle(), ident, win::DWord{period.count()}, nullptr))
+					win::LastError{}.throwAlways("Failed to set timer #{}", std::to_string(ident));
+			}
+		
+			void
+			remove(uintptr_t ident) {
+				if (!::KillTimer(this->Owner.handle(), ident))
+					win::LastError{}.throwAlways("Failed to cancel timer #{}", std::to_string(ident));
+			}
+		};
+
 		//! @brief	Logging sentry customized for the re-entrant nature of window procedures
 		class FormsExport WndProcLoggingSentry {
 		private:
