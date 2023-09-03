@@ -286,6 +286,12 @@ namespace core::forms
 				StateDescription(ProcessingState s, gsl::czstring const msg) 
 				  : State(s), Message(msg) 
 				{}
+
+			public:
+				satisfies(StateDescription,
+					IsRegular noexcept,
+					NotSortable
+				);
 			};
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
@@ -294,10 +300,16 @@ namespace core::forms
 			StateDescription     State {ProcessingState::NotApplicable};
 			std::array<char,16>	 Text  {};
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
-		public:
-			DebuggingAide() = default;
+		
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+		public:
+			satisfies(DebuggingAide,
+				IsDefaultConstructible noexcept,
+				IsCopyConstructible noexcept,
+				NotCopyAssignable,
+				IsEqualityComparable,
+				NotSortable
+			);
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
