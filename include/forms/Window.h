@@ -171,59 +171,6 @@ namespace core::forms
 			}
 		};
 
-		//! @brief	Collection of core-forms windows
-		class FormsExport ExistingWindowCollection {
-			using RawHandleDictionary = std::map<::HWND, Window*>;
-
-		public:
-			using key_type = ::HWND;
-			using mapped_type = Window*;
-
-		private:
-			RawHandleDictionary	Storage;
-
-		public:
-			ExistingWindowCollection() = default;
-
-		public:
-			mapped_type
-			at(key_type handle) const & {
-				if (auto const pos = this->Storage.find(handle); pos == this->Storage.end())
-					throw runtime_error{"Unrecognised window handle {}", to_hexString<8>(uintptr_t(handle))};
-				else
-					return pos->second;
-			}
-
-			bool 
-			contains(key_type handle) const {
-				return this->Storage.contains(handle);
-			}
-			
-			std::optional<mapped_type>
-			find(key_type handle) const & {
-				if (auto const pos = this->Storage.find(handle); pos == this->Storage.end())
-					return std::nullopt;
-				else
-					return pos->second;
-			}
-
-			mapped_type
-			operator[](key_type handle) const & {
-				return this->Storage.at(handle);
-			}
-
-		public:
-			void 
-			add(key_type handle, mapped_type object) {
-				this->Storage.emplace(handle, object);
-			}
-
-			void 
-			remove(key_type handle) {
-				this->Storage.extract(handle);
-			}
-		};
-
 #		pragma pack (push, 1)
 		//! @brief	Represents custom data provided at Window construction
 		//! @remarks	Modifying layout will break ABI compatibility
@@ -328,6 +275,59 @@ namespace core::forms
 			}
 		};
 		
+		//! @brief	Collection of core-forms windows
+		class FormsExport ExistingWindowCollection {
+			using RawHandleDictionary = std::map<::HWND, Window*>;
+
+		public:
+			using key_type = ::HWND;
+			using mapped_type = Window*;
+
+		private:
+			RawHandleDictionary	Storage;
+
+		public:
+			ExistingWindowCollection() = default;
+
+		public:
+			mapped_type
+			at(key_type handle) const & {
+				if (auto const pos = this->Storage.find(handle); pos == this->Storage.end())
+					throw runtime_error{"Unrecognised window handle {}", to_hexString<8>(uintptr_t(handle))};
+				else
+					return pos->second;
+			}
+
+			bool 
+			contains(key_type handle) const {
+				return this->Storage.contains(handle);
+			}
+			
+			std::optional<mapped_type>
+			find(key_type handle) const & {
+				if (auto const pos = this->Storage.find(handle); pos == this->Storage.end())
+					return std::nullopt;
+				else
+					return pos->second;
+			}
+
+			mapped_type
+			operator[](key_type handle) const & {
+				return this->Storage.at(handle);
+			}
+
+		public:
+			void 
+			add(key_type handle, mapped_type object) {
+				this->Storage.emplace(handle, object);
+			}
+
+			void 
+			remove(key_type handle) {
+				this->Storage.extract(handle);
+			}
+		};
+
 		//! @brief	Enhances message results with state indicating whether they were handled at all
 		class FormsExport Response {
 		public:
