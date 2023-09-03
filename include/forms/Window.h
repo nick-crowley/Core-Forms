@@ -221,46 +221,56 @@ namespace core::forms
 			CreateWindowBuilder() = default;
 		};
 	
-		//! @brief	Tracks the Window life-cycle and identifies current high-level processing loop
-		class FormsExport ProcessingState {
-		public:
-			enum CurrentState { NotApplicable, BeingCreated, BeingDestroyed, Idle, 
-				DefaultProcessing, DialogProcessing, MessageProcessing, EventProcessing, NotificationProcessing };
-
-		public:
-			CurrentState State;
-			gsl::czstring Message = "";
-
-		public:
-			implicit
-			ProcessingState(CurrentState s) 
-			  : State(s)
-			{}
-
-			ProcessingState(CurrentState s, gsl::czstring const msg) 
-			  : State(s), Message(msg) 
-			{}
+		//! @brief	Identifies current high-level processing loop
+		enum class ProcessingState { 
+			NotApplicable, 
+			BeingCreated, 
+			BeingDestroyed, 
+			Idle, 
+			DefaultProcessing, 
+			DialogProcessing, 
+			MessageProcessing, 
+			EventProcessing, 
+			NotificationProcessing 
 		};
 
-		//! @brief	Identifies the window, its state, and its current message-processing loop
+		//! @brief	Provides useful details for display within the debugger (Eg. window text, window class, and message-handler)
 		class FormsExport DebuggingAide 
 		{
+		private:
+			class FormsExport StateDescription {
+			public:
+				ProcessingState State;
+				gsl::czstring   Message = "";
+
+			public:
+				implicit
+				StateDescription(ProcessingState s) 
+				  : State(s)
+				{}
+
+				StateDescription(ProcessingState s, gsl::czstring const msg) 
+				  : State(s), Message(msg) 
+				{}
+			};
+
+		private:
 			uint32_t const       MagicNumber = 12345678;
 			std::array<char,16>  Class {};
-			ProcessingState      State {ProcessingState::NotApplicable};
+			StateDescription     State {ProcessingState::NotApplicable};
 			std::array<char,16>	 Text  {};
 
 		public:
 			DebuggingAide() = default;
 		
 		public:
-			ProcessingState
-			setState(ProcessingState newstate) {
+			StateDescription
+			setState(StateDescription newstate) {
 				return std::exchange(this->State, newstate);
 			}
 		
-			ProcessingState
-			setState(ProcessingState state, std::wstring_view cls, std::wstring_view txt) {
+			StateDescription
+			setState(StateDescription state, std::wstring_view cls, std::wstring_view txt) {
 				// Copy short preview; assume text is latin charset
 				*ranges::transform(views::take(cls,lengthof(this->Class)-1), this->Class.begin(), nstd::convert_to<char>).out = '\0';
 				*ranges::transform(views::take(txt,lengthof(this->Text)-1), this->Text.begin(), nstd::convert_to<char>).out = '\0';
@@ -268,7 +278,7 @@ namespace core::forms
 			}
 		
 			auto
-			setTemporaryState(ProcessingState newState) {
+			setTemporaryState(StateDescription newState) {
 				return gsl::finally([this, prev = this->setState(newState)]{ 
 					this->State = prev; 
 				});
