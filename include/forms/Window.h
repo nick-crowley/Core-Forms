@@ -516,8 +516,8 @@ namespace core::forms
 
 	protected:
 		//! @remarks Due to message handling being re-entrant there is a significant delay 
-		//!          between releasing smart-pointer and the release delegate returning.
-		//!          Therefore raw-pointers are preferable here due to simplicity.
+		//!          between releasing a smart-pointer and its release delegate returning,
+		//!          so the raw-pointer window handle is preferable here for simplicity.
 		::HWND                  Handle = nullptr;
 		std::optional<Brush>    Background;
 		DebuggingAide           Debug;
