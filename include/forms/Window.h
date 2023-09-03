@@ -54,13 +54,20 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
+	//! @brief	Manages the life-cycle and behaviour of a single window
 	class FormsExport Window 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		//! @brief	Enhances message results with state indicating whether they were handled at all
 		class FormsExport Response {
 		public:
-			enum Result { Invalid, Handled, Unhandled, Error };
+			enum Result { 
+				Invalid,        //!< [internal] Design flaw within wndproc
+				Handled,        //!< Message was handled 
+				Unhandled,      //!< Message wasn't handled
+				Error           //!< Error during handling [result will be 'unhandled']
+			};
 
 		public:
 			Result                    Status = Invalid;
@@ -81,6 +88,7 @@ namespace core::forms
 			);
 		};
 
+		//! @brief	Virtual collection of direct-child windows
 		class FormsExport ChildWindowCollection {
 			using const_iterator = boost::transform_iterator<std::decay_t<Window*(::HWND)>, ConstChildWindowIterator>;
 	
@@ -129,7 +137,7 @@ namespace core::forms
 			}
 		};
 
-		//! Encapsulates registered window timers
+		//! @brief	Virtual collection of registered timers for this window
 		class FormsExport TimerCollection
 		{
 			Window& Owner;
@@ -158,6 +166,7 @@ namespace core::forms
 		};
 
 	protected:
+		//! @brief	Extends MSAA implementation to provide this window's _accessibility role_
 		class FormsExport Accessible : public AccessibleDecorator {
 			using base = AccessibleDecorator;
 
@@ -183,6 +192,7 @@ namespace core::forms
 			}
 		};
 
+		//! @brief	Collection of core-forms windows
 		class FormsExport ExistingWindowCollection {
 			using RawHandleDictionary = std::map<::HWND, Window*>;
 			using key_t = ::HWND;
@@ -266,6 +276,7 @@ namespace core::forms
 		static_assert(sizeof(CreateWindowParameter) == nstd::sizeof_v<Window*> + nstd::sizeof_n<uint16_t>(2));
 #		pragma pack (pop)
 
+		//! @brief	Simplifies providing multiple window construction parameters
 		class FormsExport CreateWindowBuilder {
 		public:
 			Rect Area {CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT };
@@ -281,6 +292,7 @@ namespace core::forms
 			CreateWindowBuilder() = default;
 		};
 	
+		//! @brief	Logging sentry customized for the re-entrant nature of window procedures
 		class FormsExport WndProcLoggingSentry {
 		private:
 			std::string  Text;
@@ -371,7 +383,7 @@ namespace core::forms
 		};
 
 	private:
-		//! @brief	Dictionary of message names and special handling requirements
+		//! @brief	Dictionary of message names, expected return values, and special logging requirements
 		class FormsExport MessageDictionary  {
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		private:
@@ -457,22 +469,28 @@ namespace core::forms
 		};
 
 	private:
+		//! @brief	Window beneath the cursor, if any
 		nstd::return_t<Window const*>
 		static BeneathCursor;
 		
+		//! @brief	String representation of all known Windows messages (documented and undocumented)
 		std::array<gsl::czstring,1024> const
 		static MessageNames;
 
 	public:
+		//! @brief	Sentinel: the message was not handled
 		Response const  
 		static inline Unhandled { Response::Unhandled };
 
+		//! @brief	Sentinel: error processing message
 		Response const
 		static inline Error { Response::Error };
 
+		//! @brief	All windows created by core-forms
 		ExistingWindowCollection 
 		static ExistingWindows; 
 
+		//! @brief	All window messages and their return values
 		MessageDictionary
 		static MessageDatabase;
 		
