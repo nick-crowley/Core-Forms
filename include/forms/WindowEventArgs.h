@@ -44,6 +44,8 @@
 namespace core::forms
 {
 	class FormsExport Window;
+	using WindowRef = std::reference_wrapper<Window>;
+
 	using WindowDelegate = Delegate<void (Window&)>;
 	using WindowEvent = ObservableEvent<WindowDelegate>;
 	
@@ -156,7 +158,7 @@ namespace core::forms
 		ItemData                    Item;
 		mutable DeviceContext       Graphics;
 		OwnerDrawControl            Type;
-		std::optional<Window*>      Window;
+		std::optional<WindowRef>    Window;
 
 	public:
 		OwnerDrawEventArgs(::WPARAM w, ::LPARAM l);

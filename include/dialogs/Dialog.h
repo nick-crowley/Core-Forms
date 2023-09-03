@@ -182,20 +182,19 @@ namespace core::forms
 			try {
 				gsl::czstring const name = Window::MessageDatabase.name(message);
 				Response response;
-				Dialog* dlg {};
-			
+				
 				if (Window::ExistingWindows.contains(hDlg)) 
 				{
-					dlg = static_cast<Dialog*>(Window::ExistingWindows[hDlg]);
+					Dialog& dlg = static_cast<Dialog&>(Window::ExistingWindows[hDlg]);
 
 					scoped {
-						auto const on_exit = dlg->Debug.setTemporaryState({ProcessingState::DialogProcessing,name});
-						response = dlg->offerMessage(hDlg, message, wParam, lParam);
+						auto const on_exit = dlg.Debug.setTemporaryState({ProcessingState::DialogProcessing,name});
+						response = dlg.offerMessage(hDlg, message, wParam, lParam);
 					}
 
 					scoped {
-						auto const on_exit = dlg->Debug.setTemporaryState({ProcessingState::EventProcessing,name});
-						dlg->raiseMessageEvent(hDlg, message, wParam, lParam);
+						auto const on_exit = dlg.Debug.setTemporaryState({ProcessingState::EventProcessing,name});
+						dlg.raiseMessageEvent(hDlg, message, wParam, lParam);
 					}
 				}
 				else if (message == WM_SETFONT) {

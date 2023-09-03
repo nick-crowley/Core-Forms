@@ -45,7 +45,9 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+namespace core::forms {
+	class FormsExport Window;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -53,6 +55,8 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
+	using WindowRef = std::reference_wrapper<Window>;
+
 	//! @brief	Manages the life-cycle and behaviour of a single window
 	class FormsExport Window 
 	{
@@ -287,10 +291,19 @@ namespace core::forms
 		//! @brief	Collection of core-forms windows
 		class FormsExport ExistingWindowCollection {
 			using RawHandleDictionary = std::map<::HWND, Window*>;
+			
+			template <typename From, typename To>
+				requires std::is_reference_v<From>
+			using mirror_cv_ref_t = nstd::mirror_cv_t<std::remove_reference_t<From>, To>;
 
 		public:
 			using key_type = ::HWND;
-			using mapped_type = Window*;
+			using mapped_type = Window;
+			using value_type = meta::undefined_t;
+			using reference = Window&;
+			using const_reference = Window const&;
+			using size_type = std::size_t;
+			using difference_type = std::ptrdiff_t;
 
 		private:
 			RawHandleDictionary	Storage;
@@ -299,36 +312,38 @@ namespace core::forms
 			ExistingWindowCollection() = default;
 
 		public:
-			mapped_type
-			at(key_type handle) const & {
-				if (auto const pos = this->Storage.find(handle); pos == this->Storage.end())
+			template <typename Self>
+			mirror_cv_ref_t<Self, Window>&
+			at(this Self&& self, key_type handle) {
+				if (auto const pos = self.Storage.find(handle); pos == self.Storage.end())
 					throw runtime_error{"Unrecognised window handle {}", to_hexString<8>(uintptr_t(handle))};
 				else
-					return pos->second;
+					return *pos->second;
 			}
 
+			template <typename Self>
+			mirror_cv_ref_t<Self, Window>&
+			operator[](this Self&& self, key_type handle) {
+				return *self.Storage.at(handle);
+			}
+
+		public:
 			bool 
 			contains(key_type handle) const {
 				return this->Storage.contains(handle);
 			}
 			
-			std::optional<mapped_type>
+			std::optional<WindowRef>
 			find(key_type handle) const & {
 				if (auto const pos = this->Storage.find(handle); pos == this->Storage.end())
 					return std::nullopt;
 				else
-					return pos->second;
+					return *pos->second;
 			}
-
-			mapped_type
-			operator[](key_type handle) const & {
-				return this->Storage.at(handle);
-			}
-
 		public:
 			void 
-			add(key_type handle, mapped_type object) {
-				this->Storage.emplace(handle, object);
+			add(key_type handle, reference object) {
+				this->Storage.emplace(handle, &object);
 			}
 
 			void 
@@ -453,14 +468,14 @@ namespace core::forms
 			template <typename Self>
 			nstd::return_t<mirror_cv_ref_t<Self, Window>&>
 			operator[](this Self&& self, uint16_t const id)  {
-				return *Window::ExistingWindows[self.handle(id)];
+				return Window::ExistingWindows[self.handle(id)];
 			}
 
 		private:
 			template <nstd::AnyOf<Window,Window const> ReturnType>
 			nstd::return_t<ReturnType&>
 			static lookupWindow(::HWND handle) {
-				return *Window::ExistingWindows[handle];
+				return Window::ExistingWindows[handle];
 			}
 			
 		public:
@@ -665,14 +680,13 @@ namespace core::forms
 			Invariant(args.data<CreateWindowParameter*>() != nullptr);
 			auto* const param = args.data<CreateWindowParameter*>();
 			Window* pThis = param->get();
-		
-			Window::ExistingWindows.add(hWnd, pThis);
-			Invariant(Window::ExistingWindows[hWnd] != nullptr);
 
 			pThis->Handle = hWnd;
 			pThis->Debug.setState(ProcessingState::BeingCreated,
 								  args.Data->lpszClass, 
 								  args.Data->lpszName);	// Not yet set for dialog controls
+			
+			Window::ExistingWindows.add(hWnd, *pThis);
 		}
 	
 		Response 
@@ -713,7 +727,7 @@ namespace core::forms
 				if (!Window::ExistingWindows.contains(hWnd)) 
 					response = onUnexpectedMessage(hWnd, message, wParam, lParam);
 				else {
-					wnd = Window::ExistingWindows[hWnd];
+					wnd = &Window::ExistingWindows[hWnd];
 
 					// Window lifetime tracking
 					if (message == WM_DESTROY) 
@@ -850,7 +864,7 @@ namespace core::forms
 		Window*
 		parent() const {
 			auto const wnd = ::GetParent(this->handle());
-			return wnd ? Window::ExistingWindows[wnd] : nullptr;
+			return wnd ? &Window::ExistingWindows[wnd] : nullptr;
 		}
 		
 		template <unsigned MessageId>
@@ -1080,7 +1094,7 @@ namespace core::forms
 			// [CONTROL] Reflect notification back to child control
 			if (args.Source == CommandEventArgs::Control) 
 				if (Window::ExistingWindows.contains(args.Notification->Handle))
-					return Window::ExistingWindows[args.Notification->Handle]->offerNotification(args.Notification->Code);
+					return Window::ExistingWindows[args.Notification->Handle].offerNotification(args.Notification->Code);
 
 			// [DEBUG] Notification from child window we didn't create
 			if (args.Source == CommandEventArgs::Control) {
@@ -1160,8 +1174,8 @@ namespace core::forms
 	
 		Response 
 		virtual onOwnerDraw(OwnerDrawEventArgs args) {
-			if (args.Window && (*args.Window) != this)
-				return (*args.Window)->onOwnerDraw(args);
+			if (args.Window && this != &args.Window->get())
+				return args.Window->get().onOwnerDraw(args);
 
 			return Unhandled;
 		}
