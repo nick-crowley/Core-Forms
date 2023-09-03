@@ -288,10 +288,6 @@ namespace core::forms
 		class FormsExport ExistingWindowCollection {
 			using RawHandleDictionary = std::map<::HWND, Window*>;
 			
-			template <typename From, typename To>
-				requires std::is_reference_v<From>
-			using mirror_cv_ref_t = nstd::mirror_cv_t<std::remove_reference_t<From>, To>;
-
 		public:
 			using key_type = ::HWND;
 			using mapped_type = Window;
@@ -309,7 +305,7 @@ namespace core::forms
 
 		public:
 			template <typename Self>
-			mirror_cv_ref_t<Self, Window>&
+			nstd::mirror_cv_ref_t<Self, Window>&
 			at(this Self&& self, key_type handle) {
 				if (auto const pos = self.Storage.find(handle); pos == self.Storage.end())
 					throw runtime_error{"Unrecognised window handle {}", to_hexString<8>(uintptr_t(handle))};
@@ -318,7 +314,7 @@ namespace core::forms
 			}
 
 			template <typename Self>
-			mirror_cv_ref_t<Self, Window>&
+			nstd::mirror_cv_ref_t<Self, Window>&
 			operator[](this Self&& self, key_type handle) {
 				return *self.Storage.at(handle);
 			}
@@ -421,10 +417,6 @@ namespace core::forms
 			template <nstd::AnyOf<Window,Window const> MaybeConstWindow>
 			using iterator_t = boost::transform_iterator<std::decay_t<MaybeConstWindow&(::HWND)>, HierarchyIterator>;
 
-			template <typename From, typename To>
-				requires std::is_reference_v<From>
-			using mirror_cv_ref_t = nstd::mirror_cv_t<std::remove_reference_t<From>, To>;
-
 		public:
 			using const_iterator = iterator_t<Window const>;
 			using iterator = iterator_t<Window>;
@@ -443,26 +435,26 @@ namespace core::forms
 
 		public:
 			template <typename Self>
-			iterator_t<mirror_cv_ref_t<Self,Window>>
+			iterator_t<nstd::mirror_cv_ref_t<Self,Window>>
 			begin(this Self&& self) {
 				Invariant(self.Parent.exists());
 				return boost::make_transform_iterator(
 					HierarchyIterator{ self.Parent.handle(), HierarchyIterator::DirectDescendants }, 
-					&ChildWindowCollection::lookupWindow<mirror_cv_ref_t<Self,Window>>
+					&ChildWindowCollection::lookupWindow<nstd::mirror_cv_ref_t<Self,Window>>
 				);
 			}
 
 			template <typename Self>
-			iterator_t<mirror_cv_ref_t<Self,Window>>
+			iterator_t<nstd::mirror_cv_ref_t<Self,Window>>
 			end(this Self&& self) {
 				return boost::make_transform_iterator(
 					HierarchyIterator{}, 
-					&ChildWindowCollection::lookupWindow<mirror_cv_ref_t<Self,Window>>
+					&ChildWindowCollection::lookupWindow<nstd::mirror_cv_ref_t<Self,Window>>
 				);
 			}
 			
 			template <typename Self>
-			nstd::return_t<mirror_cv_ref_t<Self, Window>&>
+			nstd::return_t<nstd::mirror_cv_ref_t<Self, Window>&>
 			operator[](this Self&& self, uint16_t const id)  {
 				return Window::ExistingWindows[self.handle(id)];
 			}
