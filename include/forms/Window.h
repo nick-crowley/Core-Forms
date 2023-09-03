@@ -666,7 +666,12 @@ namespace core::forms
 					cdebugger << this->Text << std::endl;
 			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+		public:
+			satisfies(WndProcLoggingSentry,
+				NotCopyable,
+				NotEqualityComparable,
+				NotSortable
+			);
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
