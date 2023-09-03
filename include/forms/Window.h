@@ -355,10 +355,13 @@ namespace core::forms
 		private:
 			RawHandleDictionary	Storage;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
-		public:
-			ExistingWindowCollection() = default;
+		
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+		public:
+			satisfies(ExistingWindowCollection,
+				IsRegular,
+				NotSortable
+			);
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			template <typename Self>
