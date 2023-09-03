@@ -144,57 +144,6 @@ namespace core::forms
 			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		};
 
-	public:
-		//! @brief	Virtual collection of direct-child windows
-		class FormsExport ChildWindowCollection {
-			using const_iterator = boost::transform_iterator<std::decay_t<Window*(::HWND)>, ConstChildWindowIterator>;
-	
-		private:
-			const Window&  Parent;
-
-		public:
-			ChildWindowCollection(const Window& owner) : Parent(owner)
-			{}
-
-		public:
-			const_iterator
-			begin() const {
-				return boost::make_transform_iterator(
-					ConstChildWindowIterator{ this->Parent.handle() }, 
-					[](::HWND w) { return Window::ExistingWindows[w]; }
-				);
-			}
-
-			const_iterator
-			end() const {
-				return boost::make_transform_iterator(
-					ConstChildWindowIterator::npos, 
-					[](::HWND w) { return Window::ExistingWindows[w]; }
-				);
-			}
-
-			bool
-			contains(uint16_t const id) const {
-				return Window::ExistingWindows.contains(this->handle(id));	//!< BUG: Returns `true` for any managed window
-			}
-		
-			bool
-			exists(uint16_t const id) const {
-				return this->handle(id) != nullptr;
-			}
-
-			::HWND
-			handle(uint16_t const id) const {
-				// BUG: Docs state ::GetWindow() doesn't work like this at all
-				return ::GetWindow(this->Parent.handle(), id);
-			}
-
-			Window&
-			operator[](uint16_t const id) const {
-				return *Window::ExistingWindows[this->handle(id)];
-			}
-		};
-
 	protected:
 		//! @brief	Extends MSAA implementation to provide this window's _accessibility role_
 		class FormsExport Accessible : public AccessibleDecorator {
@@ -274,7 +223,7 @@ namespace core::forms
 				this->Storage.extract(handle);
 			}
 		};
-	
+
 #		pragma pack (push, 1)
 		//! @brief	Represents custom data provided at Window construction
 		//! @remarks	Modifying layout will break ABI compatibility
@@ -498,6 +447,58 @@ namespace core::forms
 		MessageDictionary
 		static MessageDatabase;
 		
+	protected:
+		//! @brief	Virtual collection of direct-child windows
+		//! @remarks  Requires the declaration of @c ExistingWindows, above
+		class FormsExport ChildWindowCollection {
+			using const_iterator = boost::transform_iterator<std::decay_t<Window*(::HWND)>, ConstChildWindowIterator>;
+	
+		private:
+			const Window&  Parent;
+
+		public:
+			ChildWindowCollection(const Window& owner) : Parent(owner)
+			{}
+
+		public:
+			const_iterator
+			begin() const {
+				return boost::make_transform_iterator(
+					ConstChildWindowIterator{ this->Parent.handle() }, 
+					[](::HWND w) { return Window::ExistingWindows[w]; }
+				);
+			}
+
+			const_iterator
+			end() const {
+				return boost::make_transform_iterator(
+					ConstChildWindowIterator::npos, 
+					[](::HWND w) { return Window::ExistingWindows[w]; }
+				);
+			}
+
+			bool
+			contains(uint16_t const id) const {
+				return Window::ExistingWindows.contains(this->handle(id));	//!< BUG: Returns `true` for any managed window
+			}
+		
+			bool
+			exists(uint16_t const id) const {
+				return this->handle(id) != nullptr;
+			}
+
+			::HWND
+			handle(uint16_t const id) const {
+				// BUG: Docs state ::GetWindow() doesn't work like this at all
+				return ::GetWindow(this->Parent.handle(), id);
+			}
+
+			Window&
+			operator[](uint16_t const id) const {
+				return *Window::ExistingWindows[this->handle(id)];
+			}
+		};
+	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		AnyColour           BackColour = SystemColour::Window;
