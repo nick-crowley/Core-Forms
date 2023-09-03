@@ -402,6 +402,74 @@ namespace core::forms
 			}
 		};
 		
+		//! @brief	Virtual collection of direct-child windows
+		//! @remarks  Requires the declaration of @c HierarchyIterator, above
+		class FormsExport ChildWindowCollection 
+		{
+		public:
+			using const_iterator = boost::transform_iterator<std::decay_t<Window*(::HWND)>, HierarchyIterator>;
+			using iterator = const_iterator;
+			using value_type = Window*;
+			using reference = Window*&;
+			using const_reference = Window* const&;
+			using size_type = size_t;
+			using difference_type = ptrdiff_t;
+	
+		private:
+			const Window&  Parent;
+
+		public:
+			ChildWindowCollection(const Window& owner) : Parent{owner}
+			{}
+
+		private:
+			static Window*
+			lookupWindow(::HWND handle) {
+				return Window::ExistingWindows[handle];
+			}
+
+		public:
+			const_iterator
+			begin() const {
+				Invariant(this->Parent.exists());
+				return boost::make_transform_iterator(
+					HierarchyIterator{ this->Parent.handle(), HierarchyIterator::DirectDescendants }, 
+					&ChildWindowCollection::lookupWindow
+				);
+			}
+
+			const_iterator
+			end() const {
+				return boost::make_transform_iterator(
+					HierarchyIterator{}, &ChildWindowCollection::lookupWindow
+				);
+			}
+
+			bool
+			contains(uint16_t const id) const {
+				//! TODO: Check this no longer returns 'true' for any managed window after fix to handle() below
+				return Window::ExistingWindows.contains(this->handle(id));
+			}
+		
+			bool
+			exists(uint16_t const id) const {
+				return this->handle(id) != nullptr;
+			}
+
+			::HWND
+			handle(uint16_t const id) const {
+				return ::GetDlgItem(this->Parent.handle(), id);
+			}
+
+			size_type
+			size() const = delete;
+
+			Window&
+			operator[](uint16_t const id) const {
+				return *Window::ExistingWindows[this->handle(id)];
+			}
+		};
+	
 		//! @brief	Enhances message results with state indicating whether they were handled at all
 		class FormsExport Response {
 		public:
@@ -521,75 +589,6 @@ namespace core::forms
 		MessageDictionary
 		static MessageDatabase;
 
-	protected:
-		//! @brief	Virtual collection of direct-child windows
-		//! @remarks  Requires the declaration of @c HierarchyIterator, above
-		class FormsExport ChildWindowCollection 
-		{
-		public:
-			using const_iterator = boost::transform_iterator<std::decay_t<Window*(::HWND)>, HierarchyIterator>;
-			using iterator = const_iterator;
-			using value_type = Window*;
-			using reference = Window*&;
-			using const_reference = Window* const&;
-			using size_type = size_t;
-			using difference_type = ptrdiff_t;
-	
-		private:
-			const Window&  Parent;
-
-		public:
-			ChildWindowCollection(const Window& owner) : Parent{owner}
-			{}
-
-		private:
-			static Window*
-			lookupWindow(::HWND handle) {
-				return Window::ExistingWindows[handle];
-			}
-
-		public:
-			const_iterator
-			begin() const {
-				Invariant(this->Parent.exists());
-				return boost::make_transform_iterator(
-					HierarchyIterator{ this->Parent.handle(), HierarchyIterator::DirectDescendants }, 
-					&ChildWindowCollection::lookupWindow
-				);
-			}
-
-			const_iterator
-			end() const {
-				return boost::make_transform_iterator(
-					HierarchyIterator{}, &ChildWindowCollection::lookupWindow
-				);
-			}
-
-			bool
-			contains(uint16_t const id) const {
-				//! TODO: Check this no longer returns 'true' for any managed window after fix to handle() below
-				return Window::ExistingWindows.contains(this->handle(id));
-			}
-		
-			bool
-			exists(uint16_t const id) const {
-				return this->handle(id) != nullptr;
-			}
-
-			::HWND
-			handle(uint16_t const id) const {
-				return ::GetDlgItem(this->Parent.handle(), id);
-			}
-
-			size_type
-			size() const = delete;
-
-			Window&
-			operator[](uint16_t const id) const {
-				return *Window::ExistingWindows[this->handle(id)];
-			}
-		};
-	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		AnyColour           BackColour = SystemColour::Window;
