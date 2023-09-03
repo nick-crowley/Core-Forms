@@ -235,8 +235,9 @@ namespace core::forms
 #		pragma pack (pop)
 
 		//! @brief	Simplifies providing multiple window construction parameters
-		class FormsExport CreateWindowBuilder {
-		public:
+		struct FormsExport CreateWindowBuilder 
+		{
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			Rect Area {CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT };
 			win::ResourceId Class;
 			std::wstring_view Text;
@@ -246,8 +247,11 @@ namespace core::forms
 			::HMODULE Module = nullptr;
 			CreateWindowParameter Parameter;
 
-		public:
-			CreateWindowBuilder() = default;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			satisfies(CreateWindowBuilder,
+				IsRegular,
+				NotSortable
+			);
 		};
 	
 		//! @brief	Identifies current high-level processing loop
