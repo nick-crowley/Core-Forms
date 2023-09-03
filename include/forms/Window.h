@@ -59,35 +59,6 @@ namespace core::forms
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		//! @brief	Enhances message results with state indicating whether they were handled at all
-		class FormsExport Response {
-		public:
-			enum Result { 
-				Invalid,        //!< [internal] Design flaw within wndproc
-				Handled,        //!< Message was handled 
-				Unhandled,      //!< Message wasn't handled
-				Error           //!< Error during handling [result will be 'unhandled']
-			};
-
-		public:
-			Result                    Status = Invalid;
-			std::optional<::LRESULT>  Value;
-
-		public:
-			explicit
-			Response(Result r) : Status(r)
-			{}
-
-			implicit
-			Response(::LRESULT value) : Status(Handled), Value(value)
-			{}
-
-			satisfies(Response,
-				IsRegular,
-				NotSortable
-			);
-		};
-
 		//! @brief	Virtual collection of direct-child windows
 		class FormsExport ChildWindowCollection {
 			using const_iterator = boost::transform_iterator<std::decay_t<Window*(::HWND)>, ConstChildWindowIterator>;
@@ -322,6 +293,35 @@ namespace core::forms
 			}
 		};
 		
+		//! @brief	Enhances message results with state indicating whether they were handled at all
+		class FormsExport Response {
+		public:
+			enum Result { 
+				Invalid,        //!< [internal] Design flaw within wndproc
+				Handled,        //!< Message was handled 
+				Unhandled,      //!< Message wasn't handled
+				Error           //!< Error during handling [result will be 'unhandled']
+			};
+
+		public:
+			Result                    Status = Invalid;
+			std::optional<::LRESULT>  Value;
+
+		public:
+			explicit
+			Response(Result r) : Status(r)
+			{}
+
+			implicit
+			Response(::LRESULT value) : Status(Handled), Value(value)
+			{}
+
+			satisfies(Response,
+				IsRegular,
+				NotSortable
+			);
+		};
+
 		//! @brief	Virtual collection of registered timers for this window
 		class FormsExport TimerCollection
 		{
