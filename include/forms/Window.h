@@ -493,7 +493,13 @@ namespace core::forms
 			ChildWindowCollection(const Window& owner) : Parent{owner}
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+		public:
+			satisfies(ChildWindowCollection,
+				IsCopyConstructible,
+				NotCopyAssignable,
+				NotEqualityComparable,
+				NotSortable
+			);
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			template <typename Self>
