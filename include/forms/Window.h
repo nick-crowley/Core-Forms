@@ -60,33 +60,33 @@ namespace core::forms
 	private:
 		//! @brief	Dictionary of message names, expected return values, and special logging requirements
 		class FormsExport MessageDictionary  {
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			struct MessageProperties 
 			{
-				// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
-				// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
 				uint16_t      Ident;
 				gsl::czstring Name;
 				::LRESULT     Unhandled = 0xffffffff;
 				bool          Common = false;
-				// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
 				MessageProperties(uint16_t id, gsl::czstring n) : Ident(id), Name(n)
 				{}
-				// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
-				// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
-				// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
 				constexpr operator 
 				std::pair<uint16_t,gsl::czstring>() const {
 					return {this->Ident, this->Name};
 				}
-				// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+				// o~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
 			};
 
 			using IdentDictionary = std::map<uint16_t, MessageProperties>;
@@ -95,10 +95,10 @@ namespace core::forms
 			using key_type = uint16_t;
 			using mapped_type = MessageProperties;
 
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			IdentDictionary	Entries;
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			MessageDictionary() 
 			{
@@ -120,11 +120,11 @@ namespace core::forms
 				this->Entries.at(WM_WINDOWPOSCHANGED).Common = true;
 				this->Entries.at(WM_WINDOWPOSCHANGING).Common = true;
 			}
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			bool 
 			contains(::UINT id) const {
@@ -140,23 +140,31 @@ namespace core::forms
 			operator[](::UINT id) const {
 				return this->Entries.at(static_cast<uint16_t>(id));
 			}
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 
 	protected:
 		//! @brief	Extends MSAA implementation to provide this window's _accessibility role_
 		class FormsExport Accessible : public AccessibleDecorator {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
 			using base = AccessibleDecorator;
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			Window&  Window;
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			Accessible(forms::Window& wnd, com::shared_ptr<::IAccessible> impl) 
 			  : base{std::move(impl)}, 
 			    Window{wnd}
 			{}
-		
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			::HRESULT
 			COMAPI get_accRole(::VARIANT child, com::out_t<::VARIANT> role) override {
@@ -174,10 +182,14 @@ namespace core::forms
 		//! @brief	Represents custom data provided at Window construction
 		//! @remarks	Modifying layout will break ABI compatibility
 		class FormsExport CreateWindowParameter {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
 			uint16_t   Length = 0;
 			uint16_t   DuplicateLength = 0;		// Fix: Required for ABI compatibility with DialogBoxIndirectParamW()
 			Window*    Parameter = nullptr;
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			CreateWindowParameter() = default;
 
@@ -187,7 +199,11 @@ namespace core::forms
 			    DuplicateLength{Length},
 				Parameter{w}
 			{}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			std::vector<std::byte> 
 			asBytes() const {
@@ -195,7 +211,8 @@ namespace core::forms
 				auto const r = std::as_bytes(std::span{&this->Parameter,1});
 				return {r.begin(), r.begin() + this->Length};
 			}
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
 			Window* 
 			get() {
 				return this->Parameter;
@@ -236,6 +253,7 @@ namespace core::forms
 		//! @brief	Provides useful details for display within the debugger (Eg. window text, window class, and message-handler)
 		class FormsExport DebuggingAide 
 		{
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			class FormsExport StateDescription {
 			public:
@@ -252,16 +270,22 @@ namespace core::forms
 				  : State(s), Message(msg) 
 				{}
 			};
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			uint32_t const       MagicNumber = 12345678;
 			std::array<char,16>  Class {};
 			StateDescription     State {ProcessingState::NotApplicable};
 			std::array<char,16>	 Text  {};
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			DebuggingAide() = default;
-		
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			StateDescription
 			setState(StateDescription newstate) {
@@ -286,6 +310,8 @@ namespace core::forms
 		
 		//! @brief	Collection of core-forms windows
 		class FormsExport ExistingWindowCollection {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
 			using RawHandleDictionary = std::map<::HWND, Window*>;
 			
 		public:
@@ -296,13 +322,15 @@ namespace core::forms
 			using const_reference = Window const&;
 			using size_type = std::size_t;
 			using difference_type = std::ptrdiff_t;
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			RawHandleDictionary	Storage;
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			ExistingWindowCollection() = default;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			template <typename Self>
 			nstd::mirror_cv_ref_t<Self, Window>&
@@ -318,7 +346,7 @@ namespace core::forms
 			operator[](this Self&& self, key_type handle) {
 				return *self.Storage.at(handle);
 			}
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			bool 
 			contains(key_type handle) const {
@@ -332,6 +360,7 @@ namespace core::forms
 				else
 					return pos->second;
 			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			void 
 			add(key_type handle, reference object) {
@@ -349,7 +378,7 @@ namespace core::forms
 		  : public boost::iterator_facade<HierarchyIterator, ::HWND, boost::forward_traversal_tag>
 		{
 			friend class boost::iterator_core_access;
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			using type = HierarchyIterator;
 			using base = boost::iterator_facade<type, ::HWND, boost::forward_traversal_tag>;
@@ -360,15 +389,13 @@ namespace core::forms
 
 		public:
 			enum SearchBehaviour { AllDescendants = 1, DirectDescendants = 2 };
-
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			mutable HandleCollection  Children;
 			SearchBehaviour           Flags = static_cast<SearchBehaviour>(0);
 			::HWND	                  Parent = nullptr;
 			unsigned                  Index = npos;
-	
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		 public:
 			HierarchyIterator(::HWND parent, SearchBehaviour descendants) noexcept 
 			  : Flags{descendants}, Parent{parent}, Index{0}
@@ -377,18 +404,17 @@ namespace core::forms
 				if (this->Children.empty()) 
 					*this = type{};
 			}
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			satisfies(HierarchyIterator,
 				IsSemiRegular,
 				NotSortable
 			);
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			::BOOL
 			static CALLBACK onNextChildWindow(::HWND child, ::LPARAM iterator);
-		
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		 private:
 			bool 
 			equal(const type& r) const {
@@ -400,7 +426,7 @@ namespace core::forms
 			dereference() const { 
 				return this->Children[this->Index]; 
 			}
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			void 
 			increment() { 
@@ -414,6 +440,8 @@ namespace core::forms
 		//! @remarks  Requires the declaration of @c HierarchyIterator, above
 		class FormsExport ChildWindowCollection 
 		{
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
 			template <nstd::AnyOf<Window,Window const> MaybeConstWindow>
 			using iterator_t = boost::transform_iterator<std::decay_t<MaybeConstWindow&(::HWND)>, HierarchyIterator>;
 
@@ -425,14 +453,16 @@ namespace core::forms
 			using const_reference = Window const&;
 			using size_type = size_t;
 			using difference_type = ptrdiff_t;
-	
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			const Window&  Parent;
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			ChildWindowCollection(const Window& owner) : Parent{owner}
 			{}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			template <typename Self>
 			iterator_t<nstd::mirror_cv_ref_t<Self,Window>>
@@ -465,7 +495,7 @@ namespace core::forms
 			static lookupWindow(::HWND handle) {
 				return Window::ExistingWindows[handle];
 			}
-			
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			const_iterator
 			cbegin() const {
@@ -495,10 +525,12 @@ namespace core::forms
 
 			size_type
 			size() const = delete;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 	
 		//! @brief	Enhances message results with state indicating whether they were handled at all
 		class FormsExport Response {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			enum Result { 
 				Invalid,        //!< [internal] Design flaw within wndproc
@@ -506,11 +538,11 @@ namespace core::forms
 				Unhandled,      //!< Message wasn't handled
 				Error           //!< Error during handling [result will be 'unhandled']
 			};
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			Result                    Status = Invalid;
 			std::optional<::LRESULT>  Value;
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			explicit
 			Response(Result r) : Status(r)
@@ -519,27 +551,43 @@ namespace core::forms
 			implicit
 			Response(::LRESULT value) : Status(Handled), Value(value)
 			{}
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
 			satisfies(Response,
 				IsRegular,
 				NotSortable
 			);
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 
 		//! @brief	Virtual collection of registered timers for this window
 		class FormsExport TimerCollection
 		{
-			Window& Owner;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			Window& Owner;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			TimerCollection(Window& wnd) : Owner{wnd}
 			{}
 		
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
 			satisfies(TimerCollection,
 				NotCopyable,
 				NotEqualityComparable
 			);
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			void
 			add(uintptr_t ident, chrono::milliseconds period) {
@@ -556,10 +604,13 @@ namespace core::forms
 
 		//! @brief	Logging sentry customized for the re-entrant nature of window procedures
 		class FormsExport WndProcLoggingSentry {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			std::string  Text;
 			bool		 Common = false;
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			WndProcLoggingSentry(::UINT message, const char* func = __builtin_FUNCTION()) {
 				using namespace std::literals;
@@ -575,7 +626,13 @@ namespace core::forms
 				if (!this->Common) 
 					cdebugger << this->Text << std::endl;
 			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			void 
 			setResult(Response::Result res, ::LRESULT val) { 
