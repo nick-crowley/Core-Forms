@@ -128,6 +128,7 @@ namespace core::forms
 
 			::HWND
 			handle(uint16_t const id) const {
+				// BUG: Docs state ::GetWindow() doesn't work like this at all
 				return ::GetWindow(this->Parent.handle(), id);
 			}
 
