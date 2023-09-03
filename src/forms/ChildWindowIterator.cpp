@@ -7,7 +7,7 @@ ConstChildWindowIterator const
 ConstChildWindowIterator::npos;
 
 ::BOOL 
-CALLBACK ConstChildWindowIterator::on_next_child_window(::HWND child, ::LPARAM iterator) 
+CALLBACK ConstChildWindowIterator::onNextChildWindow(::HWND child, ::LPARAM iterator) 
 {
 	static auto constexpr CONTINUE = TRUE;
 

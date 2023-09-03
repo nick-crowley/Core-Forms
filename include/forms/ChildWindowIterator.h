@@ -47,16 +47,14 @@ namespace core::forms
 		using type = ConstChildWindowIterator;
 		using base = boost::iterator_facade<type, const ::HWND, boost::forward_traversal_tag>;
 	
-		using Storage = std::list<::HWND>;
-
 	public:
 		ConstChildWindowIterator const
 		static npos;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		std::vector<::HWND>  Children;
-		::HWND	  Parent = nullptr;
-		unsigned  Index = UINT32_MAX;
+		::HWND	             Parent = nullptr;
+		unsigned             Index = UINT32_MAX;
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	 public:
@@ -64,7 +62,7 @@ namespace core::forms
 		ConstChildWindowIterator(::HWND parent) noexcept 
 		  : Parent(parent), Index(0)
 		{
-			::EnumChildWindows(parent, &on_next_child_window, (::LPARAM)(uintptr_t)this);
+			::EnumChildWindows(parent, &type::onNextChildWindow, (::LPARAM)(uintptr_t)this);
 			if (this->Children.empty())
 				this->Index = UINT32_MAX;
 		}
@@ -79,7 +77,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		static
-		::BOOL CALLBACK on_next_child_window(::HWND child, ::LPARAM iterator);
+		::BOOL CALLBACK onNextChildWindow(::HWND child, ::LPARAM iterator);
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	 private:
