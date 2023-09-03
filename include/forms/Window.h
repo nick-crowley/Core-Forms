@@ -655,6 +655,7 @@ namespace core::forms
 			return rc;
 		}
 	
+		// FIXME: I have no idea what this method does
 		Rect
 		clientRect(std::nullptr_t) const {
 			Rect rc = this->clientRect();
