@@ -202,8 +202,6 @@ namespace core::forms
 			Window*    Parameter = nullptr;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			CreateWindowParameter() = default;
-
 			explicit 
 			CreateWindowParameter(Window* w) 
 			  : Length{sizeof(Window*)}, 
@@ -211,7 +209,11 @@ namespace core::forms
 				Parameter{w}
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+		public:
+			satisfies(CreateWindowParameter,
+				IsRegular noexcept,
+				NotSortable
+			);
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
