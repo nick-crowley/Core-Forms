@@ -1494,13 +1494,6 @@ namespace core::forms
 			this->Debug.setState(ProcessingState::Idle);
 		}
 
-		//void
-		//onFirstSight(::HWND hWnd) {
-		//	Window::ExistingWindows.add(hWnd, this);
-		//	this->Handle = hWnd;	// this->Handle = make_handle(hWnd);
-		//	this->DebugState = {ProcessingState::BeingCreated};	// Not yet set for dialog controls
-		//}
-	
 		void
 		onLastSight(::HWND hWnd) {
 			Window::ExistingWindows.remove(hWnd);
