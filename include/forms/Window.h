@@ -45,9 +45,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::forms {
-	class FormsExport Window;
-}
+
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -55,8 +53,6 @@ namespace core::forms {
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	using WindowRef = std::reference_wrapper<Window>;
-
 	//! @brief	Manages the life-cycle and behaviour of a single window
 	class FormsExport Window 
 	{
@@ -333,12 +329,12 @@ namespace core::forms
 				return this->Storage.contains(handle);
 			}
 			
-			std::optional<WindowRef>
+			Window*
 			find(key_type handle) const & {
 				if (auto const pos = this->Storage.find(handle); pos == this->Storage.end())
-					return std::nullopt;
+					return nullptr;
 				else
-					return *pos->second;
+					return pos->second;
 			}
 		public:
 			void 
@@ -1174,8 +1170,8 @@ namespace core::forms
 	
 		Response 
 		virtual onOwnerDraw(OwnerDrawEventArgs args) {
-			if (args.Window && this != &args.Window->get())
-				return args.Window->get().onOwnerDraw(args);
+			if (args.Window && args.Window != this)
+				return args.Window->onOwnerDraw(args);
 
 			return Unhandled;
 		}
