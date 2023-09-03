@@ -50,6 +50,7 @@ namespace core::forms
 		com::shared_ptr<::IAccessible>  m_impl;
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+        explicit
 		AccessibleDecorator(com::shared_ptr<::IAccessible> impl) 
 			: m_impl{std::move(ThrowIfEmpty(impl))}
 		{}
