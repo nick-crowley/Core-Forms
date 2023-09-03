@@ -196,7 +196,10 @@ namespace core::forms
 		//! @brief	Collection of core-forms windows
 		class FormsExport ExistingWindowCollection {
 			using RawHandleDictionary = std::map<::HWND, Window*>;
-			using key_t = ::HWND;
+
+		public:
+			using key_type = ::HWND;
+			using mapped_type = Window*;
 
 		private:
 			RawHandleDictionary	Storage;
@@ -205,8 +208,8 @@ namespace core::forms
 			ExistingWindowCollection() = default;
 
 		public:
-			Window* 
-			at(key_t handle) const & {
+			mapped_type
+			at(key_type handle) const & {
 				if (auto const pos = this->Storage.find(handle); pos == this->Storage.end())
 					throw runtime_error{"Unrecognised window handle {}", to_hexString<8>(uintptr_t(handle))};
 				else
@@ -214,31 +217,31 @@ namespace core::forms
 			}
 
 			bool 
-			contains(key_t handle) const {
+			contains(key_type handle) const {
 				return this->Storage.contains(handle);
 			}
 			
-			std::optional<Window*>
-			find(key_t handle) const & {
+			std::optional<mapped_type>
+			find(key_type handle) const & {
 				if (auto const pos = this->Storage.find(handle); pos == this->Storage.end())
 					return std::nullopt;
 				else
 					return pos->second;
 			}
 
-			Window* 
-			operator[](key_t handle) const & {
+			mapped_type
+			operator[](key_type handle) const & {
 				return this->Storage.at(handle);
 			}
 
 		public:
 			void 
-			add(key_t handle, Window* object) {
+			add(key_type handle, mapped_type object) {
 				this->Storage.emplace(handle, object);
 			}
 
 			void 
-			remove(key_t handle) {
+			remove(key_type handle) {
 				this->Storage.extract(handle);
 			}
 		};
