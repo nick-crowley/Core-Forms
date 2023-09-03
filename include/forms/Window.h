@@ -698,7 +698,7 @@ namespace core::forms
 		static inline Error { Response::Error };
 		
 		//! @brief	All window messages and their return values
-		MessageDictionary constexpr
+		MessageDictionary const
 		static inline MessageDatabase;
 
 		//! @brief	All windows created by core-forms
