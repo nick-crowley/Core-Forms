@@ -58,6 +58,92 @@ namespace core::forms
 	class FormsExport Window 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		//! @brief	Dictionary of message names, expected return values, and special logging requirements
+		class FormsExport MessageDictionary  {
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		private:
+			struct MessageProperties 
+			{
+				// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+				// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			public:
+				uint16_t      Ident;
+				gsl::czstring Name;
+				::LRESULT     Unhandled = 0xffffffff;
+				bool          Common = false;
+				// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			public:
+				MessageProperties(uint16_t id, gsl::czstring n) : Ident(id), Name(n)
+				{}
+				// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+				// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+				// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+			public:
+				constexpr operator 
+				std::pair<uint16_t,gsl::czstring>() const {
+					return {this->Ident, this->Name};
+				}
+				// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+			};
+
+			using IdentDictionary = std::map<uint16_t, MessageProperties>;
+
+		public:
+			using key_type = uint16_t;
+			using mapped_type = MessageProperties;
+
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		private:
+			IdentDictionary	Entries;
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		public:
+			MessageDictionary() 
+			{
+				// Populate dictionary
+				for (uint16_t idx = 0; idx < Window::MessageNames.size(); ++idx) {
+					this->Entries.emplace(idx, MessageProperties{idx, Window::MessageNames[idx]});
+				}
+
+				// Special cases
+				this->Entries.at(WM_NCCREATE).Unhandled = FALSE;
+
+				// Common messages
+				this->Entries.at(WM_NCHITTEST).Common = true;
+				this->Entries.at(WM_NCMOUSEMOVE).Common = true;
+				this->Entries.at(WM_MOUSEFIRST).Common = true;
+				this->Entries.at(WM_SETCURSOR).Common = true;
+				this->Entries.at(WM_MOVE).Common = true;
+				this->Entries.at(WM_MOVING).Common = true;
+				this->Entries.at(WM_WINDOWPOSCHANGED).Common = true;
+				this->Entries.at(WM_WINDOWPOSCHANGING).Common = true;
+			}
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		public:
+			bool 
+			contains(::UINT id) const {
+				return this->Entries.contains(static_cast<uint16_t>(id));
+			}
+	
+			gsl::czstring
+			name(::UINT id) const {
+				return this->contains(id) ? (*this)[id].Name : "WM_????";
+			}
+
+			mapped_type const&
+			operator[](::UINT id) const {
+				return this->Entries.at(static_cast<uint16_t>(id));
+			}
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		};
+
 	public:
 		//! @brief	Virtual collection of direct-child windows
 		class FormsExport ChildWindowCollection {
@@ -386,92 +472,6 @@ namespace core::forms
 			}
 		};
 	
-	private:
-		//! @brief	Dictionary of message names, expected return values, and special logging requirements
-		class FormsExport MessageDictionary  {
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-		private:
-			struct MessageProperties 
-			{
-				// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
-				// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			public:
-				uint16_t      Ident;
-				gsl::czstring Name;
-				::LRESULT     Unhandled = 0xffffffff;
-				bool          Common = false;
-				// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			public:
-				MessageProperties(uint16_t id, gsl::czstring n) : Ident(id), Name(n)
-				{}
-				// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
-				// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
-				// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
-			public:
-				constexpr operator 
-				std::pair<uint16_t,gsl::czstring>() const {
-					return {this->Ident, this->Name};
-				}
-				// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
-			};
-
-			using IdentDictionary = std::map<uint16_t, MessageProperties>;
-
-		public:
-			using key_type = uint16_t;
-			using mapped_type = MessageProperties;
-
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-		private:
-			IdentDictionary	Entries;
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-		public:
-			MessageDictionary() 
-			{
-				// Populate dictionary
-				for (uint16_t idx = 0; idx < Window::MessageNames.size(); ++idx) {
-					this->Entries.emplace(idx, MessageProperties{idx, Window::MessageNames[idx]});
-				}
-
-				// Special cases
-				this->Entries.at(WM_NCCREATE).Unhandled = FALSE;
-
-				// Common messages
-				this->Entries.at(WM_NCHITTEST).Common = true;
-				this->Entries.at(WM_NCMOUSEMOVE).Common = true;
-				this->Entries.at(WM_MOUSEFIRST).Common = true;
-				this->Entries.at(WM_SETCURSOR).Common = true;
-				this->Entries.at(WM_MOVE).Common = true;
-				this->Entries.at(WM_MOVING).Common = true;
-				this->Entries.at(WM_WINDOWPOSCHANGED).Common = true;
-				this->Entries.at(WM_WINDOWPOSCHANGING).Common = true;
-			}
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-		public:
-			bool 
-			contains(::UINT id) const {
-				return this->Entries.contains(static_cast<uint16_t>(id));
-			}
-	
-			gsl::czstring
-			name(::UINT id) const {
-				return this->contains(id) ? (*this)[id].Name : "WM_????";
-			}
-
-			mapped_type const&
-			operator[](::UINT id) const {
-				return this->Entries.at(static_cast<uint16_t>(id));
-			}
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-		};
-
 	private:
 		//! @brief	Window beneath the cursor, if any
 		nstd::return_t<Window const*>
