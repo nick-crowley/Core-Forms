@@ -94,6 +94,11 @@ namespace core::forms
 		public:
 			using key_type = uint16_t;
 			using mapped_type = MessageProperties;
+			using value_type = meta::undefined_t;
+			using reference = MessageProperties&;
+			using const_reference = MessageProperties const&;
+			using size_type = std::size_t;
+			using difference_type = std::ptrdiff_t;
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
@@ -136,7 +141,7 @@ namespace core::forms
 				return this->contains(id) ? (*this)[id].Name : "WM_????";
 			}
 
-			mapped_type const&
+			const_reference
 			operator[](::UINT id) const {
 				return this->Entries.at(static_cast<uint16_t>(id));
 			}
