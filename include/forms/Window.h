@@ -574,17 +574,17 @@ namespace core::forms
 			std::optional<::LRESULT>  Value;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			explicit
-			Response(Result r) : Status(r)
+			explicit constexpr
+			Response(Result r) noexcept : Status(r)
 			{}
 
-			implicit
-			Response(::LRESULT value) : Status(Handled), Value(value)
+			implicit constexpr
+			Response(::LRESULT value) noexcept : Status(Handled), Value(value)
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			satisfies(Response,
-				IsRegular,
+				constexpr IsRegular noexcept,
 				NotSortable
 			);
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -690,11 +690,11 @@ namespace core::forms
 		
 	public:
 		//! @brief	Sentinel: the message was not handled
-		Response const  
+		Response constexpr
 		static inline Unhandled { Response::Unhandled };
 
 		//! @brief	Sentinel: error processing message
-		Response const
+		Response constexpr
 		static inline Error { Response::Error };
 		
 		//! @brief	All window messages and their return values
