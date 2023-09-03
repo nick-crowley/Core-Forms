@@ -296,42 +296,6 @@ namespace core::forms
 			CreateWindowBuilder() = default;
 		};
 	
-		//! @brief	Logging sentry customized for the re-entrant nature of window procedures
-		class FormsExport WndProcLoggingSentry {
-		private:
-			std::string  Text;
-			bool		 Common = false;
-
-		public:
-			WndProcLoggingSentry(::UINT message, const char* func = __builtin_FUNCTION()) {
-				using namespace std::literals;
-				if (!Window::MessageDatabase.contains(message)) 
-					this->Text = func + " : Processing unrecognised message "s + to_hexString<4>(message) + " ";
-				else if (!Window::MessageDatabase[message].Common)
-					this->Text = func + " : Processing "s + Window::MessageDatabase[message].Name + " ";
-				else
-					this->Common = true;
-			}
-
-			~WndProcLoggingSentry() {
-				if (!this->Common) 
-					cdebugger << this->Text << std::endl;
-			}
-
-		public:
-			void 
-			setResult(Response::Result res, ::LRESULT val) { 
-				this->Text += (res == Response::Handled ? "Handled" : "Unhandled");
-				this->Text += (" (" + to_hexString(val) + ")");
-			}
-
-			void 
-			setException(const std::exception& e) { 
-				using namespace std::literals;
-				this->Text += (" (ERROR: "s + e.what() + ')');
-			}
-		};
-	
 		//! @brief	Tracks the Window life-cycle and identifies current high-level processing loop
 		class FormsExport ProcessingState {
 		public:
@@ -385,7 +349,43 @@ namespace core::forms
 				});
 			}
 		};
+		
+		//! @brief	Logging sentry customized for the re-entrant nature of window procedures
+		class FormsExport WndProcLoggingSentry {
+		private:
+			std::string  Text;
+			bool		 Common = false;
 
+		public:
+			WndProcLoggingSentry(::UINT message, const char* func = __builtin_FUNCTION()) {
+				using namespace std::literals;
+				if (!Window::MessageDatabase.contains(message)) 
+					this->Text = func + " : Processing unrecognised message "s + to_hexString<4>(message) + " ";
+				else if (!Window::MessageDatabase[message].Common)
+					this->Text = func + " : Processing "s + Window::MessageDatabase[message].Name + " ";
+				else
+					this->Common = true;
+			}
+
+			~WndProcLoggingSentry() {
+				if (!this->Common) 
+					cdebugger << this->Text << std::endl;
+			}
+
+		public:
+			void 
+			setResult(Response::Result res, ::LRESULT val) { 
+				this->Text += (res == Response::Handled ? "Handled" : "Unhandled");
+				this->Text += (" (" + to_hexString(val) + ")");
+			}
+
+			void 
+			setException(const std::exception& e) { 
+				using namespace std::literals;
+				this->Text += (" (ERROR: "s + e.what() + ')');
+			}
+		};
+	
 	private:
 		//! @brief	Dictionary of message names, expected return values, and special logging requirements
 		class FormsExport MessageDictionary  {
