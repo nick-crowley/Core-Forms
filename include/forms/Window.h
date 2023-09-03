@@ -393,7 +393,7 @@ namespace core::forms
 
 			void 
 			remove(key_type handle) {
-				this->Storage.extract(handle);
+				this->Storage.erase(handle);
 			}
 		};
 		
