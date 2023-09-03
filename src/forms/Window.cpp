@@ -1060,10 +1060,9 @@ CALLBACK Window::HierarchyIterator::onNextChildWindow(::HWND child, ::LPARAM ite
 		return ContinueSearch;
 
 	// Exclude windows we didn't create
-	if (!Window::ExistingWindows.contains(child))
-		return ContinueSearch;
+	if (Window::ExistingWindows.contains(child))
+		pThis->Children.push_back(child);
 	
-	pThis->Children.push_back(child);
 	return ContinueSearch;
 }
 
