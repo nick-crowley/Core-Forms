@@ -690,11 +690,11 @@ namespace core::forms
 		
 	public:
 		//! @brief	Sentinel: the message was not handled
-		Response constexpr
+		Response const
 		static inline Unhandled { Response::Unhandled };
 
 		//! @brief	Sentinel: error processing message
-		Response constexpr
+		Response const
 		static inline Error { Response::Error };
 		
 		//! @brief	All window messages and their return values
