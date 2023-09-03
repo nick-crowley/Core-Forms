@@ -695,6 +695,11 @@ namespace core::forms
 			return ::IsWindowEnabled(this->handle()) != FALSE;
 		}
 	
+		bool
+		exists() const {
+			return this->handle() && ::IsWindow(this->handle()) != FALSE;
+		}
+
 		template <nstd::Enumeration Style = ExWindowStyle>
 		nstd::bitset<Style>
 		exStyle() const {
