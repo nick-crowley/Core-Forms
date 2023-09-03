@@ -26,7 +26,6 @@
 #include "system/MessageQueue.cpp"
 #include "system/MessageQueueIterator.cpp"
 
-#include "forms/ChildWindowIterator.cpp"
 #include "forms/Window.cpp"
 #include "forms/WindowClass.cpp"
 #include "forms/WindowEventArgs.cpp"

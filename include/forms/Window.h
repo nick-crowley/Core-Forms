@@ -36,7 +36,6 @@
 #include "lookNfeel/ILookNFeelProvider.h"
 #include "support/ObservableEvent.h"
 #include "forms/Accessible.h"
-#include "forms/ChildWindowIterator.h"
 #include "forms/WindowClass.h"
 #include "forms/WindowEventArgs.h"
 #include "forms/WindowInfo.h"
@@ -337,7 +336,72 @@ namespace core::forms
 				this->Storage.extract(handle);
 			}
 		};
+		
+		//! @brief	Navigates over (the handles of) descendant windows
+		class FormsExport HierarchyIterator
+		  : public boost::iterator_facade<HierarchyIterator, ::HWND, boost::forward_traversal_tag>
+		{
+			friend class boost::iterator_core_access;
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		private:
+			using type = HierarchyIterator;
+			using base = boost::iterator_facade<type, ::HWND, boost::forward_traversal_tag>;
+			using HandleCollection = std::vector<::HWND>;
 
+			unsigned constexpr
+			inline static npos = UINT32_MAX;
+
+		public:
+			enum SearchBehaviour { AllDescendants = 1, DirectDescendants = 2 };
+
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		private:
+			mutable HandleCollection  Children;
+			SearchBehaviour           Flags = static_cast<SearchBehaviour>(0);
+			::HWND	                  Parent = nullptr;
+			unsigned                  Index = npos;
+	
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		 public:
+			HierarchyIterator(::HWND parent, SearchBehaviour descendants) noexcept 
+			  : Flags{descendants}, Parent{parent}, Index{0}
+			{
+				std::ignore = ::EnumChildWindows(parent, &type::onNextChildWindow, (::LPARAM)(uintptr_t)this);
+				if (this->Children.empty()) 
+					*this = type{};
+			}
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		public:
+			satisfies(HierarchyIterator,
+				IsSemiRegular,
+				NotSortable
+			);
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		private:
+			::BOOL
+			static CALLBACK onNextChildWindow(::HWND child, ::LPARAM iterator);
+		
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		 private:
+			bool 
+			equal(const type& r) const {
+				return this->Parent == r.Parent 
+				    && this->Index == r.Index;
+			}
+
+			::HWND& 
+			dereference() const { 
+				return this->Children[this->Index]; 
+			}
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		private:
+			void 
+			increment() { 
+				if (++this->Index == this->Children.size())
+					*this = type{};
+			}
+		};
+		
 		//! @brief	Enhances message results with state indicating whether they were handled at all
 		class FormsExport Response {
 		public:
@@ -456,40 +520,55 @@ namespace core::forms
 		//! @brief	All window messages and their return values
 		MessageDictionary
 		static MessageDatabase;
-		
+
 	protected:
 		//! @brief	Virtual collection of direct-child windows
-		//! @remarks  Requires the declaration of @c ExistingWindows, above
-		class FormsExport ChildWindowCollection {
-			using const_iterator = boost::transform_iterator<std::decay_t<Window*(::HWND)>, ConstChildWindowIterator>;
+		//! @remarks  Requires the declaration of @c HierarchyIterator, above
+		class FormsExport ChildWindowCollection 
+		{
+		public:
+			using const_iterator = boost::transform_iterator<std::decay_t<Window*(::HWND)>, HierarchyIterator>;
+			using iterator = const_iterator;
+			using value_type = Window*;
+			using reference = Window*&;
+			using const_reference = Window* const&;
+			using size_type = size_t;
+			using difference_type = ptrdiff_t;
 	
 		private:
 			const Window&  Parent;
 
 		public:
-			ChildWindowCollection(const Window& owner) : Parent(owner)
+			ChildWindowCollection(const Window& owner) : Parent{owner}
 			{}
+
+		private:
+			static Window*
+			lookupWindow(::HWND handle) {
+				return Window::ExistingWindows[handle];
+			}
 
 		public:
 			const_iterator
 			begin() const {
+				Invariant(this->Parent.exists());
 				return boost::make_transform_iterator(
-					ConstChildWindowIterator{ this->Parent.handle() }, 
-					[](::HWND w) { return Window::ExistingWindows[w]; }
+					HierarchyIterator{ this->Parent.handle(), HierarchyIterator::DirectDescendants }, 
+					&ChildWindowCollection::lookupWindow
 				);
 			}
 
 			const_iterator
 			end() const {
 				return boost::make_transform_iterator(
-					ConstChildWindowIterator::npos, 
-					[](::HWND w) { return Window::ExistingWindows[w]; }
+					HierarchyIterator{}, &ChildWindowCollection::lookupWindow
 				);
 			}
 
 			bool
 			contains(uint16_t const id) const {
-				return Window::ExistingWindows.contains(this->handle(id));	//!< BUG: Returns `true` for any managed window
+				//! TODO: Check this no longer returns 'true' for any managed window after fix to handle() below
+				return Window::ExistingWindows.contains(this->handle(id));
 			}
 		
 			bool
@@ -499,9 +578,11 @@ namespace core::forms
 
 			::HWND
 			handle(uint16_t const id) const {
-				// BUG: Docs state ::GetWindow() doesn't work like this at all
-				return ::GetWindow(this->Parent.handle(), id);
+				return ::GetDlgItem(this->Parent.handle(), id);
 			}
+
+			size_type
+			size() const = delete;
 
 			Window&
 			operator[](uint16_t const id) const {
