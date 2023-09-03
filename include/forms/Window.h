@@ -74,6 +74,7 @@ namespace core::forms
 				bool          Common = false;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
+				constexpr
 				MessageProperties(uint16_t id, gsl::czstring n) : Ident(id), Name(n)
 				{}
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
