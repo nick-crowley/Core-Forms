@@ -619,7 +619,8 @@ namespace core::forms
 		public:
 			satisfies(TimerCollection,
 				NotCopyable,
-				NotEqualityComparable
+				NotEqualityComparable,
+				NotSortable
 			);
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
