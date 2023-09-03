@@ -169,11 +169,6 @@ namespace core::forms
 		}
 
 	protected:
-		/*::INT_PTR 
-		static CALLBACK FallbackDialogHandler(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) {
-			return ::DefDlgProcW(hDlg, message, wParam, lParam);
-		}*/
-
 		::INT_PTR 
 		static CALLBACK DefaultDialogHandler(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
 		{

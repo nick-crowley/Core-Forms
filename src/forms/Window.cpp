@@ -10,9 +10,6 @@ Window::BeneathCursor{};
 Window::ExistingWindowCollection 
 Window::ExistingWindows{};
 
-//Window const
-//Window::s_Desktop;
-
 ::BOOL 
 CALLBACK Window::HierarchyIterator::onNextChildWindow(::HWND child, ::LPARAM iterator) 
 {
