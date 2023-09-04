@@ -33,6 +33,7 @@
 #include "forms/EventArgs/CommandEventArgs.h"
 #include "forms/EventArgs/CreateWindowEventArgs.h"
 #include "forms/EventArgs/EraseBackgroundEventArgs.h"
+#include "forms/EventArgs/MinMaxEventArgs.h"
 #include "forms/WindowInfo.h"
 #include "win/ResourceId.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -51,18 +52,6 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	struct MinMaxEventArgs {
-		static_assert(sizeof(LPARAM) == sizeof(MINMAXINFO*));
-
-		MINMAXINFO*   Extents;
-
-		MinMaxEventArgs(WPARAM, LPARAM ext) : Extents(reinterpret_cast<MINMAXINFO*>(ext)) {
-		}
-	};
-
-	// FIXME: Order-of-message-receipt bug with WM_GETMINMAXINFO could be solved with a static event which derived classes could listen to
-
-
 	class GetObjectEventArgs {
 	public:
 		long        Flags;
