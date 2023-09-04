@@ -36,6 +36,7 @@
 #include "forms/EventArgs/GetObjectEventArgs.h"
 #include "forms/EventArgs/MinMaxEventArgs.h"
 #include "forms/EventArgs/OwnerDrawEventArgs.h"
+#include "forms/EventArgs/OwnerDrawMenuEventArgs.h"
 #include "forms/WindowInfo.h"
 #include "win/ResourceId.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -54,25 +55,6 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class FormsExport OwnerDrawMenuEventArgs 
-	{
-	public:
-		nstd::bitset<OwnerDrawAction> Action;
-		OwnerDrawEventArgs::ItemData  Item;
-		::HMENU                       Menu;
-		mutable DeviceContext         Graphics;
-
-	public:
-		OwnerDrawMenuEventArgs(::WPARAM w, ::LPARAM l);
-
-	private:
-		OwnerDrawMenuEventArgs(::DRAWITEMSTRUCT&);
-	};
-
-	using OwnerDrawMenuDelegate = Delegate<void (Window&,OwnerDrawMenuEventArgs)>;
-	using OwnerDrawMenuEvent = ObservableEvent<OwnerDrawMenuDelegate>;
-	
-
 	struct ResizeWindowEventArgs {
 		unsigned  Flags;		// FIXME: Define enum for WM_SIZE flags https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-size
 		Size      Dimensions;
