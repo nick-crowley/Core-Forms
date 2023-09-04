@@ -35,6 +35,7 @@
 #include "forms/EventArgs/EraseBackgroundEventArgs.h"
 #include "forms/EventArgs/GetObjectEventArgs.h"
 #include "forms/EventArgs/MinMaxEventArgs.h"
+#include "forms/EventArgs/OwnerDrawEventArgs.h"
 #include "forms/WindowInfo.h"
 #include "win/ResourceId.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -53,39 +54,6 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class FormsExport OwnerDrawEventArgs 
-	{
-	public:
-		struct ItemData {
-			using IdentOrIndex = std::variant<win::ResourceId,uint32_t>;
-
-			ItemData(::DRAWITEMSTRUCT& data);
-
-			Rect                        Area;
-			uintptr_t                   Data;
-			IdentOrIndex                Ident;
-			nstd::bitset<OwnerDrawState> State;
-		};
-
-	public:
-		nstd::bitset<OwnerDrawAction> Action;
-		uint16_t                    Ident;
-		ItemData                    Item;
-		mutable DeviceContext       Graphics;
-		OwnerDrawControl            Type;
-		Window*                     Window;
-
-	public:
-		OwnerDrawEventArgs(::WPARAM w, ::LPARAM l);
-
-	private:
-		OwnerDrawEventArgs(::DRAWITEMSTRUCT& data);
-	};
-
-	using OwnerDrawDelegate = Delegate<void (Window&,OwnerDrawEventArgs)>;
-	using OwnerDrawEvent = ObservableEvent<OwnerDrawDelegate>;
-
-
 	class FormsExport OwnerDrawMenuEventArgs 
 	{
 	public:
