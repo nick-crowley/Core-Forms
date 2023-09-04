@@ -37,6 +37,7 @@
 #include "forms/EventArgs/MinMaxEventArgs.h"
 #include "forms/EventArgs/OwnerDrawEventArgs.h"
 #include "forms/EventArgs/OwnerDrawMenuEventArgs.h"
+#include "forms/EventArgs/ResizeWindowEventArgs.h"
 #include "forms/WindowInfo.h"
 #include "win/ResourceId.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -55,21 +56,6 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	struct ResizeWindowEventArgs {
-		unsigned  Flags;		// FIXME: Define enum for WM_SIZE flags https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-size
-		Size      Dimensions;
-
-		ResizeWindowEventArgs(::WPARAM w, ::LPARAM l) 
-		  : Flags{(unsigned)w},
-			Dimensions{LOWORD(l), HIWORD(l)}
-		{
-		}
-	};
-
-	using ResizeWindowDelegate = Delegate<void (Window&,ResizeWindowEventArgs)>;
-	using ResizeWindowEvent = ObservableEvent<ResizeWindowDelegate>;
-
-
 	struct TimerEventArgs 
 	{
 		uintptr_t Ident;
