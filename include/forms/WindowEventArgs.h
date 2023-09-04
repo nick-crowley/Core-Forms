@@ -31,6 +31,7 @@
 #include "graphics/Graphics.h"
 #include "forms/AccessibilityFlags.h"
 #include "forms/EventArgs/CommandEventArgs.h"
+#include "forms/EventArgs/CreateWindowEventArgs.h"
 #include "forms/WindowInfo.h"
 #include "win/ResourceId.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -49,26 +50,6 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	struct CreateWindowEventArgs {
-		static_assert(sizeof(LPARAM) == sizeof(CREATESTRUCT*));
-
-		CREATESTRUCT*	Data;
-
-		CreateWindowEventArgs(WPARAM, LPARAM data) : Data(reinterpret_cast<CREATESTRUCT*>(data)) 
-		{}
-
-		template <typename Pointer>
-		Pointer
-		data() {
-			static_assert(std::is_pointer_v<Pointer>);
-			return static_cast<Pointer>(this->Data->lpCreateParams);
-		}
-	};
-
-	using CreateWindowDelegate = Delegate<void (Window&,CreateWindowEventArgs)>;
-	using CreateWindowEvent = ObservableEvent<CreateWindowDelegate>;
-
-
 	class EraseBackgroundEventArgs
 	{
 	public:
