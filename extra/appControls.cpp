@@ -77,7 +77,8 @@ try
 	startupBanner();
 	
 	ControlsForm mainDlg;
-	return static_cast<int>(mainDlg.showModal());
+	std::ignore = mainDlg.showModal();
+	return 0;
 }
 catch (std::exception const& e)
 {
