@@ -61,8 +61,9 @@ namespace core::forms
 				this->Notification = EventData{HIWORD(wParam), reinterpret_cast<HWND>(ctrl)};
 		}
 	};
-
-	// FIXME: We don't use Delegate/Event types for WM_COMMAND, but should there be a decl. here anyway? maybe type-alias to void?
+	
+	using CommandDelegate = meta::undefined_t;		//!< Unused for WM_COMMAND
+	using CommandEvent = meta::undefined_t;		//!< Unused for WM_COMMAND
 
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
