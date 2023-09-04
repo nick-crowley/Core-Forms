@@ -30,6 +30,7 @@
 #include "support/ObservableEvent.h"
 #include "graphics/Graphics.h"
 #include "forms/AccessibilityFlags.h"
+#include "forms/EventArgs/CommandEventArgs.h"
 #include "forms/WindowInfo.h"
 #include "win/ResourceId.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -42,38 +43,12 @@ namespace core::forms
 	using WindowEvent = ObservableEvent<WindowDelegate>;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-	
+
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	struct CommandEventArgs {
-		static_assert(sizeof(LPARAM) == sizeof(HWND));
-
-		enum EventSource { Menu, Accelerator, Control };
-		struct EventData
-		{
-			uint16_t   Code;
-			::HWND     Handle;
-		};
-
-		uint16_t					Ident; 
-		EventSource					Source;
-		std::optional<EventData>	Notification;
-
-		CommandEventArgs(::WPARAM wParam, ::LPARAM ctrl)
-		  : Ident(LOWORD(wParam)), 
-			Source(ctrl ? Control : HIWORD(wParam) ? Accelerator : Menu)
-		{
-			if (Source == Control)
-				this->Notification = EventData{HIWORD(wParam), reinterpret_cast<HWND>(ctrl)};
-		}
-	};
-
-	// FIXME: We don't use Delegate/Event types for WM_COMMAND, but should there be a decl. here anyway? maybe type-alias to void?
-
-
 	struct CreateWindowEventArgs {
 		static_assert(sizeof(LPARAM) == sizeof(CREATESTRUCT*));
 
