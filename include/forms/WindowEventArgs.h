@@ -32,6 +32,7 @@
 #include "forms/AccessibilityFlags.h"
 #include "forms/EventArgs/CommandEventArgs.h"
 #include "forms/EventArgs/CreateWindowEventArgs.h"
+#include "forms/EventArgs/EraseBackgroundEventArgs.h"
 #include "forms/WindowInfo.h"
 #include "win/ResourceId.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -50,20 +51,6 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class EraseBackgroundEventArgs
-	{
-	public:
-		mutable DeviceContext  Graphics;
-
-	public:
-		EraseBackgroundEventArgs(::HWND wnd, ::WPARAM w, ::LPARAM)
-			: Graphics{reinterpret_cast<::HDC>(w), wnd}
-		{}
-	};
-
-	// FIXME: Missing delegate/event declarations for WM_ERASEBACKGORUND
-	
-
 	struct MinMaxEventArgs {
 		static_assert(sizeof(LPARAM) == sizeof(MINMAXINFO*));
 
