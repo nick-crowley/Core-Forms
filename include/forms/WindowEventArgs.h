@@ -33,6 +33,7 @@
 #include "forms/EventArgs/CommandEventArgs.h"
 #include "forms/EventArgs/CreateWindowEventArgs.h"
 #include "forms/EventArgs/EraseBackgroundEventArgs.h"
+#include "forms/EventArgs/GetObjectEventArgs.h"
 #include "forms/EventArgs/MinMaxEventArgs.h"
 #include "forms/WindowInfo.h"
 #include "win/ResourceId.h"
@@ -52,22 +53,6 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class GetObjectEventArgs {
-	public:
-		long        Flags;
-		ObjectId    Object;
-
-	public:
-		GetObjectEventArgs(::WPARAM w, ::LPARAM l)
-		  : Flags{static_cast<long>(w)},
-			Object{static_cast<ObjectId>(l)}
-		{}
-	};
-	
-	using GetObjectDelegate = Delegate<void (Window&,GetObjectEventArgs)>;
-	using GetObjectEvent = ObservableEvent<GetObjectDelegate>;
-
-
 	class FormsExport OwnerDrawEventArgs 
 	{
 	public:
