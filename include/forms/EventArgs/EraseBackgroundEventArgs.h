@@ -32,7 +32,10 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+namespace core::forms
+{
+	class FormsExport Window;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -50,8 +53,9 @@ namespace core::forms
 		  : Graphics{reinterpret_cast<::HDC>(w), wnd}
 		{}
 	};
-
-	// FIXME: Missing delegate/event declarations for WM_ERASEBACKGORUND
+	
+	using EraseBackgroundDelegate = Delegate<void (Window&,EraseBackgroundEventArgs)>;
+	using EraseBackgroundEvent = ObservableEvent<EraseBackgroundDelegate>;
 	
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
