@@ -41,6 +41,7 @@ public:
 	{
 		this->OkBtn.Clicked += {*this, &ControlsForm::OkBtn_Clicked};
 		this->PopulateBtn.Clicked += {*this, &ControlsForm::PopulateBtn_Clicked};
+		this->SingleLineEdit.TextChanged += {*this, &ControlsForm::SingleLineEdit_TextChanged};
 
 		using enum forms::Side;
 		this->OkBtn.anchors(Right|Bottom);
@@ -66,6 +67,12 @@ private:
 		
 		for (unsigned idx : indexes)
 			this->StringList.Items.push_back(std::format(L"Item #{}", idx));
+	}
+	
+	void
+	SingleLineEdit_TextChanged(Window& sender)
+	{
+		this->MultiLineEdit.text(this->SingleLineEdit.text());
 	}
 };
 
