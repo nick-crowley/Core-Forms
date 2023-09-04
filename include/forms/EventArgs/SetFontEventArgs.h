@@ -47,7 +47,8 @@ namespace core::forms
 		}
 	};
 	
-	// FIXME: Mising Delegate/Event types for WM_SETFONT
+	using SetFontDelegate = Delegate<void (Window&,SetFontEventArgs)>;
+	using SetFontEvent = ObservableEvent<SetFontDelegate>;
 
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
