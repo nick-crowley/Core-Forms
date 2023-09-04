@@ -38,6 +38,7 @@
 #include "forms/EventArgs/OwnerDrawEventArgs.h"
 #include "forms/EventArgs/OwnerDrawMenuEventArgs.h"
 #include "forms/EventArgs/ResizeWindowEventArgs.h"
+#include "forms/EventArgs/SetFontEventArgs.h"
 #include "forms/EventArgs/TimerEventArgs.h"
 #include "forms/WindowInfo.h"
 #include "win/ResourceId.h"
@@ -57,14 +58,6 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	struct SetFontEventArgs {
-		SetFontEventArgs(WPARAM w, LPARAM l) {
-		}
-	};
-	
-	// FIXME: Mising Delegate/Event types for WM_SETFONT
-
-
 	struct ShowWindowEventArgs {
 		unsigned	Flags;
 
