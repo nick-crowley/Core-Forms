@@ -38,6 +38,7 @@
 #include "forms/EventArgs/OwnerDrawEventArgs.h"
 #include "forms/EventArgs/OwnerDrawMenuEventArgs.h"
 #include "forms/EventArgs/ResizeWindowEventArgs.h"
+#include "forms/EventArgs/TimerEventArgs.h"
 #include "forms/WindowInfo.h"
 #include "win/ResourceId.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -56,20 +57,6 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	struct TimerEventArgs 
-	{
-		uintptr_t Ident;
-
-		TimerEventArgs(::WPARAM w, ::LPARAM) 
-		  : Ident(static_cast<uintptr_t>(w)) 
-		{
-		}
-	};
-
-	using TimerDelegate = Delegate<void (Window&,TimerEventArgs)>;
-	using TimerEvent = ObservableEvent<TimerDelegate>;
-
-
 	struct SetFontEventArgs {
 		SetFontEventArgs(WPARAM w, LPARAM l) {
 		}
