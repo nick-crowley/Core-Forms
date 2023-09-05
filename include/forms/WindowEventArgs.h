@@ -37,6 +37,7 @@
 #include "forms/EventArgs/MinMaxEventArgs.h"
 #include "forms/EventArgs/MouseEventArgs.h"
 #include "forms/EventArgs/ActivateNonClientEventArgs.h"
+#include "forms/EventArgs/HitTestNonClientEventArgs.h"
 #include "forms/EventArgs/MouseNonClientEventArgs.h"
 #include "forms/EventArgs/OwnerDrawEventArgs.h"
 #include "forms/EventArgs/OwnerDrawMenuEventArgs.h"
@@ -62,20 +63,6 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class HitTestNonClientEventArgs {
-	public:
-		Point  Position;      //!< Screen co-ordinates
-
-	public:
-		HitTestNonClientEventArgs(::WPARAM, ::LPARAM l)
-		  : Position{reinterpret_cast<::POINTS&>(l).x, reinterpret_cast<::POINTS&>(l).y}
-		{}
-	};
-
-	using HitTestNonClientDelegate = Delegate<void (Window&,HitTestNonClientEventArgs)>;
-	using HitTestNonClientEvent = ObservableEvent<HitTestNonClientDelegate>;
-
-
 	class NonClientComponentBounds
 	{
 	public:
