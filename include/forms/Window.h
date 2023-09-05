@@ -487,6 +487,7 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			satisfies(ChildWindowCollection,
+				NotDefaultConstructible,
 				IsCopyConstructible,
 				NotCopyAssignable,
 				NotEqualityComparable,
