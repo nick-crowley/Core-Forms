@@ -39,6 +39,7 @@
 #include "forms/EventArgs/OwnerDrawMenuEventArgs.h"
 #include "forms/EventArgs/ResizeWindowEventArgs.h"
 #include "forms/EventArgs/SetFontEventArgs.h"
+#include "forms/EventArgs/ShowWindowEventArgs.h"
 #include "forms/EventArgs/TimerEventArgs.h"
 #include "forms/WindowInfo.h"
 #include "win/ResourceId.h"
@@ -58,17 +59,6 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	struct ShowWindowEventArgs {
-		unsigned	Flags;
-
-		ShowWindowEventArgs(WPARAM w, LPARAM l) : Flags((unsigned)l) {
-		}
-	};
-
-	using ShowWindowDelegate = Delegate<void (Window&,ShowWindowEventArgs)>;
-	using ShowWindowEvent = ObservableEvent<ShowWindowDelegate>;
-
-
 	class ActivateNonClientEventArgs {
 	public:
 		std::optional<Region>  InvalidArea;
