@@ -28,5 +28,7 @@
 
 #include "forms/Window.cpp"
 #include "forms/WindowClass.cpp"
+#include "forms/EventArgs/OwnerDrawEventArgs.cpp"
+#include "forms/EventArgs/OwnerDrawMenuEventArgs.cpp"
 #include "forms/EventArgs/PaintNonClientEventArgs.cpp"
 #include "forms/EventArgs/PaintWindowEventArgs.cpp"
