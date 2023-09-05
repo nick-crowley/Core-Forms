@@ -35,6 +35,7 @@
 #include "forms/EventArgs/EraseBackgroundEventArgs.h"
 #include "forms/EventArgs/GetObjectEventArgs.h"
 #include "forms/EventArgs/MinMaxEventArgs.h"
+#include "forms/EventArgs/ActivateNonClientEventArgs.h"
 #include "forms/EventArgs/OwnerDrawEventArgs.h"
 #include "forms/EventArgs/OwnerDrawMenuEventArgs.h"
 #include "forms/EventArgs/ResizeWindowEventArgs.h"
@@ -59,34 +60,6 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class ActivateNonClientEventArgs {
-	public:
-		std::optional<Region>  InvalidArea;
-		WindowCaptionState     State;
-		Window*                Window;
-		bool                   Repaint;
-
-	public:
-		ActivateNonClientEventArgs(forms::Window* window, ::WPARAM w, ::LPARAM l) 
-		  : State{static_cast<WindowCaptionState>(w)},
-			Window{window},
-			Repaint{l != -1}
-		{
-			if (l > NULLREGION && !::IsAppThemed())
-				this->InvalidArea = reinterpret_cast<::HRGN>(l);
-		}
-
-		~ActivateNonClientEventArgs() noexcept 
-		{
-			if (this->InvalidArea)
-				this->InvalidArea->detach();
-		}
-	};
-
-	using ActivateNonClientDelegate = Delegate<void (Window&,ActivateNonClientEventArgs)>;
-	using ActivateNonClientEvent = ObservableEvent<ActivateNonClientDelegate>;
-
-
 	enum class WindowHitTest
 	{
 		Border			= HTBORDER,			//!< In the border of a window that does not have a sizing border.
