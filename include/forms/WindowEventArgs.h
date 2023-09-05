@@ -35,6 +35,7 @@
 #include "forms/EventArgs/EraseBackgroundEventArgs.h"
 #include "forms/EventArgs/GetObjectEventArgs.h"
 #include "forms/EventArgs/MinMaxEventArgs.h"
+#include "forms/EventArgs/MouseEventArgs.h"
 #include "forms/EventArgs/ActivateNonClientEventArgs.h"
 #include "forms/EventArgs/OwnerDrawEventArgs.h"
 #include "forms/EventArgs/OwnerDrawMenuEventArgs.h"
@@ -86,39 +87,6 @@ namespace core::forms
 		Transparent		= HTTRANSPARENT,	//!< In a window currently covered by another window in the same thread (the message will be sent to underlying windows in the same thread until one of them returns a code that is not HTTRANSPARENT).
 		VScroll			= HTVSCROLL,		//!< In the vertical scroll bar.
 	};
-
-	enum class MouseButton 
-	{
-		None, 
-		Left = MK_LBUTTON, 
-		Middle = MK_MBUTTON, 
-		Right = MK_RBUTTON, 
-		Shift = MK_SHIFT,
-		Ctrl = MK_CONTROL
-	};
-
-	enum class MouseMessage
-	{
-		ButtonUp, ButtonDown, DoubleClick, Enter, Move, Hover
-	};
-	
-
-	class MouseEventArgs {
-	public:
-		MouseMessage  Event;
-		MouseButton   Button;
-		Point         Position;		//!< Client co-ordinates
-	
-	public:
-		MouseEventArgs(MouseMessage evn, MouseButton btn, ::WPARAM, ::LPARAM l) 
-		  : Button{btn},
-			Event{evn},
-			Position{reinterpret_cast<::POINTS&>(l).x, reinterpret_cast<::POINTS&>(l).y}
-		{}
-	};
-
-	using MouseDelegate = Delegate<void (Window&,MouseEventArgs)>;
-	using MouseEvent = ObservableEvent<MouseDelegate>;
 
 
 	class MouseNonClientEventArgs {
