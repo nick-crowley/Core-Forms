@@ -59,7 +59,10 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
+	//! @brief	Delegate for a 'standard' window event (ie. one that doesn't require a custom second parameter)
 	using WindowDelegate = Delegate<void (Window&)>;
+
+	//! @brief	'standard' window event (ie. one without custom data)
 	using WindowEvent = ObservableEvent<WindowDelegate>;
 
 }	// namespace core::forms
