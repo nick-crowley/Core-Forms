@@ -29,34 +29,12 @@
 #include "library/core.Forms.h"
 #include "support/ObservableEvent.h"
 #include "graphics/Graphics.h"
-#include "forms/AccessibilityFlags.h"
-#include "forms/EventArgs/CommandEventArgs.h"
-#include "forms/EventArgs/CreateWindowEventArgs.h"
-#include "forms/EventArgs/EraseBackgroundEventArgs.h"
-#include "forms/EventArgs/GetObjectEventArgs.h"
-#include "forms/EventArgs/MinMaxEventArgs.h"
-#include "forms/EventArgs/MouseEventArgs.h"
-#include "forms/EventArgs/ActivateNonClientEventArgs.h"
-#include "forms/EventArgs/HitTestNonClientEventArgs.h"
-#include "forms/EventArgs/MouseNonClientEventArgs.h"
-#include "forms/EventArgs/PaintNonClientEventArgs.h"
-#include "forms/EventArgs/OwnerDrawEventArgs.h"
-#include "forms/EventArgs/OwnerDrawMenuEventArgs.h"
-#include "forms/EventArgs/PaintWindowEventArgs.h"
-#include "forms/EventArgs/ResizeWindowEventArgs.h"
-#include "forms/EventArgs/SetFontEventArgs.h"
-#include "forms/EventArgs/ShowWindowEventArgs.h"
-#include "forms/EventArgs/TimerEventArgs.h"
-#include "forms/WindowInfo.h"
-#include "win/ResourceId.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
 	class FormsExport Window;
-	using WindowDelegate = Delegate<void (Window&)>;
-	using WindowEvent = ObservableEvent<WindowDelegate>;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -65,23 +43,32 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	struct UserEventArgs
-	{
-		uint16_t Message;
-		::WPARAM wParam;
-		::LPARAM lParam;
+	class FormsExport PaintWindowEventArgs {
+	private:
+		::PAINTSTRUCT                 Data {};
 
-		UserEventArgs(::UINT msg, ::WPARAM w, ::LPARAM l) 
-		  : Message(static_cast<uint16_t>(msg)),
-		    wParam(w),
-		    lParam(l) 
-		{
-		}
+	public:
+		std::optional<Rect>           Area;
+		mutable 
+		std::optional<DeviceContext>  Graphics;
+		std::optional<bool>           Erase = false, 
+									  Restore = false, 
+									  Update = false;
+		Window*                       Window;
+
+		PaintWindowEventArgs(forms::Window* w) : Window(w) 
+		{}
+
+		void 
+		beginPaint();
+
+		void 
+		endPaint();
 	};
 
-	using UserDelegate = Delegate<void (Window&,UserEventArgs)>;
-	using UserEvent = ObservableEvent<UserDelegate>;
-
+	using PaintWindowDelegate = Delegate<void (Window&,PaintWindowEventArgs)>;
+	using PaintWindowEvent = ObservableEvent<PaintWindowDelegate>;
+	
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
