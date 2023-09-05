@@ -29,33 +29,13 @@
 #include "library/core.Forms.h"
 #include "support/ObservableEvent.h"
 #include "graphics/Graphics.h"
-#include "forms/AccessibilityFlags.h"
-#include "forms/EventArgs/CommandEventArgs.h"
-#include "forms/EventArgs/CreateWindowEventArgs.h"
-#include "forms/EventArgs/EraseBackgroundEventArgs.h"
-#include "forms/EventArgs/GetObjectEventArgs.h"
-#include "forms/EventArgs/MinMaxEventArgs.h"
-#include "forms/EventArgs/MouseEventArgs.h"
-#include "forms/EventArgs/ActivateNonClientEventArgs.h"
-#include "forms/EventArgs/HitTestNonClientEventArgs.h"
-#include "forms/EventArgs/MouseNonClientEventArgs.h"
-#include "forms/EventArgs/PaintNonClientEventArgs.h"
-#include "forms/EventArgs/OwnerDrawEventArgs.h"
-#include "forms/EventArgs/OwnerDrawMenuEventArgs.h"
-#include "forms/EventArgs/ResizeWindowEventArgs.h"
-#include "forms/EventArgs/SetFontEventArgs.h"
-#include "forms/EventArgs/ShowWindowEventArgs.h"
-#include "forms/EventArgs/TimerEventArgs.h"
 #include "forms/WindowInfo.h"
-#include "win/ResourceId.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
 	class FormsExport Window;
-	using WindowDelegate = Delegate<void (Window&)>;
-	using WindowEvent = ObservableEvent<WindowDelegate>;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -64,48 +44,79 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class FormsExport PaintWindowEventArgs {
-		::PAINTSTRUCT  Data {};
+	class NonClientComponentBounds
+	{
+	public:
+		Rect  Caption,		  //!< Window co-ordinates
+			  Title,		  //!< Window co-ordinates
+			  SysMenuBtn,	  //!< Window co-ordinates
+			  MinimizeBtn,	  //!< Window co-ordinates
+			  MaximizeBtn,	  //!< Window co-ordinates
+			  Window;		  //!< Screen co-ordinates
 
 	public:
-		std::optional<Rect>           Area;
-		mutable 
-		std::optional<DeviceContext>  Graphics;
-		std::optional<bool>           Erase = false, 
-									  Restore = false, 
-									  Update = false;
-		Window*                       Window;
+		explicit
+		NonClientComponentBounds(Rect wnd) noexcept
+		  : Window{wnd}
+		{
+			this->Caption = Rect{0, 0, wnd.width(), SystemMetric::cyCaption};
+			this->Caption.inflate(-2*Size{SystemMetric::cxSizeFrame,0});
+			this->Caption.translate(2*Point{0,SystemMetric::cySizeFrame});
 
-		PaintWindowEventArgs(forms::Window* w) : Window(w) 
+			// Caption text
+			Size const rcIcon {this->Caption.height(), this->Caption.height()};
+			this->Title = this->Caption;
+			this->Title.Left += rcIcon.Width + (LONG)GuiMeasurement{SystemMetric::cxSizeFrame}*2;
+		
+			// Caption buttons
+			this->SysMenuBtn = Rect{this->Caption.topLeft(), rcIcon};
+			--this->SysMenuBtn.Left; --this->SysMenuBtn.Top;
+			this->MaximizeBtn = Rect{this->Caption.topRight(),rcIcon} - Point{rcIcon.Width,0};
+			this->MinimizeBtn = Rect{this->Caption.topRight(),rcIcon} - Point{2*rcIcon.Width,0};
+		}
+	};
+
+
+	class FormsExport PaintNonClientEventArgs {
+	public:
+		Region                                Area;
+		Rect                                  Bounds;
+		mutable std::optional<DeviceContext>  Graphics;
+		std::optional<Region>                 InvalidArea;
+		Window*                               Window;
+		WindowCaptionState                    State;
+
+	public:
+		PaintNonClientEventArgs(forms::Window* window, ::WPARAM w, ::LPARAM) 
+		  : Window{window}, 
+			State{WindowCaptionState::Unknown}
+		{
+			if (w > NULLREGION)
+				this->InvalidArea = reinterpret_cast<::HRGN>(w);
+		}
+	
+		PaintNonClientEventArgs(ActivateNonClientEventArgs const& args) 
+		  : InvalidArea{args.InvalidArea},
+			Window{args.Window},
+			State{args.State}
 		{}
+	
+		~PaintNonClientEventArgs() noexcept 
+		{
+			if (this->InvalidArea)
+				this->InvalidArea->detach();
+		}
 
-		void 
+	public:
+		bool 
 		beginPaint();
 
 		void 
 		endPaint();
 	};
 
-	using PaintWindowDelegate = Delegate<void (Window&,PaintWindowEventArgs)>;
-	using PaintWindowEvent = ObservableEvent<PaintWindowDelegate>;
-	
-	
-	struct UserEventArgs
-	{
-		uint16_t Message;
-		::WPARAM wParam;
-		::LPARAM lParam;
-
-		UserEventArgs(::UINT msg, ::WPARAM w, ::LPARAM l) 
-		  : Message(static_cast<uint16_t>(msg)),
-		    wParam(w),
-		    lParam(l) 
-		{
-		}
-	};
-
-	using UserDelegate = Delegate<void (Window&,UserEventArgs)>;
-	using UserEvent = ObservableEvent<UserDelegate>;
+	using PaintNonClientDelegate = Delegate<void (Window&,PaintNonClientEventArgs)>;
+	using PaintNonClientEvent = ObservableEvent<PaintNonClientDelegate>;
 
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
