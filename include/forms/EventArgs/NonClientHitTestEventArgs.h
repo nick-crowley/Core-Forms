@@ -43,18 +43,18 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class HitTestNonClientEventArgs {
+	class NonClientHitTestEventArgs {
 	public:
 		Point  Position;      //!< Screen co-ordinates
 
 	public:
-		HitTestNonClientEventArgs(::WPARAM, ::LPARAM l)
+		NonClientHitTestEventArgs(::WPARAM, ::LPARAM l)
 		  : Position{reinterpret_cast<::POINTS&>(l).x, reinterpret_cast<::POINTS&>(l).y}
 		{}
 	};
 
-	using HitTestNonClientDelegate = Delegate<void (Window&,HitTestNonClientEventArgs)>;
-	using HitTestNonClientEvent = ObservableEvent<HitTestNonClientDelegate>;
+	using NonClientHitTestDelegate = Delegate<void (Window&,NonClientHitTestEventArgs)>;
+	using NonClientHitTestEvent = ObservableEvent<NonClientHitTestDelegate>;
 
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

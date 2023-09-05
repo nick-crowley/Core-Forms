@@ -1293,47 +1293,47 @@ namespace core::forms
 		}
 
 		Response
-		virtual onActivateNonClient(ActivateNonClientEventArgs args) {
+		virtual onNonClientActivate(NonClientActivateEventArgs args) {
 			return Unhandled;
 		}
 	
 		Response 
-		virtual onCreateNonClient(CreateWindowEventArgs args) {
+		virtual onNonClientCreate(CreateWindowEventArgs args) {
 			return Unhandled;
 		}
 	
 		Response 
-		virtual onDestroyNonClient() {
+		virtual onNonClientDestroy() {
 			return Unhandled;
 		}
 	
 		Response
-		virtual onHitTestNonClient(HitTestNonClientEventArgs args) {
+		virtual onNonClientHitTest(NonClientHitTestEventArgs args) {
 			return Unhandled;
 		}
 	
 		Response
-		virtual onMouseDownNonClient(MouseNonClientEventArgs args) {
+		virtual onNonClientMouseDown(NonClientMouseEventArgs args) {
 			return Unhandled;
 		}
 	
 		Response
-		virtual onMouseLeaveNonClient() {
+		virtual onNonClientMouseLeave() {
 			return Unhandled;
 		}
 
 		Response
-		virtual onMouseMoveNonClient(MouseNonClientEventArgs args) {
+		virtual onNonClientMouseMove(NonClientMouseEventArgs args) {
 			return Unhandled;
 		}
 	
 		Response
-		virtual onMouseUpNonClient(MouseNonClientEventArgs args) {
+		virtual onNonClientMouseUp(NonClientMouseEventArgs args) {
 			return Unhandled;
 		}
 	
 		Response
-		virtual onPaintNonClient(PaintNonClientEventArgs args) {
+		virtual onNonClientPaint(NonClientPaintEventArgs args) {
 			return Unhandled;
 		}
 
@@ -1396,31 +1396,31 @@ namespace core::forms
 				return this->onTimer({wParam, lParam});
 		
 			case WM_NCACTIVATE: 
-				return this->onActivateNonClient({this,wParam,lParam});
+				return this->onNonClientActivate({this,wParam,lParam});
 			
 			case WM_NCCREATE: 
-				return this->onCreateNonClient({wParam,lParam});
+				return this->onNonClientCreate({wParam,lParam});
 			
 			case WM_NCDESTROY: 
-				return this->onDestroyNonClient();
+				return this->onNonClientDestroy();
 		
 			case WM_NCHITTEST: 
-				return this->onHitTestNonClient({wParam,lParam});
+				return this->onNonClientHitTest({wParam,lParam});
 			
 			case WM_NCLBUTTONDOWN:
-				return this->onMouseDownNonClient({MouseMessage::ButtonDown,MouseButton::Left,wParam,lParam});
+				return this->onNonClientMouseDown({MouseMessage::ButtonDown,MouseButton::Left,wParam,lParam});
 			
 			case WM_NCMOUSELEAVE:
-				return this->onMouseLeaveNonClient();
+				return this->onNonClientMouseLeave();
 			
 			case WM_NCMOUSEMOVE:
-				return this->onMouseMoveNonClient({MouseMessage::Move,MouseButton::None,wParam,lParam});
+				return this->onNonClientMouseMove({MouseMessage::Move,MouseButton::None,wParam,lParam});
 			
 			case WM_NCLBUTTONUP:
-				return this->onMouseUpNonClient({MouseMessage::ButtonUp,MouseButton::Left,wParam,lParam});
+				return this->onNonClientMouseUp({MouseMessage::ButtonUp,MouseButton::Left,wParam,lParam});
 			
 			case WM_NCPAINT:
-				return this->onPaintNonClient({this,wParam,lParam});
+				return this->onNonClientPaint({this,wParam,lParam});
 
 			default:
 				if (message >= WM_USER && message < WM_APP)

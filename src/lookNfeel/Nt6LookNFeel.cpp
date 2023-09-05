@@ -56,7 +56,7 @@ Nt6LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 }
 
 void
-Nt6LookNFeel::draw(Window& wnd, PaintNonClientEventArgs const& args) 
+Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs const& args) 
 {
 	Invariant(args.Graphics);
 

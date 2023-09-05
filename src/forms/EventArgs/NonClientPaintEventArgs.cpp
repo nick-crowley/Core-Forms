@@ -1,10 +1,10 @@
-#include "forms/EventArgs/PaintNonClientEventArgs.h"
+#include "forms/EventArgs/NonClientPaintEventArgs.h"
 #include "forms/Window.h"
 using namespace core;
 using namespace forms;
 
 bool
-forms::PaintNonClientEventArgs::beginPaint()
+forms::NonClientPaintEventArgs::beginPaint()
 {
 	auto constexpr
 	static Flags = DCX_WINDOW|DCX_CACHE|DCX_LOCKWINDOWUPDATE;
@@ -38,7 +38,7 @@ forms::PaintNonClientEventArgs::beginPaint()
 }
 
 void 
-forms::PaintNonClientEventArgs::endPaint() {
+forms::NonClientPaintEventArgs::endPaint() {
 	::ReleaseDC(this->Window->handle(), this->Graphics->handle());
 	this->Graphics.reset();
 }

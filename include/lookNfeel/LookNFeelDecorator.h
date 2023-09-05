@@ -98,7 +98,7 @@ namespace core::forms
 		}
 	
 		void
-		draw(Window& wnd, PaintNonClientEventArgs const& args) override {
+		draw(Window& wnd, NonClientPaintEventArgs const& args) override {
 			return this->m_lookNfeel->draw(wnd, args);
 		}
 		

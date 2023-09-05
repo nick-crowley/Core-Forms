@@ -46,7 +46,7 @@ namespace core::forms
 	class InitDialogEventArgs;
 	class OwnerDrawEventArgs;
 	class PaintWindowEventArgs;
-	class PaintNonClientEventArgs;
+	class NonClientPaintEventArgs;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -93,7 +93,7 @@ namespace core::forms
 		virtual draw(Dialog& dlg, PaintWindowEventArgs const& args) abstract;
 	
 		void
-		virtual draw(Window& wnd, PaintNonClientEventArgs const& args) abstract;
+		virtual draw(Window& wnd, NonClientPaintEventArgs const& args) abstract;
 		
 		void
 		virtual initialize(Dialog& dlg, InitDialogEventArgs const& args) abstract;

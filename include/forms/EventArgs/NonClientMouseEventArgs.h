@@ -71,7 +71,7 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class MouseNonClientEventArgs {
+	class NonClientMouseEventArgs {
 	public:
 		MouseMessage  Event;
 		MouseButton   Button;
@@ -79,7 +79,7 @@ namespace core::forms
 		Point         Position;		//!< Screen co-ordinates
 	
 	public:
-		MouseNonClientEventArgs(MouseMessage evn, MouseButton btn, ::WPARAM w, ::LPARAM l) 
+		NonClientMouseEventArgs(MouseMessage evn, MouseButton btn, ::WPARAM w, ::LPARAM l) 
 		  : Button{btn},
 			Event{evn},
 			Object{static_cast<WindowHitTest>(w)},
@@ -87,8 +87,8 @@ namespace core::forms
 		{}
 	};
 
-	using MouseNonClientDelegate = Delegate<void (Window&,MouseNonClientEventArgs)>;
-	using MouseNonClientEvent = ObservableEvent<MouseNonClientDelegate>;
+	using NonClientMouseDelegate = Delegate<void (Window&,NonClientMouseEventArgs)>;
+	using NonClientMouseEvent = ObservableEvent<NonClientMouseDelegate>;
 
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

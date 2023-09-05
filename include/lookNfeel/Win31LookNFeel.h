@@ -64,7 +64,7 @@ namespace core::forms
 		draw(Dialog& dlg, PaintWindowEventArgs const& args) override;
 	
 		void
-		draw(Window& wnd, PaintNonClientEventArgs const& args) override;
+		draw(Window& wnd, NonClientPaintEventArgs const& args) override;
 		
 		void
 		initialize(Dialog& dlg, InitDialogEventArgs const& args) override;

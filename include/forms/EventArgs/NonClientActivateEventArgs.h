@@ -44,7 +44,7 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class ActivateNonClientEventArgs {
+	class NonClientActivateEventArgs {
 	public:
 		std::optional<Region>  InvalidArea;
 		WindowCaptionState     State;
@@ -52,7 +52,7 @@ namespace core::forms
 		bool                   Repaint;
 
 	public:
-		ActivateNonClientEventArgs(forms::Window* window, ::WPARAM w, ::LPARAM l) 
+		NonClientActivateEventArgs(forms::Window* window, ::WPARAM w, ::LPARAM l) 
 		  : State{static_cast<WindowCaptionState>(w)},
 			Window{window},
 			Repaint{l != -1}
@@ -61,15 +61,15 @@ namespace core::forms
 				this->InvalidArea = reinterpret_cast<::HRGN>(l);
 		}
 
-		~ActivateNonClientEventArgs() noexcept 
+		~NonClientActivateEventArgs() noexcept 
 		{
 			if (this->InvalidArea)
 				this->InvalidArea->detach();
 		}
 	};
 
-	using ActivateNonClientDelegate = Delegate<void (Window&,ActivateNonClientEventArgs)>;
-	using ActivateNonClientEvent = ObservableEvent<ActivateNonClientDelegate>;
+	using NonClientActivateDelegate = Delegate<void (Window&,NonClientActivateEventArgs)>;
+	using NonClientActivateEvent = ObservableEvent<NonClientActivateDelegate>;
 
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

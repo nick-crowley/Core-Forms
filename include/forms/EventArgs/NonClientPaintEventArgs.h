@@ -77,7 +77,7 @@ namespace core::forms
 	};
 
 
-	class FormsExport PaintNonClientEventArgs {
+	class FormsExport NonClientPaintEventArgs {
 	public:
 		Region                                Area;
 		Rect                                  Bounds;
@@ -87,7 +87,7 @@ namespace core::forms
 		WindowCaptionState                    State;
 
 	public:
-		PaintNonClientEventArgs(forms::Window* window, ::WPARAM w, ::LPARAM) 
+		NonClientPaintEventArgs(forms::Window* window, ::WPARAM w, ::LPARAM) 
 		  : Window{window}, 
 			State{WindowCaptionState::Unknown}
 		{
@@ -95,13 +95,13 @@ namespace core::forms
 				this->InvalidArea = reinterpret_cast<::HRGN>(w);
 		}
 	
-		PaintNonClientEventArgs(ActivateNonClientEventArgs const& args) 
+		NonClientPaintEventArgs(NonClientActivateEventArgs const& args) 
 		  : InvalidArea{args.InvalidArea},
 			Window{args.Window},
 			State{args.State}
 		{}
 	
-		~PaintNonClientEventArgs() noexcept 
+		~NonClientPaintEventArgs() noexcept 
 		{
 			if (this->InvalidArea)
 				this->InvalidArea->detach();
@@ -115,8 +115,8 @@ namespace core::forms
 		endPaint();
 	};
 
-	using PaintNonClientDelegate = Delegate<void (Window&,PaintNonClientEventArgs)>;
-	using PaintNonClientEvent = ObservableEvent<PaintNonClientDelegate>;
+	using NonClientPaintDelegate = Delegate<void (Window&,NonClientPaintEventArgs)>;
+	using NonClientPaintEvent = ObservableEvent<NonClientPaintDelegate>;
 
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
