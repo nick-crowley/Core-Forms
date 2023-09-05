@@ -684,11 +684,6 @@ namespace core::forms
 			}
 		};
 	
-	private:
-		//! @brief	Window beneath the cursor, if any
-		nstd::return_t<Window const*>
-		static BeneathCursor;
-		
 	public:
 		//! @brief	Sentinel: the message was not handled
 		Response const
@@ -702,10 +697,17 @@ namespace core::forms
 		MessageDictionary const
 		static inline MessageDatabase;
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Representation o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		//! @brief	Window beneath the cursor, if any
+		nstd::return_t<Window const*>
+		static BeneathCursor;
+
+	public:
 		//! @brief	All windows created by core-forms
 		ExistingWindowCollection 
 		static ExistingWindows; 
-
+		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		AnyColour           BackColour = SystemColour::Window;
