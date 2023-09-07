@@ -44,10 +44,18 @@ public:
 		this->SingleLineEdit.TextChanged += {*this, &ControlsForm::SingleLineEdit_TextChanged};
 
 		using enum forms::Side;
-		this->OkBtn.anchors(Right|Bottom);
+		this->ListGroup.anchors(Left|Top|Right);
+		this->StringList.anchors(Left|Top|Right);
+
+		this->PopulateGroup.anchors(Top|Right);
+		this->ReverseCheck.anchors(Top|Right);
+		this->PopulateBtn.anchors(Top|Right);
+
 		this->EditGroup.anchors(Left|Top|Right|Bottom);
 		this->SingleLineEdit.anchors(Left|Top|Right);
 		this->MultiLineEdit.anchors(Left|Top|Right|Bottom);
+
+		this->OkBtn.anchors(Right|Bottom);
 	}
 
 private:
