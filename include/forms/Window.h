@@ -780,8 +780,8 @@ namespace core::forms
 				return Window::onMinMaxInfo({wParam,lParam});
 			}
 			else {
-				if (message == WM_MOUSEMOVE && Window::Window::BeneathCursor)
-					Window::Window::BeneathCursor = nullptr;
+				if (message == WM_MOUSEMOVE && Window::BeneathCursor)
+					Window::BeneathCursor = nullptr;
 				
 				using namespace std::literals;
 				throw runtime_error{"Received {} for unrecognised window {}", Window::MessageDatabase.name(message), 
