@@ -13,13 +13,15 @@ class ControlsForm : public forms::Dialog
 	using base = forms::Dialog;
 	
 private:
-	forms::GroupBoxControl ListGroup = IDC_GROUP1;
-	forms::ListBoxControl StringList = IDC_LIST1;
-	forms::GroupBoxControl PopulateGroup = IDC_GROUP2;
-	forms::CheckBoxControl ReverseCheck = IDC_CHECK1;
+	// Control identifiers have to be provided at construction to improve the developer experience
+	//  by reducing the need to lookup IDs in the resource header or Visual Studio dialog editor
+	forms::GroupBoxControl ListControlsGroup = IDC_GROUP1;
+	forms::ListBoxControl ItemList = IDC_LIST1;
+	forms::GroupBoxControl ConfigurationGroup = IDC_GROUP2;
+	forms::CheckBoxControl ReverseItemsCheck = IDC_CHECK1;
 	forms::ButtonControl PopulateBtn = IDC_BUTTON1;
 	
-	forms::GroupBoxControl EditGroup = IDC_GROUP3;
+	forms::GroupBoxControl EditControlsGroup = IDC_GROUP3;
 	forms::EditControl SingleLineEdit = IDC_EDIT1;
 	forms::EditControl MultiLineEdit = IDC_EDIT2;
 
@@ -28,30 +30,35 @@ private:
 public:
 	ControlsForm() : base{win::ResourceId{IDD_CONTROLS}, 
 		EarlyBoundControlCollection{
-			&this->ListGroup,
-			&this->StringList,
-			&this->PopulateGroup,
-			&this->ReverseCheck,
+			&this->ListControlsGroup,
+			&this->ItemList,
+			&this->ConfigurationGroup,
+			&this->ReverseItemsCheck,
 			&this->PopulateBtn,
-			&this->EditGroup,
+			&this->EditControlsGroup,
 			&this->SingleLineEdit,
 			&this->MultiLineEdit,
 			&this->OkBtn
 		}}
 	{
+		// Attach listeners for events
 		this->OkBtn.Clicked += {*this, &ControlsForm::OkBtn_Clicked};
 		this->PopulateBtn.Clicked += {*this, &ControlsForm::PopulateBtn_Clicked};
 		this->SingleLineEdit.TextChanged += {*this, &ControlsForm::SingleLineEdit_TextChanged};
 
+		// Define how controls should behave when the dialog is resized
+		// * Anchoring on the left/top alone has no effect
+		// * Anchoring on the right/bottom causes controls to move
+		// * Anchoring two opposite sides causes controls to stretch
 		using enum forms::Side;
-		this->ListGroup.anchors(Left|Top|Right);
-		this->StringList.anchors(Left|Top|Right);
+		this->ListControlsGroup.anchors(Left|Top|Right);
+		this->ItemList.anchors(Left|Top|Right);
 
-		this->PopulateGroup.anchors(Top|Right);
-		this->ReverseCheck.anchors(Top|Right);
+		this->ConfigurationGroup.anchors(Top|Right);
+		this->ReverseItemsCheck.anchors(Top|Right);
 		this->PopulateBtn.anchors(Top|Right);
 
-		this->EditGroup.anchors(Left|Top|Right|Bottom);
+		this->EditControlsGroup.anchors(Left|Top|Right|Bottom);
 		this->SingleLineEdit.anchors(Left|Top|Right);
 		this->MultiLineEdit.anchors(Left|Top|Right|Bottom);
 
@@ -70,21 +77,25 @@ private:
 	{
 		std::vector indexes {1,2,3,4,5,6,7,8};
 
-		if (this->ReverseCheck.checked())
+		// CheckBoxes expose their state via @c CheckBoxControl::checked()
+		if (this->ReverseItemsCheck.checked())
 			std::reverse(indexes.begin(), indexes.end());
 		
+		// ListBoxes expose their items via their @c Items and @SelectedIndicies properties, which
+		//  are both C++ container facades over the standard Windows messages.
 		for (unsigned idx : indexes)
-			this->StringList.Items.push_back(std::format(L"Item #{}", idx));
+			this->ItemList.Items.push_back(std::format(L"Item #{}", idx));
 	}
 	
 	void
 	SingleLineEdit_TextChanged(Window& sender)
 	{
+		// Window text can be retrieved or modified using @c Window::text() overloads
 		this->MultiLineEdit.text(this->SingleLineEdit.text());
 	}
 };
 
-// Display modal dialog
+// Entry point: Display modal dialog and exit
 int main() 
 try 
 {
