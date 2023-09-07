@@ -132,16 +132,16 @@ namespace core::forms
 				using type = ItemIterator;
 
 				class ItemProxy {
-					Item  Item$;
+					Item  Value;
 
 				public:
 					explicit
-					ItemProxy(Item itm) : Item${itm}
+					ItemProxy(Item item) : Value{item}
 					{}
 
 					operator
 					Item&() {
-						return this->Item$;
+						return this->Value;
 					}
 				};
 
