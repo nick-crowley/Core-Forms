@@ -439,7 +439,7 @@ namespace core::forms
 			::BOOL
 			static CALLBACK onNextChildWindow(::HWND child, ::LPARAM iterator);
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
-		 private:
+		private:
 			bool 
 			equal(const type& r) const {
 				return this->Parent == r.Parent 
