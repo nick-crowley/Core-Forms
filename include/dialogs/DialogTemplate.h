@@ -27,8 +27,11 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
+#include "controls/ControlDictionary.h"
 #include "dialogs/DialogItemTemplate.h"
 #include "graphics/Rectangle.h"
+#include "forms/Window.h"
+#include "forms/ClassId.h"
 #include "forms/WindowStyle.h"
 #include "forms/ExWindowStyle.h"
 #include "win/ResourceId.h"
@@ -45,6 +48,9 @@ namespace core::forms
 {
 	class DialogTemplate 
 	{
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		std::optional<uint32_t>         HelpId;
 		nstd::bitset<ExWindowStyle>     ExtendedStyle;
@@ -61,11 +67,49 @@ namespace core::forms
 		std::optional<uint8_t>          CharSet;
 		std::vector<DialogItemTemplate> Controls;
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(DialogTemplate,
 			IsRegular,
 			NotSortable
 		);
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		void
+		subclassControls(ControlDictionary const& bindings) 
+		{
+			for (auto& ctrl : this->Controls) {
+				if (ctrl.ClassName && bindings.contains(ctrl.Ident)) {
+					if (ctrl.ClassName->is_numeric())
+						switch (uint16_t id = ctrl.ClassName->as_number(); id) {
+						case ClassId::Button:    ctrl.ClassName = win::ResourceId(L"Custom.BUTTON");    break;
+						case ClassId::Edit:      ctrl.ClassName = win::ResourceId(L"Custom.EDIT");      break;
+						case ClassId::Static:    ctrl.ClassName = win::ResourceId(L"Custom.STATIC");    break;
+						case ClassId::Listbox:   ctrl.ClassName = win::ResourceId(L"Custom.LISTBOX");   break;
+						case ClassId::Scrollbar: ctrl.ClassName = win::ResourceId(L"Custom.SCROLLBAR"); break;
+						case ClassId::Combobox:  ctrl.ClassName = win::ResourceId(L"Custom.COMBOBOX");  break;
+						default: throw invalid_argument{"Controls with class id #{0} not yet supported", id};
+						}
+					else if (ctrl.ClassName == win::ResourceId{WC_LINK})
+						ctrl.ClassName = win::ResourceId(L"Custom.LINK");
+
+					Window::CreateWindowParameter param(bindings[ctrl.Ident]);
+					ctrl.Data = param.asBytes();
+				}
+			}
+		}
+
+		void
+		subclassDialog(win::ResourceId name) {
+			this->ClassName = name;
+		}
 	};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

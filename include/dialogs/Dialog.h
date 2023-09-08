@@ -425,52 +425,37 @@ namespace core::forms
 		std::optional<intptr_t>
 		createInternal(win::Module source, DialogMode mode, Window* parent)
 		{
-			// Change the wndclass for the dialog
-			auto customTemplate = this->Template;
-			customTemplate.ClassName = this->wndcls().Name;
+			// Subclass the dialog prior to creation
+			DialogTemplate customTemplate = this->Template;
+			customTemplate.subclassDialog(this->wndcls().Name);
 
 			// BUG: Prevent callers from wrapping more than one window handle using the same C++ object
 			
-			// Bind any controls provided at class construction-time
+			// Store any early-bound controls provided to our constructor
 			this->BoundControls += this->EarlyBoundControls.to_dictionary();
 
-			// Change the wndclass for each wrapped control
-			if (!this->BoundControls.empty()) {
-				for (auto& ctrl : customTemplate.Controls) {
-					if (ctrl.ClassName && this->BoundControls.contains(ctrl.Ident)) {
-						if (ctrl.ClassName->is_numeric())
-							switch (uint16_t id = ctrl.ClassName->as_number(); id) {
-							case ClassId::Button:    ctrl.ClassName = win::ResourceId(L"Custom.BUTTON");    break;
-							case ClassId::Edit:      ctrl.ClassName = win::ResourceId(L"Custom.EDIT");      break;
-							case ClassId::Static:    ctrl.ClassName = win::ResourceId(L"Custom.STATIC");    break;
-							case ClassId::Listbox:   ctrl.ClassName = win::ResourceId(L"Custom.LISTBOX");   break;
-							case ClassId::Scrollbar: ctrl.ClassName = win::ResourceId(L"Custom.SCROLLBAR"); break;
-							case ClassId::Combobox:  ctrl.ClassName = win::ResourceId(L"Custom.COMBOBOX");  break;
-							default: throw invalid_argument{"Controls with class id #{0} not yet supported", id};
-							}
-						else if (ctrl.ClassName == win::ResourceId{WC_LINK})
-							ctrl.ClassName = win::ResourceId(L"Custom.LINK");
-
-						CreateWindowParameter param(this->BoundControls[ctrl.Ident]);
-						ctrl.Data = param.asBytes();
-					}
-				}
-			}
+			// Subclass each bound control prior to creation
+			if (!this->BoundControls.empty())
+				customTemplate.subclassControls(this->BoundControls);
 
 			// Offer derived classes opportunity to modify the template
 			this->onLoadDialog(customTemplate);
-
-			// Pre-creation state
+			
+			// Aggregate all template customizations into a new template resource
+			DialogTemplateBlob blob = DialogTemplateWriter{}.writeTemplate(customTemplate);
+			
+			// Indirectly pass our custom window creation data to the dialog's WM_NCCREATE handler
+			//  by storing it temporarily in a static variable because the APIs for creating dialogs
+			//  do not support passing data into the window-creation portion of dialog construction.
 			Dialog::DialogCreationParameter = CreateWindowParameter(this);
+
+			// Transition internal state
 			this->DisplayMode.emplace(mode);
 			auto const on_exit = this->Debug.setTemporaryState(ProcessingState::BeingCreated);
 		
-			// Generate template with our customizations
-			DialogTemplateBlob blob = DialogTemplateWriter{}.writeTemplate(customTemplate);
+			// [MODAL] Display, block, and return result
 			auto const container = source.handle();
 			auto const owner = parent ? parent->handle() : nullptr;
-			
-			// [MODAL] Display, block, and return result
 			if (mode == DialogMode::Modal) { 
 				auto result = ::DialogBoxIndirectW(container, blob, owner, this->DialogProc);
 				if (result == -1)

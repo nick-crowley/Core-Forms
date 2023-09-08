@@ -57,6 +57,8 @@ namespace core::forms
 	//! @brief	Manages the life-cycle and behaviour of a single window
 	class FormsExport Window 
 	{
+		friend class DialogTemplate;	//!< Requires @c CreateWindowParameter class
+
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		//! @brief	Dictionary of message names, expected return values, and special logging requirements
