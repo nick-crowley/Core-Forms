@@ -465,7 +465,7 @@ namespace core::forms
 				return result;
 			}
 
-			// [MODELESS] Display and return handle
+			// [MODELESS] Display, set handle, and return nothing
 			this->Handle = ::CreateDialogIndirectW(container, blob, owner, this->DialogProc);
 			return std::nullopt;
 		}
