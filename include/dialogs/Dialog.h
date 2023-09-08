@@ -431,7 +431,7 @@ namespace core::forms
 
 			// BUG: Prevent callers from wrapping more than one window handle using the same C++ object
 			
-			// Late-bind any controls provided at class construction-time
+			// Bind any controls provided at class construction-time
 			this->BoundControls += this->EarlyBoundControls.to_dictionary();
 
 			// Change the wndclass for each wrapped control
