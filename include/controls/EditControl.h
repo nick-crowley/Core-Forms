@@ -58,7 +58,6 @@ namespace core::forms
 			}
 		};
 
-	protected:
 		class EditNotificationDictionary : public forms::MessageDictionary {
 			using base = forms::MessageDictionary;
 		public:

@@ -863,6 +863,10 @@ namespace core::forms
 				return Window::MessageDatabase[message].Unhandled;
 			}
 		}
+		
+		Warning
+		static unrecognisedNotificationLogEntry(CommandEventArgs args);
+
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		SharedBrush
@@ -1169,7 +1173,7 @@ namespace core::forms
 
 			return Unhandled;
 		}
-	
+
 		Response 
 		virtual onCommand(CommandEventArgs args)
 		{
@@ -1180,9 +1184,7 @@ namespace core::forms
 
 			// [DEBUG] Notification from child window we didn't create
 			if (args.Source == CommandEventArgs::Control) {
-				clog << Warning{"forms::Window::onCommand() WM_COMMAND received {} from unknown window id={} handle={}", 
-					to_hexString<4>(args.Notification->Code), ::GetDlgCtrlID(args.Notification->Handle), 
-					to_hexString<8>((uintptr_t)args.Notification->Handle)};
+				clog << Window::unrecognisedNotificationLogEntry(args);
 				return Unhandled;
 			}
 

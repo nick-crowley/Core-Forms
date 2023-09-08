@@ -75,7 +75,6 @@ namespace core::forms
 			}
 		};
 	
-	protected:
 		class ButtonNotificationDictionary : public forms::MessageDictionary {
 			using base = forms::MessageDictionary;
 		public:

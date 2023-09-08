@@ -1,4 +1,5 @@
 #include "forms/Window.h"
+#include "controls/CommonControls.h"
 #include "graphics/SystemBrush.h"
 #include "lookNfeel/Nt6LookNFeel.h"
 using namespace core;
@@ -35,4 +36,45 @@ Window::Window()
     LookNFeel{Nt6LookNFeel::Instance},
     Timers(*this)
 {
+}
+
+Warning
+Window::unrecognisedNotificationLogEntry(CommandEventArgs args)
+{
+	wchar_t buffer[64] {};
+	auto const nameLength = ::GetClassNameW(args.Notification->Handle, buffer, lengthof(buffer));
+	if (!nameLength)
+		return Warning{"forms::Window::onCommand() received {:#06x} from unmanaged child-window id={} (handle={:#08x})", 
+			args.Notification->Code, args.Ident, (uintptr_t)args.Notification->Handle};
+	
+	std::wstring_view const className{&buffer[0], &buffer[nameLength]};
+	gsl::czstring controlType{};
+	std::string messageName{};
+
+	if (className == WC_BUTTON) {
+		static ButtonControl::ButtonNotificationDictionary const messageNames;
+		messageName = messageNames.at(args.Notification->Code);
+		controlType = "button";
+	}
+	else if (className == WC_EDIT) {
+		static EditControl::EditNotificationDictionary const messageNames;
+		messageName = messageNames.at(args.Notification->Code);
+		controlType = "edit";
+	}
+	else if (className == WC_LISTBOX || className == L"ComboLBox") {
+		static ListBoxControl::ListBoxNotificationDictionary const messageNames;
+		messageName = messageNames.at(args.Notification->Code);
+		controlType = "listbox";
+	}
+	else if (className == WC_STATIC) {
+		static StaticControl::StaticNotificationDictionary const messageNames;
+		messageName = messageNames.at(args.Notification->Code);
+		controlType = "static";
+	}
+	else {
+		messageName = to_hexString<4>(args.Notification->Code);
+		controlType = "control";
+	}
+	return Warning{"forms::Window::onCommand() received {} from unmanaged {} id={} (handle={:#08x})", 
+		messageName, controlType, args.Ident, (uintptr_t)args.Notification->Handle};
 }

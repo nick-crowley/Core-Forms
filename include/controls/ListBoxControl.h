@@ -44,7 +44,7 @@ namespace core::forms
 	class ListBoxControl : public Control 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	protected:
+	public:
 		class ListBoxNotificationDictionary : public forms::MessageDictionary {
 			using base = forms::MessageDictionary;
 		public:
@@ -61,7 +61,6 @@ namespace core::forms
 			{}
 		};
 
-	public:
 		class WindowClass : public forms::WindowClass {
 		public:
 			::WNDPROC	OriginalWndProc;
