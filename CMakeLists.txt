@@ -353,6 +353,59 @@ add_dependencies(appControls
 	libCoreForms
 )
 
+############################################################################
+# ________                ___________              __  .__                 #
+# \______ \   _______  __ \__    ___/___   _______/  |_|__| ____    ____   #
+#  |    |  \_/ __ \  \/ /   |    |_/ __ \ /  ___/\   __\  |/    \  / ___\  #
+#  |    `   \  ___/\   /    |    |\  ___/ \___ \  |  | |  |   |  \/ /_/  > #
+# /_______  /\___  >\_/     |____| \___  >____  > |__| |__|___|  /\___  /  #
+#         \/     \/                    \/     \/               \//_____/   #
+############################################################################
+
+# Project: appDevTesting
+add_executable(appDevTesting
+	"${PROJECT_EXTRA_FOLDER}appDevTesting.cpp"
+	${PROJECT_RESOURCE_FILES}
+    )
+
+# Include folders
+target_include_directories(appDevTesting BEFORE
+    PRIVATE
+	${PROJECT_EXTRA_FOLDER} 
+	${PROJECT_RESOURCE_FOLDER} 
+    PUBLIC
+    ${PROJECT_INCLUDE_FOLDER}            
+	)
+	
+# Set linker dependencies
+target_link_libraries(appDevTesting
+	"${BASE_FOLDER}../Core-Platform/build/$(Configuration)/libCorePlatform.lib"
+	"${BASE_FOLDER}../Core-Com/build/$(Configuration)/libCoreCom.lib"
+	"${BASE_FOLDER}../Core-Forms/build/$(Configuration)/libCoreForms.lib"
+)
+
+# Set compiler & linker flags
+set_target_properties(appDevTesting PROPERTIES
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
+					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS} /SUBSYSTEM:CONSOLE"
+					  OUTPUT_NAME "appDevTesting")
+
+# Set export macros for static-library for all dependencies
+target_compile_definitions(appDevTesting
+	PRIVATE CORE_PLATFORM_STATIC CORE_COM_STATIC CORE_FORMS_STATIC
+)
+
+# Link CRT statically
+target_compile_options(appDevTesting
+	PRIVATE $<$<CONFIG:Release>:/MT>
+	PRIVATE $<$<CONFIG:Debug>:/MTd>
+)
+
+# Set project dependencies
+add_dependencies(appDevTesting
+	libCoreForms
+)
+
 #################################################################################
 #     ___________.__.__           .____                                __   
 #     \_   _____/|__|  |   ____   |    |   _____  ___.__. ____  __ ___/  |_ 
