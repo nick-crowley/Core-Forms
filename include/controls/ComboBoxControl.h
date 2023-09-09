@@ -234,6 +234,11 @@ namespace core::forms
 			size() const {
 				return ComboBox_GetCount(this->ComboBox.handle());
 			}
+			
+			Item
+			operator[](size_t idx) const {
+				return Item(this->ComboBox, idx);
+			}
 
 		public:
 			void
@@ -313,6 +318,11 @@ namespace core::forms
 	public:
 		Response 
 		onOwnerDraw(OwnerDrawEventArgs args) override {
+			if (args.Ident == this->ident()) {
+				this->LookNFeel->draw(*this, args);
+				return TRUE;
+			}
+
 			return Unhandled;
 		}
 

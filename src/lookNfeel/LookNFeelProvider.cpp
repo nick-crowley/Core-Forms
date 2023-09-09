@@ -139,6 +139,28 @@ LookNFeelProvider::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 void
+LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args) 
+{
+	if (!ctrl.ownerDraw())
+		throw runtime_error{"ComboBox #{} must be OwnerDraw", args.Ident};
+
+	bool const selected = args.Item.State.test(OwnerDrawState::Selected);
+	
+	// Draw item background
+	Rect const rcItem = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
+	args.Graphics.setBrush(selected ? SystemBrush::Highlight : SystemBrush::Window);
+	args.Graphics.fillRect(rcItem);
+
+	// Draw item text
+	args.Graphics.setFont(ctrl.font());
+	args.Graphics.textColour(selected ? SystemColour::HighlightText : ctrl.textColour(),
+	                         selected ? SystemColour::Highlight : ctrl.backColour());
+	args.Graphics.drawText(ctrl.Items[std::get<uint32_t>(args.Item.Ident)].text(), rcItem);
+
+	args.Graphics.restore();
+}
+
+void
 LookNFeelProvider::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args) 
 {
 	if (!ctrl.ownerDraw())

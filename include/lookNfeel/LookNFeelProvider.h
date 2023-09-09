@@ -64,6 +64,9 @@ namespace core::forms
 		draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
 		void
+		draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
+	
+		void
 		draw(LabelControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
 		void

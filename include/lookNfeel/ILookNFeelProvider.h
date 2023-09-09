@@ -36,6 +36,7 @@ namespace core::forms
 	class Dialog;
 	class ButtonControl;
 	class CheckBoxControl;
+	class ComboBoxControl;
 	class LabelControl;
 	class ListBoxControl;
 	class GroupBoxControl;
@@ -67,6 +68,9 @@ namespace core::forms
 	
 		void
 		virtual draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) abstract;
+	
+		void
+		virtual draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args) abstract;
 	
 		void
 		virtual draw(LabelControl& ctrl, OwnerDrawEventArgs const& args) abstract;
