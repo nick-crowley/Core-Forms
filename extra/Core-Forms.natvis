@@ -41,4 +41,13 @@
 		<DisplayString Condition="!Handle">{{ id={Ident,d} &lt;Not a window&gt; }}</DisplayString>
 		<DisplayString>{{ id={Ident,d} {Debug} }}</DisplayString>
 	</Type>
+
+
+	<Type Name="core::forms::ComboBoxControl::ItemCollection">
+		<DisplayString>{{ Virtual collection }}</DisplayString>
+	</Type>
+
+	<Type Name="core::forms::ListBoxControl::ItemCollection">
+		<DisplayString>{{ Virtual collection }}</DisplayString>
+	</Type>
 </AutoVisualizer>
