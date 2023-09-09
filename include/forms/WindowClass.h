@@ -66,12 +66,12 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		WindowClass(win::ResourceId name, std::optional<::HMODULE> container = std::nullopt) 
-		  : WindowClass{fromName(name,container)}
+		  : WindowClass{WindowClass::fromName(name,container)}
 		{
 		}
 		
 		WindowClass(::HWND existingWindow) 
-		  : WindowClass{fromHandle(existingWindow)}
+		  : WindowClass{WindowClass::fromHandle(existingWindow)}
 		{
 		}
 
@@ -107,7 +107,7 @@ namespace core::forms
 			wchar_t name[96] {};
 			if (!::GetClassNameW(existingWindow, name, lengthof(name))) 
 				win::LastError{}.throwIfError("Failed to resolve window class");
-			return fromName(win::ResourceId::parse(name), GetWindowInstance(existingWindow));
+			return WindowClass::fromName(win::ResourceId::parse(name), GetWindowInstance(existingWindow));
 		}
 
 		::WNDCLASSEXW
