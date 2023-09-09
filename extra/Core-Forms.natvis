@@ -17,7 +17,10 @@
 		<DisplayString>&lt;Cannot determine&gt;</DisplayString>
 	</Type>
 
-	<Type Name="core::forms::Window::ProcessingState">
+	<Type Name="core::forms::DeviceContext">
+		<DisplayString>&lt;Not implemented&gt;</DisplayString>
+	</Type>
+	
 	<Type Name="core::forms::Window::DebuggingAide::StateDescription">
 		<DisplayString Condition="strlen(Message)">{State,en} ({Message,su})</DisplayString>
 		<DisplayString>{State,en}</DisplayString>
