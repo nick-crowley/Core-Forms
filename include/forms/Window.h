@@ -227,10 +227,12 @@ namespace core::forms
 		};
 		static_assert(sizeof(CreationData) == nstd::sizeof_v<Window*> + nstd::sizeof_n<uint16_t>(2));
 #		pragma pack (pop)
-
-		//! @brief	Simplifies providing multiple window construction parameters
-		struct FormsExport CreateWindowBuilder 
+		
+		//! @brief	Window construction parameters
+		struct FormsExport CreateWindowParams
 		{
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			Rect Area {CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT };
 			win::ResourceId Class;
@@ -242,10 +244,73 @@ namespace core::forms
 			CreationData Parameter;
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			satisfies(CreateWindowBuilder,
+			satisfies(CreateWindowParams,
 				IsRegular,
 				NotSortable
 			);
+		};
+
+		//! @brief	Simplifies providing multiple window construction parameters
+		class FormsExport CreateWindowParamsBuilder 
+		{
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			using reference = CreateWindowParamsBuilder&;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			CreateWindowParams Params;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			satisfies(CreateWindowParamsBuilder,
+				IsRegular,
+				NotSortable
+			);
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			CreateWindowParams&
+			build() {
+				return this->Params;
+			}
+
+			reference
+			withArea(Rect const& area) {
+				this->Params.Area = area;
+				return *this;
+			}
+
+			reference
+			withClass(WindowClass const& cls) {
+				this->Params.Class = cls.Name;
+				this->Params.Module = cls.Instance;
+				return *this;
+			}
+
+			reference
+			withParameter(Window* wnd) {
+				this->Params.Parameter = CreationData{wnd};
+				return *this;
+			}
+
+			reference
+			withParent(Window const& parent) {
+				this->Params.Parent = parent.handle();
+				return *this;
+			}
+
+			reference
+			withStyle(WindowStyle s) {
+				this->Params.Style = s;
+				return *this;
+			}
+
+			reference
+			withText(std::wstring_view txt) {
+				this->Params.Text = txt;
+				return *this;
+			}
 		};
 	
 		//! @brief	Identifies current high-level processing loop
@@ -1024,32 +1089,28 @@ namespace core::forms
 
 		void 
 		create(std::wstring_view text, WindowStyle style, std::optional<Rect> area = std::nullopt) {
-			CreateWindowBuilder wnd;
-			if (area) {
-				wnd.Area = *area;
-			}
-			wnd.Class = this->wndcls().Name;
-			wnd.Module = this->wndcls().Instance;
-			wnd.Parameter = CreationData{this};
-			wnd.Text = text;
-			wnd.Style = style;
+			auto params = CreateWindowParamsBuilder{}.withClass(this->wndcls())
+			                                         .withStyle(style)
+			                                         .withText(text)
+			                                         .withParameter(this)
+			                                         .build();
+			if (area)
+				params.Area = *area;
 
-			this->createInternal(wnd);
+			this->createInternal(params);
 		}
 
 		void 
 		create(const Window& parent, std::wstring_view text, WindowStyle style, Rect area)
 		{
-			CreateWindowBuilder wnd;
-			wnd.Area = area;
-			wnd.Parent = parent.handle();
-			wnd.Class = this->wndcls().Name;
-			wnd.Module = this->wndcls().Instance;
-			wnd.Parameter = CreationData{this};
-			wnd.Text = text;
-			wnd.Style = style;
-
-			this->createInternal(wnd);
+			auto const params = CreateWindowParamsBuilder{}.withClass(this->wndcls())
+			                                               .withStyle(style)
+			                                               .withParent(parent)
+			                                               .withText(text)
+			                                               .withParameter(this)
+			                                               .withArea(area)
+			                                               .build();
+			this->createInternal(params);
 		}
 
 		void 
@@ -1478,12 +1539,13 @@ namespace core::forms
 
 	private:
 		void 
-		createInternal(CreateWindowBuilder& w) 
+		createInternal(CreateWindowParams const& w) 
 		{
 			this->Debug.setState(ProcessingState::BeingCreated);
 
-			if (!::CreateWindowExW(NULL, w.Class, w.Text.data(), static_cast<DWORD>(w.Style),
-				w.Area.Left, w.Area.Top, w.Area.width(), w.Area.height(), w.Parent, w.Menu, w.Module, &w.Parameter)) 
+			if (!::CreateWindowExW(NULL, w.Class, w.Text.data(), win::DWord{w.Style},
+				w.Area.Left, w.Area.Top, w.Area.width(), w.Area.height(), w.Parent, w.Menu, 
+				w.Module, (void*)&w.Parameter)) 
 			{
 				this->Debug.setState(ProcessingState::Idle);
 				win::LastError{}.throwIfError("Failed to create '{}' window", to_string(w.Class));
