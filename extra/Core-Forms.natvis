@@ -38,7 +38,7 @@
 	
 	<Type Name="core::forms::Control">
 		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
-		<DisplayString Condition="!Handle">{{ id={Ident} &lt;Not a window&gt; }}</DisplayString>
-		<DisplayString>{{ id={Ident} {Debug} }}</DisplayString>
+		<DisplayString Condition="!Handle">{{ id={Ident,d} &lt;Not a window&gt; }}</DisplayString>
+		<DisplayString>{{ id={Ident,d} {Debug} }}</DisplayString>
 	</Type>
 </AutoVisualizer>
