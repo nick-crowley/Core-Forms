@@ -64,7 +64,7 @@ namespace core::forms
 		}
 	};
 
-	using InitDialogDelegate = Delegate<void (InitDialogEventArgs)>;
+	using InitDialogDelegate = Delegate<void (Window&,InitDialogEventArgs)>;
 	using InitDialogEvent = ObservableEvent<InitDialogDelegate>;
 
 	class LoadDialogEventArgs 

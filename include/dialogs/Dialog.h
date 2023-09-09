@@ -405,7 +405,7 @@ namespace core::forms
 		{
 			switch (message) {
 			case WM_INITDIALOG: 
-				this->Initialized.raise(InitDialogEventArgs{wParam,lParam});
+				this->Initialized.raise(*this, InitDialogEventArgs{wParam,lParam});
 				return;
 			}
 
