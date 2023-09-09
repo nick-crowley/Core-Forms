@@ -797,7 +797,6 @@ namespace core::forms
 		{
 			WndProcLoggingSentry log_entry(message);
 			try {
-				gsl::czstring const name = Window::MessageDatabase.name(message);
 				Window* wnd {};
 				Response response;
 
@@ -815,17 +814,11 @@ namespace core::forms
 					if (message == WM_DESTROY) 
 						wnd->onDestructionStarted();
 
-					scoped {
-						// Offer the message to the C++ object managing this handle
-						auto const on_exit = wnd->Debug.setTemporaryState({ProcessingState::MessageProcessing, name});
-						response = wnd->offerMessage(hWnd, message, wParam, lParam);
-					}
+					// Offer the message to the C++ object managing this handle
+					response = wnd->offerMessage(hWnd, message, wParam, lParam);
 
-					scoped {
-						// [POST] Raise the associated event, if any
-						auto const on_exit = wnd->Debug.setTemporaryState({ProcessingState::EventProcessing, name});
-						wnd->raiseMessageEvent(hWnd, message, wParam, lParam);
-					}
+					// Raise equivalent event, if any, after processing completed
+					wnd->raiseMessageEvent(hWnd, message, wParam, lParam);
 				}
 
 				Invariant(response.Status != Response::Invalid);
@@ -836,10 +829,9 @@ namespace core::forms
 					result = *response.Value;
 
 				// [UNHANDLED/ERROR] Let the C++ object managing this handle pass message to ::DefWindowProc()
-				else if (wnd) {	
-					auto const on_exit = wnd->Debug.setTemporaryState({ProcessingState::DefaultProcessing, name});
+				else if (wnd) 
 					result = wnd->unhandledMessage(hWnd, message, wParam, lParam);
-				}
+				
 				// [UNMANAGED] Pass message to ::DefWindowProc()
 				else 
 					result = ::DefWindowProc(hWnd, message, wParam, lParam);
@@ -1348,6 +1340,8 @@ namespace core::forms
 		Response
 		virtual offerMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) 
 		{
+			auto const on_exit = this->Debug.setTemporaryState({ProcessingState::MessageProcessing, 
+			                                                    Window::MessageDatabase.name(message)});
 			switch (message) {
 			case WM_CLOSE: 
 				return this->onClose();
@@ -1445,6 +1439,8 @@ namespace core::forms
 		void
 		virtual raiseMessageEvent(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) 
 		{
+			auto const on_exit = this->Debug.setTemporaryState({ProcessingState::EventProcessing, 
+			                                                    Window::MessageDatabase.name(message)});
 			switch (message) {
 			case WM_CREATE: 
 				this->Created.raise(*this, CreateWindowEventArgs{wParam,lParam});
@@ -1473,15 +1469,10 @@ namespace core::forms
 			}
 		} 
 	
-		::LRESULT
-		performDefaultProcessing(::UINT message, ::WPARAM wParam, ::LPARAM lParam)
-		{
-			auto const on_exit = this->Debug.setTemporaryState({ProcessingState::DefaultProcessing,Window::MessageDatabase.name(message)});
-			return this->unhandledMessage(this->handle(), message, wParam, lParam);
-		}
-
 		::LRESULT 
 		virtual unhandledMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) {
+			auto const on_exit = this->Debug.setTemporaryState({ProcessingState::DefaultProcessing,
+			                                                    Window::MessageDatabase.name(message)});
 			return ::DefWindowProc(hWnd, message, wParam, lParam);
 		}
 
