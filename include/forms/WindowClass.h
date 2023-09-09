@@ -61,60 +61,69 @@ namespace core::forms
 		::WNDPROC                 WndProc = nullptr;
 
 	protected:
-		SharedAtom	Atom;
+		SharedAtom	              Atom;
 
-	private:
-		::WNDCLASSEXW  Properties {sizeof(::WNDCLASSEXW)};
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		WindowClass() {
+		WindowClass(win::ResourceId name, std::optional<::HMODULE> container = std::nullopt) 
+		  : WindowClass{fromName(name,container)}
+		{
 		}
 
-		WindowClass(win::ResourceId name, std::optional<::HMODULE> container = std::nullopt) 
-		  : Name{name}, Instance{container.value_or(nullptr)}
+		WindowClass(::WNDCLASSEXW const& props)
 		{
-			if (!::GetClassInfoExW(this->Instance, name, &this->Properties)) {
-				win::LastError{}.throwIfError("Cannot find '{}' window class", to_string(name));
-			}
-			if (this->Properties.hbrBackground) {
-				if (auto const sysCol = reinterpret_cast<uintptr_t>(this->Properties.hbrBackground); sysCol <= STOCK_LAST)
+			if (props.hbrBackground) {
+				if (auto const sysCol = reinterpret_cast<uintptr_t>(props.hbrBackground); sysCol <= STOCK_LAST)
 					this->Background = SystemBrush::get(static_cast<SystemColour>(sysCol-1)).handle();
 				else
-					this->Background = SharedBrush{this->Properties.hbrBackground, weakref};
+					this->Background = SharedBrush{props.hbrBackground, weakref};
 			}
-			this->ClsExtra = this->Properties.cbClsExtra;
-			this->Cursor = this->Properties.hCursor;
-			this->LargeIcon = this->Properties.hIcon;
-			this->SmallIcon = this->Properties.hIconSm;
-			this->Menu = win::ResourceId::parse(this->Properties.lpszMenuName);
-			this->Style = static_cast<ClassStyle>(this->Properties.style);
-			this->WndExtra = this->Properties.cbWndExtra;
-			this->WndProc = this->Properties.lpfnWndProc;
+			this->ClsExtra = props.cbClsExtra;
+			this->Cursor = props.hCursor;
+			this->LargeIcon = props.hIcon;
+			this->SmallIcon = props.hIconSm;
+			this->Instance = props.hInstance;
+			this->Menu = win::ResourceId::parse(props.lpszMenuName);
+			this->Name = win::ResourceId::parse(props.lpszClassName);
+			this->Style = static_cast<ClassStyle>(props.style);
+			this->WndExtra = props.cbWndExtra;
+			this->WndProc = props.lpfnWndProc;
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		satisfies(WindowClass
+			IsSemiRegular,
+		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	private:
+		::WNDCLASSEXW
+		static fromName(win::ResourceId name, std::optional<::HMODULE> container = std::nullopt) 
+		{
+			::WNDCLASSEXW wndcls{sizeof(::WNDCLASSEXW)};
+			if (!::GetClassInfoExW(container.value_or(nullptr), name, &wndcls)) 
+				win::LastError{}.throwIfError("Cannot find '{}' window class", to_string(name));
+			return wndcls;
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void 
 		registér() {
-			this->Properties.hbrBackground = this->Background.get();
-			this->Properties.cbClsExtra = this->ClsExtra;
-			this->Properties.lpszClassName = this->Name;
-			this->Properties.hCursor = this->Cursor;
-			this->Properties.hIcon = this->LargeIcon;
-			this->Properties.hIconSm = this->SmallIcon;
-			this->Properties.hInstance = this->Instance;
-			this->Properties.lpszMenuName = this->Menu;
-			this->Properties.style = this->Style.value();
-			this->Properties.cbWndExtra = this->WndExtra;
-			this->Properties.lpfnWndProc = this->WndProc;
+			::WNDCLASSEXW wndcls{sizeof(::WNDCLASSEXW)};
+			wndcls.hbrBackground = this->Background.get();
+			wndcls.cbClsExtra = this->ClsExtra;
+			wndcls.lpszClassName = this->Name;
+			wndcls.hCursor = this->Cursor;
+			wndcls.hIcon = this->LargeIcon;
+			wndcls.hIconSm = this->SmallIcon;
+			wndcls.hInstance = this->Instance;
+			wndcls.lpszMenuName = this->Menu;
+			wndcls.style = this->Style.value();
+			wndcls.cbWndExtra = this->WndExtra;
+			wndcls.lpfnWndProc = this->WndProc;
 
-			if (::ATOM atom = ::RegisterClassExW(&this->Properties); !atom) {
+			if (::ATOM atom = ::RegisterClassExW(&wndcls); !atom) {
 				if (auto lastError = win::LastError{}; lastError != ERROR_CLASS_ALREADY_EXISTS)
 					lastError.throwIfError("Failed to register '{}' window class", to_string(this->Name));
 			}
