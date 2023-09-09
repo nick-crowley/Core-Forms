@@ -24,6 +24,19 @@ public:
 		this->OkBtn.Clicked += {*this, &DevTesting::Button_Clicked};
 	}
 
+protected:
+	Response 
+	virtual onInitDialog(forms::InitDialogEventArgs args) override {
+		std::ignore = base::onInitDialog(args);
+
+		for (int idx = 1; idx <= 8; ++idx) {
+			this->ComboBox.Items.push_back(std::format(L"Item #{}", idx));
+			this->ListBox.Items.push_back(std::format(L"Item #{}", idx));
+		}
+
+		return FALSE;
+	}
+	
 private:
 	void
 	Button_Clicked(Window& sender)
