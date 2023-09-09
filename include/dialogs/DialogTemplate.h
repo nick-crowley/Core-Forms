@@ -100,7 +100,7 @@ namespace core::forms
 					else if (ctrl.ClassName == win::ResourceId{WC_LINK})
 						ctrl.ClassName = win::ResourceId(L"Custom.LINK");
 
-					Window::CreateWindowParameter param(bindings[ctrl.Ident]);
+					Window::CreationData param(bindings[ctrl.Ident]);
 					ctrl.Data = param.asBytes();
 				}
 			}

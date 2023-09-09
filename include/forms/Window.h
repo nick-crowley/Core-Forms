@@ -57,7 +57,7 @@ namespace core::forms
 	//! @brief	Manages the life-cycle and behaviour of a single window
 	class FormsExport Window 
 	{
-		friend class DialogTemplate;	//!< Requires @c CreateWindowParameter class
+		friend class DialogTemplate;	//!< Requires @c CreationData class
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
@@ -186,7 +186,7 @@ namespace core::forms
 #		pragma pack (push, 1)
 		//! @brief	Represents custom data provided at Window construction
 		//! @remarks	Modifying layout will break ABI compatibility
-		class FormsExport CreateWindowParameter {
+		class FormsExport CreationData {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -197,14 +197,14 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			explicit 
-			CreateWindowParameter(Window* w) 
+			CreationData(Window* w) 
 			  : Length{sizeof(Window*)}, 
 			    DuplicateLength{Length},
 				Parameter{w}
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			satisfies(CreateWindowParameter,
+			satisfies(CreationData,
 				IsRegular noexcept,
 				NotSortable
 			);
@@ -225,7 +225,7 @@ namespace core::forms
 				return this->Parameter;
 			}
 		};
-		static_assert(sizeof(CreateWindowParameter) == nstd::sizeof_v<Window*> + nstd::sizeof_n<uint16_t>(2));
+		static_assert(sizeof(CreationData) == nstd::sizeof_v<Window*> + nstd::sizeof_n<uint16_t>(2));
 #		pragma pack (pop)
 
 		//! @brief	Simplifies providing multiple window construction parameters
@@ -239,7 +239,7 @@ namespace core::forms
 			::HWND Parent = nullptr;
 			::HMENU Menu = nullptr;
 			::HMODULE Module = nullptr;
-			CreateWindowParameter Parameter;
+			CreationData Parameter;
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			satisfies(CreateWindowBuilder,
@@ -759,8 +759,8 @@ namespace core::forms
 				return;
 			}
 			
-			Invariant(args.data<CreateWindowParameter*>() != nullptr);
-			auto* const param = args.data<CreateWindowParameter*>();
+			Invariant(args.data<CreationData*>() != nullptr);
+			auto* const param = args.data<CreationData*>();
 			Window* pThis = param->get();
 
 			pThis->Handle = hWnd;
@@ -1030,7 +1030,7 @@ namespace core::forms
 			}
 			wnd.Class = this->wndcls().Name;
 			wnd.Module = this->wndcls().Instance;
-			wnd.Parameter = CreateWindowParameter{this};
+			wnd.Parameter = CreationData{this};
 			wnd.Text = text;
 			wnd.Style = style;
 
@@ -1045,7 +1045,7 @@ namespace core::forms
 			wnd.Parent = parent.handle();
 			wnd.Class = this->wndcls().Name;
 			wnd.Module = this->wndcls().Instance;
-			wnd.Parameter = CreateWindowParameter{this};
+			wnd.Parameter = CreationData{this};
 			wnd.Text = text;
 			wnd.Style = style;
 

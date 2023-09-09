@@ -2,5 +2,5 @@
 using namespace core;
 using namespace forms;
 
-std::optional<Dialog::CreateWindowParameter>
+std::optional<Dialog::CreationData>
 /*thread_local*/ Dialog::DialogCreationParameter {};

@@ -128,7 +128,7 @@ namespace core::forms
 
 	private:
 		// BUG: Dialog::DialogCreationParameter cannot be __declspec(dllexport)
-		std::optional<CreateWindowParameter>
+		std::optional<CreationData>
 		static /*thread_local*/ DialogCreationParameter;
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -447,7 +447,7 @@ namespace core::forms
 			// Indirectly pass our custom window creation data to the dialog's WM_NCCREATE handler
 			//  by storing it temporarily in a static variable because the APIs for creating dialogs
 			//  do not support passing data into the window-creation portion of dialog construction.
-			Dialog::DialogCreationParameter = CreateWindowParameter(this);
+			Dialog::DialogCreationParameter = CreationData(this);
 
 			// Transition internal state
 			this->DisplayMode.emplace(mode);
