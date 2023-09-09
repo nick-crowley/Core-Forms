@@ -6,7 +6,7 @@
 		<DisplayString>{{non-empty}}</DisplayString>
 	</Type>
 
-	<Type Name="core::forms::ResourceId">
+	<Type Name="core::win::ResourceId">
 		<Intrinsic Name="index" Expression="(int)Ident._Which"/>
 		<DisplayString Condition="index() == 0" Optional="true">{{ #{Ident._Head} }}</DisplayString>
 		<DisplayString Condition="index() == 1" Optional="true">{{ {Ident._Head._Tail,su} }}</DisplayString>
@@ -14,6 +14,7 @@
 	</Type>
 
 	<Type Name="core::forms::Window::ProcessingState">
+	<Type Name="core::forms::Window::DebuggingAide::StateDescription">
 		<DisplayString Condition="strlen(Message)">{State,en} ({Message,su})</DisplayString>
 		<DisplayString>{State,en}</DisplayString>
 	</Type>
