@@ -69,6 +69,11 @@ namespace core::forms
 		  : WindowClass{fromName(name,container)}
 		{
 		}
+		
+		WindowClass(::HWND existingWindow) 
+		  : WindowClass{fromHandle(existingWindow)}
+		{
+		}
 
 		WindowClass(::WNDCLASSEXW const& props)
 		{
@@ -96,6 +101,15 @@ namespace core::forms
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
+		::WNDCLASSEXW
+		static fromHandle(::HWND existingWindow) 
+		{
+			wchar_t name[96] {};
+			if (!::GetClassNameW(existingWindow, name, lengthof(name))) 
+				win::LastError{}.throwIfError("Failed to resolve window class");
+			return fromName(win::ResourceId::parse(name), GetWindowInstance(existingWindow));
+		}
+
 		::WNDCLASSEXW
 		static fromName(win::ResourceId name, std::optional<::HMODULE> container = std::nullopt) 
 		{
