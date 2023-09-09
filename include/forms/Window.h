@@ -840,7 +840,7 @@ namespace core::forms
 					auto const on_exit = wnd->Debug.setTemporaryState({ProcessingState::DefaultProcessing, name});
 					result = wnd->unhandledMessage(hWnd, message, wParam, lParam);
 				}
-				// [UNHANDLED/ERROR] Pass message to ::DefWindowProc()
+				// [UNMANAGED] Pass message to ::DefWindowProc()
 				else 
 					result = ::DefWindowProc(hWnd, message, wParam, lParam);
 
