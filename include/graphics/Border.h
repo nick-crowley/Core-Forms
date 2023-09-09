@@ -74,7 +74,8 @@ namespace core::forms
 			constexpr IsDefaultConstructible noexcept,
 			constexpr IsCopyConstructible noexcept,
 			constexpr IsEqualityComparable noexcept,
-			constexpr NotSortable noexcept
+			NotCopyAssignable,
+			NotSortable
 		);
 	
 		Border constexpr
