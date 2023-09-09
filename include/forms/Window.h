@@ -1034,7 +1034,7 @@ namespace core::forms
 			wnd.Text = text;
 			wnd.Style = style;
 
-			this->create(wnd);
+			this->createInternal(wnd);
 		}
 
 		void 
@@ -1049,7 +1049,7 @@ namespace core::forms
 			wnd.Text = text;
 			wnd.Style = style;
 
-			this->create(wnd);
+			this->createInternal(wnd);
 		}
 
 		void 
@@ -1478,7 +1478,7 @@ namespace core::forms
 
 	private:
 		void 
-		create(CreateWindowBuilder& w) 
+		createInternal(CreateWindowBuilder& w) 
 		{
 			this->Debug.setState(ProcessingState::BeingCreated);
 
