@@ -7,7 +7,6 @@ std::shared_ptr<ILookNFeelProvider> const
 Nt6LookNFeel::Instance = std::make_shared<Nt6LookNFeel>();
 
 Nt6LookNFeel::Nt6LookNFeel()
-  : SegoeUi{L"Segoe UI",20}
 {}
 
 void
@@ -89,6 +88,9 @@ Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs const& args)
 void
 Nt6LookNFeel::initialize(Dialog& dlg, InitDialogEventArgs const& args) 
 {
+	using namespace forms::literals;
+	this->WindowFont = Font{L"Segoe UI", dlg.clientDC().measureFont(11_pt)};
+
 	for (Window& ctrl : dlg.Children) {
 		switch (ctrl.role())
 		{
@@ -102,7 +104,7 @@ Nt6LookNFeel::initialize(Dialog& dlg, InitDialogEventArgs const& args)
 			break;
 		}
 		ctrl.textColour(SystemColour::WindowText);
-		ctrl.font(this->SegoeUi);
+		ctrl.font(this->WindowFont);
 		ctrl.lookNfeel(this->shared_from_this());
 	}
 }

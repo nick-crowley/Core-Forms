@@ -50,7 +50,7 @@ namespace core::forms
 
 	private:
 		SystemBrush  Background = SystemBrush::Dialog;
-		Font  SegoeUi;
+		Font         WindowFont = StockFont::DefaultGui;
 
 	public:
 		Nt6LookNFeel();
