@@ -17,7 +17,7 @@ forms::OwnerDrawEventArgs::ItemData::ItemData(::DRAWITEMSTRUCT& data)
 forms::OwnerDrawEventArgs::OwnerDrawEventArgs(::WPARAM id, ::LPARAM data) 
   : OwnerDrawEventArgs{*reinterpret_cast<::DRAWITEMSTRUCT*>(data)}
 {
-	Expects(id != 0);
+	Expects(id != 0);		// FIXME: Replace this @c Expects() with @c Invariant()
 }
 
 forms::OwnerDrawEventArgs::OwnerDrawEventArgs(::DRAWITEMSTRUCT& data) 

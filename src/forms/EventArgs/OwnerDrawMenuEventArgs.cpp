@@ -6,7 +6,7 @@ using namespace forms;
 forms::OwnerDrawMenuEventArgs::OwnerDrawMenuEventArgs(::WPARAM id, ::LPARAM data) 
   : OwnerDrawMenuEventArgs{*reinterpret_cast<::DRAWITEMSTRUCT*>(data)}
 {
-	Expects(id == 0);
+	Expects(id == 0);	// FIXME: Replace this @c Expects() with @c Invariant()
 }
 
 forms::OwnerDrawMenuEventArgs::OwnerDrawMenuEventArgs(::DRAWITEMSTRUCT& data)
