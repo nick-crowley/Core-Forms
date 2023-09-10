@@ -1233,12 +1233,11 @@ namespace core::forms
 		virtual onCommand(CommandEventArgs args)
 		{
 			// [CONTROL] Reflect notification back to child control
-			if (args.Source == CommandEventArgs::Control) 
-				if (Window::ExistingWindows.contains(args.Notification->Handle))
-					return Window::ExistingWindows[args.Notification->Handle].offerNotification(args.Notification->Code);
-
-			// [DEBUG] Notification from child window we didn't create
 			if (args.Source == CommandEventArgs::Control) {
+				if (Window* sender = Window::ExistingWindows.find(args.Notification->Handle); sender)
+					return sender->offerNotification(args.Notification->Code);
+
+				// [DEBUG] Notification from child window we didn't create
 				clog << Window::unrecognisedNotificationLogEntry(args);
 				return Unhandled;
 			}
