@@ -349,9 +349,10 @@ namespace core::forms
 		Size
 		measureText(std::wstring_view txt, Size initial) const
 		{
+			auto const flags = DrawTextFlags::CalcRect|DrawTextFlags::WordBreak;
 			Rect rc{Point::Zero, initial};
 			// Measure text
-			if (!::DrawTextW(this->handle(), txt.data(), win::DWord{txt.size()}, rc, win::DWord{DrawTextFlags::CalcRect}))
+			if (!::DrawTextW(this->handle(), txt.data(), win::DWord{txt.size()}, rc, win::DWord{flags}))
 				win::LastError{}.throwAlways();
 
 			return rc.size();
