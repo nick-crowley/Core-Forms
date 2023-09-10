@@ -366,6 +366,13 @@ namespace core::forms
 				win::LastError{}.throwAlways();
 		}
 
+		//! @brief	Release the handle
+		void
+		release()
+		{
+			::ReleaseDC(this->Window, this->Context);
+		}
+
 		//!	@brief	Restores the state upon creation
 		void 
 		restore()
