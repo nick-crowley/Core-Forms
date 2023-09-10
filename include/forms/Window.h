@@ -783,6 +783,7 @@ namespace core::forms
 	private:
 		AnyColour           BackColour = SystemColour::Window;
 		AnyColour           TextColour = SystemColour::WindowText;
+		Font                WindowFont = StockFont::SystemFixed;
 
 	protected:
 		//! @remarks Due to message handling being re-entrant there is a significant delay 
@@ -991,9 +992,9 @@ namespace core::forms
 			return static_cast<Style>(::GetWindowLongW(this->handle(),GWL_EXSTYLE));
 		}
 	
-		::HFONT
+		Font
 		font() const {
-			return GetWindowFont(this->handle());
+			return this->WindowFont;
 		}
 
 		uint16_t
@@ -1134,7 +1135,8 @@ namespace core::forms
 		}
 	
 		void
-		virtual font(const Font& newFont) {
+		font(const Font& newFont) {
+			this->WindowFont = newFont;
 			SetWindowFont(this->handle(), *newFont.handle(), FALSE);
 		}
 		
