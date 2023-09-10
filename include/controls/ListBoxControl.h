@@ -381,12 +381,12 @@ namespace core::forms
 		}
 		
 		bool
-		ownerDraw() const override {
+		virtual ownerDraw() const override {
 			return this->style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawFixed|ListBoxStyle::OwnerDrawVariable);
 		}
 		
 		WindowRole
-		role() const override {
+		virtual role() const override {
 			return WindowRole::List;
 		}
 		
@@ -408,7 +408,7 @@ namespace core::forms
 		}
 	
 		Response 
-		onEraseBackground(EraseBackgroundEventArgs args) override {
+		virtual onEraseBackground(EraseBackgroundEventArgs args) override {
 			if (!this->style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawFixed|ListBoxStyle::OwnerDrawVariable))
 				return Unhandled;
 
@@ -417,7 +417,7 @@ namespace core::forms
 		}
 
 		Response 
-		onOwnerDraw(OwnerDrawEventArgs args) override {
+		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
 			if (args.Ident == this->ident()) {
 				this->LookNFeel->draw(*this, args);
 				return TRUE;

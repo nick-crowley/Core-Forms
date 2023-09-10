@@ -69,7 +69,7 @@ namespace core::forms
 		}
 		
 		WindowRole
-		role() const override {
+		virtual role() const override {
 			return WindowRole::CheckButton;
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -85,7 +85,7 @@ namespace core::forms
 		}
 		
 		Response 
-		onOwnerDraw(OwnerDrawEventArgs args) override {
+		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
 			if (args.Ident == this->ident()) {
 				this->LookNFeel->draw(*this, args);
 				return TRUE;

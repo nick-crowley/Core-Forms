@@ -68,7 +68,7 @@ namespace core::forms
 		}
 		
 		WindowRole
-		role() const override {
+		virtual role() const override {
 			return WindowRole::RadioButton;
 		}
 		
@@ -85,7 +85,7 @@ namespace core::forms
 		}
 		
 		Response 
-		onOwnerDraw(OwnerDrawEventArgs args) override {
+		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
 			if (args.Ident == this->ident()) {
 				if (this->Checked)
 					args.Item.State |= OwnerDrawState::Checked;

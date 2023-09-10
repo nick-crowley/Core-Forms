@@ -443,12 +443,12 @@ namespace core::forms
 		}
 
 		bool
-		ownerDraw() const override {
+		virtual ownerDraw() const override {
 			return this->style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawFixed|ComboBoxStyle::OwnerDrawVariable);
 		}
 		
 		WindowRole
-		role() const override {
+		virtual role() const override {
 			return WindowRole::ComboBox;
 		}
 		

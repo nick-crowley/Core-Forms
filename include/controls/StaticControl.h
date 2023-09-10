@@ -99,12 +99,12 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		bool
-		ownerDraw() const override {
+		virtual ownerDraw() const override {
 			return (this->style<StaticStyle>() & StaticStyle::TypeMask).test(StaticStyle::OwnerDraw);
 		}
 		
 		WindowRole
-		role() const override {
+		virtual role() const override {
 			return WindowRole::StaticText;
 		}
 
@@ -117,7 +117,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Response 
-		onOwnerDraw(OwnerDrawEventArgs args) override {
+		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
 			if (args.Ident == this->ident()) {
 				this->LookNFeel->draw(*this, args);
 				return TRUE;

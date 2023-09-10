@@ -64,7 +64,7 @@ namespace core::forms
 		}
 	
 		WindowRole
-		role() const override {
+		virtual role() const override {
 			return WindowRole::Grouping;
 		}
 		
@@ -76,7 +76,7 @@ namespace core::forms
 		}
 	
 		Response 
-		onOwnerDraw(OwnerDrawEventArgs args) override {
+		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
 			if (args.Ident == this->ident()) {
 				this->LookNFeel->draw(*this, args);
 				return TRUE;
