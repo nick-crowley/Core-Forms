@@ -383,15 +383,14 @@ namespace core::forms
 		EditControl      ItemEdit;*/
 		
 	private:
-		Font             TitleFont;
+		Font             TitleFont = ComboBoxControl::makeTitleFont(StockFont::DefaultGui);
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		implicit
 		ComboBoxControl(uint16_t id) 
 		  : base{id}, 
-		    Items{*this},
-			TitleFont{*StockFont::DefaultGui.handle(), std::nullopt, 20}
+		    Items{*this}
 		{}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -424,6 +423,11 @@ namespace core::forms
 			return Window::DefaultMessageHandler(hWnd, message, wParam, lParam);
 		}*/
 
+	private:
+		Font
+		static makeTitleFont(Font const& textFont) {
+			return Font{*textFont.handle(), std::nullopt, 3*textFont.height() / 2};
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		bool
@@ -437,8 +441,6 @@ namespace core::forms
 			ComboBox_GetDroppedControlRect(this->handle(), rc);
 			return rc;
 		}
-
-		using base::font;
 
 		bool
 		ownerDraw() const override {
@@ -457,12 +459,6 @@ namespace core::forms
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		void
-		virtual font(const Font& newFont) override {
-			base::font(newFont);
-			this->titleFont(Font{*newFont.handle(), std::nullopt, 3*newFont.height() / 2});
-		}
-
 		//! TODO: Delete item data
 		Response
 		virtual onDeleteItem(void* args) = delete;
@@ -487,6 +483,15 @@ namespace core::forms
 			return Unhandled;
 		}
 		
+		Response
+		virtual onSetFont(SetWindowFontEventArgs args) override {
+			// Generate title font automatically when window font changes (or is reset to default)
+			this->titleFont(
+				ComboBoxControl::makeTitleFont(args.Font ? Font{args.Font} : StockFont::SystemFixed)
+			);
+			return Unhandled;
+		}
+
 		void
 		titleFont(const Font& newFont) {
 			this->TitleFont = newFont;
