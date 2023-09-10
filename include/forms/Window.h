@@ -1469,7 +1469,7 @@ namespace core::forms
 				return this->onPaint({this});
 			
 			case WM_MEASUREITEM:
-				return this->onMeasureItem({wParam,lParam});
+				return this->onMeasureItem({*this,wParam,lParam});
 
 			case WM_DRAWITEM:
 				return wParam ? this->onOwnerDraw({wParam,lParam}) 

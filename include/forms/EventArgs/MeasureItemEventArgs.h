@@ -56,31 +56,26 @@ namespace core::forms
 				ThrowIf(data, data.CtlType == ODT_MENU);
 			}
 
-			uintptr_t   UserData;
-			ItemIndex   Index;
+			uintptr_t          UserData;
+			ItemIndex          Index;
 		};
 
 	public:
-		uint16_t          Ident;		//!< Control Identifier
-		ItemData          Item;	
-		OwnerDrawControl  Type;
-		uint32_t&         Width;
-		uint32_t&         Height;
+		uint16_t               Ident;		//!< Control Identifier
+		ItemData               Item;	
+		mutable DeviceContext  Graphics;
+		OwnerDrawControl       Type;
+		uint32_t&              Width;
+		uint32_t&              Height;
+		Window*                Window;
 
 	public:
-		MeasureItemEventArgs(::WPARAM w, ::LPARAM l)
-		  : MeasureItemEventArgs{*reinterpret_cast<::MEASUREITEMSTRUCT*>(l)}
+		MeasureItemEventArgs(forms::Window& wnd, ::WPARAM w, ::LPARAM l)
+		  : MeasureItemEventArgs{wnd, *reinterpret_cast<::MEASUREITEMSTRUCT*>(l)}
 		{}
 
 	private:
-		MeasureItemEventArgs(::MEASUREITEMSTRUCT& data) 
-		  : Ident{static_cast<uint16_t>(data.CtlID)},
-		    Item{data},
-		    Type{static_cast<OwnerDrawControl>(data.CtlType)},
-		    Width{data.itemWidth},
-		    Height{data.itemHeight}
-		{
-		}
+		MeasureItemEventArgs(forms::Window& wnd, ::MEASUREITEMSTRUCT& data);
 	};
 
 	using MeasureItemDelegate = Delegate<void (Window&,MeasureItemEventArgs )>;
