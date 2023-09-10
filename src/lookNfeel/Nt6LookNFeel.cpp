@@ -90,8 +90,17 @@ void
 Nt6LookNFeel::initialize(Dialog& dlg, InitDialogEventArgs const& args) 
 {
 	for (Window& ctrl : dlg.Children) {
-		if (ctrl.role() != WindowRole::PushButton)
+		switch (ctrl.role())
+		{
+		case WindowRole::ComboBox:
+		case WindowRole::List:
+			ctrl.backColour(SystemColour::Window);
+			break;
+
+		default:
 			ctrl.backColour(SystemColour::Dialog);
+			break;
+		}
 		ctrl.textColour(SystemColour::WindowText);
 		ctrl.font(this->SegoeUi);
 		ctrl.lookNfeel(this->shared_from_this());
