@@ -30,9 +30,7 @@
 #include "core/DebugStream.h"
 #include "core/FunctionLogging.h"
 #include "com/SharedPtr.h"
-#include "graphics/Colours.h"
-#include "graphics/Font.h"
-#include "graphics/Region.h"
+#include "graphics/Graphics.h"
 #include "lookNfeel/ILookNFeelProvider.h"
 #include "support/ObservableEvent.h"
 #include "forms/Accessible.h"
@@ -946,7 +944,14 @@ namespace core::forms
 		backColour() const {
 			return this->BackColour;
 		}
-
+		
+		DeviceContext
+		clientDC() const {
+			return DeviceContext{
+				SharedDeviceContext{::GetDC(this->handle()), this->handle()}
+			};
+		}
+	
 		Rect
 		clientRect() const {
 			Rect rc;
@@ -970,7 +975,7 @@ namespace core::forms
 			::MapWindowPoints(this->handle(), alternateCoordinateSystem.handle(), pointsArray, 2);
 			return rc;
 		}
-	
+
 		bool
 		enabled() const {
 			return ::IsWindowEnabled(this->handle()) != FALSE;
