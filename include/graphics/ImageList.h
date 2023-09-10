@@ -100,24 +100,24 @@ namespace core::forms
 		};
 
 	private:
-		CoImageListImpl m_impl;
+		CoImageListImpl Impl;
 
 	public:
 		ImageList(Size imageSize, unsigned capacity, std::optional<unsigned> growCount = std::nullopt)
-		  : m_impl{com::make_shared<::IImageList2,CLSID_ImageList>(CLSCTX_INPROC_SERVER)}
+		  : Impl{com::make_shared<::IImageList2,CLSID_ImageList>(CLSCTX_INPROC_SERVER)}
 		{
-			this->m_impl.initialize(imageSize.Width, imageSize.Height, ILC_COLOR32|ILC_MASK, capacity, growCount.value_or(0));
+			this->Impl.initialize(imageSize.Width, imageSize.Height, ILC_COLOR32|ILC_MASK, capacity, growCount.value_or(0));
 		}
 		
 		explicit
 		ImageList(com::shared_ptr<::IImageList2> existing)
-		  : m_impl{existing}
+		  : Impl{existing}
 		{}
 
 	public:
 		void
 		appendIcon(Icon const& icon) {
-			this->m_impl.replaceIcon(-1, icon.handle());
+			this->Impl.replaceIcon(-1, icon.handle());
 		}
 
 		void
@@ -127,7 +127,7 @@ namespace core::forms
 			params.rgbBk = CLR_NONE;
 			params.rgbFg = CLR_NONE;
 
-			this->m_impl.draw(&params);
+			this->Impl.draw(&params);
 		}
 		
 #if 0
@@ -138,7 +138,7 @@ namespace core::forms
 			params.rgbBk = CLR_NONE;
 			params.rgbFg = win::DWord{blend.value_or(static_cast<Colour>(CLR_NONE))};	// BUG: Doesn't operate like MSDN says it should
 			
-			this->m_impl.Draw(&params);
+			this->Impl.Draw(&params);
 		}
 #endif
 
@@ -154,7 +154,7 @@ namespace core::forms
 				params.dwRop = NOTSRCCOPY;
 				params.rgbBk = CLR_NONE;
 				params.rgbFg = CLR_NONE;
-				this->m_impl.draw(&params);
+				this->Impl.draw(&params);
 
 				// Colour the mask red
 				Brush foreground{*blend};
@@ -168,7 +168,7 @@ namespace core::forms
 				params.dwRop = SRCCOPY;
 				params.rgbBk = CLR_NONE;
 				params.rgbFg = CLR_NONE;
-				this->m_impl.draw(&params);
+				this->Impl.draw(&params);
 
 				DeviceContext _dest{SharedDeviceContext{dest, weakref}};
 				_dest.copyBitmap(invertedMask.handle(), at, RasterOp::SrcPaint);
@@ -192,38 +192,38 @@ namespace core::forms
 				params.fState = ILS_ALPHA;
 				params.Frame = alpha * 255u;
 			}
-			this->m_impl.draw(&params);
+			this->Impl.draw(&params);
 		}
 		
 		::HIMAGELIST
 		handle() const {
-			return ::IImageListToHIMAGELIST(this->m_impl);
+			return ::IImageListToHIMAGELIST(this->Impl);
 		}
 
 		forms::Icon
 		getIcon(unsigned idx) const {
 			return forms::Icon{
-				forms::SharedIcon{this->m_impl.getIcon(idx,ILD_TRANSPARENT), &::DestroyIcon}, 
+				forms::SharedIcon{this->Impl.getIcon(idx,ILD_TRANSPARENT), &::DestroyIcon}, 
 				this->getIconSize()
 			};
 		}
 		
 		forms::Size
 		getIconSize() const {
-			auto [cx,cy] = this->m_impl.getIconSize();
+			auto [cx,cy] = this->Impl.getIconSize();
 			return {cx,cy};
 		}
 		
 		void
 		setIcon(unsigned idx, Icon const& icon) {
-			this->m_impl.replaceIcon(idx, icon.handle());
+			this->Impl.replaceIcon(idx, icon.handle());
 		}
 
 	private:
 		::IMAGELISTDRAWPARAMS
 		make_params(::HDC dest, unsigned idx, std::variant<Point,Rect> at) {
 			::IMAGELISTDRAWPARAMS params{sizeof(params)};
-			params.himl = ::IImageListToHIMAGELIST(this->m_impl);
+			params.himl = ::IImageListToHIMAGELIST(this->Impl);
 			params.i = idx;
 			params.hdcDst = dest;
 			if (std::holds_alternative<forms::Rect>(at)) {
