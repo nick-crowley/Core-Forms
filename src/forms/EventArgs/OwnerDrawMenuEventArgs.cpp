@@ -3,10 +3,18 @@
 using namespace core;
 using namespace forms;
 
-forms::OwnerDrawMenuEventArgs::OwnerDrawMenuEventArgs(::WPARAM id, ::LPARAM data) 
+forms::OwnerDrawMenuEventArgs::ItemData::ItemData(::DRAWITEMSTRUCT& data) 
+  : Area{data.rcItem},
+	Ident{win::ResourceId{static_cast<uint16_t>(data.itemID)}},
+    State{static_cast<OwnerDrawState>(data.itemState)},
+    UserData{data.itemData}
+{
+	ThrowIf(data, data.CtlType == ODT_MENU);
+}
+
+forms::OwnerDrawMenuEventArgs::OwnerDrawMenuEventArgs(::WPARAM [[maybe_unused]] id, ::LPARAM data) 
   : OwnerDrawMenuEventArgs{*reinterpret_cast<::DRAWITEMSTRUCT*>(data)}
 {
-	Expects(id == 0);	// FIXME: Replace this @c Expects() with @c Invariant()
 }
 
 forms::OwnerDrawMenuEventArgs::OwnerDrawMenuEventArgs(::DRAWITEMSTRUCT& data)

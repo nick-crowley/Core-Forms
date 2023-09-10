@@ -46,15 +46,15 @@ namespace core::forms
 	class FormsExport OwnerDrawEventArgs 
 	{
 	public:
-		struct ItemData {
-			using IdentOrIndex = std::variant<win::ResourceId,uint32_t>;
+		enum ItemIndex : int32_t { Empty = -1 };
 
+		struct ItemData {
 			ItemData(::DRAWITEMSTRUCT& data);
 
-			Rect                        Area;
-			uintptr_t                   Data;
-			IdentOrIndex                Ident;
+			Rect                         Area;
+			ItemIndex                    Index;
 			nstd::bitset<OwnerDrawState> State;
+			uintptr_t                    UserData;
 		};
 
 	public:

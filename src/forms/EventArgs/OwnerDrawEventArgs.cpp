@@ -5,19 +5,16 @@ using namespace forms;
 
 forms::OwnerDrawEventArgs::ItemData::ItemData(::DRAWITEMSTRUCT& data) 
   : Area{data.rcItem},
-    Data{data.itemData},
-    State{static_cast<OwnerDrawState>(data.itemState)}
+	Index{static_cast<ItemIndex>(data.itemID)},
+    State{static_cast<OwnerDrawState>(data.itemState)},
+    UserData{data.itemData}
 {
-	if (data.CtlType != ODT_MENU)
-		this->Ident = static_cast<uint32_t>(data.itemID);
-	else
-		this->Ident = win::ResourceId{static_cast<uint16_t>(data.itemID)};
+	ThrowIf(data, data.CtlType != ODT_MENU);
 }
 
-forms::OwnerDrawEventArgs::OwnerDrawEventArgs(::WPARAM id, ::LPARAM data) 
+forms::OwnerDrawEventArgs::OwnerDrawEventArgs(::WPARAM [[maybe_unused]] id, ::LPARAM data) 
   : OwnerDrawEventArgs{*reinterpret_cast<::DRAWITEMSTRUCT*>(data)}
 {
-	Expects(id != 0);		// FIXME: Replace this @c Expects() with @c Invariant()
 }
 
 forms::OwnerDrawEventArgs::OwnerDrawEventArgs(::DRAWITEMSTRUCT& data) 

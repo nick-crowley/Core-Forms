@@ -154,7 +154,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	args.Graphics.fillRect(rcItem);
 
 	// Set text attributes
-	auto const item = ctrl.Items[std::get<uint32_t>(args.Item.Ident)];
+	auto const item = ctrl.Items[args.Item.Index];
 	args.Graphics.textColour(colText, colBack);
 	// [TEXT] Draw text only
 	if (auto title = item.title(); !title) {
@@ -258,7 +258,7 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	args.Graphics.setFont(ctrl.font());
 	args.Graphics.textColour(selected ? SystemColour::HighlightText : ctrl.textColour(),
 	                         selected ? SystemColour::Highlight : ctrl.backColour());
-	args.Graphics.drawText(ctrl.Items[std::get<uint32_t>(args.Item.Ident)].text(), rcItem);
+	args.Graphics.drawText(ctrl.Items[args.Item.Index].text(), rcItem);
 
 	args.Graphics.restore();
 }

@@ -46,8 +46,18 @@ namespace core::forms
 	class FormsExport OwnerDrawMenuEventArgs 
 	{
 	public:
+		struct ItemData {
+			ItemData(::DRAWITEMSTRUCT& data);
+
+			Rect                         Area;
+			win::ResourceId              Ident;
+			nstd::bitset<OwnerDrawState> State;
+			uintptr_t                    UserData;
+		};
+
+	public:
 		nstd::bitset<OwnerDrawAction> Action;
-		OwnerDrawEventArgs::ItemData  Item;
+		ItemData                      Item;
 		::HMENU                       Menu;
 		mutable DeviceContext         Graphics;
 

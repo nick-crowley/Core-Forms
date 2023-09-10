@@ -45,15 +45,8 @@
 		<DisplayString>{{ id={Ident,d} {Debug} }}</DisplayString>
 	</Type>
 
-	<Type Name="core::forms::OwnerDrawEventArgs::ItemData">
-		<Intrinsic Name="index" Expression="(int)Ident._Which"/>
-		<DisplayString Condition="index() == 0" Optional="true">{{ resource={Ident._Head} state={State.Value,en} }}</DisplayString>
-		<DisplayString Condition="index() == 1" Optional="true">{{ idx={Ident._Tail._Head} state={State.Value,en} }}</DisplayString>
-		<DisplayString>{{ #&lt;Cannot resolve&gt; state={State.Value,en} }}</DisplayString>
-	</Type>
-
 	<Type Name="core::forms::OwnerDrawEventArgs">
-		<DisplayString>{{ {Type,en} action={Action.Value,en} id={Ident,d} item={Item} }}</DisplayString>
+		<DisplayString>{{ {Type,en} action={Action.Value,en} id={Ident,d} item={Item.Index} state={Item.State} }}</DisplayString>
 	</Type>
 
 	<Type Name="core::forms::MeasureItemEventArgs">
