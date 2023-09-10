@@ -59,6 +59,7 @@ namespace core::forms
 {
 	class DeviceContext 
 	{
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		struct EarlierState
 		{
@@ -77,20 +78,25 @@ namespace core::forms
 			}*/
 		};
 
-	public:
 		/*DeviceContext
 		static ScreenDC;*/
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
 		SharedDeviceContext Handle;
 		EarlierState Modified;
-
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		explicit
 		DeviceContext(SharedDeviceContext h) 
 		  : Handle{std::move(h)}
 		{}
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		::HDC
 		handle() const
@@ -357,6 +363,7 @@ namespace core::forms
 			return rc.size();
 		}
 	
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		//!	@brief	Add rectangle to clip region
 		void
