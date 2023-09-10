@@ -149,7 +149,7 @@ namespace core::forms
 			invertedMask.setBitmap(memoryBitmap);
 			scoped {	
 				// Invert the mask
-				::IMAGELISTDRAWPARAMS params = make_params(invertedMask.handle(,idx,at-at.topLeft());
+				::IMAGELISTDRAWPARAMS params = make_params(invertedMask.handle(), idx, at-at.topLeft());
 				params.fStyle |= ILD_MASK | ILD_ROP;
 				params.dwRop = NOTSRCCOPY;
 				params.rgbBk = CLR_NONE;
