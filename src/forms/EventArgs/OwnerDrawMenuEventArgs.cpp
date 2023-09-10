@@ -9,7 +9,7 @@ forms::OwnerDrawMenuEventArgs::ItemData::ItemData(::DRAWITEMSTRUCT& data)
     State{static_cast<OwnerDrawState>(data.itemState)},
     UserData{data.itemData}
 {
-	ThrowIf(data, data.CtlType == ODT_MENU);
+	ThrowIf(data, data.CtlType != ODT_MENU);
 }
 
 forms::OwnerDrawMenuEventArgs::OwnerDrawMenuEventArgs(::WPARAM [[maybe_unused]] id, ::LPARAM data) 
