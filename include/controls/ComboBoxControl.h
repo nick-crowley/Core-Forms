@@ -49,20 +49,6 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		using base = Control;
 
-	public:
-		class WindowClass : public forms::WindowClass {
-		public:
-			::WNDPROC	OriginalWndProc;
-
-		public:
-			WindowClass() : forms::WindowClass{win::ResourceId{WC_COMBOBOX}}  {
-				this->Name = win::ResourceId{L"Custom.COMBOBOX"};
-				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
-				this->Style |= ClassStyle::GlobalClass;
-				this->registér();
-			}
-		};
-		
 	protected:
 		class ComboBoxNotificationDictionary : public forms::MessageDictionary {
 			using base = forms::MessageDictionary;
@@ -368,6 +354,19 @@ namespace core::forms
 			}
 		};
 	
+		class WindowClass : public forms::WindowClass {
+		public:
+			::WNDPROC	OriginalWndProc;
+
+		public:
+			WindowClass() : forms::WindowClass{win::ResourceId{WC_COMBOBOX}}  {
+				this->Name = win::ResourceId{L"Custom.COMBOBOX"};
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->Style |= ClassStyle::GlobalClass;
+				this->registér();
+			}
+		};
+		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		ItemCollection   Items;
@@ -391,6 +390,13 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		gsl::czstring
+		static identifyNotification(::UINT notification) {
+			static const ComboBoxNotificationDictionary names;
+			return names.at(notification);
+		}
+
 	protected:
 		/*::LRESULT 
 		static CALLBACK InterceptCreationHandler(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
@@ -488,8 +494,7 @@ namespace core::forms
 	protected:
 		gsl::czstring
 		virtual notificationName(::UINT notification) override {
-			static const ComboBoxNotificationDictionary names;
-			return names.at(notification);
+			return ComboBoxControl::identifyNotification(notification);
 		}
 
 		//Response

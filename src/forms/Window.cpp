@@ -55,6 +55,10 @@ Window::unrecognisedNotificationLogEntry(CommandEventArgs args)
 		messageName = ButtonControl::identifyNotification(args.Notification->Code);
 		controlType = "button";
 	}
+	else if (className == WC_COMBOBOX) {
+		messageName = ComboBoxControl::identifyNotification(args.Notification->Code);
+		controlType = "combobox";
+	}
 	else if (className == WC_EDIT) {
 		messageName = EditControl::identifyNotification(args.Notification->Code);
 		controlType = "edit";
