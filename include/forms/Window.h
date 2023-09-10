@@ -1422,7 +1422,7 @@ namespace core::forms
 				return this->onDestroy();
 			
 			case WM_ERASEBKGND:
-				return this->onEraseBackground({hWnd,wParam,lParam});
+				return this->onEraseBackground({wParam,lParam});
 				
 			case WM_GETOBJECT:
 				return this->onGetObject({wParam,lParam});

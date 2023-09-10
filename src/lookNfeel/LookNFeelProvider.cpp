@@ -195,7 +195,7 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 		auto const item = ctrl.Items[args.Item.Index];
 		::COMBOBOXINFO info{sizeof(info)};
 		ctrl.send<CB_GETCOMBOBOXINFO>(std::nullopt, (LPARAM)&info);
-		DeviceContext g{::GetDC(info.hwndList), info.hwndList};
+		DeviceContext g{SharedDeviceContext{::GetDC(info.hwndList), info.hwndList}};
 		
 		// Calculate size required for potentially multi-line item text
 		g.setFont(ctrl.font());
@@ -212,7 +212,6 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 		args.Height = itemSize.Height;
 
 		g.restore();
-		g.release();
 	}
 }
 
@@ -285,16 +284,19 @@ LookNFeelProvider::draw(PictureControl& ctrl, OwnerDrawEventArgs const& args)
 		throw runtime_error{"Picture #{} must be OwnerDraw", args.Ident};
 	
 	if (auto bitmap = ctrl.image(); bitmap) {
-		DeviceContext src{::CreateCompatibleDC(args.Graphics.handle()), ctrl.handle()};
-		src.setBitmap(bitmap->handle());
+		if (auto* dc = ::CreateCompatibleDC(args.Graphics.handle()); !dc)
+			win::LastError{}.throwAlways("Failed to create compatible DC");
+		else {
+			DeviceContext src{SharedDeviceContext{dc, destroy}};
+			src.setBitmap(bitmap->handle());
 
-		Rect rcDest = args.Item.Area;
-		if (ctrl.style<StaticStyle>().test(StaticStyle::RealSizeImage)) 
-			rcDest = Rect{args.Item.Area.topLeft(), bitmap->size()};	
-		args.Graphics.copyBitmap(src.handle(), bitmap->depth(), bitmap->rect(), rcDest);
+			Rect rcDest = args.Item.Area;
+			if (ctrl.style<StaticStyle>().test(StaticStyle::RealSizeImage)) 
+				rcDest = Rect{args.Item.Area.topLeft(), bitmap->size()};	
+			args.Graphics.copyBitmap(src.handle(), bitmap->depth(), bitmap->rect(), rcDest);
 
-		src.restore();
-		::DeleteDC(src.handle());
+			src.restore();
+		}
 	}
 	else if (auto icon = ctrl.icon(); icon) {
 		Rect rcDest = args.Item.Area;

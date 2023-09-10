@@ -7,7 +7,7 @@ void
 forms::PaintWindowEventArgs::beginPaint() 
 {
 	if (auto dc = ::BeginPaint(this->Window->handle(), &this->Data)) {
-		this->Graphics = DeviceContext{dc, this->Window->handle()};
+		this->Graphics = DeviceContext{SharedDeviceContext{dc, weakref}};
 		this->Area = this->Data.rcPaint;
 		this->Erase = this->Data.fErase;
 		this->Restore = this->Data.fRestore;

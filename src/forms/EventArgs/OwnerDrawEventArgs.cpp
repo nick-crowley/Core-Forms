@@ -24,7 +24,7 @@ forms::OwnerDrawEventArgs::OwnerDrawEventArgs(::DRAWITEMSTRUCT& data)
   : Action{static_cast<OwnerDrawAction>(data.itemAction)},
     Ident{static_cast<uint16_t>(data.CtlID)},
 	Item{data},
-	Graphics{data.hDC, data.hwndItem},
+	Graphics{SharedDeviceContext{data.hDC, weakref}},
 	Type{static_cast<OwnerDrawControl>(data.CtlType)},
 	Window{Window::ExistingWindows.find(data.hwndItem)}
 {

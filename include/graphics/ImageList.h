@@ -30,10 +30,7 @@
 #include "com/Adapter.h"
 #include "com/Annotations.h"
 #include "com/SharedPtr.h"
-#include "graphics/Icon.h"
-#include "graphics/SizePoint.h"
-#include "graphics/Colours.h"
-#include "graphics/Percentage.h"
+#include "graphics/Graphics.h"
 #include "win/DWord.h"
 #pragma comment(lib, "Comctl32.lib")
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -147,12 +144,12 @@ namespace core::forms
 
 		void
 		draw(::HDC dest, unsigned idx, Rect at, std::optional<Colour> blend) {
-			auto invertedMask = ::CreateCompatibleDC(dest);
-			auto memoryBitmap = ::CreateCompatibleBitmap(dest, at.width(), at.height());
-			auto prev = ::SelectObject(invertedMask,memoryBitmap);
-			{	
+			DeviceContext invertedMask{SharedDeviceContext{::CreateCompatibleDC(dest), weakref}};
+			::HBITMAP memoryBitmap = ::CreateCompatibleBitmap(dest, at.width(), at.height());
+			invertedMask.setBitmap(memoryBitmap);
+			scoped {	
 				// Invert the mask
-				::IMAGELISTDRAWPARAMS params = make_params(invertedMask,idx,at-at.topLeft());
+				::IMAGELISTDRAWPARAMS params = make_params(invertedMask.handle(,idx,at-at.topLeft());
 				params.fStyle |= ILD_MASK | ILD_ROP;
 				params.dwRop = NOTSRCCOPY;
 				params.rgbBk = CLR_NONE;
@@ -160,11 +157,10 @@ namespace core::forms
 				this->m_impl.draw(&params);
 
 				// Colour the mask red
-				DeviceContext memDc{invertedMask, nullptr};
 				Brush foreground{*blend};
-				memDc.setBrush(foreground);
-				memDc.copyBitmap(memDc.handle(), at-at.topLeft(), RasterOp::MergeCopy);
-				memDc.restore();
+				invertedMask.setBrush(foreground);
+				invertedMask.copyBitmap(invertedMask.handle(), at-at.topLeft(), RasterOp::MergeCopy);
+				invertedMask.restore();
 
 				// Draw the mask transparently
 				params = make_params(dest,idx,at);
@@ -174,15 +170,13 @@ namespace core::forms
 				params.rgbFg = CLR_NONE;
 				this->m_impl.draw(&params);
 
-				DeviceContext destDc{dest, nullptr};
-				destDc.copyBitmap(memDc.handle(), at, RasterOp::SrcPaint);
+				DeviceContext _dest{SharedDeviceContext{dest, weakref}};
+				_dest.copyBitmap(invertedMask.handle(), at, RasterOp::SrcPaint);
 
 				// Alphablend the icon onto the mask
 				this->draw(dest, idx, at, Percentage{50});
 			}
-			::SelectObject(invertedMask,prev);
 			::DeleteBitmap(memoryBitmap);
-			::DeleteDC(invertedMask);
 		}
 		
 		void

@@ -49,8 +49,8 @@ namespace core::forms
 		mutable DeviceContext  Graphics;
 
 	public:
-		EraseBackgroundEventArgs(::HWND wnd, ::WPARAM w, ::LPARAM)
-		  : Graphics{reinterpret_cast<::HDC>(w), wnd}
+		EraseBackgroundEventArgs(::WPARAM w, ::LPARAM)
+		  : Graphics{SharedDeviceContext{reinterpret_cast<::HDC>(w), weakref}}
 		{}
 	};
 	

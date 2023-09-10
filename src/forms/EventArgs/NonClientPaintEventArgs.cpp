@@ -30,7 +30,7 @@ forms::NonClientPaintEventArgs::beginPaint()
 		this->Area -= Region{rcClient};
 	}
 	this->Bounds = rcWindow;
-	this->Graphics = DeviceContext{dc, this->Window->handle()};
+	this->Graphics = DeviceContext{SharedDeviceContext{dc}};
 	if (this->State == WindowCaptionState::Unknown)
 		this->State = this->Window->info().State;
 	
@@ -39,6 +39,5 @@ forms::NonClientPaintEventArgs::beginPaint()
 
 void 
 forms::NonClientPaintEventArgs::endPaint() {
-	::ReleaseDC(this->Window->handle(), this->Graphics->handle());
 	this->Graphics.reset();
 }

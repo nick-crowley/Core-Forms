@@ -54,6 +54,11 @@ namespace core::forms
         struct DeviceContextTraits {
             ::HDC constexpr
             inline static empty = nullptr;
+            
+            auto constexpr
+            inline static destroy = [](::HDC dc) {
+                ::DeleteDC(dc);
+            };
 
             auto constexpr
             inline static release = [](::HDC dc) {
@@ -104,7 +109,35 @@ namespace core::forms
     using SharedWindow = SmartHandle<::HWND, detail::WindowTraits>;
     
     //! @brief  Shared @c ::HDC released using @c ::ReleaseDC()
-    using SharedDeviceContext = SmartHandle<::HDC, detail::DeviceContextTraits>;
+    class SharedDeviceContext : public SmartHandle<::HDC, detail::DeviceContextTraits> {
+        using base = SmartHandle<::HDC, detail::DeviceContextTraits>;
+        // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+    public:
+        explicit
+        SharedDeviceContext(::HDC dc)
+          : base{dc, detail::DeviceContextTraits::release}
+        {}
+
+        //! @brief  Construct with window handle (used during release)
+        SharedDeviceContext(::HDC dc, ::HWND wnd)
+          : base{dc, [wnd](::HDC handle) { ::ReleaseDC(wnd, handle); }}
+        {}
+        
+        SharedDeviceContext(::HDC dc, meta::destroy_t)
+          : base{dc, detail::DeviceContextTraits::destroy}
+        {}
+
+        SharedDeviceContext(::HDC dc, meta::weakref_t)
+          : base{dc, weakref}
+        {}
+    
+        // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+    public:
+        satisfies(SharedDeviceContext,
+            IsRegular noexcept,
+            NotSortable
+        );
+    };
     
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

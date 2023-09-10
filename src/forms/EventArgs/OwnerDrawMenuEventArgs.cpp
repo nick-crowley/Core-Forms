@@ -13,6 +13,6 @@ forms::OwnerDrawMenuEventArgs::OwnerDrawMenuEventArgs(::DRAWITEMSTRUCT& data)
   : Action{static_cast<OwnerDrawAction>(data.itemAction)},
 	Item{data},
 	Menu{reinterpret_cast<::HMENU>(data.hwndItem)},
-    Graphics{data.hDC, ::WindowFromDC(data.hDC)}
+	Graphics{SharedDeviceContext{data.hDC, weakref}}
 {
 }

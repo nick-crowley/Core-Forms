@@ -82,27 +82,26 @@ namespace core::forms
 		static ScreenDC;*/
 
 	protected:
-		::HDC Context; 
-		::HWND Window;
+		SharedDeviceContext Handle;
 		EarlierState Modified;
 
 	public:
-		DeviceContext(::HDC dc, ::HWND wnd) 
-		  : Context{dc}, 
-			Window{wnd}
+		explicit
+		DeviceContext(SharedDeviceContext h) 
+		  : Handle{std::move(h)}
 		{}
 
 	public:
 		::HDC
 		handle() const
 		{
-			return this->Context;
+			return this->Handle.get();
 		}
 
 		::HWND
 		window() const
 		{
-			return this->Window;
+			return ::WindowFromDC(this->handle());
 		}
 	
 		void
@@ -365,13 +364,6 @@ namespace core::forms
 		{
 			if (!::ExcludeClipRect(this->handle(), rc.Left, rc.Top, rc.Right, rc.Bottom))
 				win::LastError{}.throwAlways();
-		}
-
-		//! @brief	Release the handle
-		void
-		release()
-		{
-			::ReleaseDC(this->Window, this->Context);
 		}
 
 		//!	@brief	Restores the state upon creation
