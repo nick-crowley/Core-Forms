@@ -616,6 +616,11 @@ namespace core::forms
 				return this->handle(id) != nullptr;
 			}
 
+			Window*
+			find(uint16_t const id) const {
+				return Window::ExistingWindows.find(this->handle(id));
+			}
+
 			::HWND
 			handle(uint16_t const id) const {
 				return ::GetDlgItem(this->Parent.handle(), id);
@@ -1310,6 +1315,14 @@ namespace core::forms
 		}
 	
 		Response 
+		virtual onMeasureItem(MeasureItemEventArgs args) {
+			if (auto* wnd = this->Children.find(args.Ident); wnd)
+				return wnd->onMeasureItem(args);
+
+			return Unhandled;
+		}
+
+		Response 
 		virtual onOwnerDraw(OwnerDrawEventArgs args) {
 			if (args.Window && args.Window != this)
 				return args.Window->onOwnerDraw(args);
@@ -1440,6 +1453,9 @@ namespace core::forms
 			case WM_PAINT:
 				return this->onPaint({this});
 			
+			case WM_MEASUREITEM:
+				return this->onMeasureItem({wParam,lParam});
+
 			case WM_DRAWITEM:
 				return wParam ? this->onOwnerDraw({wParam,lParam}) 
 							  : this->onOwnerDrawMenu({wParam,lParam});
