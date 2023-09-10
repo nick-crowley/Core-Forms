@@ -170,8 +170,8 @@ namespace core::forms
 			case BN_UNPUSHED:
 			case BN_SETFOCUS:
 			case BN_KILLFOCUS:
-				InvalidateRect(this->handle(), 0, FALSE);
-				UpdateWindow(this->handle());
+				this->invalidate(false);
+				this->update();
 				return 0;
 			}
 
