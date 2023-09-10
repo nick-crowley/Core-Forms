@@ -48,6 +48,9 @@ namespace core::forms
 	class FormsExport Dialog : public Window 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		using base = Window;
+
 	protected:
 		//! @brief	Temporary storage for controls of _derived_ classes 
 		//! 
@@ -175,22 +178,15 @@ namespace core::forms
 			WndProcLoggingSentry log_entry(message);
 			// FIXME: This method needs documenting
 			try {
-				gsl::czstring const name = Window::MessageDatabase.name(message);
 				Response response;
 				
 				if (Window::ExistingWindows.contains(hDlg)) 
 				{
 					Dialog& dlg = static_cast<Dialog&>(Window::ExistingWindows[hDlg]);
 
-					scoped {
-						auto const on_exit = dlg.Debug.setTemporaryState({ProcessingState::DialogProcessing,name});
-						response = dlg.offerMessage(hDlg, message, wParam, lParam);
-					}
+					response = dlg.offerMessage(message, wParam, lParam);
 
-					scoped {
-						auto const on_exit = dlg.Debug.setTemporaryState({ProcessingState::EventProcessing,name});
-						dlg.raiseMessageEvent(hDlg, message, wParam, lParam);
-					}
+					dlg.raiseMessageEvent(message, wParam, lParam);
 				}
 				else if (message == WM_SETFONT) {
 					response = Dialog::onSetFont({wParam,lParam});
@@ -376,18 +372,18 @@ namespace core::forms
 		}
 
 		Response
-		virtual offerMessage(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override
+		virtual onOfferMessage(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override
 		{
 			switch (message) {
 			case WM_INITDIALOG: 
 				return this->onInitDialog({wParam,lParam});
 			}
 
-			return Window::offerMessage(hDlg, message, wParam, lParam);
+			return base::onOfferMessage(message, wParam, lParam);
 		} 
 	
 		Response
-		virtual offerNotification(::UINT notification) override {
+		virtual onOfferNotification(::UINT notification) override {
 			switch (notification) {
 			case IDOK:
 			case IDCANCEL:
@@ -401,7 +397,7 @@ namespace core::forms
 		}
 	
 		void
-		virtual raiseMessageEvent(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override
+		virtual onRaiseMessageEvent(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override
 		{
 			switch (message) {
 			case WM_INITDIALOG: 
@@ -409,18 +405,14 @@ namespace core::forms
 				return;
 			}
 
-			Window::raiseMessageEvent(hDlg, message, wParam, lParam);
+			base::onRaiseMessageEvent(message, wParam, lParam);
 		} 
 
 		::LRESULT 
-		virtual unhandledMessage(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
-			return ::CallWindowProc(this->wndcls().OriginalWndProc, hDlg, message, wParam, lParam);
+		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
+			return ::CallWindowProc(this->wndcls().OriginalWndProc, this->Handle, message, wParam, lParam);
 		}
 
-		/*::LRESULT 
-		unhandledMessage(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
-			return Dialog::FallbackDialogHandler(hDlg, message, wParam, lParam);
-		}*/
 	private:
 		std::optional<intptr_t>
 		createInternal(win::Module source, DialogMode mode, Window* parent)
@@ -451,7 +443,7 @@ namespace core::forms
 
 			// Transition internal state
 			this->DisplayMode.emplace(mode);
-			auto const on_exit = this->Debug.setTemporaryState(ProcessingState::BeingCreated);
+			auto const onExit = this->Debug.setTemporaryState(ProcessingState::BeingCreated);
 		
 			// [MODAL] Display, block, and return result
 			auto const container = source.handle();

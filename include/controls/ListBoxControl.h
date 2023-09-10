@@ -427,27 +427,23 @@ namespace core::forms
 
 	protected:
 		gsl::czstring
-		notificationName(::UINT notification) override {
+		virtual notificationName(::UINT notification) override {
 			return ListBoxControl::identifyNotification(notification);
 		}
 
 		/*Response
-		offerNotification(::UINT notification) override {
-			auto const on_exit = this->Debug.setTemporaryState(
-				{ProcessingState::NotificationProcessing, this->notificationName(notification)}
-			); 
+		virtual onOfferNotification(::UINT notification) override {
 			switch (notification) {
 			case BN_CLICKED:
 				this->Clicked.raise();
 				return 0;
 			}
-
 			return Unhandled;
 		}*/
-
+		
 		::LRESULT 
-		unhandledMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
-			return ::CallWindowProc(this->wndcls().OriginalWndProc, hWnd, message, wParam, lParam);
+		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
+			return ::CallWindowProc(wndcls().OriginalWndProc, this->handle(), message, wParam, lParam);
 		}
 	};
 }	// namespace core::forms

@@ -123,13 +123,13 @@ namespace core::forms
 	
 	protected:
 		gsl::czstring
-		notificationName(::UINT notification) override {
+		virtual notificationName(::UINT notification) override {
 			return StaticControl::identifyNotification(notification);
 		}
-
+		
 		::LRESULT 
-		unhandledMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
-			return ::CallWindowProc(this->wndcls().OriginalWndProc, hWnd, message, wParam, lParam);
+		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
+			return ::CallWindowProc(wndcls().OriginalWndProc, this->handle(), message, wParam, lParam);
 		}
 	};
 }	// namespace core::forms

@@ -105,14 +105,14 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
 		gsl::czstring
-		notificationName(::UINT notification) override {
+		virtual notificationName(::UINT notification) override {
 			static const NotificationDictionary names;
 			return names.at(notification);
 		}
-
+		
 		::LRESULT 
-		unhandledMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
-			return ::CallWindowProc(wndcls().OriginalWndProc, hWnd, message, wParam, lParam);
+		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
+			return ::CallWindowProc(wndcls().OriginalWndProc, this->handle(), message, wParam, lParam);
 		}
 	};
 }	// namespace core::forms

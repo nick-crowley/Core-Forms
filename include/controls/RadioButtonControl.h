@@ -108,17 +108,12 @@ namespace core::forms
 		
 	protected:
 		/*Response
-		offerNotification(::UINT notification) override {
-			auto const on_exit = this->Debug.setTemporaryState(
-				{ProcessingState::NotificationProcessing, this->notificationName(notification)}
-			); 
-
+		virtual onOfferNotification(::UINT notification) override {
 			switch (notification) {
 			case BN_CLICKED:
 				this->Clicked.raise();
 				return 0;
 			}
-
 			return Unhandled;
 		}*/
 	};

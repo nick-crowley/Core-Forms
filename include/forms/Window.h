@@ -313,15 +313,14 @@ namespace core::forms
 	
 		//! @brief	Identifies current high-level processing loop
 		enum class ProcessingState { 
-			NotApplicable, 
-			BeingCreated, 
-			BeingDestroyed, 
-			Idle, 
-			DefaultProcessing, 
-			DialogProcessing, 
-			MessageProcessing, 
-			EventProcessing, 
-			NotificationProcessing 
+			NotApplicable,           //!< Window does not exist
+			BeingCreated,            //!< Creation initiated; not yet complete
+			BeingDestroyed,          //!< Destruction initiated; not yet complete
+			Idle,                    //!< Exists; doing nothing
+			DefaultProcessing,       //!< Default (system) processing for unhandled message
+			MessageProcessing,       //!< Processing a message
+			EventProcessing,         //!< Dispatching post-message event to attached listeners
+			NotificationProcessing   //!< Reflecting notification message back to sender
 		};
 
 		//! @brief	Provides useful details for display within the debugger (Eg. window text, window class, and message-handler)
@@ -883,10 +882,10 @@ namespace core::forms
 						wnd->onDestructionStarted();
 
 					// Offer the message to the C++ object managing this handle
-					response = wnd->offerMessage(hWnd, message, wParam, lParam);
+					response = wnd->offerMessage(message, wParam, lParam);
 
 					// Raise equivalent event, if any, after processing completed
-					wnd->raiseMessageEvent(hWnd, message, wParam, lParam);
+					wnd->raiseMessageEvent(message, wParam, lParam);
 				}
 
 				Invariant(response.Status != Response::Invalid);
@@ -898,7 +897,7 @@ namespace core::forms
 
 				// [UNHANDLED/ERROR] Let the C++ object managing this handle pass message to ::DefWindowProc()
 				else if (wnd) 
-					result = wnd->unhandledMessage(hWnd, message, wParam, lParam);
+					result = wnd->routeUnhandled(message, wParam, lParam);
 				
 				// [UNMANAGED] Pass message to ::DefWindowProc()
 				else 
@@ -1411,11 +1410,27 @@ namespace core::forms
 		}
 
 	protected:
+		//! @brief	Stringify notification this window sends to its parent
+		gsl::czstring
+		virtual notificationName(::UINT [[maybe_unused]] notification) {
+			// Default implementation sends no notifications so there's never need to stringize them
+			return "";
+		}
+		
+
+		//! @brief	Decode message arguments and offer to this object
 		Response
-		virtual offerMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) 
+		offerMessage(::UINT message, ::WPARAM wParam, ::LPARAM lParam) 
 		{
-			auto const on_exit = this->Debug.setTemporaryState({ProcessingState::MessageProcessing, 
-			                                                    Window::MessageDatabase.name(message)});
+			auto const _ = this->Debug.setTemporaryState(
+				{ProcessingState::MessageProcessing, Window::MessageDatabase.name(message)}
+			);
+			return this->onOfferMessage(message, wParam, lParam);
+		}
+		
+		Response
+		virtual onOfferMessage(::UINT message, ::WPARAM wParam, ::LPARAM lParam) 
+		{
 			switch (message) {
 			case WM_CLOSE: 
 				return this->onClose();
@@ -1507,17 +1522,34 @@ namespace core::forms
 				return Unhandled;
 			}
 		} 
-
+		
+		//! @brief	Reflect notification back to sender
 		Response
-		virtual offerNotification(::UINT notification) {
+		offerNotification(::UINT notification) {
+			auto const _ = this->Debug.setTemporaryState(
+				{ProcessingState::NotificationProcessing, this->notificationName(notification)}
+			);
+			return this->onOfferNotification(notification);
+		}
+		
+		Response
+		virtual onOfferNotification(::UINT [[maybe_unused]] notification) {
+			// Default implementation ignores all reflected notifications
 			return Unhandled;
+		}
+		
+		//! @brief	Notify arbitrary set of listeners for this message
+		void
+		raiseMessageEvent(::UINT message, ::WPARAM wParam, ::LPARAM lParam) {
+			auto const _ = this->Debug.setTemporaryState(
+				{ProcessingState::EventProcessing, Window::MessageDatabase.name(message)}
+			);
+			this->onRaiseMessageEvent(message, wParam, lParam);
 		}
 
 		void
-		virtual raiseMessageEvent(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) 
+		virtual onRaiseMessageEvent(::UINT message, ::WPARAM wParam, ::LPARAM lParam) 
 		{
-			auto const on_exit = this->Debug.setTemporaryState({ProcessingState::EventProcessing, 
-			                                                    Window::MessageDatabase.name(message)});
 			switch (message) {
 			case WM_CREATE: 
 				this->Created.raise(*this, CreateWindowEventArgs{wParam,lParam});
@@ -1546,13 +1578,21 @@ namespace core::forms
 			}
 		} 
 	
+		//! @brief	Pass an unhandled message to a different window procedure (eg. system default)
 		::LRESULT 
-		virtual unhandledMessage(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam) {
-			auto const on_exit = this->Debug.setTemporaryState({ProcessingState::DefaultProcessing,
-			                                                    Window::MessageDatabase.name(message)});
-			return ::DefWindowProc(hWnd, message, wParam, lParam);
+		routeUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) {
+			auto const _ = this->Debug.setTemporaryState(
+				{ProcessingState::DefaultProcessing, Window::MessageDatabase.name(message)}
+			);
+			return this->onRouteUnhandled(message, wParam, lParam);
 		}
-
+		
+		::LRESULT 
+		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) {
+			// Default implementation passes to system default
+			return ::DefWindowProc(this->Handle, message, wParam, lParam);
+		}
+		
 	private:
 		void 
 		createInternal(CreateWindowParams const& w) 

@@ -91,6 +91,13 @@ namespace core::forms
 	protected:
 		gsl::czstring
 		virtual notificationName(::UINT notification) abstract;
+		
+		Response
+		virtual onOfferNotification(::UINT [[maybe_unused]] notification) override {
+			auto const _ = this->Debug.setTemporaryState({ProcessingState::NotificationProcessing,
+			                                             Window::MessageDatabase.name(notification)});
+			return Unhandled;
+		}
 	};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
