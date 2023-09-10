@@ -441,12 +441,13 @@ namespace core::forms
 				return this->Storage.contains(handle);
 			}
 			
-			Window*
+			template <std::derived_from<Window> WindowType = Window>
+			WindowType*
 			find(key_type handle) const & {
 				if (auto const pos = this->Storage.find(handle); pos == this->Storage.end())
 					return nullptr;
 				else
-					return pos->second;
+					return static_cast<WindowType*>(pos->second);
 			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
@@ -613,9 +614,10 @@ namespace core::forms
 				return this->handle(id) != nullptr;
 			}
 
-			Window*
+			template <std::derived_from<Window> WindowType = Window>
+			WindowType*
 			find(uint16_t const id) const {
-				return Window::ExistingWindows.find(this->handle(id));
+				return static_cast<WindowType*>(Window::ExistingWindows.find(this->handle(id)));
 			}
 
 			::HWND

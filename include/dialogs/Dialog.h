@@ -180,7 +180,7 @@ namespace core::forms
 			try {
 				Response response;
 				
-				if (Dialog* dlg = static_cast<Dialog*>(Window::ExistingWindows.find(hDlg)); dlg) 
+				if (Dialog* dlg = Window::ExistingWindows.find<Dialog>(hDlg); dlg) 
 				{
 					response = dlg->offerMessage(message, wParam, lParam);
 
