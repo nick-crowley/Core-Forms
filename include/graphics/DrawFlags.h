@@ -88,30 +88,30 @@ metadata bool core::meta::Settings<core::bitwise_enum, core::forms::BorderFlags>
 //! \enum DrawTextFlags - Defines DrawText flags
 enum class core::forms::DrawTextFlags : uint32_t
 {
-    Top = DT_TOP,                                    //!< 
-    Left = Top,                                      //!< 
-    Centre = DT_CENTER,                              //!< 
-    Right = DT_RIGHT,                                //!< 
-    VCentre = DT_VCENTER,                            //!< 
-    Bottom = DT_BOTTOM,                              //!< 
-    WordBreak = DT_WORDBREAK,                        //!< 
-    SingleLine = DT_SINGLELINE,                      //!< 
-    ExpandTabs = DT_EXPANDTABS,                      //!< 
-    TabStop = DT_TABSTOP,                            //!< 
-    NoClip = DT_NOCLIP,                              //!< 
-    ExternalLeading = DT_EXTERNALLEADING,            //!< 
-    CalcRect = DT_CALCRECT,                          //!< 
-    NoPrefix = DT_NOPREFIX,                          //!< 
-    Internal = DT_INTERNAL,                          //!< 
-    EditControl = DT_EDITCONTROL,                    //!< 
-    PathEllipsis = DT_PATH_ELLIPSIS,                 //!< 
-    EndElipsis = DT_END_ELLIPSIS,                    //!< 
-    ModifyString = DT_MODIFYSTRING,                  //!< 
-    RtlReading = DT_RTLREADING,                      //!< 
-    WordElipsis = DT_WORD_ELLIPSIS,                  //!< 
-    NoFullWidthCharBreak = DT_NOFULLWIDTHCHARBREAK,  //!< [windows 5.00]
-    HidePrefix = DT_HIDEPREFIX,                      //!< [windows 5.00]
-    PrefixOnly = DT_PREFIXONLY,                      //!< [windows 5.00]
+    Top = DT_TOP,                                    //!< Justifies the text to the top of the rectangle.
+    Left = Top,                                      //!< Aligns text to the left.
+    Centre = DT_CENTER,                              //!< Centers text horizontally in the rectangle.
+    Right = DT_RIGHT,                                //!< Aligns text to the right.
+    VCentre = DT_VCENTER,                            //!< Centers text vertically [Requires @c DrawTextFlags::SingleLine]
+    Bottom = DT_BOTTOM,                              //!< Justifies the text to the bottom of the rectangle [Requires @c DrawTextFlags::SingleLine]
+    WordBreak = DT_WORDBREAK,                        //!< Breaks lines based on word-boundaries and line-break characters
+    SingleLine = DT_SINGLELINE,                      //!< Displays text on a single line only (@c '\r' and @c '\n' are ignored)
+    ExpandTabs = DT_EXPANDTABS,                      //!< Expands tab characters (Default number of chars is 8)
+    TabStop = DT_TABSTOP,                            //!< Sets number of chars in tab stops (using bits 15-8; the high-order byte of the low-order word)
+    NoClip = DT_NOCLIP,                              //!< Draws without clipping
+    ExternalLeading = DT_EXTERNALLEADING,            //!< Includes the font external leading in line height
+    CalcRect = DT_CALCRECT,                          //!< Determines the width and height of the rectangle.
+    NoPrefix = DT_NOPREFIX,                          //!< Disables prefix characters substitution
+    Internal = DT_INTERNAL,                          //!< Uses the system font to calculate text metrics
+    EditControl = DT_EDITCONTROL,                    //!< Clip partially visible last-line, like a multiline edit control.
+    PathEllipsis = DT_PATH_ELLIPSIS,                 //!< Replaces characters in the middle of the string with ellipses so the result fits in the rectangle
+    EndElipsis = DT_END_ELLIPSIS,                    //!< Truncates the final word with ellipses if it would not fit in the rectangle
+    ModifyString = DT_MODIFYSTRING,                  //!< Modifies the input string to reflect the ellipses replacements, if any
+    RtlReading = DT_RTLREADING,                      //!< Layout in right-to-left [Requires @c Hebrew or @c Arabic font]
+    WordElipsis = DT_WORD_ELLIPSIS,                  //!< Truncates any word that does not fit in the rectangle and adds ellipses.
+    NoFullWidthCharBreak = DT_NOFULLWIDTHCHARBREAK,  //!< [windows 5.00] Use alternative word-break rules for double-byte character sets
+    HidePrefix = DT_HIDEPREFIX,                      //!< [windows 5.00] Ignores the ampersand (&) prefix character in the text but not &&
+    PrefixOnly = DT_PREFIXONLY,                      //!< [windows 5.00] Only draws the prefix character substitutions
 
     SimpleLeft = Left|VCentre|SingleLine,
     SimpleCentre = Centre|VCentre|SingleLine,
