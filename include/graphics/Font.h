@@ -108,6 +108,16 @@ namespace core::forms
 		}
 		
 	public:
+		int32_t
+		height() const {
+			Invariant(this->Handle);
+			
+			if (::LOGFONTW props {}; !::GetObjectW(*this->handle(), sizeof(::LOGFONTW), &props))
+				win::LastError{}.throwAlways("GetObject() failed");
+			else
+				return props.lfHeight;
+		}
+
 		SharedFont
 		handle() const
 		{
