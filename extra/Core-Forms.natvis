@@ -56,6 +56,10 @@
 		<DisplayString>{{ {Type,en} action={Action.Value,en} id={Ident,d} item={Item} }}</DisplayString>
 	</Type>
 
+	<Type Name="core::forms::MeasureItemEventArgs">
+		<DisplayString>{{ {Type,en} id={Ident,d} item={Item.Index} width={Width} height={Height} }}</DisplayString>
+	</Type>
+
 	<Type Name="core::forms::ComboBoxControl::ItemCollection">
 		<DisplayString>{{ Virtual collection }}</DisplayString>
 	</Type>

@@ -27,25 +27,8 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
-#include "forms/EventArgs/CommandEventArgs.h"
-#include "forms/EventArgs/CreateWindowEventArgs.h"
-#include "forms/EventArgs/EraseBackgroundEventArgs.h"
-#include "forms/EventArgs/GetObjectEventArgs.h"
-#include "forms/EventArgs/MeasureItemEventArgs.h"
-#include "forms/EventArgs/MinMaxEventArgs.h"
-#include "forms/EventArgs/MouseEventArgs.h"
-#include "forms/EventArgs/NonClientActivateEventArgs.h"
-#include "forms/EventArgs/NonClientHitTestEventArgs.h"
-#include "forms/EventArgs/NonClientMouseEventArgs.h"
-#include "forms/EventArgs/NonClientPaintEventArgs.h"
-#include "forms/EventArgs/OwnerDrawEventArgs.h"
-#include "forms/EventArgs/OwnerDrawMenuEventArgs.h"
-#include "forms/EventArgs/PaintWindowEventArgs.h"
-#include "forms/EventArgs/ResizeWindowEventArgs.h"
-#include "forms/EventArgs/SetFontEventArgs.h"
-#include "forms/EventArgs/ShowWindowEventArgs.h"
-#include "forms/EventArgs/TimerEventArgs.h"
-#include "forms/EventArgs/UserEventArgs.h"
+#include "support/ObservableEvent.h"
+#include "graphics/Graphics.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -60,11 +43,48 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	//! @brief	Delegate for a 'standard' window event (ie. one that doesn't require a custom second parameter)
-	using WindowDelegate = Delegate<void (Window&)>;
+	class FormsExport MeasureItemEventArgs 
+	{
+	public:
+		enum ItemIndex : int32_t { EditControl = -1 };
 
-	//! @brief	'standard' window event (ie. one without custom data)
-	using WindowEvent = ObservableEvent<WindowDelegate>;
+		struct ItemData {
+			ItemData(::MEASUREITEMSTRUCT& data)
+			  : UserData{data.itemData},
+				Index{static_cast<ItemIndex>(data.itemID)}
+			{
+				ThrowIf(data, data.CtlType == ODT_MENU);
+			}
+
+			uintptr_t   UserData;
+			ItemIndex   Index;
+		};
+
+	public:
+		uint16_t          Ident;		//!< Control Identifier
+		ItemData          Item;	
+		OwnerDrawControl  Type;
+		uint32_t&         Width;
+		uint32_t&         Height;
+
+	public:
+		MeasureItemEventArgs(::WPARAM w, ::LPARAM l)
+		  : MeasureItemEventArgs{*reinterpret_cast<::MEASUREITEMSTRUCT*>(l)}
+		{}
+
+	private:
+		MeasureItemEventArgs(::MEASUREITEMSTRUCT& data) 
+		  : Ident{static_cast<uint16_t>(data.CtlID)},
+		    Item{data},
+		    Type{static_cast<OwnerDrawControl>(data.CtlType)},
+		    Width{data.itemWidth},
+		    Height{data.itemHeight}
+		{
+		}
+	};
+
+	using MeasureItemDelegate = Delegate<void (Window&,MeasureItemEventArgs )>;
+	using MeasureItemEvent = ObservableEvent<MeasureItemDelegate>;
 
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
