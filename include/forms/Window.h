@@ -874,7 +874,7 @@ namespace core::forms
 			
 				// Search for the C++ object managing this handle
 				if (!Window::ExistingWindows.contains(hWnd)) 
-					response = onUnexpectedMessage(hWnd, message, wParam, lParam);
+					response = Window::onUnexpectedMessage(hWnd, message, wParam, lParam);
 				else {
 					wnd = &Window::ExistingWindows[hWnd];
 
