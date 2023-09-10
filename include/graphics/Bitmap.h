@@ -95,6 +95,13 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Bitmap
+		static create(::HDC compatible, Size dimensions) {
+			return Bitmap{
+				SharedBitmap{::CreateCompatibleBitmap(compatible, dimensions.Width, dimensions.Height)}
+			};
+		}
+
+		Bitmap
 		static load(std::wstring_view path) 
 		{
 			ThrowIfEmpty(path);

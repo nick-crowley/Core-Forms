@@ -144,8 +144,8 @@ namespace core::forms
 
 		void
 		draw(::HDC dest, unsigned idx, Rect at, std::optional<Colour> blend) {
-			DeviceContext invertedMask{SharedDeviceContext{::CreateCompatibleDC(dest), destroy}};
-			::HBITMAP memoryBitmap = ::CreateCompatibleBitmap(dest, at.width(), at.height());
+			DeviceContext invertedMask = DeviceContext::create(dest);
+			Bitmap memoryBitmap = Bitmap::create(dest, at.size());
 			invertedMask.setBitmap(memoryBitmap);
 			scoped {	
 				// Invert the mask
@@ -176,7 +176,6 @@ namespace core::forms
 				// Alphablend the icon onto the mask
 				this->draw(dest, idx, at, Percentage{50});
 			}
-			::DeleteBitmap(memoryBitmap);
 		}
 		
 		void
