@@ -60,7 +60,7 @@ namespace core::forms
 	class DeviceContext 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
+	protected:
 		struct EarlierState
 		{
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -77,7 +77,8 @@ namespace core::forms
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			satisfies(EarlierState, 
-				IsRegular noexcept,
+				IsSemiRegular noexcept,
+				NotEqualityComparable,
 				NotSortable
 			);
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -91,13 +92,15 @@ namespace core::forms
 			}*/
 		};
 
+		using SharedEarlierState = std::shared_ptr<EarlierState>;
+
 		/*DeviceContext
 		static ScreenDC;*/
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
 		SharedDeviceContext Handle;
-		EarlierState Modified;
+		SharedEarlierState  Modified = std::make_shared<EarlierState>();
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -110,7 +113,7 @@ namespace core::forms
 		satisfies(DeviceContext, 
 			NotDefaultConstructible,
 			IsMovable noexcept,
-			NotCopyable,
+			IsCopyable noexcept,
 			NotEqualityComparable,
 			NotSortable
 		);
@@ -404,22 +407,22 @@ namespace core::forms
 		void 
 		restore()
 		{
-			if (this->Modified.PrevBackColour) 
-				this->backColour(*this->Modified.PrevBackColour);
-			if (this->Modified.PrevTextColour)
-				this->textColour(*this->Modified.PrevTextColour);
-			if (this->Modified.PrevDrawingMode)
-				this->backMode(*this->Modified.PrevDrawingMode);
-			if (this->Modified.PrevBitmap)
-				this->setBitmap(*this->Modified.PrevBitmap);
-			if (this->Modified.PrevBrush)
-				this->setBrush(*this->Modified.PrevBrush);
-			if (this->Modified.PrevFont)
-				this->setFont(*this->Modified.PrevFont);
-			if (this->Modified.PrevPen)
-				this->setPen(*this->Modified.PrevPen);
+			if (this->Modified->PrevBackColour) 
+				this->backColour(*this->Modified->PrevBackColour);
+			if (this->Modified->PrevTextColour)
+				this->textColour(*this->Modified->PrevTextColour);
+			if (this->Modified->PrevDrawingMode)
+				this->backMode(*this->Modified->PrevDrawingMode);
+			if (this->Modified->PrevBitmap)
+				this->setBitmap(*this->Modified->PrevBitmap);
+			if (this->Modified->PrevBrush)
+				this->setBrush(*this->Modified->PrevBrush);
+			if (this->Modified->PrevFont)
+				this->setFont(*this->Modified->PrevFont);
+			if (this->Modified->PrevPen)
+				this->setPen(*this->Modified->PrevPen);
 
-			this->Modified = {};
+			*this->Modified = {};
 		}
 
 		void
@@ -427,8 +430,8 @@ namespace core::forms
 		{
 			if (auto prev = reinterpret_cast<::HBITMAP>(::SelectObject(this->handle(), newBitmap)); !prev) 
 				win::LastError{}.throwAlways();
-			else if (!this->Modified.PrevBitmap) 
-				this->Modified.PrevBitmap = prev;
+			else if (!this->Modified->PrevBitmap) 
+				this->Modified->PrevBitmap = prev;
 		}
 		
 		void
@@ -446,8 +449,8 @@ namespace core::forms
 		{
 			if (auto prev = reinterpret_cast<::HBRUSH>(::SelectObject(this->handle(), newBrush)); !prev) 
 				win::LastError{}.throwAlways();
-			else if (!this->Modified.PrevBrush) 
-				this->Modified.PrevBrush = prev;
+			else if (!this->Modified->PrevBrush) 
+				this->Modified->PrevBrush = prev;
 		}
 		
 		void
@@ -492,8 +495,8 @@ namespace core::forms
 		{
 			if (auto prev = reinterpret_cast<::HFONT>(::SelectObject(this->handle(), newFont)); !prev) 
 				win::LastError{}.throwAlways();
-			else if (!this->Modified.PrevFont) 
-				this->Modified.PrevFont = prev;
+			else if (!this->Modified->PrevFont) 
+				this->Modified->PrevFont = prev;
 		}
 		
 		void
@@ -516,8 +519,8 @@ namespace core::forms
 		{
 			if (auto prev = reinterpret_cast<::HPEN>(::SelectObject(this->handle(), newPen)); !prev) 
 				win::LastError{}.throwAlways();
-			else if (!this->Modified.PrevPen) 
-				this->Modified.PrevPen = prev;
+			else if (!this->Modified->PrevPen) 
+				this->Modified->PrevPen = prev;
 		}
 		
 		void
@@ -561,8 +564,8 @@ namespace core::forms
 			auto const prev = static_cast<Colour>(::SetBkColor(this->handle(), win::DWord{newcolour}));
 			if (prev == Colour::Invalid)
 				win::LastError{}.throwAlways();
-			else if (!this->Modified.PrevBackColour) 
-				this->Modified.PrevBackColour = prev;
+			else if (!this->Modified->PrevBackColour) 
+				this->Modified->PrevBackColour = prev;
 
 			this->backMode(DrawingMode::Opaque);
 		}
@@ -611,8 +614,8 @@ namespace core::forms
 			auto const prev = static_cast<DrawingMode>(::SetBkMode(this->handle(), win::DWord{mode}));
 			if (prev == DrawingMode::Invalid)
 				win::LastError{}.throwAlways();
-			else if (!this->Modified.PrevDrawingMode) 
-				this->Modified.PrevDrawingMode = prev;
+			else if (!this->Modified->PrevDrawingMode) 
+				this->Modified->PrevDrawingMode = prev;
 		}
 		
 		//! @brief	Changes the current text colour
@@ -622,8 +625,8 @@ namespace core::forms
 			auto const prev = static_cast<Colour>(::SetTextColor(this->handle(), win::DWord{col})); 
 			if (prev == Colour::Invalid)
 				win::LastError{}.throwAlways();
-			else if (!this->Modified.PrevTextColour) 
-				this->Modified.PrevTextColour = prev;
+			else if (!this->Modified->PrevTextColour) 
+				this->Modified->PrevTextColour = prev;
 		}
 	};
 }
