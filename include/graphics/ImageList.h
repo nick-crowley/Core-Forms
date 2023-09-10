@@ -144,7 +144,7 @@ namespace core::forms
 
 		void
 		draw(::HDC dest, unsigned idx, Rect at, std::optional<Colour> blend) {
-			DeviceContext invertedMask{SharedDeviceContext{::CreateCompatibleDC(dest), weakref}};
+			DeviceContext invertedMask{SharedDeviceContext{::CreateCompatibleDC(dest), destroy}};
 			::HBITMAP memoryBitmap = ::CreateCompatibleBitmap(dest, at.width(), at.height());
 			invertedMask.setBitmap(memoryBitmap);
 			scoped {	
