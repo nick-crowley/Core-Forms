@@ -1342,6 +1342,11 @@ namespace core::forms
 		virtual onResize(ResizeWindowEventArgs args) {
 			return Unhandled;
 		}
+		
+		Response
+		virtual onSetFont(SetWindowFontEventArgs args) {
+			return Unhandled;
+		}
 	
 		Response 
 		virtual onShow(ShowWindowEventArgs args) {
@@ -1476,6 +1481,9 @@ namespace core::forms
 				
 			case WM_MEASUREITEM:
 				return this->onMeasureItem({*this,wParam,lParam});
+
+			case WM_SETFONT:
+				return this->onSetFont({wParam,lParam});
 
 			case WM_SHOWWINDOW:
 				return wParam ? this->onShow({wParam,lParam})

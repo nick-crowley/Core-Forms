@@ -42,12 +42,12 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	struct SetFontEventArgs {
-		SetFontEventArgs(WPARAM w, LPARAM l) {
+	struct SetWindowFontEventArgs {
+		SetWindowFontEventArgs(::WPARAM w, ::LPARAM l) {
 		}
 	};
 	
-	using SetFontDelegate = Delegate<void (Window&,SetFontEventArgs)>;
+	using SetFontDelegate = Delegate<void (Window&,SetWindowFontEventArgs)>;
 	using SetFontEvent = ObservableEvent<SetFontDelegate>;
 
 }	// namespace core::forms

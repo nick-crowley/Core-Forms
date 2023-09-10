@@ -42,7 +42,7 @@
 #include "forms/EventArgs/OwnerDrawMenuEventArgs.h"
 #include "forms/EventArgs/PaintWindowEventArgs.h"
 #include "forms/EventArgs/ResizeWindowEventArgs.h"
-#include "forms/EventArgs/SetFontEventArgs.h"
+#include "forms/EventArgs/SetWindowFontEventArgs.h"
 #include "forms/EventArgs/ShowWindowEventArgs.h"
 #include "forms/EventArgs/TimerEventArgs.h"
 #include "forms/EventArgs/UserEventArgs.h"
