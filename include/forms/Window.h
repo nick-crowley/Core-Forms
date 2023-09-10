@@ -1440,9 +1440,9 @@ namespace core::forms
 			case WM_DESTROY:
 				return this->onDestroy();
 			
-			case WM_ERASEBKGND:
-				return this->onEraseBackground({wParam,lParam});
-				
+			case WM_COMMAND:
+				return this->onCommand({wParam, lParam});
+		
 			case WM_GETOBJECT:
 				return this->onGetObject({wParam,lParam});
 			
@@ -1464,15 +1464,18 @@ namespace core::forms
 			case WM_LBUTTONUP:
 				return this->onMouseUp({MouseMessage::ButtonUp,MouseButton::Left,wParam,lParam});
 			
+			case WM_ERASEBKGND:
+				return this->onEraseBackground({wParam,lParam});
+				
 			case WM_PAINT:
 				return this->onPaint({this});
 			
-			case WM_MEASUREITEM:
-				return this->onMeasureItem({*this,wParam,lParam});
-
 			case WM_DRAWITEM:
 				return wParam ? this->onOwnerDraw({wParam,lParam}) 
 							  : this->onOwnerDrawMenu({wParam,lParam});
+				
+			case WM_MEASUREITEM:
+				return this->onMeasureItem({*this,wParam,lParam});
 
 			case WM_SHOWWINDOW:
 				return wParam ? this->onShow({wParam,lParam})
@@ -1481,9 +1484,6 @@ namespace core::forms
 			case WM_SIZE:
 				return this->onResize({wParam,lParam});
 			
-			case WM_COMMAND:
-				return this->onCommand({wParam, lParam});
-		
 			case WM_TIMER:
 				return this->onTimer({wParam, lParam});
 		
