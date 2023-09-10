@@ -67,6 +67,9 @@ namespace core::forms
 		draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
 		void
+		measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& args) override;
+	
+		void
 		draw(LabelControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
 		void

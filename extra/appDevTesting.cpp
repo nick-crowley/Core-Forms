@@ -30,9 +30,12 @@ protected:
 		std::ignore = base::onInitDialog(args);
 
 		for (int idx = 1; idx <= 8; ++idx) {
-			this->ComboBox.Items.push_back(std::format(L"Item #{}", idx));
 			this->ListBox.Items.push_back(std::format(L"Item #{}", idx));
 		}
+
+		this->ComboBox.Items.push_back(L"The rain in spain falls mainly on the plane", L"Rain in Spain");
+		this->ComboBox.Items.push_back(L"The quick brown fox jumped over the lazy dog", L"Quick Brown Fox");
+		this->ComboBox.Items.push_back(L"My very earthly mother just said you're nearly perfect", L"Very Earthly Mother");
 
 		return FALSE;
 	}

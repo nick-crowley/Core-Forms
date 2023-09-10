@@ -145,19 +145,75 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		throw runtime_error{"ComboBox #{} must be OwnerDraw", args.Ident};
 
 	bool const selected = args.Item.State.test(OwnerDrawState::Selected);
-	
+	auto const colBack = selected ? SystemColour::Highlight : ctrl.backColour();
+	auto const colText = selected ? SystemColour::HighlightText : ctrl.textColour();
+
 	// Draw item background
 	Rect const rcItem = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
-	args.Graphics.setBrush(selected ? SystemBrush::Highlight : SystemBrush::Window);
+	args.Graphics.setBrush(colBack);
 	args.Graphics.fillRect(rcItem);
 
-	// Draw item text
-	args.Graphics.setFont(ctrl.font());
-	args.Graphics.textColour(selected ? SystemColour::HighlightText : ctrl.textColour(),
-	                         selected ? SystemColour::Highlight : ctrl.backColour());
-	args.Graphics.drawText(ctrl.Items[std::get<uint32_t>(args.Item.Ident)].text(), rcItem);
+	// Set text attributes
+	auto const item = ctrl.Items[std::get<uint32_t>(args.Item.Ident)];
+	args.Graphics.textColour(colText, colBack);
+	// [TEXT] Draw text only
+	if (auto title = item.title(); !title) {
+		args.Graphics.setFont(ctrl.font());
+		args.Graphics.drawText(item.text(), rcItem);
+	}
+	// [TITLE/TEXT] Draw title and text (using separate fonts)
+	else {
+		args.Graphics.setFont(ctrl.titleFont());
+		auto const titleHeight = args.Graphics.drawText(*title, rcItem, DrawTextFlags::Left);
+
+		LONG constexpr GAP = 6;
+		Rect const rcText = rcItem - Border{0, titleHeight + GAP, 0, 0};
+		args.Graphics.setFont(ctrl.font());
+		args.Graphics.drawText(item.text(), rcText, DrawTextFlags::Left|DrawTextFlags::WordBreak);
+	}
 
 	args.Graphics.restore();
+}
+
+void
+LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& args)
+{
+	if (!ctrl.ownerDraw())
+		throw runtime_error{"ComboBox #{} must be OwnerDraw", args.Ident};
+
+	// [EDIT] Return default
+	if (args.Item.Index == MeasureItemEventArgs::EditControl)
+		return;
+
+	// [FIXED-HEIGHT] Return user-provided height, if any, otherwise default
+	if (ctrl.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawFixed)) {
+		if (auto const allItems = ctrl.Items.height(); allItems != 0)
+			args.Height = allItems;
+	}
+	// [VARIABLE-HEIGHT] Calculate per-item height
+	else {
+		auto const item = ctrl.Items[args.Item.Index];
+		::COMBOBOXINFO info{sizeof(info)};
+		ctrl.send<CB_GETCOMBOBOXINFO>(std::nullopt, (LPARAM)&info);
+		DeviceContext g{::GetDC(info.hwndList), info.hwndList};
+		
+		// Calculate size required for potentially multi-line item text
+		g.setFont(ctrl.font());
+		auto itemSize = g.measureText(item.text(), Size{ctrl.droppedRect().width(), args.Height});
+		
+		// [TITLE] Append extra height
+		if (auto title = item.title(); title) {
+			LONG constexpr GAP = 6;
+			g.setFont(ctrl.titleFont());
+			itemSize.Height += g.measureText(*title).Height + GAP;
+		}
+
+		// Save result
+		args.Height = itemSize.Height;
+
+		g.restore();
+		g.release();
+	}
 }
 
 void

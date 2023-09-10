@@ -45,6 +45,7 @@ namespace core::forms
 	class StaticControl;
 	class EraseBackgroundEventArgs;
 	class InitDialogEventArgs;
+	class MeasureItemEventArgs;
 	class OwnerDrawEventArgs;
 	class PaintWindowEventArgs;
 	class NonClientPaintEventArgs;
@@ -71,6 +72,9 @@ namespace core::forms
 	
 		void
 		virtual draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args) abstract;
+	
+		void
+		virtual measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& args) abstract;
 	
 		void
 		virtual draw(LabelControl& ctrl, OwnerDrawEventArgs const& args) abstract;

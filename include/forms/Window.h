@@ -1130,12 +1130,7 @@ namespace core::forms
 		}
 	
 		void
-		font(::HFONT newFont) {
-			SetWindowFont(this->handle(), newFont, FALSE);
-		}
-	
-		void
-		font(const Font& newFont) {
+		virtual font(const Font& newFont) {
 			SetWindowFont(this->handle(), *newFont.handle(), FALSE);
 		}
 		
@@ -1313,7 +1308,7 @@ namespace core::forms
 		virtual onMouseUp(MouseEventArgs args) {
 			return Unhandled;
 		}
-	
+
 		Response 
 		virtual onMeasureItem(MeasureItemEventArgs args) {
 			if (auto* wnd = this->Children.find(args.Ident); wnd)
