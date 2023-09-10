@@ -59,13 +59,16 @@ namespace core::forms
 			{}
 		};
 		
-	public:
-		class WindowClass : public forms::WindowClass {
+		class StaticWindowClass : public forms::WindowClass {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			using const_reference = StaticWindowClass const&;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			::WNDPROC	OriginalWndProc;
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			WindowClass() : forms::WindowClass{win::ResourceId{WC_STATIC}}  {
+			StaticWindowClass() : forms::WindowClass{win::ResourceId{WC_STATIC}}  {
 				this->Name = win::ResourceId{L"Custom.STATIC"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
@@ -73,6 +76,8 @@ namespace core::forms
 			}
 		};
 		
+	public:
+		using WindowClass = StaticWindowClass;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -103,9 +108,9 @@ namespace core::forms
 			return WindowRole::StaticText;
 		}
 
-		WindowClass const& 
-		wndcls() const override {
-			static WindowClass c;
+		StaticWindowClass::const_reference
+		virtual wndcls() const override {
+			static StaticWindowClass c;
 			return c;
 		}
 

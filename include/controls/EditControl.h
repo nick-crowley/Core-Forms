@@ -67,19 +67,27 @@ namespace core::forms
 			{}
 		};
 
-	public:
-		class WindowClass : public forms::WindowClass {
+		class EditWindowClass : public forms::WindowClass {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			using const_reference = EditWindowClass const&;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			::WNDPROC	OriginalWndProc;
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			WindowClass() : forms::WindowClass{win::ResourceId{WC_EDIT}}  {
+			EditWindowClass() : forms::WindowClass{win::ResourceId{WC_EDIT}}  {
 				this->Name = win::ResourceId{L"Custom.EDIT"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();
 			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
+
+	public:
+		using WindowClass = EditWindowClass;
+
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		WindowEvent    TextChanged;
@@ -113,9 +121,9 @@ namespace core::forms
 		}
 
 	public:
-		WindowClass const& 
-		wndcls() const override {
-			static WindowClass c;
+		EditWindowClass::const_reference
+		virtual wndcls() const override {
+			static EditWindowClass c;
 			return c;
 		}
 		

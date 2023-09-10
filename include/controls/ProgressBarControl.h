@@ -44,20 +44,27 @@ namespace core::forms
 	class ProgressBarControl : public Control 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		class WindowClass : public forms::WindowClass {
+	protected:
+		class ProgressBarWindowClass : public forms::WindowClass {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			using const_reference = ProgressBarWindowClass const&;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			::WNDPROC	OriginalWndProc;
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			WindowClass() : forms::WindowClass{win::ResourceId{PROGRESS_CLASS}}  {
+			ProgressBarWindowClass() : forms::WindowClass{win::ResourceId{PROGRESS_CLASS}}  {
 				this->Name = win::ResourceId{L"Custom.PROGRESS"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();
 			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
-
+		
+	public:
+		using WindowClass = ProgressBarWindowClass;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -83,9 +90,9 @@ namespace core::forms
 			return WindowRole::ProgressBar;
 		}
 
-		WindowClass const& 
-		wndcls() const override {
-			static WindowClass c;
+		ProgressBarWindowClass::const_reference
+		virtual wndcls() const override {
+			static ProgressBarWindowClass c;
 			return c;
 		}
 

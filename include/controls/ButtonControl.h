@@ -83,19 +83,27 @@ namespace core::forms
 			{}
 		};
 
-	public:
-		class WindowClass : public forms::WindowClass {
+		class ButtonWindowClass : public forms::WindowClass {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			using const_reference = ButtonWindowClass const&;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			::WNDPROC	OriginalWndProc;
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			WindowClass() : forms::WindowClass{win::ResourceId{WC_BUTTON}}  {
+			ButtonWindowClass() : forms::WindowClass{win::ResourceId{WC_BUTTON}}  {
 				this->Name = win::ResourceId{L"Custom.BUTTON"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();
 			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
+
+	public:
+		using WindowClass = ButtonWindowClass;
+
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -129,9 +137,9 @@ namespace core::forms
 		}
 
 	public:
-		WindowClass const& 
-		wndcls() const override {
-			static WindowClass c;
+		ButtonWindowClass::const_reference 
+		virtual wndcls() const override {
+			static ButtonWindowClass c;
 			return c;
 		}
 	

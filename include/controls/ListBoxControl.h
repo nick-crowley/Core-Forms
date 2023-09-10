@@ -61,20 +61,25 @@ namespace core::forms
 			{}
 		};
 
-	public:
-		class WindowClass : public forms::WindowClass {
+		class ListBoxWindowClass : public forms::WindowClass {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			using const_reference = ListBoxWindowClass const&;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			::WNDPROC	OriginalWndProc;
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			WindowClass() : forms::WindowClass{win::ResourceId{WC_LISTBOX}}  {
+			ListBoxWindowClass() : forms::WindowClass{win::ResourceId{WC_LISTBOX}}  {
 				this->Name = win::ResourceId{L"Custom.LISTBOX"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();
 			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
-
+		
+	public:
 		class Item {
 			ListBoxControl&		ListBox;
 			size_t				Index;
@@ -337,6 +342,8 @@ namespace core::forms
 				return (size_t)ListBox_GetSelCount(this->ListBox.handle());
 			}
 		};
+		
+		using WindowClass = ListBoxWindowClass;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		SelectedIndexCollection		SelectedItems;
@@ -419,9 +426,9 @@ namespace core::forms
 			return Unhandled;
 		}
 
-		WindowClass const& 
-		wndcls() const override {
-			static WindowClass c;
+		ListBoxWindowClass::const_reference
+		virtual wndcls() const override {
+			static ListBoxWindowClass c;
 			return c;
 		}
 

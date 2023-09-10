@@ -1057,7 +1057,7 @@ namespace core::forms
 			return this->TextColour;
 		}
 		
-		nstd::return_t<WindowClass const&>
+		WindowClass::const_reference
 		virtual wndcls() const abstract;
 		
 		Rect

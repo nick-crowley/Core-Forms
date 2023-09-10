@@ -71,6 +71,24 @@ namespace core::forms
 			{}
 		};
 	
+		class ComboBoxWindowClass : public forms::WindowClass {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			using const_reference = ComboBoxWindowClass const&;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			::WNDPROC	OriginalWndProc;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			ComboBoxWindowClass() : forms::WindowClass{win::ResourceId{WC_COMBOBOX}}  {
+				this->Name = win::ResourceId{L"Custom.COMBOBOX"};
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->Style |= ClassStyle::GlobalClass;
+				this->registér();
+			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		};
+		
 		struct ItemData {
 			std::wstring                 Text;
 			AnyColour                    TextColour = SystemColour::WindowText;
@@ -354,19 +372,8 @@ namespace core::forms
 			}
 		};
 	
-		class WindowClass : public forms::WindowClass {
-		public:
-			::WNDPROC	OriginalWndProc;
+		using WindowClass = ComboBoxWindowClass;
 
-		public:
-			WindowClass() : forms::WindowClass{win::ResourceId{WC_COMBOBOX}}  {
-				this->Name = win::ResourceId{L"Custom.COMBOBOX"};
-				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
-				this->Style |= ClassStyle::GlobalClass;
-				this->registér();
-			}
-		};
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		ItemCollection   Items;
@@ -485,9 +492,9 @@ namespace core::forms
 			this->TitleFont = newFont;
 		}
 		
-		nstd::return_t<WindowClass const&>
+		ComboBoxWindowClass::const_reference
 		virtual wndcls() const override {
-			static WindowClass c;
+			static ComboBoxWindowClass c;
 			return c;
 		}
 

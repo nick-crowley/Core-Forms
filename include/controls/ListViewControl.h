@@ -44,20 +44,6 @@ namespace core::forms
 	class ListViewControl : public Control 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		class WindowClass : public forms::WindowClass {
-		public:
-			::WNDPROC	OriginalWndProc;
-
-		public:
-			WindowClass() : forms::WindowClass{win::ResourceId{WC_LISTVIEW}}  {
-				this->Name = win::ResourceId{L"Custom.LISTVIEW"};
-				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
-				this->Style |= ClassStyle::GlobalClass;
-				this->registér();
-			}
-		};
-
 	protected:
 		class ListViewNotificationDictionary : public forms::MessageDictionary {
 			using base = forms::MessageDictionary;
@@ -101,6 +87,26 @@ namespace core::forms
 			{}
 		};
 		
+		class ListViewWindowClass : public forms::WindowClass {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			using const_reference = ListViewWindowClass const&;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			::WNDPROC	OriginalWndProc;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			ListViewWindowClass() : forms::WindowClass{win::ResourceId{WC_LISTVIEW}}  {
+				this->Name = win::ResourceId{L"Custom.LISTVIEW"};
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->Style |= ClassStyle::GlobalClass;
+				this->registér();
+			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		};
+
+	public:
+		using WindowClass = ListViewWindowClass;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -125,9 +131,9 @@ namespace core::forms
 			return WindowRole::List;
 		}
 
-		WindowClass const& 
-		wndcls() const override {
-			static WindowClass c;
+		ListViewWindowClass::const_reference
+		virtual wndcls() const override {
+			static ListViewWindowClass c;
 			return c;
 		}
 		

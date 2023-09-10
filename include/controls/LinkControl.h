@@ -44,13 +44,28 @@ namespace core::forms
 	class LinkControl : public Control 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		class WindowClass : public forms::WindowClass {
+	protected:
+		class LinkNotificationDictionary : public forms::MessageDictionary {
+			using base = forms::MessageDictionary;
+		public:
+			LinkNotificationDictionary() : base({
+	#define MakeMessageName(msg)  { msg, #msg }
+				MakeMessageName(NM_CLICK)
+	#undef MakeMessageName
+				})
+			{}
+		};
+		
+		class LinkWindowClass : public forms::WindowClass {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			using const_reference = LinkWindowClass const&;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			::WNDPROC	OriginalWndProc;
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			WindowClass() : forms::WindowClass{win::ResourceId{WC_LINK}}  {
+			LinkWindowClass() : forms::WindowClass{win::ResourceId{WC_LINK}}  {
 				this->Name = win::ResourceId{L"Custom.LINK"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
@@ -58,18 +73,8 @@ namespace core::forms
 			}
 		};
 
-	protected:
-		class NotificationDictionary : public forms::MessageDictionary {
-			using base = forms::MessageDictionary;
-		public:
-			NotificationDictionary() : base({
-	#define MakeMessageName(msg)  { msg, #msg }
-				MakeMessageName(NM_CLICK)
-	#undef MakeMessageName
-				})
-			{}
-		};
-
+	public:
+		using WindowClass = LinkWindowClass;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -96,9 +101,9 @@ namespace core::forms
 		}
 
 	public:
-		WindowClass const& 
-		wndcls() const override {
-			static WindowClass c;
+		LinkWindowClass::const_reference
+		virtual wndcls() const override {
+			static LinkWindowClass c;
 			return c;
 		}
 
@@ -106,7 +111,7 @@ namespace core::forms
 	protected:
 		gsl::czstring
 		virtual notificationName(::UINT notification) override {
-			static const NotificationDictionary names;
+			static const LinkNotificationDictionary names;
 			return names.at(notification);
 		}
 		
