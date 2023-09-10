@@ -111,7 +111,7 @@ Win31LookNFeel::initialize(Dialog& dlg, InitDialogEventArgs const& args)
 		if (ctrl.role() != WindowRole::PushButton)
 			ctrl.backColour(SystemColour::Window);
 		ctrl.textColour(SystemColour::WindowText);
-		ctrl.font(StockFont::SystemFixed);
+		ctrl.font(this->WindowFont);
 		ctrl.lookNfeel(this->shared_from_this());
 	}
 }

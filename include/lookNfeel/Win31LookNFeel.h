@@ -50,6 +50,7 @@ namespace core::forms
 
 	private:
 		SystemBrush  Background = SystemBrush::Window;
+		Font         WindowFont = StockFont::SystemFixed;
 		
 	public:
 		Win31LookNFeel();
