@@ -63,6 +63,9 @@ namespace core::forms
 	public:
 		struct EarlierState
 		{
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			std::optional<DrawingMode> PrevDrawingMode;
 			std::optional<Colour>      PrevBackColour;
 			std::optional<Colour>      PrevTextColour;
@@ -70,6 +73,16 @@ namespace core::forms
 			std::optional<::HBRUSH>    PrevBrush;
 			std::optional<::HFONT>     PrevFont;
 			std::optional<::HPEN>      PrevPen;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			satisfies(EarlierState, 
+				IsRegular noexcept,
+				NotSortable
+			);
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			/*bool
 			empty() const {
@@ -93,7 +106,14 @@ namespace core::forms
 		  : Handle{std::move(h)}
 		{}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		satisfies(DeviceContext, 
+			NotDefaultConstructible,
+			IsMovable noexcept,
+			NotCopyable,
+			NotEqualityComparable,
+			NotSortable
+		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		DeviceContext
