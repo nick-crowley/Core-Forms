@@ -165,12 +165,6 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		Response 
-		static onSetFont(SetFontEventArgs args) {
-			return TRUE;
-		}
-
 	protected:
 		::INT_PTR 
 		static CALLBACK DefaultDialogHandler(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
@@ -185,9 +179,6 @@ namespace core::forms
 					response = dlg->offerMessage(message, wParam, lParam);
 
 					dlg->raiseMessageEvent(message, wParam, lParam);
-				}
-				else if (message == WM_SETFONT) {
-					response = Dialog::onSetFont({wParam,lParam});
 				}
 				else {
 					throw runtime_error{"No associated dialog object"};
