@@ -44,7 +44,7 @@ namespace core::forms
 	class ListBoxControl : public Control 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
+	protected:
 		class ListBoxNotificationDictionary : public forms::MessageDictionary {
 			using base = forms::MessageDictionary;
 		public:
@@ -61,6 +61,7 @@ namespace core::forms
 			{}
 		};
 
+	public:
 		class WindowClass : public forms::WindowClass {
 		public:
 			::WNDPROC	OriginalWndProc;
@@ -353,6 +354,12 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		gsl::czstring
+		static identifyNotification(::UINT notification) {
+			static const ListBoxNotificationDictionary names;
+			return names.at(notification);
+		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -421,8 +428,7 @@ namespace core::forms
 	protected:
 		gsl::czstring
 		notificationName(::UINT notification) override {
-			static const ListBoxNotificationDictionary names;
-			return names.at(notification);
+			return ListBoxControl::identifyNotification(notification);
 		}
 
 		/*Response

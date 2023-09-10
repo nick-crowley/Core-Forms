@@ -52,23 +52,19 @@ Window::unrecognisedNotificationLogEntry(CommandEventArgs args)
 	std::string messageName{};
 
 	if (className == WC_BUTTON) {
-		static ButtonControl::ButtonNotificationDictionary const messageNames;
-		messageName = messageNames.at(args.Notification->Code);
+		messageName = ButtonControl::identifyNotification(args.Notification->Code);
 		controlType = "button";
 	}
 	else if (className == WC_EDIT) {
-		static EditControl::EditNotificationDictionary const messageNames;
-		messageName = messageNames.at(args.Notification->Code);
+		messageName = EditControl::identifyNotification(args.Notification->Code);
 		controlType = "edit";
 	}
 	else if (className == WC_LISTBOX || className == L"ComboLBox") {
-		static ListBoxControl::ListBoxNotificationDictionary const messageNames;
-		messageName = messageNames.at(args.Notification->Code);
+		messageName = ListBoxControl::identifyNotification(args.Notification->Code);
 		controlType = "listbox";
 	}
 	else if (className == WC_STATIC) {
-		static StaticControl::StaticNotificationDictionary const messageNames;
-		messageName = messageNames.at(args.Notification->Code);
+		messageName = StaticControl::identifyNotification(args.Notification->Code);
 		controlType = "static";
 	}
 	else {

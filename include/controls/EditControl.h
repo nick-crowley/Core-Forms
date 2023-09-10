@@ -44,20 +44,7 @@ namespace core::forms
 	class EditControl : public Control 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		class WindowClass : public forms::WindowClass {
-		public:
-			::WNDPROC	OriginalWndProc;
-
-		public:
-			WindowClass() : forms::WindowClass{win::ResourceId{WC_EDIT}}  {
-				this->Name = win::ResourceId{L"Custom.EDIT"};
-				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
-				this->Style |= ClassStyle::GlobalClass;
-				this->registér();
-			}
-		};
-
+	protected:
 		class EditNotificationDictionary : public forms::MessageDictionary {
 			using base = forms::MessageDictionary;
 		public:
@@ -79,6 +66,20 @@ namespace core::forms
 				})
 			{}
 		};
+
+	public:
+		class WindowClass : public forms::WindowClass {
+		public:
+			::WNDPROC	OriginalWndProc;
+
+		public:
+			WindowClass() : forms::WindowClass{win::ResourceId{WC_EDIT}}  {
+				this->Name = win::ResourceId{L"Custom.EDIT"};
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->Style |= ClassStyle::GlobalClass;
+				this->registér();
+			}
+		};
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		WindowEvent    TextChanged;
@@ -92,6 +93,12 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		gsl::czstring
+		static identifyNotification(::UINT notification) {
+			static const EditNotificationDictionary names;
+			return names.at(notification);
+		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -116,8 +123,7 @@ namespace core::forms
 	protected:
 		gsl::czstring
 		notificationName(::UINT notification) override {
-			static const EditNotificationDictionary names;
-			return names.at(notification);
+			return EditControl::identifyNotification(notification);
 		}
 		
 		Response

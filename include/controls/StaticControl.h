@@ -44,20 +44,7 @@ namespace core::forms
 	class StaticControl : public Control 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		class WindowClass : public forms::WindowClass {
-		public:
-			::WNDPROC	OriginalWndProc;
-
-		public:
-			WindowClass() : forms::WindowClass{win::ResourceId{WC_STATIC}}  {
-				this->Name = win::ResourceId{L"Custom.STATIC"};
-				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
-				this->Style |= ClassStyle::GlobalClass;
-				this->registér();
-			}
-		};
-		
+	protected:
 		class StaticNotificationDictionary : public forms::MessageDictionary {
 			using base = forms::MessageDictionary;
 		public:
@@ -72,6 +59,20 @@ namespace core::forms
 			{}
 		};
 		
+	public:
+		class WindowClass : public forms::WindowClass {
+		public:
+			::WNDPROC	OriginalWndProc;
+
+		public:
+			WindowClass() : forms::WindowClass{win::ResourceId{WC_STATIC}}  {
+				this->Name = win::ResourceId{L"Custom.STATIC"};
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->Style |= ClassStyle::GlobalClass;
+				this->registér();
+			}
+		};
+		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -83,6 +84,12 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		gsl::czstring
+		static identifyNotification(::UINT notification) {
+			static const StaticNotificationDictionary names;
+			return names.at(notification);
+		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -117,8 +124,7 @@ namespace core::forms
 	protected:
 		gsl::czstring
 		notificationName(::UINT notification) override {
-			static const StaticNotificationDictionary names;
-			return names.at(notification);
+			return StaticControl::identifyNotification(notification);
 		}
 
 		::LRESULT 

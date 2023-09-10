@@ -61,20 +61,7 @@ namespace core::forms
 	private:
 		using base = Control;
 		
-	public:
-		class WindowClass : public forms::WindowClass {
-		public:
-			::WNDPROC	OriginalWndProc;
-
-		public:
-			WindowClass() : forms::WindowClass{win::ResourceId{WC_BUTTON}}  {
-				this->Name = win::ResourceId{L"Custom.BUTTON"};
-				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
-				this->Style |= ClassStyle::GlobalClass;
-				this->registér();
-			}
-		};
-	
+	protected:
 		class ButtonNotificationDictionary : public forms::MessageDictionary {
 			using base = forms::MessageDictionary;
 		public:
@@ -95,6 +82,20 @@ namespace core::forms
 				})
 			{}
 		};
+
+	public:
+		class WindowClass : public forms::WindowClass {
+		public:
+			::WNDPROC	OriginalWndProc;
+
+		public:
+			WindowClass() : forms::WindowClass{win::ResourceId{WC_BUTTON}}  {
+				this->Name = win::ResourceId{L"Custom.BUTTON"};
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->Style |= ClassStyle::GlobalClass;
+				this->registér();
+			}
+		};
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -108,6 +109,12 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		gsl::czstring
+		static identifyNotification(::UINT notification) {
+			static const ButtonNotificationDictionary names;
+			return names.at(notification);
+		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -148,8 +155,7 @@ namespace core::forms
 	protected:
 		gsl::czstring
 		notificationName(::UINT notification) override {
-			static const ButtonNotificationDictionary names;
-			return names.at(notification);
+			return ButtonControl::identifyNotification(notification);
 		}
 
 		Response
