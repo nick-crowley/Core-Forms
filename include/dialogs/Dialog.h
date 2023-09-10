@@ -170,28 +170,32 @@ namespace core::forms
 		static CALLBACK DefaultDialogHandler(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
 		{
 			WndProcLoggingSentry log_entry(message);
-			// FIXME: This method needs documenting
 			try {
 				Response response;
 				
+				// Search for the C++ object managing this handle
 				if (Dialog* dlg = Window::ExistingWindows.find<Dialog>(hDlg); dlg) 
 				{
+					// Offer the message to the C++ object managing this handle
 					response = dlg->offerMessage(message, wParam, lParam);
-
+					
+					// Raise equivalent event, if any, after processing completed
 					dlg->raiseMessageEvent(message, wParam, lParam);
 				}
-				else {
+				// [UNMANAGED] Shouldn't be possible to receive messages for dialog prior to WM_NCCREATE saving its handle
+				else 
 					throw runtime_error{"No associated dialog object"};
-				}
 
 				Invariant(response.Status != Response::Invalid);
 			
+				// [HANDLED] Return the result provided
 				if (response.Status == Response::Handled) 
 				{
 					log_entry.setResult(Response::Handled, *response.Value);
 					return *response.Value;
 				}
-
+				
+				// [UNHANDLED/ERROR] Inform ::DefWindowProc() we didn't handle this message
 				log_entry.setResult(Response::Unhandled, FALSE);
 				return FALSE;
 			} 
