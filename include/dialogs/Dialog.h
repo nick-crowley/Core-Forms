@@ -180,13 +180,11 @@ namespace core::forms
 			try {
 				Response response;
 				
-				if (Window::ExistingWindows.contains(hDlg)) 
+				if (Dialog* dlg = static_cast<Dialog*>(Window::ExistingWindows.find(hDlg)); dlg) 
 				{
-					Dialog& dlg = static_cast<Dialog&>(Window::ExistingWindows[hDlg]);
+					response = dlg->offerMessage(message, wParam, lParam);
 
-					response = dlg.offerMessage(message, wParam, lParam);
-
-					dlg.raiseMessageEvent(message, wParam, lParam);
+					dlg->raiseMessageEvent(message, wParam, lParam);
 				}
 				else if (message == WM_SETFONT) {
 					response = Dialog::onSetFont({wParam,lParam});

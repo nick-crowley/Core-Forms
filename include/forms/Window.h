@@ -872,11 +872,9 @@ namespace core::forms
 					Window::onFirstSight(hWnd, {wParam,lParam});
 			
 				// Search for the C++ object managing this handle
-				if (!Window::ExistingWindows.contains(hWnd)) 
+				if (wnd = Window::ExistingWindows.find(hWnd); !wnd) 
 					response = Window::onUnexpectedMessage(hWnd, message, wParam, lParam);
 				else {
-					wnd = &Window::ExistingWindows[hWnd];
-
 					// Window lifetime tracking
 					if (message == WM_DESTROY) 
 						wnd->onDestructionStarted();
