@@ -918,6 +918,7 @@ namespace core::forms
 			// [ERROR] Return a value indicating we didn't handle the message (usually anything but zero)
 			catch (const std::exception& e) {
 				log_entry.setException(e);
+				clog << Failure{"Exception processing {}: {}", Window::MessageDatabase[message].Name, e.what()};
 				return Window::MessageDatabase[message].Unhandled;
 			}
 		}

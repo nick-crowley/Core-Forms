@@ -201,6 +201,7 @@ namespace core::forms
 			} 
 			catch (const std::exception& e) {
 				log_entry.setException(e);
+				clog << Failure{"Exception processing {}: {}", Window::MessageDatabase[message].Name, e.what()};
 				return (INT_PTR)FALSE;
 			}
 		}
