@@ -119,6 +119,45 @@ namespace core::forms
 		Whitespace         = ROLE_SYSTEM_WHITESPACE,        //!< Blank space between other objects.
 		Window             = ROLE_SYSTEM_WINDOW,            //!< The window frame, which contains child objects such as a title bar, client, and other objects of a window.
 	};
+
+#ifndef STATE_SYSTEM_NORMAL
+	#define STATE_SYSTEM_NORMAL 0
+#endif
+
+	enum class WindowState {
+		AlertHigh       = STATE_SYSTEM_ALERT_HIGH,        //!< Not Supported
+		AlertMedium     = STATE_SYSTEM_ALERT_MEDIUM,      //!< Not Supported
+		AlertLow        = STATE_SYSTEM_ALERT_LOW,         //!< Not Supported
+		Animated        = STATE_SYSTEM_ANIMATED,          //!< The object's appearance changes rapidly or constantly.
+		Busy            = STATE_SYSTEM_BUSY,              //!< The control cannot accept input at this time.
+		Checked         = STATE_SYSTEM_CHECKED,           //!< The object's check box is selected.
+		Collapsed       = STATE_SYSTEM_COLLAPSED,         //!< The object's children that have the ROLE_SYSTEM_OUTLINEITEM role are hidden.
+		Default         = STATE_SYSTEM_DEFAULT,           //!< This state represents the default button in a window.
+		Expanded        = STATE_SYSTEM_EXPANDED,          //!< The object's children that have the ROLE_SYSTEM_OUTLINEITEM role are displayed.
+		ExtSelectable   = STATE_SYSTEM_EXTSELECTABLE,     //!< Indicates that an object extends its selection by using SELFLAG_EXTENDSELECTION in the IAccessible::accSelect method.
+		Floating        = STATE_SYSTEM_FLOATING,          //!< Not Supported
+		Focusable       = STATE_SYSTEM_FOCUSABLE,         //!< The object is on the active window and is ready to receive keyboard focus.
+		Focused         = STATE_SYSTEM_FOCUSED,           //!< The object has the keyboard focus. Do not confuse object focus with object selection. For more information, see Selection and Focus Properties and Methods. For objects with this object state, send the EVENT_OBJECT_SHOW or EVENT_OBJECT_HIDE WinEvents to notify client applications about state changes. Do not use EVENT_OBJECT_STATECHANGE.
+		HasPopup        = STATE_SYSTEM_HASPOPUP,          //!< When invoked, the object displays a pop-up menu or a window.
+		HotTracked      = STATE_SYSTEM_HOTTRACKED,        //!< The object is hot-tracked by the mouse, which means that the object's appearance has changed to indicate that the mouse pointer is located over it.
+		Invisible       = STATE_SYSTEM_INVISIBLE,         //!< The object is programmatically hidden.
+		Linked          = STATE_SYSTEM_LINKED,            //!< Indicates that the object is formatted as a hyperlink. The object's role will usually be ROLE_SYSTEM_TEXT.
+		Marqueed        = STATE_SYSTEM_MARQUEED,          //!< Indicates scrolling or moving text or graphics.
+		Mixed           = STATE_SYSTEM_MIXED,             //!< Indicates that the state of a three-state check box or toolbar button is not determined. The check box is neither selected nor cleared and is therefore in the third or mixed state.
+		Moveable        = STATE_SYSTEM_MOVEABLE,          //!< Indicates that the object can be moved. For example, a user can click the object's title bar and drag the object to a new location.
+		MultiSelectable = STATE_SYSTEM_MULTISELECTABLE,   //!< Indicates that the object accepts multiple selected items; that is, SELFLAG_ADDSELECTION for the IAccessible::accSelect method is valid.
+		Normal          = STATE_SYSTEM_NORMAL,            //!< Indicates that the object does not have another state assigned to it.
+		Offscreen       = STATE_SYSTEM_OFFSCREEN,         //!< The object is clipped or has scrolled out of view, but it is not programmatically hidden.
+		Pressed         = STATE_SYSTEM_PRESSED,           //!< The object is pressed.
+		Protected       = STATE_SYSTEM_PROTECTED,         //!< The object is a password-protected edit control.
+		Readonly        = STATE_SYSTEM_READONLY,          //!< The object is designated read-only.
+		Selectable      = STATE_SYSTEM_SELECTABLE,        //!< The object accepts selection.
+		Selected        = STATE_SYSTEM_SELECTED,          //!< The object is selected.
+		SelfVoicing     = STATE_SYSTEM_SELFVOICING,       //!< The object or child uses text-to-speech (TTS) technology for description purposes.
+		Sizeable        = STATE_SYSTEM_SIZEABLE,          //!< The object can be resized. For example, a user could change the size of a window by dragging it by the border.
+		Traversed       = STATE_SYSTEM_TRAVERSED,         //!< The object is a hyperlink that has been visited (previously clicked) by a user.
+		Unavailable     = STATE_SYSTEM_UNAVAILABLE,       //!< The object is unavailable.
+	};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
