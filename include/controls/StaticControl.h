@@ -73,7 +73,7 @@ namespace core::forms
 		public:
 			StaticWindowClass() : forms::WindowClass{win::ResourceId{WC_STATIC}}  {
 				this->Name = win::ResourceId{L"Custom.STATIC"};
-				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::defaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();
 			}

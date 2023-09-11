@@ -120,7 +120,7 @@ namespace core::forms
 			WindowClass() : forms::WindowClass(win::ResourceId::parse(WC_DIALOG))
 			{
 				this->Name = win::ResourceId{L"Custom.DIALOG"};
-				this->OriginalWndProc = std::exchange(this->WndProc, Dialog::InterceptMessageHandler);
+				this->OriginalWndProc = std::exchange(this->WndProc, Dialog::interceptMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();
 			}
@@ -139,7 +139,7 @@ namespace core::forms
 		// NB: Fields ordered for debugging convenience
 		win::ResourceId const           DialogId;
 		std::optional<DialogMode const>	DisplayMode;
-		::DLGPROC const					DialogProc = Dialog::DefaultDialogHandler;
+		::DLGPROC const					DialogProc = Dialog::defaultDialogHandler;
 		DialogTemplate const            Template;
 		EarlyBoundControlCollection const EarlyBoundControls;
 		ControlDictionary               BoundControls;
@@ -167,7 +167,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
 		::INT_PTR 
-		static CALLBACK DefaultDialogHandler(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
+		static CALLBACK defaultDialogHandler(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
 		{
 			WndProcLoggingSentry log_entry(message);
 			try {
@@ -206,7 +206,7 @@ namespace core::forms
 		}
 
 		::LRESULT 
-		static CALLBACK InterceptMessageHandler(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
+		static CALLBACK interceptMessageHandler(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
 		{
 			// The documented dialog box Windows API functions do not provide a way of passing a custom
 			// parameter into the creation of dialogs; they only provide a facility to pass a parameter
@@ -220,10 +220,10 @@ namespace core::forms
 				replacement.lpCreateParams = &Dialog::DialogCreationParameter.value();	// BUG: Returning address which is invalidated on next line
 				Dialog::DialogCreationParameter = std::nullopt;
 
-				return Window::DefaultMessageHandler(hWnd, message, wParam, (LPARAM)&replacement);
+				return Window::defaultMessageHandler(hWnd, message, wParam, (LPARAM)&replacement);
 			} 
 
-			return Window::DefaultMessageHandler(hWnd, message, wParam, lParam);
+			return Window::defaultMessageHandler(hWnd, message, wParam, lParam);
 		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o

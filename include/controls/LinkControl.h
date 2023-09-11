@@ -67,7 +67,7 @@ namespace core::forms
 		public:
 			LinkWindowClass() : forms::WindowClass{win::ResourceId{WC_LINK}}  {
 				this->Name = win::ResourceId{L"Custom.LINK"};
-				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::defaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();
 			}

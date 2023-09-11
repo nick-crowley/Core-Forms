@@ -84,7 +84,7 @@ namespace core::forms
 		public:
 			ComboBoxWindowClass() : forms::WindowClass{win::ResourceId{WC_COMBOBOX}}  {
 				this->Name = win::ResourceId{L"Custom.COMBOBOX"};
-				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::defaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();
 			}

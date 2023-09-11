@@ -81,7 +81,7 @@ namespace core::forms
 		public:
 			EditWindowClass() : forms::WindowClass{win::ResourceId{WC_EDIT}}  {
 				this->Name = win::ResourceId{L"Custom.EDIT"};
-				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::defaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();
 			}

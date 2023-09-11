@@ -56,7 +56,7 @@ namespace core::forms
 		public:
 			ProgressBarWindowClass() : forms::WindowClass{win::ResourceId{PROGRESS_CLASS}}  {
 				this->Name = win::ResourceId{L"Custom.PROGRESS"};
-				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::defaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();
 			}

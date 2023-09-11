@@ -861,7 +861,7 @@ namespace core::forms
 	
 	protected:
 		::LRESULT 
-		static CALLBACK DefaultMessageHandler(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
+		static CALLBACK defaultMessageHandler(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
 		{
 			WndProcLoggingSentry log_entry(message);
 			try {

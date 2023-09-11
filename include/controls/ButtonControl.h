@@ -97,7 +97,7 @@ namespace core::forms
 		public:
 			ButtonWindowClass() : forms::WindowClass{win::ResourceId{WC_BUTTON}}  {
 				this->Name = win::ResourceId{L"Custom.BUTTON"};
-				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::defaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();
 			}

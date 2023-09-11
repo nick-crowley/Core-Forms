@@ -98,7 +98,7 @@ namespace core::forms
 		public:
 			ListViewWindowClass() : forms::WindowClass{win::ResourceId{WC_LISTVIEW}}  {
 				this->Name = win::ResourceId{L"Custom.LISTVIEW"};
-				this->OriginalWndProc = std::exchange(this->WndProc, Window::DefaultMessageHandler);
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::defaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();
 			}
