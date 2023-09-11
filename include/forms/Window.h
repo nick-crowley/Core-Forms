@@ -367,7 +367,11 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+		public:
+			bool
+			hasState(ProcessingState s) const {
+				return this->State.State == s;
+			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			StateDescription
@@ -1442,7 +1446,7 @@ namespace core::forms
 		void 
 		createInternal(CreateWindowParams const& w) 
 		{
-			this->Debug.setState(ProcessingState::BeingCreated);
+			Invariant(this->Debug.hasState(ProcessingState::Idle));
 
 			if (!::CreateWindowExW(
 				NULL, 
