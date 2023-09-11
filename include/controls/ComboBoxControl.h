@@ -29,7 +29,7 @@
 #include "library/core.Forms.h"
 #include "controls/Control.h"
 #include "controls/ComboBoxStyle.h"
-//#include "controls/EditControl.h"
+#include "controls/ComboBoxInfo.h"
 //#include "controls/ListBoxControl.h"
 #include "graphics/Icon.h"
 #include "forms/WindowClass.h"
@@ -462,6 +462,13 @@ namespace core::forms
 			Rect rc;
 			ComboBox_GetDroppedControlRect(this->handle(), rc);
 			return rc;
+		}
+
+		ComboBoxInfo
+		info() const {
+			::COMBOBOXINFO info{sizeof ::COMBOBOXINFO}; 
+			this->send<CB_GETCOMBOBOXINFO>(std::nullopt, (::LPARAM)&info);
+			return ComboBoxInfo{info};
 		}
 
 		bool
