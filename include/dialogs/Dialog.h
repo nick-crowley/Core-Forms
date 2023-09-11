@@ -403,7 +403,7 @@ namespace core::forms
 
 		::LRESULT 
 		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
-			return ::CallWindowProc(this->wndcls().OriginalWndProc, this->Handle, message, wParam, lParam);
+			return ::CallWindowProc(this->wndcls().OriginalWndProc, this->handle(), message, wParam, lParam);
 		}
 
 	private:
@@ -451,7 +451,8 @@ namespace core::forms
 			}
 
 			// [MODELESS] Display, set handle, and return nothing
-			this->Handle = ::CreateDialogIndirectW(container, blob, owner, this->DialogProc);
+			if (auto* const dlg = ::CreateDialogIndirectW(container, blob, owner, this->DialogProc); dlg)
+				this->attach(dlg);
 			return std::nullopt;
 		}
 	};

@@ -30,16 +30,12 @@
 #include "core/DebugStream.h"
 #include "core/FunctionLogging.h"
 #include "com/SharedPtr.h"
-#include "graphics/Graphics.h"
 #include "lookNfeel/ILookNFeelProvider.h"
 #include "support/ObservableEvent.h"
 #include "forms/Accessible.h"
 #include "forms/BuiltInWindowMessages.h"
-#include "forms/WindowClass.h"
+#include "forms/UnmanagedWindow.h"
 #include "forms/WindowEventArgs.h"
-#include "forms/WindowInfo.h"
-#include "forms/WindowStyle.h"
-#include "win/Boolean.h"
 #pragma comment (lib, "OleAcc.lib")
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -53,12 +49,14 @@
 namespace core::forms
 {
 	//! @brief	Manages the life-cycle and behaviour of a single window
-	class FormsExport Window 
+	class FormsExport Window : private UnmanagedWindow
 	{
 		friend class DialogTemplate;	//!< Requires @c CreationData class
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
+		using base = UnmanagedWindow;
+
 		//! @brief	Dictionary of message names, expected return values, and special logging requirements
 		class FormsExport MessageDictionary {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -786,10 +784,6 @@ namespace core::forms
 		Font                WindowFont = StockFont::SystemFixed;
 
 	protected:
-		//! @remarks Due to message handling being re-entrant there is a significant delay 
-		//!          between releasing a smart-pointer and its release delegate returning,
-		//!          so the raw-pointer window handle is preferable here for simplicity.
-		::HWND                  Handle = nullptr;
 		std::optional<Brush>    Background;
 		DebuggingAide           Debug;
 		SharedLookNFeelProvider LookNFeel;
@@ -833,7 +827,7 @@ namespace core::forms
 			auto* const param = args.data<CreationData*>();
 			Window* pThis = param->get();
 
-			pThis->Handle = hWnd;
+			pThis->attach(hWnd);
 			pThis->Debug.setState(ProcessingState::BeingCreated,
 								  args.Data->lpszClass, 
 								  args.Data->lpszName);	// Not yet set for dialog controls
@@ -929,6 +923,21 @@ namespace core::forms
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		using base::clientDC;
+		using base::clientRect;
+		using base::enabled;
+		using base::exists;
+		using base::exStyle;
+		using base::ident;
+		using base::info;
+		using base::handle;
+		using base::post;
+		using base::send;
+		using base::style;
+		using base::text;
+		using base::wndRect;
+		using base::wndRgn;
+		
 		SharedBrush
 		background() const {
 			if (this->Background)
@@ -945,147 +954,48 @@ namespace core::forms
 			return this->BackColour;
 		}
 		
-		DeviceContext
-		clientDC() const {
-			return DeviceContext{
-				SharedDeviceContext{::GetDC(this->handle()), this->handle()}
-			};
-		}
-	
 		Rect
-		clientRect() const {
-			Rect rc;
-			::GetClientRect(this->handle(), rc);
-			return rc;
-		}
-	
-		// FIXME: I have no idea what this method does
-		Rect
-		clientRect(std::nullptr_t) const {
-			Rect rc = this->clientRect();
-			auto* pointsArray = reinterpret_cast<::POINT*>(static_cast<::RECT*>(rc));
-			::MapWindowPoints(this->handle(), nullptr, pointsArray, 2);
-			return rc;
-		}
-	
-		Rect
-		clientRect(Window const& alternateCoordinateSystem) const {
-			Rect rc = this->clientRect();
-			auto* pointsArray = reinterpret_cast<::POINT*>(static_cast<::RECT*>(rc));
-			::MapWindowPoints(this->handle(), alternateCoordinateSystem.handle(), pointsArray, 2);
-			return rc;
+		clientRect(Window& alternateCoordinateSystem) const {
+			return base::clientRect(alternateCoordinateSystem.handle());
 		}
 
-		bool
-		enabled() const {
-			return ::IsWindowEnabled(this->handle()) != FALSE;
-		}
-	
-		bool
-		exists() const {
-			return this->handle() && ::IsWindow(this->handle()) != FALSE;
-		}
-
-		template <nstd::Enumeration Style = ExWindowStyle>
-		nstd::bitset<Style>
-		exStyle() const {
-			return static_cast<Style>(::GetWindowLongW(this->handle(),GWL_EXSTYLE));
-		}
-	
 		Font
 		font() const {
 			return this->WindowFont;
 		}
 
-		uint16_t
-		ident() const {
-			return static_cast<uint16_t>(::GetDlgCtrlID(this->handle()));
-		}
-	
-		WindowInfo
-		info() const {
-			::WINDOWINFO info{sizeof(info)};
-			::GetWindowInfo(this->handle(), &info);
-			return WindowInfo{info};
-		}
-
-		::HWND 
-		handle() const {
-			return this->Handle;
-		}
-		
 		Window*
 		parent() const {
 			auto const wnd = ::GetParent(this->handle());
 			return wnd ? &Window::ExistingWindows[wnd] : nullptr;
 		}
-		
-		template <unsigned MessageId>
-		::LRESULT
-		post(std::optional<::WPARAM> first = std::nullopt, std::optional<::LPARAM> second = std::nullopt) const {
-			return ::PostMessageW(this->handle(), MessageId, first.value_or(0), second.value_or(0));
-		}
-		
+
 		WindowRole
 		virtual role() const abstract;
 
-		template <unsigned MessageId>
-		::LRESULT
-		send(std::optional<::WPARAM> first = std::nullopt, std::optional<::LPARAM> second = std::nullopt) const {
-			return ::SendMessageW(this->handle(), MessageId, first.value_or(0), second.value_or(0));
-		}
-
-		template <nstd::Enumeration Style = WindowStyle>
-		nstd::bitset<Style>
-		style() const {
-			return static_cast<Style>(::GetWindowLongW(this->handle(),GWL_STYLE));
-		}
-
-		std::wstring
-		text() const {
-			if (std::wstring::size_type const capacity = ::GetWindowTextLengthW(this->handle())+1; capacity == 1) 
-				return {};
-			else {
-				std::wstring buffer(capacity, L'\0');
-				if (auto const n = ::GetWindowTextW(this->handle(), buffer.data(), win::DWord{capacity}); n != capacity)
-					buffer.erase(n, buffer.npos);
-				return buffer;
-			}
-		}
-		
 		AnyColour
 		textColour() const {
 			return this->TextColour;
 		}
 		
-		WindowClass::const_reference
-		virtual wndcls() const abstract;
-		
 		Rect
-		wndRect() const {
-			Rect rc;
-			::GetWindowRect(this->handle(), rc);
-			return rc;
+		wndRect(Window& alternateCoordinateSystem) const {
+			return base::wndRect(alternateCoordinateSystem.handle());
 		}
-	
-		Rect
-		wndRect(Window const& alternateCoordinateSystem) const {
-			Rect rc = this->wndRect();
-			::POINT* pointsArray = reinterpret_cast<POINT*>(static_cast<::RECT*>(rc));
-			::MapWindowPoints(nullptr, alternateCoordinateSystem.handle(), pointsArray, 2);
-			return rc;
-		}
-	
-		std::optional<Region>
-		wndRgn() const {
-			Region rgn;
-			if (!::GetWindowRgn(this->handle(), rgn))
-				return std::nullopt;
-			return rgn;
-		}
-		
+
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		using base::destroy;
+		using base::enable;
+		using base::hide;
+		using base::invalidate;
+		using base::order;
+		using base::show;
+		using base::move;
+		using base::reposition;
+		using base::resize;
+		using base::update;
+
 		void
 		backColour(AnyColour newColour) {
 			this->BackColour = newColour;
@@ -1122,97 +1032,22 @@ namespace core::forms
 			                                               .build();
 			this->createInternal(params);
 		}
-
-		void 
-		destroy() {
-			if (::DestroyWindow(this->handle()))
-				this->Handle = nullptr;
-		}
-	
-		void
-		enable(bool enabled) const {
-			::EnableWindow(this->handle(), win::Boolean{enabled});
-		}
-	
+		
 		void
 		font(const Font& newFont) {
 			this->WindowFont = newFont;
 			SetWindowFont(this->handle(), *newFont.handle(), FALSE);
 		}
 		
-		void 
-		hide() {
-			::ShowWindow(this->handle(), SW_HIDE);
-		}
-		
-		void
-		invalidate(bool redraw = false) {
-			::InvalidateRect(this->handle(), nullptr, win::Boolean{redraw});
-		}
-
-		void
-		invalidate(Rect rc, bool redraw = false) {
-			::InvalidateRect(this->handle(), rc, win::Boolean{redraw});
-		}
-
 		void
 		lookNfeel(SharedLookNFeelProvider newFeel) {
 			this->LookNFeel = ThrowIfEmpty(newFeel);
 		}
-
-		void
-		order(::HWND after) {
-			::SetWindowPos(this->handle(), after, -1, -1, -1, -1, 
-				SWP_NOMOVE|SWP_NOSIZE|SWP_NOACTIVATE);
-		}
-
-		void 
-		show() {
-			::ShowWindow(this->handle(), SW_SHOW);
-		}
 		
-		void 
-		show(signed flags) {
-			::ShowWindow(this->handle(), flags);
-		}
-		
-		void 
-		move(Point pt) {
-			::SetWindowPos(this->handle(), nullptr, pt.X, pt.Y, -1, -1, 
-				SWP_NOSIZE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOACTIVATE);
-		}
-	
-		void 
-		reposition(Rect wnd) {
-			::SetWindowPos(this->handle(), nullptr, wnd.Left, wnd.Top, wnd.width(), wnd.height(),
-				SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOACTIVATE);
-		}
-	
-		void 
-		resize(Size sz) {
-			::SetWindowPos(this->handle(), nullptr, -1, -1, sz.Width, sz.Height,
-				SWP_NOMOVE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOACTIVATE);
-		}
-	
-		void
-		text(std::wstring_view s)  {
-			::SetWindowTextW(this->handle(), s.data());
-		}
-
 		void
 		textColour(AnyColour newColour) {
 			ThrowIf(newColour, std::holds_alternative<meta::transparent_t>(newColour));
 			this->TextColour = newColour;
-		}
-
-		void
-		update() {
-			::UpdateWindow(this->handle());
-		}
-		
-		void
-		wndRgn(Region rgn) const {
-			::SetWindowRgn(this->handle(), rgn.detach(), win::Boolean{true});
 		}
 
 		Response 
@@ -1416,6 +1251,8 @@ namespace core::forms
 		}
 
 	protected:
+		using base::attach;
+
 		//! @brief	Stringify notification this window sends to its parent
 		gsl::czstring
 		virtual notificationName(::UINT [[maybe_unused]] notification) {
@@ -1423,7 +1260,6 @@ namespace core::forms
 			return "";
 		}
 		
-
 		//! @brief	Decode message arguments and offer to this object
 		Response
 		offerMessage(::UINT message, ::WPARAM wParam, ::LPARAM lParam) 
@@ -1599,7 +1435,7 @@ namespace core::forms
 		::LRESULT 
 		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) {
 			// Default implementation passes to system default
-			return ::DefWindowProc(this->Handle, message, wParam, lParam);
+			return ::DefWindowProc(this->handle(), message, wParam, lParam);
 		}
 		
 	private:
