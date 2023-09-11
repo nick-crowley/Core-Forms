@@ -57,7 +57,11 @@ namespace core::forms
 		//!          so the raw-pointer window handle is preferable here for simplicity.
 		::HWND   Handle = nullptr;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	
+	public:
+		explicit
+		UnmanagedWindow(::HWND existingWindow) 
+			: Handle{existingWindow}
+		{}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(UnmanagedWindow,
