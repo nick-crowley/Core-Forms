@@ -138,7 +138,7 @@ namespace core::forms
 
 			std::optional<Icon>
 			icon() const {
-				Invariant(!this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::HasStrings));
+				Invariant(this->Owner.ownerDraw());
 				return this->itemData()->Icon;
 			}
 
@@ -149,7 +149,7 @@ namespace core::forms
 
 			std::wstring
 			text() const {
-				if (!this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::HasStrings))
+				if (this->Owner.ownerDraw())
 					return this->itemData()->Text;
 				else if (auto const length = ComboBox_GetLBTextLen(this->Owner.handle(), this->Index); !length)
 					return {};
@@ -162,7 +162,7 @@ namespace core::forms
 			
 			std::optional<std::wstring>
 			title() const {
-				Invariant(!this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::HasStrings));
+				Invariant(this->Owner.ownerDraw());
 				return this->itemData()->Title;
 			}
 
