@@ -1,5 +1,6 @@
 #include "library/core.forms.h"
 #include "dialogs/Dialog.h"
+#include "graphics/ImageList.h"
 #include "Resource.h"
 using namespace core;
 

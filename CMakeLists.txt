@@ -26,6 +26,7 @@ set(OUTPUT_FOLDER "${BASE_FOLDER}build")
 # Folders: Project
 set(PROJECT_EXTRA_FOLDER    "${BASE_FOLDER}extra/")
 set(PROJECT_INCLUDE_FOLDER  "${BASE_FOLDER}include/")
+set(PROJECT_SAMPLE_FOLDER   "${BASE_FOLDER}sample/")
 set(PROJECT_SOURCE_FOLDER   "${BASE_FOLDER}src/")
 set(PROJECT_RESOURCE_FOLDER "${BASE_FOLDER}res/")
 
@@ -258,14 +259,14 @@ target_compile_options(dllCoreForms
 
 # Project: appBasicForm
 add_executable(appBasicForm
-	"${PROJECT_EXTRA_FOLDER}appBasicForm.cpp"
+	"${PROJECT_SAMPLE_FOLDER}appBasicForm.cpp"
 	${PROJECT_RESOURCE_FILES}
     )
 
 # Include folders
 target_include_directories(appBasicForm BEFORE
     PRIVATE
-	${PROJECT_EXTRA_FOLDER} 
+	${PROJECT_SAMPLE_FOLDER} 
 	${PROJECT_RESOURCE_FOLDER} 
     PUBLIC
     ${PROJECT_INCLUDE_FOLDER}            
@@ -311,14 +312,14 @@ add_dependencies(appBasicForm
 
 # Project: appControls
 add_executable(appControls
-	"${PROJECT_EXTRA_FOLDER}appControls.cpp"
+	"${PROJECT_SAMPLE_FOLDER}appControls.cpp"
 	${PROJECT_RESOURCE_FILES}
     )
 
 # Include folders
 target_include_directories(appControls BEFORE
     PRIVATE
-	${PROJECT_EXTRA_FOLDER} 
+	${PROJECT_SAMPLE_FOLDER} 
 	${PROJECT_RESOURCE_FOLDER} 
     PUBLIC
     ${PROJECT_INCLUDE_FOLDER}            
@@ -364,14 +365,14 @@ add_dependencies(appControls
 
 # Project: appDevTesting
 add_executable(appDevTesting
-	"${PROJECT_EXTRA_FOLDER}appDevTesting.cpp"
+	"${PROJECT_SAMPLE_FOLDER}appDevTesting.cpp"
 	${PROJECT_RESOURCE_FILES}
     )
 
 # Include folders
 target_include_directories(appDevTesting BEFORE
     PRIVATE
-	${PROJECT_EXTRA_FOLDER} 
+	${PROJECT_SAMPLE_FOLDER} 
 	${PROJECT_RESOURCE_FOLDER} 
     PUBLIC
     ${PROJECT_INCLUDE_FOLDER}            
@@ -420,11 +421,18 @@ file(GLOB_RECURSE PROJECT_EXTRA_FILES
     "${PROJECT_EXTRA_FOLDER}*.h"
     "${PROJECT_EXTRA_FOLDER}*.cpp"
 )
-	
+
+# Sample files
+file(GLOB_RECURSE PROJECT_SAMPLE_FILES
+    "${PROJECT_SAMPLE_FOLDER}*.h"
+    "${PROJECT_SAMPLE_FOLDER}*.cpp"
+)
+
 # Project file groups
 source_group(TREE ${PROJECT_SOURCE_FOLDER}    PREFIX "Build Files"    FILES ${PROJECT_SOURCE_CC_FILES}})
 source_group(TREE ${PROJECT_EXTRA_FOLDER}     PREFIX "Extra Files"    FILES ${PROJECT_EXTRA_FILES})
 source_group(TREE ${PROJECT_INCLUDE_FOLDER}   PREFIX "Header Files"   FILES ${PROJECT_INCLUDE_FILES})
+source_group(TREE ${PROJECT_SAMPLE_FOLDER}    PREFIX "Source Files"   FILES ${PROJECT_SAMPLE_FILES})
 source_group(TREE ${PROJECT_SOURCE_FOLDER}    PREFIX "Source Files"   FILES ${PROJECT_SOURCE_FILES})
 source_group(TREE ${PROJECT_RESOURCE_FOLDER}  PREFIX "Resource Files" FILES ${PROJECT_RESOURCE_FILES})
 
