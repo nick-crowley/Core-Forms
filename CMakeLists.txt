@@ -144,6 +144,7 @@ message("StaticLib: Generating project(s) from ${PROJECT_SOURCE_FOLDER} with ${P
 
 # Project: libCoreForms
 add_library(libCoreForms STATIC 
+	"${PROJECT_EXTRA_FOLDER}Core-Forms.natvis"
 	${PROJECT_SOURCE_FILES} 
 	${PROJECT_SOURCE_CC_FILES} 
 	${PROJECT_INCLUDE_FILES} 
@@ -202,6 +203,7 @@ message("DynamicLib: Generating project(s) from ${PROJECT_SOURCE_FOLDER} with ${
 # Project: dllCoreForms
 add_library(dllCoreForms SHARED 
 	"${PROJECT_EXTRA_FOLDER}DllMain.cpp"
+	"${PROJECT_EXTRA_FOLDER}Core-Forms.natvis"
 	${PROJECT_SOURCE_FILES} 
 	${PROJECT_SOURCE_CC_FILES} 
 	${PROJECT_INCLUDE_FILES} 
