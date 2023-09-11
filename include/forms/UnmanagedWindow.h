@@ -52,9 +52,6 @@ namespace core::forms
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		//! @remarks Due to message handling being re-entrant there is a significant delay 
-		//!          between releasing a smart-pointer and its release delegate returning,
-		//!          so the raw-pointer window handle is preferable here for simplicity.
 		::HWND   Handle = nullptr;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
