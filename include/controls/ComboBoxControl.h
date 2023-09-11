@@ -30,7 +30,6 @@
 #include "controls/Control.h"
 #include "controls/ComboBoxStyle.h"
 #include "controls/ComboBoxInfo.h"
-//#include "controls/ListBoxControl.h"
 #include "graphics/Icon.h"
 #include "forms/WindowClass.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -402,8 +401,8 @@ namespace core::forms
 		ItemCollection   Items;
 
 	protected:
-		/*ListBoxControl   DropList;
-		EditControl      ItemEdit;*/
+		forms::UnmanagedWindow  DroppedItemsList;
+		forms::UnmanagedWindow  SelectedItemEdit;
 		
 	private:
 		Font             TitleFont = ComboBoxControl::makeTitleFont(StockFont::DefaultGui);
@@ -424,26 +423,6 @@ namespace core::forms
 			static const ComboBoxNotificationDictionary names;
 			return names.at(notification);
 		}
-
-	protected:
-		/*::LRESULT 
-		static CALLBACK InterceptCreationHandler(::HWND hWnd, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
-		{
-			if (message == WM_CREATE) {
-				if (auto result = Window::DefaultMessageHandler(hWnd, message, wParam, lParam); result != 0)
-					return result;
-				
-				else if (::COMBOBOXINFO info{}; ::SendMessageW(hWnd, CB_GETCOMBOBOXINFO, NULL, (::LPARAM)&info))
-				{
-					auto* pThis = static_cast<ComboBoxControl*>(Window::ExistingWindows[hWnd]);
-					pThis->DropList.attach(info.hwndList);
-					pThis->ItemEdit.attach(info.hwndItem);
-					return result;
-				}
-			} 
-
-			return Window::DefaultMessageHandler(hWnd, message, wParam, lParam);
-		}*/
 
 	private:
 		Font
@@ -551,6 +530,14 @@ namespace core::forms
 
 		::LRESULT 
 		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
+			if (message == WM_CREATE) {
+				auto const result = ::CallWindowProc(this->wndcls().OriginalWndProc, this->handle(), message, wParam, lParam);
+				auto const info = this->info();
+				this->DroppedItemsList = info.DroppedItemList;
+				this->SelectedItemEdit = info.SelectedItemEdit;
+				return result;
+			} 
+
 			return ::CallWindowProc(this->wndcls().OriginalWndProc, this->handle(), message, wParam, lParam);
 		}
 	};
