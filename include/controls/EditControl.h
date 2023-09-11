@@ -46,7 +46,10 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
 		class EditNotificationDictionary : public forms::MessageDictionary {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
 			using base = forms::MessageDictionary;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			EditNotificationDictionary() : base({
 	#define MakeMessageName(msg)  { msg, #msg }

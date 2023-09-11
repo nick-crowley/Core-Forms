@@ -51,7 +51,10 @@ namespace core::forms
 
 	protected:
 		class ComboBoxNotificationDictionary : public forms::MessageDictionary {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
 			using base = forms::MessageDictionary;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			ComboBoxNotificationDictionary() : base({
 	#define MakeMessageName(msg)  { msg, #msg }
@@ -90,12 +93,14 @@ namespace core::forms
 		};
 		
 		struct ItemData {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			std::wstring                 Text;
 			AnyColour                    TextColour = SystemColour::WindowText;
 			std::optional<std::wstring>  Title;
 			std::optional<Icon>          Icon;
 			std::optional<void*>         UserData = nullptr;
 
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			ItemData(std::wstring_view text) 
 			  : Text{text}
 			{}
@@ -111,16 +116,21 @@ namespace core::forms
 
 	public:
 		class Item {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			ComboBoxControl&  Owner;
 			size_t            Index;
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			Item(ComboBoxControl& Combo, size_t idx) 
 			  : Owner{Combo}, 
 			    Index{idx}
 			{}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		protected:
 			template <typename Self>
 			auto*
@@ -132,7 +142,7 @@ namespace core::forms
 					return reinterpret_cast<item_data_t*>(itemData);
 				}
 			}
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			template <typename UserData>
 			UserData*
@@ -175,7 +185,8 @@ namespace core::forms
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
 				return static_cast<uint32_t>(this->Owner.send<CB_GETITEMHEIGHT>(this->Index));
 			}
-
+			
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			template <typename UserData>
 			void
@@ -191,13 +202,17 @@ namespace core::forms
 		};
 
 		class ItemCollection {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			class ItemIterator : public boost::iterator_facade<ItemIterator, Item, boost::random_access_traversal_tag>{
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			private:
 				using type = ItemIterator;
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
 				ComboBoxControl& Owner;
 				size_t			 Index;
-
+				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
 				ItemIterator(ComboBoxControl& owner, unsigned initialIdx) 
 				  : Owner{owner}, 
@@ -208,7 +223,7 @@ namespace core::forms
 				  : Owner{owner}, 
 				    Index{(size_t)ComboBox_GetCount(owner.handle())}
 				{}
-			
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
 				satisfies(ItemIterator,
 					NotDefaultConstructible,
@@ -216,7 +231,9 @@ namespace core::forms
 					IsMovable,
 					NotSortable
 				);
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
+				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
 				bool 
 				equal(const type& r) const {
@@ -234,6 +251,7 @@ namespace core::forms
 					return static_cast<ptrdiff_t>(r.Index) - static_cast<ptrdiff_t>(this->Index);
 				}
 
+				// o~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
 				void 
 				advance(ptrdiff_t n) { 
@@ -250,15 +268,19 @@ namespace core::forms
 					++this->Index;
 				}
 			};
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			ComboBoxControl& Owner;
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			ItemCollection(ComboBoxControl& ctrl)
 			  : Owner{ctrl}
 			{}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			ItemIterator
 			begin() const {
@@ -310,6 +332,7 @@ namespace core::forms
 				return Item(this->Owner, idx);
 			}
 
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			void
 			height(uint32_t allItems) {
@@ -392,7 +415,6 @@ namespace core::forms
 		  : base{id}, 
 		    Items{*this}
 		{}
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o

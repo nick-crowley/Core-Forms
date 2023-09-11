@@ -63,7 +63,10 @@ namespace core::forms
 		
 	protected:
 		class ButtonNotificationDictionary : public forms::MessageDictionary {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
 			using base = forms::MessageDictionary;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			ButtonNotificationDictionary() : base({
 	#define MakeMessageName(msg)  { msg, #msg }
