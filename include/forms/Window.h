@@ -582,7 +582,7 @@ namespace core::forms
 			}
 			
 			template <typename Self>
-			nstd::return_t<nstd::mirror_cv_ref_t<Self, Window>&>
+			nstd::mirror_cv_ref_t<Self, Window>&
 			operator[](this Self&& self, uint16_t const id)  {
 				return Window::ExistingWindows[self.handle(id)];
 			}
