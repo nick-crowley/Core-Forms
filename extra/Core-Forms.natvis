@@ -22,7 +22,7 @@
 	</Type>
 	
 	<Type Name="core::forms::Window::DebuggingAide::StateDescription">
-		<DisplayString Condition="strlen(Message)">{State,en} ({Message,su})</DisplayString>
+		<DisplayString Condition="strlen(Message)">{State,en} ({Message,s})</DisplayString>
 		<DisplayString>{State,en}</DisplayString>
 	</Type>
 
