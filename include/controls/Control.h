@@ -79,7 +79,9 @@ namespace core::forms
 		}
 		
 		bool
-		virtual ownerDraw() const abstract;
+		virtual ownerDraw() const {
+			return false;
+		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
