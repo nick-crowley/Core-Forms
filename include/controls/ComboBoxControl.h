@@ -127,29 +127,19 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-		protected:
-			template <typename Self>
-			auto*
-			internalData(this Self&& self) {
-				if (::LRESULT itemData = self.Owner.send<CB_GETITEMDATA>(self.Index); !itemData)
-					throw runtime_error{"Missing ComboBox data for item {}", self.Index};
-				else {
-					using item_data_t = nstd::mirror_cv_ref_t<Self,ItemData>;
-					return reinterpret_cast<item_data_t*>(itemData);
-				}
-			}
+
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			template <typename UserData>
 			UserData*
 			data() const {
-				return static_cast<UserData*>(this->internalData()->UserData.value_or(nullptr));
+				return static_cast<UserData*>(this->itemData()->UserData.value_or(nullptr));
 			}
 
 			std::optional<Icon>
 			icon() const {
 				Invariant(!this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::HasStrings));
-				return this->internalData()->Icon;
+				return this->itemData()->Icon;
 			}
 
 			size_t
@@ -160,7 +150,7 @@ namespace core::forms
 			std::wstring
 			text() const {
 				if (!this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::HasStrings))
-					return this->internalData()->Text;
+					return this->itemData()->Text;
 				else if (auto const length = ComboBox_GetLBTextLen(this->Owner.handle(), this->Index); !length)
 					return {};
 				else {
@@ -173,7 +163,7 @@ namespace core::forms
 			std::optional<std::wstring>
 			title() const {
 				Invariant(!this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::HasStrings));
-				return this->internalData()->Title;
+				return this->itemData()->Title;
 			}
 
 			uint32_t
@@ -182,12 +172,20 @@ namespace core::forms
 				return static_cast<uint32_t>(this->Owner.send<CB_GETITEMHEIGHT>(this->Index));
 			}
 			
+		protected:
+			ItemData*
+			itemData() const {
+				if (::LRESULT itemData = this->Owner.send<CB_GETITEMDATA>(this->Index); !itemData)
+					throw runtime_error{"Missing ComboBox data for item {}", this->Index};
+				else 
+					return reinterpret_cast<ItemData*>(itemData);
+			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			template <typename UserData>
 			void
 			data(UserData* userData) {
-				this->internalData()->UserData = userData;
+				this->itemData()->UserData = userData;
 			}
 
 			void
