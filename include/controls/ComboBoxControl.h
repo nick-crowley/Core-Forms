@@ -100,16 +100,13 @@ namespace core::forms
 			std::optional<void*>         UserData = nullptr;
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			ItemData(std::wstring_view text) 
-			  : Text{text}
-			{}
-
-			ItemData(std::wstring_view text, std::wstring_view title) 
-			  : Text{text}, Title{title}
-			{}
-
-			ItemData(std::wstring_view text, std::wstring_view title, forms::Icon icon) 
-			  : Text{text}, Title{title}, Icon{icon}
+			ItemData(
+				std::wstring_view                text, 
+				std::optional<std::wstring_view> title = std::nullopt, 
+				std::optional<forms::Icon>       icon = std::nullopt
+			) : Text{text}, 
+			    Title{title}, 
+			    Icon{icon}
 			{}
 		};
 
@@ -338,35 +335,40 @@ namespace core::forms
 				Invariant(!this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
 				ComboBox_SetItemHeight(this->Owner.handle(), 0, allItems);
 			}
-
+			
 			void
 			insert(size_t idx, std::wstring_view text) {
-				this->insertAt(idx, text);
+				// Store or duplicate the string, according to the 'HasStrings' style
+				ComboBox_InsertString(this->Owner.handle(), idx, text.data());
+			}
+
+			void
+			insert(size_t              idx, 
+			       std::wstring_view   text, 
+			       std::wstring_view   title, 
+			       std::optional<Icon> icon = std::nullopt)
+			{
+				Invariant(this->Owner.ownerDraw());
+				
+				// Provide item text for screen-reader support (addressed from our item data storage)
+				auto data = std::make_unique<ItemData>(text, title, icon);
+				ComboBox_InsertString(this->Owner.handle(), idx, data->Title.value_or(data->Text).data());
+				// Use the custom item data slot for actual storage
+				ComboBox_InsertItemData(this->Owner.handle(), idx, data.release());
 			}
 			
 			void
-			insert(size_t idx, std::wstring_view text, std::wstring_view title) {
-				this->insertAt(idx, std::make_unique<ItemData>(text, title));
+			push_back(size_t idx, std::wstring_view text) {
+				this->insert(static_cast<size_t>(-1), text);
 			}
 
 			void
-			insert(size_t idx, std::wstring_view text, std::wstring_view title, Icon icon) {
-				this->insertAt(idx, std::make_unique<ItemData>(text, title, icon));
-			}
-
-			void
-			push_back(std::wstring_view text) {
-				this->insertAt(static_cast<size_t>(-1), text);
-			}
-			
-			void
-			push_back(std::wstring_view text, std::wstring_view title) {
-				this->insertAt(static_cast<size_t>(-1), std::make_unique<ItemData>(text, title));
-			}
-
-			void
-			push_back(std::wstring_view text, std::wstring_view title, Icon icon) {
-				this->insertAt(static_cast<size_t>(-1), std::make_unique<ItemData>(text, title, icon));
+			push_back(std::wstring_view   text, 
+			          std::wstring_view   title, 
+			          std::optional<Icon> icon = std::nullopt)
+			{
+				Invariant(this->Owner.ownerDraw());
+				this->insert(static_cast<size_t>(-1), text, title, icon);
 			}
 		
 			void
@@ -377,20 +379,6 @@ namespace core::forms
 			void
 			select(size_t idx) {
 				ComboBox_SetCurSel(this->Owner.handle(), idx);
-			}
-
-		private:
-			void
-			insertAt(size_t idx, std::wstring_view text) {
-				if (this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::HasStrings))
-					ComboBox_InsertString(this->Owner.handle(), idx, text.data());
-				else
-					this->insertAt(idx, std::make_unique<ItemData>(text));
-			}
-
-			void
-			insertAt(size_t idx, std::unique_ptr<ItemData> item) {
-				ComboBox_InsertItemData(this->Owner.handle(), idx, item.release());
 			}
 		};
 	
