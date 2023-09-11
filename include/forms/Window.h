@@ -975,7 +975,10 @@ namespace core::forms
 		}
 
 		WindowRole
-		virtual role() const abstract;
+		virtual role() const {
+			// Documentation states MSAA considers this a reasonable value for 'undefined'
+			return WindowRole::Client;
+		}
 
 		AnyColour
 		textColour() const {
