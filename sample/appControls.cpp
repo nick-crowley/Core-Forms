@@ -83,6 +83,7 @@ private:
 		
 		// ListBoxes expose their items via their @c Items and @SelectedIndicies properties, which
 		//  are both C++ container facades over the standard Windows messages.
+		this->ItemList.Items.clear();
 		for (unsigned idx : indexes)
 			this->ItemList.Items.push_back(std::format(L"Item #{}", idx));
 	}

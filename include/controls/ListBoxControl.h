@@ -248,6 +248,11 @@ namespace core::forms
 
 		public:
 			void
+			clear() {
+				ListBox_ResetContent(this->ListBox.handle());
+			}
+
+			void
 			insert(size_t idx, std::wstring const& txt) {
 				ListBox_InsertString(this->ListBox.handle(), idx, txt.c_str());
 			}
