@@ -33,6 +33,10 @@
 		<DisplayString>{{ {State} }}</DisplayString>
 	</Type>
 
+	<Type Name="core::forms::Window::MessageDictionary::MessageProperties">
+		<DisplayString>{{ {Name,sb} ({Ident,x}) }}</DisplayString>
+	</Type>
+
 	<Type Name="core::forms::Window">
 		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
 		<DisplayString Condition="!Handle">{{ &lt;Not a window&gt; }}</DisplayString>
