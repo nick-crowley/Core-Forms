@@ -348,11 +348,14 @@ namespace core::forms
 			{
 				Invariant(this->Owner.ownerDraw());
 				
-				// Provide item text for screen-reader support (addressed from our item data storage)
-				auto data = std::make_unique<ItemData>(text, title, icon);
-				ComboBox_InsertString(this->Owner.handle(), idx, data->Title.value_or(data->Text).data());
 				// Use the custom item data slot for actual storage
+				auto data = std::make_unique<ItemData>(text, title, icon);
 				ComboBox_InsertItemData(this->Owner.handle(), idx, data.release());
+
+				// Provide item text for screen-reader support (addressed from our item data storage)
+				// -> ComboBox_InsertString(this->Owner.handle(), idx, data->Title.value_or(data->Text).data());
+				// -> data.release();
+				// BUG: This added another item instead of amending the one above
 			}
 			
 			void
