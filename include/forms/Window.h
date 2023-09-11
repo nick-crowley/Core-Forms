@@ -1608,10 +1608,17 @@ namespace core::forms
 		{
 			this->Debug.setState(ProcessingState::BeingCreated);
 
-			if (!::CreateWindowExW(NULL, w.Class, w.Text.data(), win::DWord{w.Style},
-				w.Area.Left, w.Area.Top, w.Area.width(), w.Area.height(), w.Parent, w.Menu, 
-				w.Module, (void*)&w.Parameter)) 
-			{
+			if (!::CreateWindowExW(
+				NULL, 
+				w.Class, 
+				w.Text.data(), 
+				win::DWord{w.Style},
+				w.Area.Left, w.Area.Top, w.Area.width(), w.Area.height(), 
+				w.Parent, 
+				w.Menu, 
+				w.Module, 
+				(void*)&w.Parameter)
+			) {
 				this->Debug.setState(ProcessingState::Idle);
 				win::LastError{}.throwIfError("Failed to create '{}' window", to_string(w.Class));
 			}
