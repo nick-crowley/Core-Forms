@@ -61,6 +61,10 @@
 		<DisplayString>{{ Virtual collection }}</DisplayString>
 	</Type>
 
+	<Type Name="core::forms::ComboBoxControl::Item">
+		<DisplayString>{{ Item #{Index} of ComboBox with id={Owner.Ident} }}</DisplayString>
+	</Type>
+
 	<Type Name="core::forms::ComboBoxControl::ItemData">
 		<DisplayString>{{ {Title} text={Text} }}</DisplayString>
 	</Type>
