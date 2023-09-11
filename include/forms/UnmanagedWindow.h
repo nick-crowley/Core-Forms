@@ -61,11 +61,8 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(UnmanagedWindow,
-			IsDefaultConstructible noexcept,
-			NotCopyable,
-			NotMovable,
-			NotEqualityComparable,
-			NotSortable,
+			IsRegular noexcept,
+			IsSortable noexcept,
 			IsPolymorphic
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
