@@ -91,27 +91,56 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 		
-		struct ItemData {
+		//! @brief	Display element of each owner-draw item
+		struct ComboBoxItemElement {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			std::wstring                 Text;
-			AnyColour                    TextColour = SystemColour::WindowText;
-			std::optional<std::wstring>  Title;
-			std::optional<Icon>          Icon;
-			std::optional<void*>         UserData = nullptr;
-
+			std::wstring              Text;
+			std::optional<AnyColour>  Colour = SystemColour::WindowText;
+			std::optional<Font>       Font;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			ItemData(
-				std::wstring_view                text, 
-				std::optional<std::wstring_view> title = std::nullopt, 
-				std::optional<forms::Icon>       icon = std::nullopt
+			ComboBoxItemElement(
+				std::wstring_view          text, 
+				std::optional<AnyColour>   colour = std::nullopt, 
+				std::optional<forms::Font> font = std::nullopt
 			) : Text{text}, 
-			    Title{title}, 
+				Colour{colour}, 
+				Font{font}
+			{}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			satisfies(ComboBoxItemElement,
+				IsSemiRegular,
+				NotEqualityComparable,
+				NotSortable
+			);
+		};
+
+		//! @brief	Custom item data used for each element when in owner-draw mode
+		struct ComboBoxItemData {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			ComboBoxItemElement                Detail;   //!< Primary item content when no title present
+			std::optional<ComboBoxItemElement> Heading;
+			std::optional<Icon>                Icon;
+			void*                              UserData = nullptr;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			ComboBoxItemData(
+				std::wstring_view                text, 
+				std::optional<std::wstring_view> heading = std::nullopt, 
+				std::optional<forms::Icon>       icon = std::nullopt
+			) : Detail{text}, 
+			    Heading{heading}, 
 			    Icon{icon}
 			{}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			satisfies(ComboBoxItemData,
+				IsSemiRegular,
+				NotEqualityComparable,
+				NotSortable
+			);
 		};
 
 	public:
-		class Item {
+		//! @brief	Facade for a single item at a fixed index
+		class ComboBoxItem {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -120,7 +149,7 @@ namespace core::forms
 			size_t            Index;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			Item(ComboBoxControl& Combo, size_t idx) 
+			ComboBoxItem(ComboBoxControl& Combo, size_t idx) 
 			  : Owner{Combo}, 
 			    Index{idx}
 			{}
@@ -130,27 +159,47 @@ namespace core::forms
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			template <typename UserData>
-			UserData*
-			data() const {
-				return static_cast<UserData*>(this->itemData()->UserData.value_or(nullptr));
+			ComboBoxItemElement
+			detail() const {
+				Invariant(this->Owner.ownerDraw());
+				return this->data<ComboBoxItemData>()->Detail;
 			}
 
 			std::optional<Icon>
 			icon() const {
 				Invariant(this->Owner.ownerDraw());
-				return this->itemData()->Icon;
+				return this->data<ComboBoxItemData>()->Icon;
 			}
 
 			size_t
 			index() const {
 				return this->Index;
 			}
+			
+			std::optional<ComboBoxItemElement>
+			heading() const {
+				Invariant(this->Owner.ownerDraw());
+				return this->data<ComboBoxItemData>()->Heading;
+			}
 
+			uint32_t
+			height() const {
+				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
+				return static_cast<uint32_t>(this->Owner.send<CB_GETITEMHEIGHT>(this->Index));
+			}
+			
+			std::optional<std::wstring>
+			title() const {
+				Invariant(this->Owner.ownerDraw());
+				if (auto const hasTitle = this->data<ComboBoxItemData>()->Heading; hasTitle)
+					return hasTitle->Text;
+				return std::nullopt;
+			}
+			
 			std::wstring
 			text() const {
 				if (this->Owner.ownerDraw())
-					return this->itemData()->Text;
+					return this->data<ComboBoxItemData>()->Detail.Text;
 				else if (auto const length = ComboBox_GetLBTextLen(this->Owner.handle(), this->Index); !length)
 					return {};
 				else {
@@ -160,45 +209,48 @@ namespace core::forms
 				}
 			}
 			
-			std::optional<std::wstring>
-			title() const {
-				Invariant(this->Owner.ownerDraw());
-				return this->itemData()->Title;
+			template <typename UserData>
+			UserData*
+			userData() const {
+				// When owner-draw is active, the item-data slot addresses an 'ComboBoxItemData' object
+				if (!this->Owner.ownerDraw())
+					return this->data<UserData>();
+				else
+					return static_cast<UserData*>(this->data<ComboBoxItemData>()->UserData);
 			}
 
-			uint32_t
-			height() const {
-				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
-				return static_cast<uint32_t>(this->Owner.send<CB_GETITEMHEIGHT>(this->Index));
-			}
-			
 		protected:
-			ItemData*
-			itemData() const {
-				if (::LRESULT itemData = this->Owner.send<CB_GETITEMDATA>(this->Index); !itemData)
+			template <typename AnyType>
+			AnyType*
+			data() const {
+				if (::LRESULT itemData = ComboBox_GetItemData(this->Owner.handle(), this->Index); !itemData)
 					throw runtime_error{"Missing ComboBox data for item {}", this->Index};
 				else 
-					return reinterpret_cast<ItemData*>(itemData);
+					return reinterpret_cast<AnyType*>(itemData);
 			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			template <typename UserData>
-			void
-			data(UserData* userData) {
-				this->itemData()->UserData = userData;
-			}
-
 			void
 			height(uint32_t individualItem) {
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
 				ComboBox_SetItemHeight(this->Owner.handle(), this->Index, individualItem);
+			}
+
+			template <typename AnyType>
+			void
+			userData(AnyType* customUserData) {
+				// When owner-draw is active, the item-data slot addresses an 'ComboBoxItemData' object
+				if (!this->Owner.ownerDraw())
+					ComboBox_SetItemData(this->Owner.handle(), this->Index, customUserData);
+				else
+					this->data<ComboBoxItemData>()->UserData = static_cast<void*>(customUserData);
 			}
 		};
 
 		class ItemCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			class ItemIterator : public boost::iterator_facade<ItemIterator, Item, boost::random_access_traversal_tag>{
+			class ItemIterator : public boost::iterator_facade<ItemIterator, ComboBoxItem, boost::random_access_traversal_tag>{
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
 				using type = ItemIterator;
@@ -235,9 +287,9 @@ namespace core::forms
 						&& this->Index == r.Index;
 				}
 
-				Item
+				ComboBoxItem
 				dereference() const { 
-					return Item{this->Owner, this->Index};
+					return ComboBoxItem{this->Owner, this->Index};
 				}
 
 				ptrdiff_t
@@ -286,12 +338,12 @@ namespace core::forms
 				return ItemIterator{this->Owner};
 			}
 
-			std::optional<Item>
+			std::optional<ComboBoxItem>
 			find(std::wstring_view item) const {
 				if (signed const idx = ComboBox_FindStringExact(this->Owner.handle(), 0, item.data()); idx == -1)
 					return std::nullopt;
 				else
-					return Item{this->Owner, static_cast<size_t>(idx)};
+					return ComboBoxItem{this->Owner, static_cast<size_t>(idx)};
 			}
 		
 			uint32_t
@@ -300,12 +352,12 @@ namespace core::forms
 				return ComboBox_GetItemHeight(this->Owner.handle());
 			}
 
-			std::optional<Item>
+			std::optional<ComboBoxItem>
 			selected() const {
 				if (signed const idx = ComboBox_GetCurSel(this->Owner.handle()); idx == -1)
 					return std::nullopt;
 				else 
-					return Item{this->Owner, static_cast<size_t>(idx)};
+					return ComboBoxItem{this->Owner, static_cast<size_t>(idx)};
 			}
 			
 			size_t 
@@ -313,17 +365,17 @@ namespace core::forms
 				return ComboBox_GetCount(this->Owner.handle());
 			}
 			
-			std::optional<Item>
+			std::optional<ComboBoxItem>
 			substr(std::wstring_view substring) const {
 				if (signed const idx = ComboBox_FindStringExact(this->Owner.handle(), 0, substring.data()); idx == -1)
 					return std::nullopt;
 				else
-					return Item{this->Owner, static_cast<size_t>(idx)};
+					return ComboBoxItem{this->Owner, static_cast<size_t>(idx)};
 			}
 
-			Item
+			ComboBoxItem
 			operator[](size_t idx) const {
-				return Item(this->Owner, idx);
+				return ComboBoxItem(this->Owner, idx);
 			}
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -336,8 +388,22 @@ namespace core::forms
 			
 			void
 			insert(size_t idx, std::wstring_view text) {
-				// Store or duplicate the string, according to the 'HasStrings' style
-				ComboBox_InsertString(this->Owner.handle(), idx, text.data());
+				// [NOT OWNER-DRAW] Store (or duplicate) a simple string (according to its 'HasStrings' style)
+				if (!this->Owner.ownerDraw()) 
+					ComboBox_InsertString(this->Owner.handle(), idx, text.data());
+
+				else {
+					auto data = std::make_unique<ComboBoxItemData>(text);
+					
+					// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
+					if (this->Owner.hasStrings()) {
+						ComboBox_InsertString(this->Owner.handle(), idx, data->Detail.Text.c_str());
+						ComboBox_SetItemData(this->Owner.handle(), idx, data.release());
+					}
+					// [NO-STRING] Only store our owner-draw data
+					else
+						ComboBox_InsertItemData(this->Owner.handle(), idx, data.release());
+				}
 			}
 
 			void
@@ -346,20 +412,21 @@ namespace core::forms
 			       std::wstring_view   title, 
 			       std::optional<Icon> icon = std::nullopt)
 			{
-				Invariant(this->Owner.ownerDraw());
+				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
+				auto data = std::make_unique<ComboBoxItemData>(text, title, icon);
 				
-				// Use the custom item data slot for actual storage
-				auto data = std::make_unique<ItemData>(text, title, icon);
-				ComboBox_InsertItemData(this->Owner.handle(), idx, data.release());
-
-				// Provide item text for screen-reader support (addressed from our item data storage)
-				// -> ComboBox_InsertString(this->Owner.handle(), idx, data->Title.value_or(data->Text).data());
-				// -> data.release();
-				// BUG: This added another item instead of amending the one above
+				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
+				if (this->Owner.hasStrings()) {
+					ComboBox_InsertString(this->Owner.handle(), idx, data->Heading->Text.c_str());
+					ComboBox_SetItemData(this->Owner.handle(), idx, data.release());
+				}
+				// [NO-STRING] Only store our owner-draw data
+				else
+					ComboBox_InsertItemData(this->Owner.handle(), idx, data.release());
 			}
 			
 			void
-			push_back(size_t idx, std::wstring_view text) {
+			push_back(std::wstring_view text) {
 				this->insert(static_cast<size_t>(-1), text);
 			}
 
@@ -368,12 +435,12 @@ namespace core::forms
 			          std::wstring_view   title, 
 			          std::optional<Icon> icon = std::nullopt)
 			{
-				Invariant(this->Owner.ownerDraw());
+				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
 				this->insert(static_cast<size_t>(-1), text, title, icon);
 			}
 		
 			void
-			select(Item const& item) {
+			select(ComboBoxItem const& item) {
 				this->select(item.index());
 			}
 
@@ -430,6 +497,11 @@ namespace core::forms
 			Rect rc;
 			ComboBox_GetDroppedControlRect(this->handle(), rc);
 			return rc;
+		}
+		
+		bool
+		hasStrings() const {
+			return this->style<ComboBoxStyle>().test(ComboBoxStyle::HasStrings);
 		}
 
 		ComboBoxInfo
@@ -506,16 +578,16 @@ namespace core::forms
 			return ComboBoxControl::identifyNotification(notification);
 		}
 
-		//Response
-		//virtual onOfferNotification(::UINT notification) override {
-		//	switch (notification) {
-		//	case CBN_SELCHANGE:
-		//		this->update();
-		//		//this->Clicked.raise();
-		//		return 0;
-		//	}
-		//	return Unhandled;
-		//}
+		/*Response
+		virtual onOfferNotification(::UINT notification) override {
+			switch (notification) {
+			case CBN_SELENDOK:
+				if (auto selectedItem = this->Items.selected(); selectedItem)
+					this->Items.select(*selectedItem);
+				return 0;
+			}
+			return Unhandled;
+		}*/
 
 		::LRESULT 
 		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
