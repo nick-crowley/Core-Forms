@@ -116,7 +116,7 @@ LookNFeelProvider::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	// Erase background
 	args.Graphics.setBrush(ctrl.backColour());
 	args.Graphics.fillRect(args.Item.Area);
-
+	
 	// Draw check
 	auto const checked = ctrl.checked();
 	Rect const content = args.Item.Area - Border{SystemMetric::cxFixedFrame};
@@ -145,33 +145,42 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		throw runtime_error{"ComboBox #{} must be OwnerDraw", args.Ident};
 
 	bool const selected = args.Item.State.test(OwnerDrawState::Selected);
-	auto const colBack = selected ? SystemColour::Highlight : ctrl.backColour();
-	auto const colText = selected ? SystemColour::HighlightText : ctrl.textColour();
-
+	auto const backColour = selected ? SystemColour::Highlight : ctrl.backColour();
+	auto const chooseTextColour = [&](std::optional<AnyColour> const& itemColour) -> AnyColour {
+		if (selected)
+			return SystemColour::HighlightText;
+		return itemColour ? *itemColour : ctrl.textColour();
+	};
+	
 	// Draw item background
 	Rect const rcItem = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
-	args.Graphics.setBrush(colBack);
+	args.Graphics.setBrush(backColour);
 	args.Graphics.fillRect(rcItem);
 
-	// Set text attributes
+	// Setup item
 	auto const item = ctrl.Items[args.Item.Index];
-	args.Graphics.textColour(colText, colBack);
-	// [TEXT] Draw text only
-	if (auto title = item.title(); !title) {
-		args.Graphics.setFont(ctrl.font());
-		args.Graphics.drawText(item.text(), rcItem);
-	}
-	// [TITLE/TEXT] Draw title and text (using separate fonts)
-	else {
-		args.Graphics.setFont(ctrl.titleFont());
-		auto const titleHeight = args.Graphics.drawText(*title, rcItem, DrawTextFlags::Left);
+	auto const detail = item.detail();
+	Rect rcDetail = rcItem;
+	auto flagsDetail = DrawTextFlags::SimpleLeft;
 
-		LONG constexpr GAP = 6;
-		Rect const rcText = rcItem - Border{0, titleHeight + GAP, 0, 0};
-		args.Graphics.setFont(ctrl.font());
-		args.Graphics.drawText(item.text(), rcText, DrawTextFlags::Left|DrawTextFlags::WordBreak);
+	// [TITLE] Draw title and calculate different rectangle for (multi-line) detail text
+	if (auto const title = item.heading(); title)
+	{
+		args.Graphics.setFont(title->Font ? *title->Font : ctrl.font());
+		args.Graphics.textColour(chooseTextColour(title->Colour), backColour);
+		LONG constexpr TitleDetailGap = 6;
+		auto const titleHeight = args.Graphics.drawText(title->Text, rcItem, DrawTextFlags::Left);
+
+		// Calculate rectangle beneath title for multi-line detail text
+		rcDetail = rcItem - Border{0, titleHeight + TitleDetailGap, 0, 0};
+		flagsDetail = DrawTextFlags::Left|DrawTextFlags::WordBreak;
 	}
 
+	// [TEXT] Draw using custom font/colour, if any; otherwise use ComboBox colours
+	args.Graphics.setFont(detail.Font ? *detail.Font : ctrl.font());
+	args.Graphics.textColour(chooseTextColour(detail.Colour), backColour);
+	args.Graphics.drawText(detail.Text, rcDetail, flagsDetail);
+	
 	args.Graphics.restore();
 }
 
@@ -187,32 +196,31 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 
 	// [FIXED-HEIGHT] Return user-provided height, if any, otherwise default
 	if (ctrl.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawFixed)) {
-		if (auto const allItems = ctrl.Items.height(); allItems != 0)
-			args.Height = allItems;
+		args.Graphics.setFont(ctrl.font());
+		args.Height = args.Graphics.measureText(L"Wjgy").Height;
 	}
 	// [VARIABLE-HEIGHT] Calculate per-item height
 	else {
 		auto const item = ctrl.Items[args.Item.Index];
-		::COMBOBOXINFO info{sizeof(info)};
-		ctrl.send<CB_GETCOMBOBOXINFO>(std::nullopt, (LPARAM)&info);
-		DeviceContext g{SharedDeviceContext{::GetDC(info.hwndList), info.hwndList}};
-		
-		// Calculate size required for potentially multi-line item text
-		g.setFont(ctrl.font());
-		auto itemSize = g.measureText(item.text(), Size{ctrl.droppedRect().width(), args.Height});
-		
-		// [TITLE] Append extra height
-		if (auto title = item.title(); title) {
-			LONG constexpr GAP = 6;
-			g.setFont(ctrl.titleFont());
-			itemSize.Height += g.measureText(*title).Height + GAP;
+		args.Height = 0;
+
+		// [TITLE] Measure title using custom font, if provided; otherwise comboBox font
+		if (auto const title = item.heading(); title)
+		{
+			args.Graphics.setFont(title->Font ? *title->Font : ctrl.font());
+			LONG constexpr TitleDetailGap = 6;
+			args.Height += TitleDetailGap;
+			args.Height += args.Graphics.measureText(title->Text).Height;
 		}
 
-		// Save result
-		args.Height = itemSize.Height;
-
-		g.restore();
+		// Calculate size required for (potentially multi-line) item text. Use custom font, if one
+		//  was provided; otherwise comboBox font
+		auto const detail = item.detail();
+		args.Graphics.setFont(detail.Font ? *detail.Font : ctrl.font());
+		args.Height += args.Graphics.measureText(item.text(), Size{ctrl.droppedRect().width(), args.Height}).Height;
 	}
+
+	args.Graphics.restore();
 }
 
 void

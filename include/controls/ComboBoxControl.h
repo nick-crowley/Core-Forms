@@ -43,6 +43,31 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
+	//! @brief	Display element of each owner-draw item
+	struct ComboBoxItemElement {
+		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		std::wstring              Text;
+		std::optional<AnyColour>  Colour = SystemColour::WindowText;
+		std::optional<Font>       Font;
+		// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		explicit
+		ComboBoxItemElement(
+			std::wstring_view          text, 
+			std::optional<AnyColour>   colour = std::nullopt, 
+			std::optional<forms::Font> font = std::nullopt
+		) : Text{text}, 
+			Colour{colour}, 
+			Font{font}
+		{}
+		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		satisfies(ComboBoxItemElement,
+			IsSemiRegular,
+			NotEqualityComparable,
+			NotSortable
+		);
+	};
+
+	//! @brief	ComboBox supporting item text, item headings, custom fonts, and icons
 	class ComboBoxControl : public Control 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -91,29 +116,6 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 		
-		//! @brief	Display element of each owner-draw item
-		struct ComboBoxItemElement {
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			std::wstring              Text;
-			std::optional<AnyColour>  Colour = SystemColour::WindowText;
-			std::optional<Font>       Font;
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			ComboBoxItemElement(
-				std::wstring_view          text, 
-				std::optional<AnyColour>   colour = std::nullopt, 
-				std::optional<forms::Font> font = std::nullopt
-			) : Text{text}, 
-				Colour{colour}, 
-				Font{font}
-			{}
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			satisfies(ComboBoxItemElement,
-				IsSemiRegular,
-				NotEqualityComparable,
-				NotSortable
-			);
-		};
-
 		//! @brief	Custom item data used for each element when in owner-draw mode
 		struct ComboBoxItemData {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -122,11 +124,20 @@ namespace core::forms
 			std::optional<Icon>                Icon;
 			void*                              UserData = nullptr;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			ComboBoxItemData(
-				std::wstring_view                text, 
-				std::optional<std::wstring_view> heading = std::nullopt, 
-				std::optional<forms::Icon>       icon = std::nullopt
-			) : Detail{text}, 
+			explicit
+			ComboBoxItemData(std::wstring_view                text, 
+			                 std::optional<std::wstring_view> heading = std::nullopt, 
+			                 std::optional<forms::Icon>       icon = std::nullopt) 
+			  : Detail{text}, 
+			    Heading{heading}, 
+			    Icon{icon}
+			{}
+			
+			explicit
+			ComboBoxItemData(ComboBoxItemElement                text, 
+			                 std::optional<ComboBoxItemElement> heading = std::nullopt, 
+			                 std::optional<forms::Icon>         icon = std::nullopt) 
+			  : Detail{text}, 
 			    Heading{heading}, 
 			    Icon{icon}
 			{}
@@ -387,7 +398,8 @@ namespace core::forms
 			}
 			
 			void
-			insert(size_t idx, std::wstring_view text) {
+			insert(size_t idx, std::wstring_view text) 
+			{
 				// [NOT OWNER-DRAW] Store (or duplicate) a simple string (according to its 'HasStrings' style)
 				if (!this->Owner.ownerDraw()) 
 					ComboBox_InsertString(this->Owner.handle(), idx, text.data());
@@ -397,7 +409,7 @@ namespace core::forms
 					
 					// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 					if (this->Owner.hasStrings()) {
-						ComboBox_InsertString(this->Owner.handle(), idx, data->Detail.Text.c_str());
+						idx = ComboBox_InsertString(this->Owner.handle(), idx, data->Detail.Text.c_str());
 						ComboBox_SetItemData(this->Owner.handle(), idx, data.release());
 					}
 					// [NO-STRING] Only store our owner-draw data
@@ -405,19 +417,46 @@ namespace core::forms
 						ComboBox_InsertItemData(this->Owner.handle(), idx, data.release());
 				}
 			}
-
+			
 			void
-			insert(size_t              idx, 
-			       std::wstring_view   text, 
-			       std::wstring_view   title, 
-			       std::optional<Icon> icon = std::nullopt)
+			insert(size_t                     idx, 
+			       ComboBoxItemElement        text,
+			       std::optional<forms::Icon> icon = std::nullopt) 
 			{
-				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
-				auto data = std::make_unique<ComboBoxItemData>(text, title, icon);
+				auto data = std::make_unique<ComboBoxItemData>(text, std::nullopt, icon);
 				
 				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 				if (this->Owner.hasStrings()) {
-					ComboBox_InsertString(this->Owner.handle(), idx, data->Heading->Text.c_str());
+					idx = ComboBox_InsertString(this->Owner.handle(), idx, data->Detail.Text.c_str());
+					ComboBox_SetItemData(this->Owner.handle(), idx, data.release());
+				}
+				// [NO-STRING] Only store our owner-draw data
+				else
+					ComboBox_InsertItemData(this->Owner.handle(), idx, data.release());
+			}
+			
+			void
+			insert(size_t              idx, 
+			       std::wstring_view   text, 
+			       std::wstring_view   heading, 
+			       std::optional<Icon> icon = std::nullopt)
+			{
+				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
+				this->insert(idx, ComboBoxItemElement{text}, ComboBoxItemElement{heading}, icon);
+			}
+			
+			void
+			insert(size_t                     idx, 
+			       ComboBoxItemElement        text,
+			       ComboBoxItemElement        heading,
+			       std::optional<forms::Icon> icon = std::nullopt) 
+			{
+				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
+				auto data = std::make_unique<ComboBoxItemData>(text, heading, icon);
+				
+				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
+				if (this->Owner.hasStrings()) {
+					idx = ComboBox_InsertString(this->Owner.handle(), idx, data->Heading->Text.c_str());
 					ComboBox_SetItemData(this->Owner.handle(), idx, data.release());
 				}
 				// [NO-STRING] Only store our owner-draw data
@@ -431,14 +470,29 @@ namespace core::forms
 			}
 
 			void
+			push_back(ComboBoxItemElement        text,
+			          std::optional<forms::Icon> icon = std::nullopt) {
+				this->insert(static_cast<size_t>(-1), text, icon);
+			}
+			
+			void
 			push_back(std::wstring_view   text, 
-			          std::wstring_view   title, 
-			          std::optional<Icon> icon = std::nullopt)
+			          std::wstring_view   heading, 
+			          std::optional<Icon> icon = std::nullopt) 
 			{
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
-				this->insert(static_cast<size_t>(-1), text, title, icon);
+				this->insert(static_cast<size_t>(-1), text, heading, icon);
 			}
-		
+			
+			void
+			push_back(ComboBoxItemElement        text,
+			          ComboBoxItemElement        heading,
+			          std::optional<forms::Icon> icon = std::nullopt) 
+			{
+				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
+				this->insert(static_cast<size_t>(-1), text, heading, icon);
+			}
+
 			void
 			select(ComboBoxItem const& item) {
 				this->select(item.index());

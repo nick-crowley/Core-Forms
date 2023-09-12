@@ -34,9 +34,14 @@ protected:
 			this->ListBox.Items.push_back(std::format(L"Item #{}", idx));
 		}
 
+#ifdef ItemsWithHeadings
 		this->ComboBox.Items.push_back(L"The rain in spain falls mainly on the plane", L"Rain in Spain");
 		this->ComboBox.Items.push_back(L"The quick brown fox jumped over the lazy dog", L"Quick Brown Fox");
-		this->ComboBox.Items.push_back(L"My very earthly mother just said you're nearly perfect", L"Very Earthly Mother");
+		this->ComboBox.Items.push_back(L"My very earthly mother just said you're nearly perfect", L"Very Earthly Mother");*/
+#endif
+		this->ComboBox.Items.push_back(forms::ComboBoxItemElement{L"Rain in Spain", forms::Colour::DarkBlue, forms::StockFont::SystemFixed});
+		this->ComboBox.Items.push_back(L"Quick Brown Fox", L"Example heading");
+		this->ComboBox.Items.push_back(forms::ComboBoxItemElement{L"Very Earthly Mother", forms::Colour::Red, forms::StockFont::AnsiFixed});
 
 		return FALSE;
 	}
