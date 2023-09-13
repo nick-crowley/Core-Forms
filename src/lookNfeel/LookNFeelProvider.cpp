@@ -166,7 +166,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	// [TITLE] Draw title and calculate different rectangle for (multi-line) detail text
 	if (auto const title = item.heading(); title)
 	{
-		args.Graphics.setFont(title->Font ? *title->Font : ctrl.font());
+		args.Graphics.setFont(title->Font ? *title->Font : ctrl.titleFont());
 		args.Graphics.textColour(chooseTextColour(title->Colour), backColour);
 		LONG constexpr TitleDetailGap = 6;
 		auto const titleHeight = args.Graphics.drawText(title->Text, rcItem, DrawTextFlags::Left);
@@ -204,17 +204,17 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 		auto const& item = *reinterpret_cast<ComboBoxControl::ComboBoxItemData*>(args.Item.UserData);
 		args.Height = 0;
 
-		// [TITLE] Measure title using custom font, if provided; otherwise comboBox font
+		// [TITLE] Measure title using custom font, if provided; otherwise ComboBox's heading-font
 		if (auto const title = item.Heading; title)
 		{
-			args.Graphics.setFont(title->Font ? *title->Font : ctrl.font());
+			args.Graphics.setFont(title->Font ? *title->Font : ctrl.titleFont());
 			LONG constexpr TitleDetailGap = 6;
 			args.Height += TitleDetailGap;
 			args.Height += args.Graphics.measureText(title->Text).Height;
 		}
 
 		// Calculate size required for (potentially multi-line) item text. Use custom font, if one
-		//  was provided; otherwise comboBox font
+		//  was provided; otherwise ComboBox's text-font
 		auto const detail = item.Detail;
 		args.Graphics.setFont(detail.Font ? *detail.Font : ctrl.font());
 		args.Height += args.Graphics.measureText(detail.Text, Size{ctrl.droppedRect().width(), args.Height}).Height;
