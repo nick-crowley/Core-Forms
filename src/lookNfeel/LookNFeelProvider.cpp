@@ -144,6 +144,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"ComboBox #{} must be OwnerDraw", args.Ident};
 
+	bool const variable = ctrl.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable);
 	bool const selected = args.Item.State.test(OwnerDrawState::Selected);
 	auto const backColour = selected ? SystemColour::Highlight : ctrl.backColour();
 	auto const chooseTextColour = [&](std::optional<AnyColour> const& itemColour) -> AnyColour {
@@ -161,19 +162,20 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	auto const item = ctrl.Items[args.Item.Index];
 	auto const detail = item.detail();
 	Rect rcDetail = rcItem;
-	auto flagsDetail = DrawTextFlags::SimpleLeft;
+
+	// [ALIGNMENT] Item detail may be multi-line when using OD-variable mode; otherwise they're v-centred
+	auto const flagsDetail = variable ? DrawTextFlags::Left|DrawTextFlags::WordBreak : DrawTextFlags::SimpleLeft;
 
 	// [TITLE] Draw title and calculate different rectangle for (multi-line) detail text
 	if (auto const title = item.heading(); title)
 	{
 		args.Graphics.setFont(title->Font ? *title->Font : ctrl.titleFont());
 		args.Graphics.textColour(chooseTextColour(title->Colour), backColour);
-		LONG constexpr TitleDetailGap = 6;
 		auto const titleHeight = args.Graphics.drawText(title->Text, rcItem, DrawTextFlags::Left);
 
 		// Calculate rectangle beneath title for multi-line detail text
+		LONG constexpr TitleDetailGap = 6;
 		rcDetail = rcItem - Border{0, titleHeight + TitleDetailGap, 0, 0};
-		flagsDetail = DrawTextFlags::Left|DrawTextFlags::WordBreak;
 	}
 
 	// [TEXT] Draw using custom font/colour, if any; otherwise use ComboBox colours
