@@ -116,6 +116,7 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 		
+	public:
 		//! @brief	Custom item data used for each element when in owner-draw mode
 		struct ComboBoxItemData {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -409,8 +410,10 @@ namespace core::forms
 					
 					// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 					if (this->Owner.hasStrings()) {
+						this->Owner.ExposingOwnerDrawItemsBugfix = data.get();
 						idx = ComboBox_InsertString(this->Owner.handle(), idx, data->Detail.Text.c_str());
 						ComboBox_SetItemData(this->Owner.handle(), idx, data.release());
+						this->Owner.ExposingOwnerDrawItemsBugfix = nullptr;
 					}
 					// [NO-STRING] Only store our owner-draw data
 					else
@@ -427,8 +430,10 @@ namespace core::forms
 				
 				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 				if (this->Owner.hasStrings()) {
+					this->Owner.ExposingOwnerDrawItemsBugfix = data.get();
 					idx = ComboBox_InsertString(this->Owner.handle(), idx, data->Detail.Text.c_str());
 					ComboBox_SetItemData(this->Owner.handle(), idx, data.release());
+					this->Owner.ExposingOwnerDrawItemsBugfix = nullptr;
 				}
 				// [NO-STRING] Only store our owner-draw data
 				else
@@ -456,8 +461,10 @@ namespace core::forms
 				
 				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 				if (this->Owner.hasStrings()) {
+					this->Owner.ExposingOwnerDrawItemsBugfix = data.get();
 					idx = ComboBox_InsertString(this->Owner.handle(), idx, data->Heading->Text.c_str());
 					ComboBox_SetItemData(this->Owner.handle(), idx, data.release());
+					this->Owner.ExposingOwnerDrawItemsBugfix = nullptr;
 				}
 				// [NO-STRING] Only store our owner-draw data
 				else
@@ -516,6 +523,14 @@ namespace core::forms
 		
 	private:
 		Font             TitleFont = ComboBoxControl::makeTitleFont(StockFont::DefaultGui);
+
+		//! @bug  When 'HasStrings' and 'OwnerDraw' are both active and items are added, supplementary
+		//!       item text should be provided for screen-readers; however, the API only permits item
+		//!       data to be added retrospectively, so text must added first. This triggers a design
+		//!       flaw whereby WM_MEASUREITEM is sent prior to item data being added. This fix is the 
+		//!       suggested workaround.
+		//! @see https://learn.microsoft.com/en-us/windows/win32/winauto/exposing-owner-drawn-combo-box-items
+		ComboBoxItemData* ExposingOwnerDrawItemsBugfix; 
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -589,6 +604,7 @@ namespace core::forms
 		Response 
 		virtual onMeasureItem(MeasureItemEventArgs args) override {
 			if (args.Ident == this->ident()) {
+				args.Item.UserData = (uintptr_t)this->ExposingOwnerDrawItemsBugfix;
 				this->LookNFeel->measure(*this, args);
 				return TRUE;
 			}
