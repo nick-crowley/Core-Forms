@@ -174,8 +174,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		auto const titleHeight = args.Graphics.drawText(title->Text, rcItem, DrawTextFlags::Left);
 
 		// Calculate rectangle beneath title for multi-line detail text
-		LONG constexpr TitleDetailGap = 6;
-		rcDetail = rcItem - Border{0, titleHeight + TitleDetailGap, 0, 0};
+		rcDetail = rcItem - Border{0, titleHeight, 0, 0};
 	}
 
 	// [TEXT] Draw using custom font/colour, if any; otherwise use ComboBox colours
@@ -216,8 +215,6 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 		if (auto const title = item.Heading; title)
 		{
 			args.Graphics.setFont(title->Font.value_or(ctrl.titleFont().value_or(ctrl.font())));
-			LONG constexpr TitleDetailGap = 6;
-			args.Height += TitleDetailGap;
 			args.Height += args.Graphics.measureText(title->Text).Height;
 		}
 
