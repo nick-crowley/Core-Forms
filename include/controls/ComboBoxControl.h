@@ -539,7 +539,9 @@ namespace core::forms
 		ComboBoxControl(uint16_t id) 
 		  : base{id}, 
 		    Items{*this}
-		{}
+		{
+			this->Created += {*this, &ComboBoxControl::this_OnCreated};
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -658,15 +660,15 @@ namespace core::forms
 
 		::LRESULT 
 		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
-			if (message == WM_CREATE) {
-				auto const result = this->subclassedWndProc(WM_CREATE, wParam,lParam);
-				auto const info = this->info();
-				this->DroppedItemsList = info.DroppedItemList;
-				this->SelectedItemEdit = info.SelectedItemEdit;
-				return result;
-			} 
-
 			return this->subclassedWndProc(message, wParam, lParam);
+		}
+
+	private:
+		void
+		this_OnCreated(Window& [[maybe_unused]] sender, CreateWindowEventArgs [[maybe_unused]] args) {
+			auto const info = this->info();
+			this->DroppedItemsList = info.DroppedItemList;
+			this->SelectedItemEdit = info.SelectedItemEdit;
 		}
 	};
 }	// namespace core::forms
