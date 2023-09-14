@@ -149,7 +149,7 @@ namespace core::forms
 
 		::LRESULT 
 		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
-			return ::CallWindowProc(wndcls().OriginalWndProc, this->handle(), message, wParam, lParam);
+			return this->subclassedWndProc(message, wParam, lParam);
 		}
 	};
 }	// namespace core::forms
