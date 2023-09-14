@@ -32,7 +32,10 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+namespace core::forms 
+{
+	class Control;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -45,6 +48,15 @@ namespace core::meta
 	metadata bool Settings<bitwise_enum, forms::Side> = true;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::meta 
+{
+	//! @brief	Any control which exposes a @c WindowClass with an @c OriginalWndProc member
+	template <typename T>
+	concept SubclassedControl = std::derived_from<std::remove_reference_t<T>,forms::Control> 
+		                     && requires(T&& ctrl) {
+		{ctrl.wndcls().OriginalWndProc} -> std::convertible_to<::WNDPROC>;
+	};
+}
 namespace core::forms 
 {
 	class Control : public Window
@@ -96,6 +108,12 @@ namespace core::forms
 			auto const _ = this->Debug.setTemporaryState({ProcessingState::NotificationProcessing,
 			                                             Window::MessageDatabase.name(notification)});
 			return Unhandled;
+		}
+
+		template <meta::SubclassedControl Self>
+		::LRESULT
+		subclassedWndProc(this Self&& self, unsigned message, std::optional<::WPARAM> w = std::nullopt, std::optional<::LPARAM> l = std::nullopt) {
+			return ::CallWindowProc(self.wndcls().OriginalWndProc, self.handle(), message, w.value_or(0), l.value_or(0));
 		}
 	};
 }
