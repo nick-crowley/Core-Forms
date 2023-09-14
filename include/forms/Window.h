@@ -882,9 +882,6 @@ namespace core::forms
 
 					// Offer the message to the C++ object managing this handle
 					response = wnd->offerMessage(message, wParam, lParam);
-
-					// Raise equivalent event, if any, after processing completed
-					wnd->raiseMessageEvent(message, wParam, lParam);
 				}
 
 				Invariant(response.Status != Response::Invalid);
@@ -912,7 +909,10 @@ namespace core::forms
 					Invariant(wnd != nullptr);
 					wnd->onLastSight(hWnd);
 				}
-						
+				
+				// Raise equivalent event, if any, after processing completed
+				wnd->raiseMessageEvent(message, wParam, lParam);
+
 				return result;
 			} 
 			// [ERROR] Return a value indicating we didn't handle the message (usually anything but zero)
