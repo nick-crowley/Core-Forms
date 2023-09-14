@@ -3,6 +3,7 @@
 #include "graphics/ImageList.h"
 #include "Resource.h"
 using namespace core;
+using namespace forms::literals;
 
 // Define program meta-data
 metadata std::string_view meta::Settings<program_name> = "Core.Forms Dev-Testing Application";
@@ -15,14 +16,23 @@ class DevTesting : public forms::Dialog
 	
 private:
 	forms::ButtonControl OkBtn = IDOK;
-	forms::ComboBoxControl ComboBox = IDC_COMBO1;
+	forms::ComboBoxControl WideComboBox = IDC_COMBO1;
+	forms::ComboBoxControl NarrowComboBox = IDC_COMBO2;
 	forms::ListBoxControl ListBox = IDC_LIST1;
 
 public:
-	DevTesting() : base{win::ResourceId{IDD_DEVTEST}, 
-		EarlyBoundControlCollection{&this->OkBtn, &this->ComboBox, &this->ListBox}}
+	DevTesting() 
+	  : base{
+			win::ResourceId{IDD_DEVTEST}, 
+			EarlyBoundControlCollection{&this->OkBtn, &this->NarrowComboBox, &this->WideComboBox, &this->ListBox}
+		}
 	{
 		this->OkBtn.Clicked += {*this, &DevTesting::Button_Clicked};
+		
+		// A design flaw means custom fonts for currently selected ComboBox item must be
+		//  specified prior to creation of the ComboBox and, once set, cannot be changed.
+		forms::Font const titleFont{L"Consolas", this->clientDC().measureFont(24_pt), forms::FontWeight::Bold};
+		this->WideComboBox.editFont(titleFont);
 	}
 
 protected:
@@ -34,14 +44,30 @@ protected:
 			this->ListBox.Items.push_back(std::format(L"Item #{}", idx));
 		}
 
-#ifdef ItemsWithHeadings
-		this->ComboBox.Items.push_back(L"The rain in spain falls mainly on the plane", L"Rain in Spain");
-		this->ComboBox.Items.push_back(L"The quick brown fox jumped over the lazy dog", L"Quick Brown Fox");
-		this->ComboBox.Items.push_back(L"My very earthly mother just said you're nearly perfect", L"Very Earthly Mother");*/
-#endif
-		this->ComboBox.Items.push_back(forms::ComboBoxItemElement{L"Rain in Spain", forms::Colour::DarkBlue, forms::StockFont::SystemFixed});
-		this->ComboBox.Items.push_back(L"Quick Brown Fox", L"Example heading");
-		this->ComboBox.Items.push_back(forms::ComboBoxItemElement{L"Very Earthly Mother", forms::Colour::Red, forms::StockFont::AnsiFixed});
+		forms::Font const titleFont{L"Consolas", this->clientDC().measureFont(24_pt), forms::FontWeight::Bold};
+		forms::Font const detailFont{L"Segoe UI", this->clientDC().measureFont(11_pt)};
+
+		// Separate design flaw means custom font for currently selected ComboBox item must be
+		//  specified again after creation of the ComboBox. This can be changed at runtime but
+		//  the control will never resize to fit the new font.
+		this->WideComboBox.font(titleFont);
+		this->WideComboBox.titleFont(titleFont);
+
+		struct { gsl::cwzstring title; gsl::cwzstring detail; } const itemDefinitions[3] {
+			{L"Rain in Spain",       L"The rain in spain falls mainly on the plane"},
+			{L"Quick Brown Fox",     L"The quick brown fox jumped over the lazy dog"},
+			{L"Very Earthly Mother", L"My very earthly mother just said you're nearly perfect"}
+		};
+		for (auto item : itemDefinitions) {
+			this->WideComboBox.Items.push_back(
+				forms::ComboBoxItemElement{item.detail, forms::Colour::Grey, detailFont},
+				forms::ComboBoxItemElement{item.title}
+			);
+		}
+
+		this->NarrowComboBox.Items.push_back(forms::ComboBoxItemElement{L"Rain in Spain", forms::Colour::DarkBlue, forms::StockFont::SystemFixed});
+		this->NarrowComboBox.Items.push_back(L"Quick Brown Fox");
+		this->NarrowComboBox.Items.push_back(forms::ComboBoxItemElement{L"Very Earthly Mother", forms::Colour::Red, forms::StockFont::AnsiFixed});
 
 		return FALSE;
 	}

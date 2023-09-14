@@ -14,6 +14,7 @@
 #define IDC_GROUP2                      1007
 #define IDC_GROUP3                      1008
 #define IDC_COMBO1                      1009
+#define IDC_COMBO2                      1010
 
 // Next default values for new objects
 // 
