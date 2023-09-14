@@ -169,7 +169,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	// [TITLE] Draw title and calculate different rectangle for (multi-line) detail text
 	if (auto const title = item.heading(); title)
 	{
-		args.Graphics.setFont(title->Font ? *title->Font : ctrl.titleFont());
+		args.Graphics.setFont(title->Font.value_or(ctrl.titleFont().value_or(ctrl.font())));
 		args.Graphics.textColour(chooseTextColour(title->Colour), backColour);
 		auto const titleHeight = args.Graphics.drawText(title->Text, rcItem, DrawTextFlags::Left);
 
@@ -179,7 +179,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	}
 
 	// [TEXT] Draw using custom font/colour, if any; otherwise use ComboBox colours
-	args.Graphics.setFont(detail.Font ? *detail.Font : ctrl.font());
+	args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
 	args.Graphics.textColour(chooseTextColour(detail.Colour), backColour);
 	args.Graphics.drawText(detail.Text, rcDetail, flagsDetail);
 	
@@ -192,9 +192,15 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"ComboBox #{} must be OwnerDraw", args.Ident};
 
-	// [EDIT] Return default
-	if (args.Item.Index == MeasureItemEventArgs::EditControl)
+	// [EDIT] Measure the 'edit font', if any, provided prior to construction
+	if (args.Item.Index == MeasureItemEventArgs::EditControl) {
+		//! @remarks WM_MEASUREITEM is received _extremely_ early in the process of ComboBox construction
+		//!           so it's not even feasible to rely on its window font because the control hasn't yet
+		//!           received its first WM_SETFONT
+		auto const fontHeight = ctrl.editFont().height();
+		args.Height = std::abs(fontHeight);
 		return;
+	}
 
 	// [FIXED-HEIGHT] Return user-provided height, if any, otherwise default
 	if (ctrl.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawFixed)) {
@@ -209,7 +215,7 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 		// [TITLE] Measure title using custom font, if provided; otherwise ComboBox's heading-font
 		if (auto const title = item.Heading; title)
 		{
-			args.Graphics.setFont(title->Font ? *title->Font : ctrl.titleFont());
+			args.Graphics.setFont(title->Font.value_or(ctrl.titleFont().value_or(ctrl.font())));
 			LONG constexpr TitleDetailGap = 6;
 			args.Height += TitleDetailGap;
 			args.Height += args.Graphics.measureText(title->Text).Height;
@@ -218,7 +224,7 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 		// Calculate size required for (potentially multi-line) item text. Use custom font, if one
 		//  was provided; otherwise ComboBox's text-font
 		auto const detail = item.Detail;
-		args.Graphics.setFont(detail.Font ? *detail.Font : ctrl.font());
+		args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
 		args.Height += args.Graphics.measureText(detail.Text, Size{ctrl.droppedRect().width(), args.Height}).Height;
 	}
 

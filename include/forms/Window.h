@@ -1043,7 +1043,6 @@ namespace core::forms
 		
 		void
 		font(const Font& newFont) {
-			this->WindowFont = newFont;
 			SetWindowFont(this->handle(), *newFont.handle(), FALSE);
 		}
 		
@@ -1190,6 +1189,8 @@ namespace core::forms
 		
 		Response
 		virtual onSetFont(SetWindowFontEventArgs args) {
+			if (args.Font != this->WindowFont.handle())
+				this->WindowFont = Font{args.Font};
 			return Unhandled;
 		}
 	

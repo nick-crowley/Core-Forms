@@ -522,7 +522,8 @@ namespace core::forms
 		forms::UnmanagedWindow  SelectedItemEdit;
 		
 	private:
-		Font             TitleFont = ComboBoxControl::makeTitleFont(StockFont::DefaultGui);
+		std::optional<Font>   EditFont;
+		std::optional<Font>   TitleFont;
 
 		//! @bug  When 'HasStrings' and 'OwnerDraw' are both active and items are added, supplementary
 		//!       item text should be provided for screen-readers; however, the API only permits item
@@ -548,12 +549,6 @@ namespace core::forms
 			static const ComboBoxNotificationDictionary names;
 			return names.at(notification);
 		}
-
-	private:
-		Font
-		static makeTitleFont(Font const& textFont) {
-			return Font{*textFont.handle(), std::nullopt, 3*textFont.height() / 2};
-		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		bool
@@ -566,6 +561,11 @@ namespace core::forms
 			Rect rc;
 			ComboBox_GetDroppedControlRect(this->handle(), rc);
 			return rc;
+		}
+		
+		Font
+		editFont() {
+			return this->EditFont.value_or(this->font());
 		}
 		
 		bool
@@ -590,13 +590,19 @@ namespace core::forms
 			return WindowRole::ComboBox;
 		}
 		
-		Font
+		std::optional<Font>
 		titleFont() const {
 			return this->TitleFont;
 		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		void
+		editFont(const Font& newFont) {
+			Invariant(!this->exists());
+			this->EditFont = newFont;
+		}
+
 		//! TODO: Delete item data
 		Response
 		virtual onDeleteItem(void* args) = delete;
@@ -622,15 +628,6 @@ namespace core::forms
 			return Unhandled;
 		}
 		
-		Response
-		virtual onSetFont(SetWindowFontEventArgs args) override {
-			// Generate title font automatically when window font changes (or is reset to default)
-			this->titleFont(
-				ComboBoxControl::makeTitleFont(args.Font ? Font{args.Font} : StockFont::SystemFixed)
-			);
-			return Unhandled;
-		}
-
 		void
 		titleFont(const Font& newFont) {
 			this->TitleFont = newFont;
