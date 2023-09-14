@@ -659,14 +659,14 @@ namespace core::forms
 		::LRESULT 
 		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
 			if (message == WM_CREATE) {
-				auto const result = ::CallWindowProc(this->wndcls().OriginalWndProc, this->handle(), message, wParam, lParam);
+				auto const result = this->subclassedWndProc(WM_CREATE, wParam,lParam);
 				auto const info = this->info();
 				this->DroppedItemsList = info.DroppedItemList;
 				this->SelectedItemEdit = info.SelectedItemEdit;
 				return result;
 			} 
 
-			return ::CallWindowProc(this->wndcls().OriginalWndProc, this->handle(), message, wParam, lParam);
+			return this->subclassedWndProc(message, wParam, lParam);
 		}
 	};
 }	// namespace core::forms
