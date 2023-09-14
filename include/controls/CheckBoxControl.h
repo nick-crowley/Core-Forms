@@ -117,10 +117,12 @@ namespace core::forms
 
 		void
 		this_Clicked(Window& sender) {
-			if (this->ownerDraw() && this->Checked) 
-				return this->uncheck();
-			else if (this->ownerDraw())
-				return this->check();
+			if (!this->ownerDraw())
+				return;
+			if (this->Checked) 
+				this->uncheck();
+			else 
+				this->check();
 		}
 	};
 }	// namespace core::forms
