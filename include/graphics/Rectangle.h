@@ -198,6 +198,18 @@ namespace core::forms
 		}
 	
 		Rect constexpr
+		operator+(Rect const& amount) const noexcept {
+			return {this->Left + amount.Left,  this->Top + amount.Top,
+					this->Right + amount.Right, this->Bottom + amount.Bottom};
+		}
+	
+		Rect constexpr
+		operator-(Rect const& amount) const noexcept {
+			return {this->Left - amount.Left,  this->Top - amount.Top,
+					this->Right - amount.Right, this->Bottom - amount.Bottom};
+		}
+	
+		Rect constexpr
 		operator+(Size const& sz) const noexcept {
 			Rect r(*this);
 			r.resize(sz);
