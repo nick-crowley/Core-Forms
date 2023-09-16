@@ -225,6 +225,14 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void constexpr
+		add(Rect const& amount) noexcept {
+			this->Left += amount.Left;
+			this->Right += amount.Right;
+			this->Top += amount.Top;
+			this->Bottom += amount.Bottom;
+		}
+
+		void constexpr
 		inflate(::LONG amount) noexcept {
 			this->Left -= amount;
 			this->Right += amount;
@@ -262,6 +270,14 @@ namespace core::forms
 			this->Bottom += s.Height;
 		}
 	
+		void constexpr
+		subtract(Rect const& amount) noexcept {
+			this->Left -= amount.Left;
+			this->Right -= amount.Right;
+			this->Top -= amount.Top;
+			this->Bottom -= amount.Bottom;
+		}
+
 		reference constexpr
 		operator+=(Point const& pt) noexcept {
 			this->translate(pt);
@@ -271,6 +287,18 @@ namespace core::forms
 		reference constexpr
 		operator-=(Point const& pt) noexcept {
 			this->translate(-pt);
+			return *this;
+		}
+	
+		reference constexpr
+		operator+=(Rect const& rc) noexcept {
+			this->add(rc);
+			return *this;
+		}
+	
+		reference constexpr
+		operator-=(Rect const& rc) noexcept {
+			this->subtract(rc);
 			return *this;
 		}
 	
