@@ -171,24 +171,23 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	auto const icon = item.icon();
 	if (title)
 	{
-		LONG titleHeight {};
 		args.Graphics.setFont(title->Font.value_or(ctrl.titleFont().value_or(ctrl.font())));
 		args.Graphics.textColour(chooseTextColour(title->Colour), backColour);
 		
-		// [ICON] Draw icon and update detail rectangle
+		// [ICON] Draw icon on left; position both title and detail text beside it
 		if (icon)
 		{
-			titleHeight = args.Graphics.measureText(title->Text).Height;
-			Size const iconSize{titleHeight, titleHeight};
-			Rect const rcTitle = rcItem + Rect{Percentage{115,unconstrained}*iconSize.Width,0,0,0};
+			Size const iconSize{rcItem.height(), rcItem.height()};
+			Rect const rcTitle = rcItem + Point{Percentage{115,unconstrained}*iconSize.Width,0};
 			args.Graphics.drawIcon(icon->handle(), rcItem.topLeft(), iconSize);
-			args.Graphics.drawText(title->Text, rcTitle, DrawTextFlags::Left);
+			auto const titleHeight = args.Graphics.drawText(title->Text, rcTitle, DrawTextFlags::Left);
+			rcDetail = rcTitle + Point{0, titleHeight};
 		}
-		else 
-			titleHeight = args.Graphics.drawText(title->Text, rcItem, DrawTextFlags::Left);
-			
-		// Calculate rectangle beneath title for multi-line detail text
-		rcDetail = rcItem - Border{0, titleHeight, 0, 0};
+		// [TITLE-ONLY] Draw title; position detail text directly below
+		else {
+			auto const titleHeight = args.Graphics.drawText(title->Text, rcItem, DrawTextFlags::Left);
+			rcDetail = rcItem + Point{0, titleHeight};
+		}
 	}
 
 	// [TEXT] Draw using custom font/colour, if any; otherwise use ComboBox colours
