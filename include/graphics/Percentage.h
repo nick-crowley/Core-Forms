@@ -68,6 +68,13 @@ namespace core::forms
 			if (this->m_value > Percentage::MaxValue)
 				this->m_value = Percentage::MaxValue;
 		}
+		
+		template <nstd::RealNumber T>
+		constexpr
+		explicit
+		Percentage(T v, meta::unconstrained_t) : m_value{static_cast<float>(v)}
+		{
+		}
 
 		satisfies(Percentage,
 			NotDefaultConstructible,
