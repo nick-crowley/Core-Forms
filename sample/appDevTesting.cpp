@@ -1,6 +1,7 @@
 #include "library/core.forms.h"
 #include "dialogs/Dialog.h"
 #include "graphics/ImageList.h"
+#include "graphics/Icon.h"
 #include "Resource.h"
 using namespace core;
 using namespace forms::literals;
@@ -46,6 +47,7 @@ protected:
 
 		forms::Font const titleFont{L"Consolas", this->clientDC().measureFont(24_pt), forms::FontWeight::Bold};
 		forms::Font const detailFont{L"Segoe UI", this->clientDC().measureFont(11_pt)};
+		forms::Icon const sampleIcon = forms::Icon::load(win::ProcessModule, win::ResourceId{IDI_ICON1});
 
 		// Separate design flaw means custom font for currently selected ComboBox item must be
 		//  specified again after creation of the ComboBox. This can be changed at runtime but
@@ -61,13 +63,14 @@ protected:
 		for (auto item : itemDefinitions) {
 			this->WideComboBox.Items.push_back(
 				forms::ComboBoxItemElement{item.detail, forms::Colour::Grey, detailFont},
-				forms::ComboBoxItemElement{item.title}
+				forms::ComboBoxItemElement{item.title},
+				sampleIcon
 			);
 		}
 
-		this->NarrowComboBox.Items.push_back(forms::ComboBoxItemElement{L"Rain in Spain", forms::Colour::DarkBlue, forms::StockFont::SystemFixed});
+		this->NarrowComboBox.Items.push_back(forms::ComboBoxItemElement{L"Rain in Spain", forms::Colour::DarkBlue, forms::StockFont::SystemFixed}, sampleIcon);
 		this->NarrowComboBox.Items.push_back(L"Quick Brown Fox");
-		this->NarrowComboBox.Items.push_back(forms::ComboBoxItemElement{L"Very Earthly Mother", forms::Colour::Red, forms::StockFont::AnsiFixed});
+		this->NarrowComboBox.Items.push_back(forms::ComboBoxItemElement{L"Very Earthly Mother", forms::Colour::Red, forms::StockFont::AnsiFixed}, sampleIcon);
 
 		return FALSE;
 	}

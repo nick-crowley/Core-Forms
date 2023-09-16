@@ -167,12 +167,26 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	auto const flagsDetail = variable ? DrawTextFlags::Left|DrawTextFlags::WordBreak : DrawTextFlags::SimpleLeft;
 
 	// [TITLE] Draw title and calculate different rectangle for (multi-line) detail text
-	if (auto const title = item.heading(); title)
+	auto const title = item.heading(); 
+	auto const icon = item.icon();
+	if (title)
 	{
+		LONG titleHeight {};
 		args.Graphics.setFont(title->Font.value_or(ctrl.titleFont().value_or(ctrl.font())));
 		args.Graphics.textColour(chooseTextColour(title->Colour), backColour);
-		auto const titleHeight = args.Graphics.drawText(title->Text, rcItem, DrawTextFlags::Left);
-
+		
+		// [ICON] Draw icon and update detail rectangle
+		if (icon)
+		{
+			titleHeight = args.Graphics.measureText(title->Text).Height;
+			Size const iconSize{titleHeight, titleHeight};
+			Rect const rcTitle = rcItem + Rect{Percentage{115,unconstrained}*iconSize.Width,0,0,0};
+			args.Graphics.drawIcon(icon->handle(), rcItem.topLeft(), iconSize);
+			args.Graphics.drawText(title->Text, rcTitle, DrawTextFlags::Left);
+		}
+		else 
+			titleHeight = args.Graphics.drawText(title->Text, rcItem, DrawTextFlags::Left);
+			
 		// Calculate rectangle beneath title for multi-line detail text
 		rcDetail = rcItem - Border{0, titleHeight, 0, 0};
 	}
@@ -180,6 +194,11 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	// [TEXT] Draw using custom font/colour, if any; otherwise use ComboBox colours
 	args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
 	args.Graphics.textColour(chooseTextColour(detail.Colour), backColour);
+	if (icon && !title) {
+		Size const iconSize{rcDetail.height(), rcDetail.height()};
+		args.Graphics.drawIcon(icon->handle(), rcItem.topLeft(), iconSize);
+		rcDetail += Rect{Percentage{115,unconstrained}*iconSize.Width, 0, 0, 0};
+	}
 	args.Graphics.drawText(detail.Text, rcDetail, flagsDetail);
 	
 	args.Graphics.restore();
