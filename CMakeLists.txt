@@ -27,8 +27,8 @@ set(PROJECT_SOURCE_FOLDER   "${BASE_FOLDER}src/")
 set(PROJECT_RESOURCE_FOLDER "${BASE_FOLDER}res/")
 
 # Folders: Test code
-#set(PROJECT_TESTS_FOLDER         "${BASE_FOLDER}tests/")
-#set(PROJECT_MOCKS_FOLDER         "${BASE_FOLDER}mocks/")
+set(PROJECT_TEST_FOLDER     "${BASE_FOLDER}test/")
+set(PROJECT_MOCK_FOLDER     "${BASE_FOLDER}mock/")
 
 # Folders: Google.Mock
 set(GMOCK_FOLDER         "${BASE_FOLDER}3rdparty/googlemock/")
@@ -59,9 +59,6 @@ set(GSL_ASSERTION_BEHAVIOUR "GSL_THROW_ON_CONTRACT_VIOLATION")
 # /wd4543           : Disable C4543: Injected text suppressed by attribute 'no_injected_text'
 # /wd4584           : Disable C4584: Base-class 'IUnknown' is already a base-class of 'I...'
 set(GLOBAL_COMPILER_OPTIONS "/std:c++latest /std:c17 /permissive /Zc:preprocessor /ZI /EHa /W4 /wd4100 /wd4251 /wd4275 /wd4467 /wd4684 /wd4543 /wd4584")
-
-# Set compiler options used by test modules
-#set(GLOBAL_TEST_COMPILER_OPTIONS "${GLOBAL_COMPILER_OPTIONS} -DTEST_BUILD_CONTEXT -DGTEST_LINKED_AS_SHARED_LIBRARY=1")
 
 # Set linker options used by all modules
 set(GLOBAL_LINKER_OPTIONS "${GLOBAL_LINKER_OPTIONS} /SAFESEH:NO")
@@ -458,6 +455,74 @@ target_compile_options(dllGoogleTest
 	PRIVATE $<$<CONFIG:Release>:/MD>
 	PRIVATE $<$<CONFIG:Debug>:/MDd>
 )
+####################################################################
+#  ____ ___      .__  __    ___________              __            #
+# |    |   \____ |__|/  |_  \__    ___/___   _______/  |_  ______  #
+# |    |   /    \|  \   __\   |    |_/ __ \ /  ___/\   __\/  ___/  #
+# |    |  /   |  \  ||  |     |    |\  ___/ \___ \  |  |  \___ \   #
+# |______/|___|  /__||__|     |____| \___  >____  > |__| /____  >  #
+#              \/                        \/     \/            \/   #
+####################################################################
+message("exeFormsTests: Generating project(s) from ${PROJECT_SOURCE_FOLDER} with ${PROJECT_SOURCE_FOLDER}")
+
+# Test files
+file(GLOB_RECURSE PROJECT_UNIT_TEST_FILES
+    "${PROJECT_TEST_FOLDER}*.h"
+    "${PROJECT_TEST_FOLDER}*.cpp"
+    )
+
+# Project: exeFormsTests
+add_executable(exeFormsTests
+	${PROJECT_UNIT_TEST_FILES}
+)
+
+# Include folders
+target_include_directories(exeFormsTests BEFORE
+    PRIVATE
+	${PROJECT_INCLUDE_FOLDER} 
+	${PROJECT_SOURCE_FOLDER} 
+	${PROJECT_TEST_FOLDER} 
+)
+
+# Consume GoogleTest as DLL
+target_compile_definitions(exeFormsTests
+	PRIVATE GTEST_LINKED_AS_SHARED_LIBRARY=1
+)
+
+# Set compiler & linker flags
+set_target_properties(exeFormsTests PROPERTIES
+					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
+					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS} /SUBSYSTEM:CONSOLE"
+)
+
+# Set linker dependencies
+target_link_libraries(exeFormsTests
+	dllGoogleTest
+	"${BASE_FOLDER}../Core-Platform/build/$(Configuration)/CorePlatform.lib" 
+	"${BASE_FOLDER}../Core-COM/build/$(Configuration)/CoreCOM.lib" 
+	dllCoreForms
+)
+
+# Set header declarations to dllimport
+target_compile_definitions(exeFormsTests
+	PRIVATE CORE_PLATFORM_IMPORT 
+	        CORE_COM_IMPORT
+	        ${PROJECT_IMPORT_MACRO}
+)
+
+# Link CRT dynamically
+target_compile_options(exeFormsTests
+	PRIVATE $<$<CONFIG:Release>:/MD>
+	PRIVATE $<$<CONFIG:Debug>:/MDd>
+)
+
+# Set project dependencies
+add_dependencies(exeFormsTests
+	dllGoogleTest
+	#dllCorePlatform
+	#dllCoreCOM
+	dllCoreForms
+)
 #################################################################################
 #     ___________.__.__           .____                                __   
 #     \_   _____/|__|  |   ____   |    |   _____  ___.__. ____  __ ___/  |_ 
@@ -488,10 +553,6 @@ source_group(TREE ${PROJECT_SOURCE_FOLDER}    PREFIX "Source Files"   FILES ${PR
 source_group(TREE ${PROJECT_RESOURCE_FOLDER}  PREFIX "Resource Files" FILES ${PROJECT_RESOURCE_FILES})
 
 # unit-test file groups
-#source_group(TREE ${PROJECT_TESTS_FOLDER}   PREFIX "Build Files"  FILES ${PROJECT_UNIT_TEST_CC_FILES})
-#source_group(TREE ${PROJECT_TESTS_FOLDER}   PREFIX "Test Files"   FILES ${PROJECT_UNIT_TEST_FILES})
-#source_group(TREE ${PROJECT_MOCKS_FOLDER}   PREFIX "Mock Files"   FILES ${PROJECT_MOCK_FILES})
-
-# system-test file groups
-#source_group(TREE ${PROJECT_SYSTEM_TESTS_FOLDER}   PREFIX "Build Files"  FILES ${PROJECT_SYSTEM_TEST_CC_FILES})
-#source_group(TREE ${PROJECT_SYSTEM_TESTS_FOLDER}   PREFIX "Test Files"   FILES ${PROJECT_SYSTEM_TEST_FILES})
+#source_group(TREE ${PROJECT_TEST_FOLDER}   PREFIX "Build Files"  FILES ${PROJECT_UNIT_TEST_CC_FILES})
+source_group(TREE ${PROJECT_TEST_FOLDER}   PREFIX "Test Files"   FILES ${PROJECT_UNIT_TEST_FILES})
+source_group(TREE ${PROJECT_MOCK_FOLDER}   PREFIX "Mock Files"   FILES ${PROJECT_MOCK_FILES})
