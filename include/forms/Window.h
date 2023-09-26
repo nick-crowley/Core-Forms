@@ -31,7 +31,7 @@
 #include "core/FunctionLogging.h"
 #include "com/SharedPtr.h"
 #include "lookNfeel/ILookNFeelProvider.h"
-#include "support/ObservableEvent.h"
+#include "core/ObservableEvent.h"
 #include "forms/Accessible.h"
 #include "forms/BuiltInWindowMessages.h"
 #include "forms/UnmanagedWindow.h"
