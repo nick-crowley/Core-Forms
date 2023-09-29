@@ -8,6 +8,7 @@
 #         \/                   \/       \/                    \/     \/  #
 ##########################################################################
 cmake_minimum_required (VERSION 3.8.2)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Solution: CoreForms
 project (CoreForms
@@ -287,7 +288,9 @@ target_link_libraries(appBasicForm
 set_target_properties(appBasicForm PROPERTIES
 					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
 					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS} /SUBSYSTEM:CONSOLE"
-					  OUTPUT_NAME "appBasicForm")
+					  OUTPUT_NAME "appBasicForm"
+					  FOLDER "Samples"
+)
 
 # Set export macros for static-library for all dependencies
 target_compile_definitions(appBasicForm
@@ -340,7 +343,9 @@ target_link_libraries(appControls
 set_target_properties(appControls PROPERTIES
 					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
 					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS} /SUBSYSTEM:CONSOLE"
-					  OUTPUT_NAME "appControls")
+					  OUTPUT_NAME "appControls"
+					  FOLDER "Samples"
+)
 
 # Set export macros for static-library for all dependencies
 target_compile_definitions(appControls
@@ -393,7 +398,9 @@ target_link_libraries(appDevTesting
 set_target_properties(appDevTesting PROPERTIES
 					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
 					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS} /SUBSYSTEM:CONSOLE"
-					  OUTPUT_NAME "appDevTesting")
+					  OUTPUT_NAME "appDevTesting"
+					  FOLDER "Samples"
+)
 
 # Set export macros for static-library for all dependencies
 target_compile_definitions(appDevTesting
@@ -443,6 +450,7 @@ set_target_properties(dllGoogleTest PROPERTIES
 					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
 					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS}"
 					  OUTPUT_NAME "GoogleTest"
+					  FOLDER "Testing"
 )
 
 # Specify GTest should be build as a DLL
@@ -493,6 +501,7 @@ target_compile_definitions(exeFormsTests
 set_target_properties(exeFormsTests PROPERTIES
 					  COMPILE_FLAGS "${GLOBAL_COMPILER_OPTIONS}"
 					  LINK_FLAGS "${GLOBAL_LINKER_OPTIONS} /SUBSYSTEM:CONSOLE"
+					  FOLDER "Testing"
 )
 
 # Set linker dependencies
