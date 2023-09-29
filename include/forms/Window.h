@@ -911,6 +911,7 @@ namespace core::forms
 				}
 				
 				// Raise equivalent event, if any, after processing completed
+				if (wnd)
 				wnd->raiseMessageEvent(message, wParam, lParam);
 
 				return result;
