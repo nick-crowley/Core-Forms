@@ -55,24 +55,24 @@ namespace core::forms
 		inline static MaxValue = 100.0f;
 
 	private:
-		float   m_value;
+		float   Value;
 
 	public:
 		template <nstd::RealNumber T>
 		constexpr
 		explicit  
-		Percentage(T v) : m_value{static_cast<float>(v)}
+		Percentage(T v) : Value{static_cast<float>(v)}
 		{
-			if (this->m_value < Percentage::MinValue)
-				this->m_value = Percentage::MinValue;
-			if (this->m_value > Percentage::MaxValue)
-				this->m_value = Percentage::MaxValue;
+			if (this->Value < Percentage::MinValue)
+				this->Value = Percentage::MinValue;
+			if (this->Value > Percentage::MaxValue)
+				this->Value = Percentage::MaxValue;
 		}
 		
 		template <nstd::RealNumber T>
 		constexpr
 		explicit
-		Percentage(T v, meta::unconstrained_t) : m_value{static_cast<float>(v)}
+		Percentage(T v, meta::unconstrained_t) : Value{static_cast<float>(v)}
 		{
 		}
 
@@ -85,24 +85,24 @@ namespace core::forms
 	public:
 		template <nstd::RealNumber Result> 
 		implicit operator Result() const {
-			return static_cast<Result>(this->m_value);
+			return static_cast<Result>(this->Value);
 		}
 
 		template <nstd::RealNumber Result> 
 		Result
 		operator*(Result const rhs) const
 		{
-			return static_cast<Result>(this->m_value * rhs / 100.0f);
+			return static_cast<Result>(this->Value * rhs / 100.0f);
 		}
 
 		bool
 		operator==(Percentage const& r) const {
-			return boost::math::relative_difference(this->m_value,r.m_value) < 0.01f;
+			return boost::math::relative_difference(this->Value,r.Value) < 0.01f;
 		}
 
 		bool
 		operator!=(Percentage const& r) const {
-			return boost::math::relative_difference(this->m_value,r.m_value) >= 0.01f;
+			return boost::math::relative_difference(this->Value,r.Value) >= 0.01f;
 		}
 	};
 
