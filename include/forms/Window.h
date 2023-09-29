@@ -853,7 +853,6 @@ namespace core::forms
 				if (message == WM_MOUSEMOVE && Window::BeneathCursor)
 					Window::BeneathCursor = nullptr;
 				
-				using namespace std::literals;
 				throw runtime_error{"Received {} for unrecognised window {}", Window::MessageDatabase.name(message), 
 					to_hexString((uintptr_t)hWnd)};
 			}
