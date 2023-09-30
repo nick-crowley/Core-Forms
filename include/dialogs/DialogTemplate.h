@@ -90,7 +90,10 @@ namespace core::forms
 					clog << Warning{"Dialog control #{} is unmanaged (so it will not receive look-n-feel)", (signed)ctrl.Ident};
 				}
 				else {
-					if (ctrl.ClassName->is_numeric())
+					if (ctrl.ClassName->is_numeric()) {
+						if (ctrl.ClassName->as_number() == ClassId::Button && ctrl.Style.test(ButtonStyle::GroupBox) && !ctrl.Style.test(WindowStyle::ClipSiblings))
+							ctrl.Style |= WindowStyle::ClipSiblings;
+
 						switch (uint16_t id = ctrl.ClassName->as_number(); id) {
 						case ClassId::Button:    ctrl.ClassName = win::ResourceId(L"Custom.BUTTON");    break;
 						case ClassId::Edit:      ctrl.ClassName = win::ResourceId(L"Custom.EDIT");      break;
@@ -100,6 +103,7 @@ namespace core::forms
 						case ClassId::Combobox:  ctrl.ClassName = win::ResourceId(L"Custom.COMBOBOX");  break;
 						default: throw invalid_argument{"Controls with class id #{0} not yet supported", id};
 						}
+					}
 					else if (ctrl.ClassName == win::ResourceId{WC_LINK})
 						ctrl.ClassName = win::ResourceId(L"Custom.LINK");
 

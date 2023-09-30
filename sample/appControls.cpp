@@ -76,14 +76,9 @@ protected:
 	void
 	virtual onLoadDialog(forms::LoadDialogEventArgs args) override
 	{
-		for(auto& ctrl : args.Template.Controls) {
-			// Enable owner-draw on all controls (where supported) to enable look-n-feel support
+		// Enable owner-draw on all controls (where supported) to enable look-n-feel support
+		for(auto& ctrl : args.Template.Controls) 
 			ctrl.setOwnerDraw();
-
-			// GroupBoxes need the 'ClipSiblings' style to prevent them over-painting the controls beneath
-			if (ctrl.Ident == IDC_GROUP1 || ctrl.Ident == IDC_GROUP2 || ctrl.Ident == IDC_GROUP3)
-				ctrl.Style |= forms::WindowStyle::ClipSiblings;
-		}
 	}
 	
 private:
