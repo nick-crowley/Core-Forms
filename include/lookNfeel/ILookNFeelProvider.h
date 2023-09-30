@@ -60,8 +60,7 @@ namespace core::forms
 	struct ILookNFeelProvider
 	{
 		satisfies(ILookNFeelProvider,
-			protected: IsDefaultConstructible,
-			public: IsPolymorphic
+			IsInterface
 		);
 
 		void
