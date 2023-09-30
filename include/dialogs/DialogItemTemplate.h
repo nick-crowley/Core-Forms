@@ -48,6 +48,9 @@ namespace core::forms
 {
 	class DialogItemTemplate 
 	{
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		std::optional<uint32_t>      HelpId;
 		nstd::bitset<ExWindowStyle>  ExtendedStyle;
@@ -57,13 +60,17 @@ namespace core::forms
 		std::optional<win::ResourceId> Title;
 		std::optional<win::ResourceId> ClassName;
 		std::vector<std::byte>       Data;
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(DialogItemTemplate,
 			IsRegular,
 			NotSortable
 		);
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		bool
 		subclassed() const {
@@ -71,7 +78,7 @@ namespace core::forms
 			    && !this->ClassName->is_numeric() 
 			    && this->ClassName->as_string().starts_with(L"Custom.");
 		}
-		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
 		setOwnerDraw() {
