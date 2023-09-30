@@ -66,6 +66,15 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Response 
+		virtual onEraseBackground(EraseBackgroundEventArgs args) override {
+			if (!this->ownerDraw())
+				return Unhandled;
+
+			this->LookNFeel->erase(*this, args);
+			return 0;
+		}
+
+		Response 
 		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
 			if (args.Ident == this->ident()) {
 				this->LookNFeel->draw(*this, args);

@@ -24,10 +24,6 @@ Win31LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"GroupBox #{} must be OwnerDraw", args.Ident};
 
-	// Erase background
-	args.Graphics.setBrush(ctrl.backColour());
-	args.Graphics.fillRect(args.Item.Area);
-
 	// Draw frame
 	auto const text = ctrl.text();
 	auto const textSize = args.Graphics.measureText(text);

@@ -90,6 +90,9 @@ namespace core::forms
 		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) abstract;
 	
 		void
+		virtual erase(GroupBoxControl& ctrl, EraseBackgroundEventArgs const& args) abstract;
+	
+		void
 		virtual draw(PictureControl& ctrl, OwnerDrawEventArgs const& args) abstract;
 	
 		void

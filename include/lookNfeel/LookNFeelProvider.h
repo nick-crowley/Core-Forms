@@ -91,6 +91,9 @@ namespace core::forms
 		measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& args) override;
 	
 		void
+		erase(GroupBoxControl& ctrl, EraseBackgroundEventArgs const& args) override;
+	
+		void
 		draw(LabelControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
 		void
