@@ -66,6 +66,13 @@ public:
 	}
 
 protected:
+	Response
+	virtual onInitDialog(forms::InitDialogEventArgs args) override
+	{
+		this->PopulateBtn.focus();
+		return FALSE;
+	}
+
 	void
 	virtual onLoadDialog(forms::LoadDialogEventArgs args) override
 	{
