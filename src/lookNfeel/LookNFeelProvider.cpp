@@ -266,7 +266,7 @@ LookNFeelProvider::erase(GroupBoxControl& ctrl, EraseBackgroundEventArgs const& 
 {
 	// Erase background
 	Rect const rcClient = ctrl.clientRect();
-	args.Graphics.setBrush(ctrl.background());
+	args.Graphics.setBrush(ctrl.backColour());
 	args.Graphics.fillRect(rcClient);
 
 	// Draw window border
@@ -392,7 +392,7 @@ LookNFeelProvider::draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args
 void
 LookNFeelProvider::draw(StaticControl& ctrl, OwnerDrawEventArgs const& args)
 {
-	args.Graphics.setBrush(ctrl.background());
+	args.Graphics.setBrush(ctrl.backColour());
 	args.Graphics.drawText(ctrl.text(), args.Item.Area, calculateFlags(ctrl.style<StaticStyle>()));
 	
 	args.Graphics.restore();

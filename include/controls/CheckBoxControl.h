@@ -53,6 +53,7 @@ namespace core::forms
 		CheckBoxControl(uint16_t id) : ButtonControl{id}
 		{
 			this->Clicked += {*this, &CheckBoxControl::this_Clicked};
+			this->backColour(this->LookNFeel->window());
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
