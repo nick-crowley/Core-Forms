@@ -69,6 +69,21 @@ forms::drawWindowBorder(DeviceContext& graphics, Rect const& client, nstd::bitse
 	}
 }
 
+LookNFeelProvider::LookNFeelProvider() 
+  : Fonts{
+    .Heading1{StockFont::DefaultGui},
+    .Heading2{StockFont::DefaultGui},
+    .Paragraph{StockFont::DefaultGui}
+  },
+  Colours{
+    .Button{SystemColour::ButtonFace},
+    .Primary{SystemColour::WindowText},
+    .Secondary{SystemColour::GrayText},
+    .Window{SystemColour::Window}
+  }
+{
+}
+
 void
 LookNFeelProvider::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) 
 {
@@ -372,4 +387,39 @@ LookNFeelProvider::draw(StaticControl& ctrl, OwnerDrawEventArgs const& args)
 	args.Graphics.drawText(ctrl.text(), args.Item.Area, calculateFlags(ctrl.style<StaticStyle>()));
 	
 	args.Graphics.restore();
+}
+
+AnyColour
+LookNFeelProvider::button() {
+	return this->Colours.Button;
+}
+
+Font
+LookNFeelProvider::heading1() {
+	return this->Fonts.Heading1;
+}
+
+Font
+LookNFeelProvider::heading2() {
+	return this->Fonts.Heading2;
+}
+
+Font
+LookNFeelProvider::paragraph() {
+	return this->Fonts.Paragraph;
+}
+
+AnyColour
+LookNFeelProvider::primary() {
+	return this->Colours.Primary;
+}
+
+AnyColour
+LookNFeelProvider::secondary() {
+	return this->Colours.Secondary;
+}
+
+AnyColour
+LookNFeelProvider::window() {
+	return this->Colours.Window;
 }

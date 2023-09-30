@@ -7,7 +7,16 @@ std::shared_ptr<ILookNFeelProvider> const
 Nt6LookNFeel::Instance = std::make_shared<Nt6LookNFeel>();
 
 Nt6LookNFeel::Nt6LookNFeel()
-{}
+{
+	using namespace forms::literals;
+	this->Fonts.Paragraph = Font{L"Segoe UI", DeviceContext::ScreenDC.measureFont(11_pt)};
+	this->Fonts.Heading2 = Font{*this->Fonts.Paragraph.handle(), std::nullopt, DeviceContext::ScreenDC.measureFont(12_pt)};
+	this->Fonts.Heading1 = Font{*this->Fonts.Paragraph.handle(), std::nullopt, DeviceContext::ScreenDC.measureFont(14_pt)};
+	this->Colours.Button = SystemColour::ButtonFace;
+    this->Colours.Primary = SystemColour::WindowText;
+    this->Colours.Secondary = SystemColour::GrayText;
+	this->Colours.Window = SystemColour::Dialog;
+}
 
 void
 Nt6LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) 

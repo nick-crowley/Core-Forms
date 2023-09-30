@@ -7,7 +7,16 @@ std::shared_ptr<ILookNFeelProvider> const
 Win31LookNFeel::Instance = std::make_shared<Win31LookNFeel>();
 
 Win31LookNFeel::Win31LookNFeel()
-{}
+{
+	using namespace forms::literals;
+	this->Fonts.Paragraph = Font{L"FixedSys", DeviceContext::ScreenDC.measureFont(11_pt)};
+	this->Fonts.Heading2 = Font{*this->Fonts.Paragraph.handle(), std::nullopt, DeviceContext::ScreenDC.measureFont(12_pt)};
+	this->Fonts.Heading1 = Font{*this->Fonts.Paragraph.handle(), std::nullopt, DeviceContext::ScreenDC.measureFont(14_pt)};
+	this->Colours.Button = SystemColour::ButtonFace;
+    this->Colours.Primary = SystemColour::WindowText;
+    this->Colours.Secondary = SystemColour::GrayText;
+	this->Colours.Window = SystemColour::Window;
+}
 
 void
 Win31LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) 

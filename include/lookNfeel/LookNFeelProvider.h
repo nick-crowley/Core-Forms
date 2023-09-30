@@ -51,11 +51,32 @@ namespace core::forms
 {
 	class FormsExport LookNFeelProvider : public ILookNFeelProvider
 	{
-	public:
-		satisfies(LookNFeelProvider,
-			IsDefaultConstructible
-		);
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	protected:
+		struct {
+			Font  Heading1;
+			Font  Heading2;
+			Font  Paragraph;
+		} Fonts;
+
+		struct { 
+			AnyColour  Button;
+			AnyColour  Primary;
+			AnyColour  Secondary;
+			AnyColour  Window;
+		} Colours;
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	protected:
+		LookNFeelProvider();
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
 		draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) override;
@@ -86,6 +107,27 @@ namespace core::forms
 
 		void
 		draw(StaticControl& ctrl, OwnerDrawEventArgs const& args) override;
+		
+		AnyColour
+		virtual button() override;
+
+		Font
+		virtual heading1() override;
+
+		Font
+		virtual heading2() override;
+
+		Font
+		virtual paragraph() override;
+
+		AnyColour
+		virtual primary() override;
+
+		AnyColour
+		virtual secondary() override;
+
+		AnyColour
+		virtual window() override;
 	};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

@@ -27,6 +27,8 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
+#include "graphics/Colours.h"
+#include "graphics/Font.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -102,6 +104,27 @@ namespace core::forms
 		void
 		virtual draw(Window& wnd, NonClientPaintEventArgs const& args) abstract;
 		
+		AnyColour
+		virtual button() abstract;
+
+		Font
+		virtual heading1() abstract;
+
+		Font
+		virtual heading2() abstract;
+
+		Font
+		virtual paragraph() abstract;
+
+		AnyColour
+		virtual primary() abstract;
+
+		AnyColour
+		virtual secondary() abstract;
+
+		AnyColour
+		virtual window() abstract;
+
 		void
 		virtual initialize(Dialog& dlg, InitDialogEventArgs const& args) abstract;
 	};
