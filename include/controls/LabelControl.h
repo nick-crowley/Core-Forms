@@ -49,7 +49,6 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		HorizontalAlign TextAlignment = Left;
-		PointSize       TextHeight = PointSize::Default;
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -68,11 +67,6 @@ namespace core::forms
 			return this->TextAlignment;
 		}
 
-		PointSize
-		height() const {
-			return this->TextHeight;
-		}
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
@@ -80,11 +74,6 @@ namespace core::forms
 			this->TextAlignment = horz;
 		}
 
-		void
-		height(PointSize sz) {
-			this->TextHeight = sz;
-		}
-	
 		Response 
 		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
 			if (args.Ident == this->ident()) {

@@ -285,16 +285,9 @@ LookNFeelProvider::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args)
 	args.Graphics.setBrush(ctrl.backColour());
 	args.Graphics.fillRect(args.Item.Area);
 
-	std::optional<Font> customFont;
-	if (auto textHeight = ctrl.height(); textHeight == PointSize::Default) 
-		args.Graphics.setFont(ctrl.font());
-	else {
-		customFont = Font{*StockFont::OemFixed.handle(), std::nullopt, args.Graphics.measureFont(ctrl.height())};
-		args.Graphics.setFont(customFont->handle());
-	}
-
 	// Draw text
 	auto const style = (ctrl.style<StaticStyle>() & ~StaticStyle::TypeMask) | ctrl.align();
+	args.Graphics.setFont(ctrl.font());
 	args.Graphics.textColour(ctrl.textColour(), ctrl.backColour());
 	args.Graphics.drawText(ctrl.text(), args.Item.Area, calculateFlags(style));
 
@@ -316,10 +309,10 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 
 	// Draw item text
 	if (args.Item.Index != args.Empty) {
-	args.Graphics.setFont(ctrl.font());
-	args.Graphics.textColour(selected ? SystemColour::HighlightText : ctrl.textColour(),
-	                         selected ? SystemColour::Highlight : ctrl.backColour());
-	args.Graphics.drawText(ctrl.Items[args.Item.Index].text(), rcItem);
+		args.Graphics.setFont(ctrl.font());
+		args.Graphics.textColour(selected ? SystemColour::HighlightText : ctrl.textColour(),
+								 selected ? SystemColour::Highlight : ctrl.backColour());
+		args.Graphics.drawText(ctrl.Items[args.Item.Index].text(), rcItem);
 	}
 
 	args.Graphics.restore();
