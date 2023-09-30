@@ -17,15 +17,15 @@ CALLBACK Window::HierarchyIterator::onNextChildWindow(::HWND child, ::LPARAM ite
 	win::Boolean constexpr 
 	static ContinueSearch{true};
 
-	auto pThis = reinterpret_cast<type*>(iterator);
+	auto* const thís = reinterpret_cast<type*>(iterator);
 
 	// [OPTIONAL] Exclude non-direct descendants
-	if (pThis->Flags == DirectDescendants && ::GetParent(child) != pThis->Parent)
+	if (thís->Flags == DirectDescendants && ::GetParent(child) != thís->Parent)
 		return ContinueSearch;
 
 	// Exclude windows we didn't create
 	if (Window::ExistingWindows.contains(child))
-		pThis->Children.push_back(child);
+		thís->Children.push_back(child);
 	
 	return ContinueSearch;
 }
