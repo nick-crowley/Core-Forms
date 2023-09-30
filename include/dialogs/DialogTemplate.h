@@ -66,14 +66,12 @@ namespace core::forms
 		std::optional<uint8_t>          Italic;
 		std::optional<uint8_t>          CharSet;
 		std::vector<DialogItemTemplate> Controls;
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(DialogTemplate,
 			IsRegular,
 			NotSortable
 		);
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
