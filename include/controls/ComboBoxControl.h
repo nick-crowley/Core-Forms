@@ -605,7 +605,20 @@ namespace core::forms
 			Invariant(!this->exists());
 			this->EditFont = newFont;
 		}
+		
+		Response 
+		virtual onCommand(CommandEventArgs args) override
+		{
+			// [EDIT/LISTBOX] Ignore notification as controls are unmanaged
+			if (args.Source == CommandEventArgs::Control) {
+				if (args.Notification->Handle == this->DroppedItemsList.handle()
+				 || args.Notification->Handle == this->SelectedItemEdit.handle())
+					return Unhandled;
+			}
 
+			return base::onCommand(args);
+		}
+	
 		//! TODO: Delete item data
 		Response
 		virtual onDeleteItem(void* args) = delete;
