@@ -12,9 +12,13 @@
 
 	<Type Name="core::win::ResourceId">
 		<Intrinsic Name="index" Expression="(int)Ident._Which"/>
-		<DisplayString Condition="index() == 0" Optional="true">{{ #{Ident._Head} }}</DisplayString>
-		<DisplayString Condition="index() == 1" Optional="true">{{ {Ident._Head._Tail,su} }}</DisplayString>
+		<DisplayString Condition="index() == 0" Optional="true">#{Ident._Head}</DisplayString>
+		<DisplayString Condition="index() == 1" Optional="true">{Ident._Tail._Head,su}</DisplayString>
 		<DisplayString>&lt;Cannot determine&gt;</DisplayString>
+	</Type>
+
+	<Type Name="core::forms::Rect">
+		<DisplayString>{{ {Left},{Top} [{Right-Left}x{Bottom-Top}] }}</DisplayString>
 	</Type>
 
 	<Type Name="core::forms::DeviceContext">
