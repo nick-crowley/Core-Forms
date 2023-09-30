@@ -911,7 +911,7 @@ namespace core::forms
 				
 				// Raise equivalent event, if any, after processing completed
 				if (wnd)
-				wnd->raiseMessageEvent(message, wParam, lParam);
+					wnd->raiseMessageEvent(message, wParam, lParam);
 
 				return result;
 			} 
@@ -971,6 +971,7 @@ namespace core::forms
 
 		Window*
 		parent() const {
+			// @bug	Refactor this to use Window::ExistingWindows.find() because parent may not be managed
 			auto const wnd = ::GetParent(this->handle());
 			return wnd ? &Window::ExistingWindows[wnd] : nullptr;
 		}
