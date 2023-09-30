@@ -301,10 +301,12 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	args.Graphics.fillRect(rcItem);
 
 	// Draw item text
+	if (args.Item.Index != args.Empty) {
 	args.Graphics.setFont(ctrl.font());
 	args.Graphics.textColour(selected ? SystemColour::HighlightText : ctrl.textColour(),
 	                         selected ? SystemColour::Highlight : ctrl.backColour());
 	args.Graphics.drawText(ctrl.Items[args.Item.Index].text(), rcItem);
+	}
 
 	args.Graphics.restore();
 }
