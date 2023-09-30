@@ -115,7 +115,7 @@ namespace core::forms
 		ButtonControl(uint16_t id)
 		  : Control{id}
 		{
-			this->backColour(SystemColour::ButtonFace);
+			this->backColour(this->LookNFeel->button());
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 

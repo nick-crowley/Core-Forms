@@ -353,7 +353,6 @@ namespace core::forms
 	
 		Response 
 		virtual onInitDialog(InitDialogEventArgs args) {
-			this->LookNFeel->initialize(*this,args);
 			return FALSE;
 		}
 	

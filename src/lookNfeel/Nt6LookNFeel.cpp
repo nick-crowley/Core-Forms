@@ -93,27 +93,3 @@ Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs const& args)
 
 	args.Graphics->restore();
 }
-
-void
-Nt6LookNFeel::initialize(Dialog& dlg, InitDialogEventArgs const& args) 
-{
-	using namespace forms::literals;
-	this->WindowFont = Font{L"Segoe UI", dlg.clientDC().measureFont(11_pt)};
-
-	for (Window& ctrl : dlg.Children) {
-		switch (ctrl.role())
-		{
-		case WindowRole::ComboBox:
-		case WindowRole::List:
-			ctrl.backColour(SystemColour::Window);
-			break;
-
-		default:
-			ctrl.backColour(SystemColour::Dialog);
-			break;
-		}
-		ctrl.textColour(SystemColour::WindowText);
-		ctrl.font(this->WindowFont);
-		ctrl.lookNfeel(this->shared_from_this());
-	}
-}

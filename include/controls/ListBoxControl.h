@@ -361,7 +361,9 @@ namespace core::forms
 		  : Control{id}, 
 		    SelectedItems(*this), 
 		    Items(*this)
-		{}
+		{
+			this->backColour(this->LookNFeel->window());
+		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 

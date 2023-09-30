@@ -112,15 +112,3 @@ Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs const& args)
 	
 	args.Graphics->restore();
 }
-
-void
-Win31LookNFeel::initialize(Dialog& dlg, InitDialogEventArgs const& args) 
-{
-	for (Window& ctrl : dlg.Children) {
-		if (ctrl.role() != WindowRole::PushButton)
-			ctrl.backColour(SystemColour::Window);
-		ctrl.textColour(SystemColour::WindowText);
-		ctrl.font(this->WindowFont);
-		ctrl.lookNfeel(this->shared_from_this());
-	}
-}

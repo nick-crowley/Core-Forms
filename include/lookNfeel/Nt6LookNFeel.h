@@ -39,18 +39,13 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class FormsExport Nt6LookNFeel : public LookNFeelProvider, 
-	                                 public std::enable_shared_from_this<ILookNFeelProvider>
+	class FormsExport Nt6LookNFeel : public LookNFeelProvider
 	{
 		using base = LookNFeelProvider;
 		
 	public:
 		std::shared_ptr<ILookNFeelProvider> const
 		static Instance;
-
-	private:
-		SystemBrush  Background = SystemBrush::Dialog;
-		Font         WindowFont = StockFont::DefaultGui;
 
 	public:
 		Nt6LookNFeel();
@@ -66,9 +61,6 @@ namespace core::forms
 	
 		void
 		draw(Window& wnd, NonClientPaintEventArgs const& args) override;
-		
-		void
-		initialize(Dialog& dlg, InitDialogEventArgs const& args) override;
 	};
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

@@ -32,7 +32,6 @@ CALLBACK Window::HierarchyIterator::onNextChildWindow(::HWND child, ::LPARAM ite
 
 Window::Window()
   : Children(*this),
-    Background{SystemBrush::Dialog.handle()},
     LookNFeel{Nt6LookNFeel::Instance},
     Timers(*this)
 {

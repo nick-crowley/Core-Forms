@@ -124,9 +124,6 @@ namespace core::forms
 
 		AnyColour
 		virtual window() abstract;
-
-		void
-		virtual initialize(Dialog& dlg, InitDialogEventArgs const& args) abstract;
 	};
 
 	using SharedLookNFeelProvider = std::shared_ptr<ILookNFeelProvider>;

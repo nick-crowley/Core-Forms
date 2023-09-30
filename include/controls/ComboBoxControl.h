@@ -541,6 +541,7 @@ namespace core::forms
 		    Items{*this}
 		{
 			this->Created += {*this, &ComboBoxControl::this_OnCreated};
+			this->backColour(this->LookNFeel->window());
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 

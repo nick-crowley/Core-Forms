@@ -783,12 +783,12 @@ namespace core::forms
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		AnyColour           BackColour = SystemColour::Window;
-		AnyColour           TextColour = SystemColour::WindowText;
-		Font                WindowFont = StockFont::SystemFixed;
+		std::optional<AnyColour> BackColour;
+		std::optional<Brush>     Background;
+		std::optional<AnyColour> TextColour;
+		std::optional<Font>      WindowFont;
 
 	protected:
-		std::optional<Brush>    Background;
 		DebuggingAide           Debug;
 		SharedLookNFeelProvider LookNFeel;
 
@@ -948,15 +948,16 @@ namespace core::forms
 			if (this->Background)
 				return this->Background->handle();
 
-			if (std::holds_alternative<SystemColour>(this->BackColour))
-				return SystemBrush::get(std::get<SystemColour>(this->BackColour)).handle();
+			if (this->BackColour)
+				if (auto* const sysColour = std::get_if<SystemColour>(&*this->BackColour); sysColour)
+					return SystemBrush::get(*sysColour).handle();
 			
 			return this->wndcls().Background;
 		}
 
 		AnyColour
 		backColour() const {
-			return this->BackColour;
+			return this->BackColour.value_or(this->LookNFeel->window());
 		}
 		
 		Rect
@@ -966,7 +967,7 @@ namespace core::forms
 
 		Font
 		font() const {
-			return this->WindowFont;
+			return this->WindowFont.value_or(this->LookNFeel->paragraph());
 		}
 
 		Window*
@@ -984,7 +985,7 @@ namespace core::forms
 
 		AnyColour
 		textColour() const {
-			return this->TextColour;
+			return this->TextColour.value_or(this->LookNFeel->primary());
 		}
 		
 		Rect
@@ -1048,8 +1049,8 @@ namespace core::forms
 		}
 		
 		void
-		lookNfeel(SharedLookNFeelProvider newFeel) {
-			this->LookNFeel = ThrowIfEmpty(newFeel);
+		font(const Font& newFont) {
+			this->WindowFont = newFont; 
 		}
 		
 		void
@@ -1190,8 +1191,6 @@ namespace core::forms
 		
 		Response
 		virtual onSetFont(SetWindowFontEventArgs args) {
-			if (args.Font != this->WindowFont.handle())
-				this->WindowFont = Font{args.Font};
 			return Unhandled;
 		}
 	

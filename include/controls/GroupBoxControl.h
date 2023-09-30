@@ -51,7 +51,9 @@ namespace core::forms
 	public:
 		implicit
 		GroupBoxControl(uint16_t id) : ButtonControl{id}
-		{}
+		{
+			this->font(this->LookNFeel->heading2());
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
