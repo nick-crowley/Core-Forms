@@ -43,10 +43,10 @@ namespace core::forms
 namespace core::forms
 {
 	struct SetWindowFontEventArgs {
-		SharedFont  Font;
+		SharedFont  NewFont;
 
 		SetWindowFontEventArgs(::WPARAM w, ::LPARAM [[maybe_unused]] l)
-		  : Font{reinterpret_cast<::HFONT>(w), weakref}
+		  : NewFont{reinterpret_cast<::HFONT>(w), weakref}
 		{
 		}
 	};
