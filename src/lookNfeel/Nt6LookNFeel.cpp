@@ -26,6 +26,7 @@ Nt6LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 
 	// Draw frame
 	auto const text = ctrl.text();
+	args.Graphics.setFont(ctrl.font());
 	auto const textSize = args.Graphics.measureText(text);
 	auto const frameRect = args.Item.Area - Border{1, textSize.Height/2, 0, 0};
 	Pen const  thickPen{SystemColour::ButtonShadow, 2};
@@ -36,7 +37,6 @@ Nt6LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	// Draw text
 	auto const frameText = L' ' + text + L' ';
 	auto const textOffset = Point{SystemMetric::cxSmallIcon,0};
-	args.Graphics.setFont(ctrl.font());
 	args.Graphics.textColour(ctrl.textColour(), ctrl.backColour());
 	args.Graphics.drawText(frameText, args.Item.Area + textOffset, DrawTextFlags::Top);
 
