@@ -105,11 +105,16 @@ namespace core::forms
 
 			std::wstring
 			text() const {
-				size_t const length = ListBox_GetTextLen(this->ListBox.handle(), this->Index)+1;
-				std::wstring buffer(length, L'\0');
-				ListBox_GetText(this->ListBox.handle(), this->Index, buffer.data());
-				buffer.pop_back();
-				return buffer;
+				if (size_t const length = ListBox_GetTextLen(this->ListBox.handle(), this->Index)+1; !length)
+					throw runtime_error{"ListBox_GetTextLen(#{}) failed", this->Index};
+				else if (length == 1)
+					return {};
+				else {
+					std::wstring buffer(length, L'\0');
+					ListBox_GetText(this->ListBox.handle(), this->Index, buffer.data());
+					buffer.pop_back();
+					return buffer;
+				}
 			}
 
 			size_t
