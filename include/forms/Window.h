@@ -1043,8 +1043,8 @@ namespace core::forms
 		}
 		
 		void
-		font(const Font& newFont) {
-			SetWindowFont(this->handle(), *newFont.handle(), FALSE);
+		focus() {
+			::SetFocus(this->handle());
 		}
 		
 		void
