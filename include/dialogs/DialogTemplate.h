@@ -84,7 +84,12 @@ namespace core::forms
 		subclassControls(ControlDictionary const& bindings) 
 		{
 			for (auto& ctrl : this->Controls) {
-				if (ctrl.ClassName && bindings.contains(ctrl.Ident)) {
+				if (!ctrl.ClassName)
+					continue;
+				else if (!bindings.contains(ctrl.Ident)) {
+					clog << Warning{"Dialog control #{} is unmanaged (so it will not receive look-n-feel)", (signed)ctrl.Ident};
+				}
+				else {
 					if (ctrl.ClassName->is_numeric())
 						switch (uint16_t id = ctrl.ClassName->as_number(); id) {
 						case ClassId::Button:    ctrl.ClassName = win::ResourceId(L"Custom.BUTTON");    break;
