@@ -94,8 +94,9 @@ namespace core::forms
 
 		using SharedEarlierState = std::shared_ptr<EarlierState>;
 
-		/*DeviceContext
-		static ScreenDC;*/
+	public:
+		DeviceContext
+		static ScreenDC;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:

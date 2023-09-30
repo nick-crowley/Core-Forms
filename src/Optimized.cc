@@ -13,6 +13,7 @@
 #include "dialogs/DialogTemplateWriter.cpp"
 
 #include "graphics/Font.cpp"
+#include "graphics/Graphics.cpp"
 #include "graphics/StockBrush.cpp"
 #include "graphics/StockPen.cpp"
 #include "graphics/StockFont.cpp"
