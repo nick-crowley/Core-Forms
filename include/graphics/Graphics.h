@@ -570,7 +570,8 @@ namespace core::forms
 
 			this->backMode(DrawingMode::Opaque);
 		}
-
+		
+		//! @brief	Changes the background colour (used for text backgrounds and non-solid pen backgrounds)
 		void
 		backColour(SystemColour newcolour) {
 			this->backColour(to_colour(newcolour));
