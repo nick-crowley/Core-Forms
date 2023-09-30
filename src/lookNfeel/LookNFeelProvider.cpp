@@ -134,7 +134,7 @@ LookNFeelProvider::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	
 	// Draw check
 	auto const checked = ctrl.checked();
-	Rect const content = args.Item.Area - Border{SystemMetric::cxFixedFrame};
+	Rect const content = args.Item.Area;
 	Rect const tick {content.topLeft(), Size{SystemMetric::cxSmallIcon,SystemMetric::cySmallIcon}};
 	args.Graphics.drawControl(tick, DFC_BUTTON, DFCS_BUTTONCHECK|(checked?DFCS_CHECKED:0));
 	
