@@ -41,9 +41,9 @@ namespace core::forms
 		Button = 0x0080,
 		Edit = 0x0081,
 		Static = 0x0082,
-		Listbox = 0x0083,
-		Scrollbar = 0x0084,
-		Combobox = 0x0085,
+		ListBox = 0x0083,
+		ScrollBar = 0x0084,
+		ComboBox = 0x0085,
 		Desktop = 0x8001
 	};
 }
