@@ -213,6 +213,11 @@ namespace core::forms
 			::EnableWindow(this->handle(), win::Boolean{enabled});
 		}
 	
+		void
+		font(::HFONT newFont, bool redraw = false) {
+			SetWindowFont(this->handle(), newFont, win::Boolean{redraw});
+		}
+	
 		void 
 		hide() {
 			::ShowWindow(this->handle(), SW_HIDE);
