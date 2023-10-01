@@ -1093,6 +1093,11 @@ namespace core::forms
 		}
 	
 		Response 
+		virtual onControlColour(ControlColourEventArgs args) {
+			return Unhandled;
+		}
+	
+		Response 
 		virtual onEraseBackground(EraseBackgroundEventArgs args) {
 			return Unhandled;
 		}
@@ -1321,6 +1326,14 @@ namespace core::forms
 			case WM_PAINT:
 				return this->onPaint({this});
 			
+			case WM_CTLCOLORDLG:
+			case WM_CTLCOLORSTATIC:
+			case WM_CTLCOLOREDIT:
+			case WM_CTLCOLORBTN:
+			case WM_CTLCOLORLISTBOX:
+			case WM_CTLCOLORSCROLLBAR:
+				return this->onControlColour({message,wParam,lParam});
+
 			case WM_DRAWITEM:
 				return wParam ? this->onOwnerDraw({wParam,lParam}) 
 							  : this->onOwnerDrawMenu({wParam,lParam});

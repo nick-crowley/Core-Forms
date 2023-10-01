@@ -30,6 +30,7 @@
 
 #include "forms/Window.cpp"
 #include "forms/WindowClass.cpp"
+#include "forms/EventArgs/ControlColourEventArgs.cpp"
 #include "forms/EventArgs/MeasureItemEventArgs.cpp"
 #include "forms/EventArgs/OwnerDrawEventArgs.cpp"
 #include "forms/EventArgs/OwnerDrawMenuEventArgs.cpp"

@@ -27,26 +27,9 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
-#include "forms/EventArgs/CommandEventArgs.h"
-#include "forms/EventArgs/CreateWindowEventArgs.h"
-#include "forms/EventArgs/ControlColourEventArgs.h"
-#include "forms/EventArgs/EraseBackgroundEventArgs.h"
-#include "forms/EventArgs/GetObjectEventArgs.h"
-#include "forms/EventArgs/MeasureItemEventArgs.h"
-#include "forms/EventArgs/MinMaxEventArgs.h"
-#include "forms/EventArgs/MouseEventArgs.h"
-#include "forms/EventArgs/NonClientActivateEventArgs.h"
-#include "forms/EventArgs/NonClientHitTestEventArgs.h"
-#include "forms/EventArgs/NonClientMouseEventArgs.h"
-#include "forms/EventArgs/NonClientPaintEventArgs.h"
-#include "forms/EventArgs/OwnerDrawEventArgs.h"
-#include "forms/EventArgs/OwnerDrawMenuEventArgs.h"
-#include "forms/EventArgs/PaintWindowEventArgs.h"
-#include "forms/EventArgs/ResizeWindowEventArgs.h"
-#include "forms/EventArgs/SetWindowFontEventArgs.h"
-#include "forms/EventArgs/ShowWindowEventArgs.h"
-#include "forms/EventArgs/TimerEventArgs.h"
-#include "forms/EventArgs/UserEventArgs.h"
+#include "core/ObservableEvent.h"
+#include "graphics/Graphics.h"
+#include "forms/UnmanagedWindow.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -61,11 +44,27 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	//! @brief	Delegate for a 'standard' window event (ie. one that doesn't require a custom second parameter)
-	using WindowDelegate = Delegate<void (Window&)>;
+	struct ControlColourEventArgs 
+	{
+		enum SupportedSender {
+			Button = WM_CTLCOLORBTN,
+			Dialog = WM_CTLCOLORDLG,
+			Edit = WM_CTLCOLOREDIT,
+			ListBox = WM_CTLCOLORLISTBOX,
+			ScrollBar = WM_CTLCOLORSCROLLBAR,
+			Static = WM_CTLCOLORSTATIC,
+		};
 
-	//! @brief	'standard' window event (ie. one without custom data)
-	using WindowEvent = ObservableEvent<WindowDelegate>;
+		DeviceContext   mutable Graphics;
+		Window*         Managed;
+		UnmanagedWindow Window;
+		SupportedSender Source;
+
+		ControlColourEventArgs(::UINT msg, ::WPARAM hdc, ::LPARAM wnd);
+	};
+	
+	using ControlColourDelegate = Delegate<void (Window&,ControlColourEventArgs)>;
+	using ControlColourEvent = ObservableEvent<ControlColourDelegate>;
 
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
