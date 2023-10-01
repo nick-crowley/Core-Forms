@@ -325,7 +325,7 @@ namespace core::forms
 		class FormsExport DebuggingAide 
 		{
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-		private:
+		public:
 			class FormsExport StateDescription {
 			public:
 				ProcessingState State;
@@ -790,9 +790,9 @@ namespace core::forms
 		std::optional<Brush> mutable  Background;
 		std::optional<AnyColour>      TextColour;
 		std::optional<Font>           WindowFont;
+		DebuggingAide              Debug;
 
 	protected:
-		DebuggingAide           Debug;
 		SharedLookNFeelProvider LookNFeel;
 
 	public:
@@ -1462,6 +1462,10 @@ namespace core::forms
 			return ::DefWindowProc(this->handle(), message, wParam, lParam);
 		}
 		
+		auto
+		setTemporaryState(DebuggingAide::StateDescription newState) {
+			return this->Debug.setTemporaryState(newState);
+		}
 	private:
 		void 
 		createInternal(CreateWindowParams const& w) 

@@ -455,7 +455,7 @@ namespace core::forms
 
 			// Transition internal state
 			this->DisplayMode.emplace(mode);
-			auto const onExit = this->Debug.setTemporaryState(ProcessingState::BeingCreated);
+			auto const onExit = this->setTemporaryState(ProcessingState::BeingCreated);
 		
 			// [MODAL] Display, block, and return result
 			auto const container = source.handle();

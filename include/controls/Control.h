@@ -118,8 +118,8 @@ namespace core::forms
 
 		Response
 		virtual onOfferNotification(::UINT [[maybe_unused]] notification) override {
-			auto const _ = this->Debug.setTemporaryState({ProcessingState::NotificationProcessing,
-			                                             Window::MessageDatabase.name(notification)});
+			auto const _ = this->setTemporaryState({ProcessingState::NotificationProcessing,
+			                                        Window::MessageDatabase.name(notification)});
 			return Unhandled;
 		}
 
