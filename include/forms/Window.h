@@ -479,22 +479,16 @@ namespace core::forms
 			inline static npos = UINT32_MAX;
 
 		public:
-			enum SearchBehaviour { AllDescendants = 1, DirectDescendants = 2 };
+			enum SearchBehaviour { Ancestors = 1, Children = 2, Managed = 4, Unmanaged = 8 };
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
-			mutable HandleCollection  Children;
-			SearchBehaviour           Flags = static_cast<SearchBehaviour>(0);
-			::HWND	                  Parent = nullptr;
-			unsigned                  Index = npos;
+			mutable HandleCollection      Results;
+			nstd::bitset<SearchBehaviour> Flags;
+			::HWND	                      Parent = nullptr;
+			unsigned                      Index = type::npos;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		 public:
-			HierarchyIterator(::HWND parent, SearchBehaviour descendants) noexcept 
-			  : Flags{descendants}, Parent{parent}, Index{0}
-			{
-				std::ignore = ::EnumChildWindows(parent, &type::onNextChildWindow, (::LPARAM)(uintptr_t)this);
-				if (this->Children.empty()) 
-					*this = type{};
-			}
+			HierarchyIterator(::HWND parent, SearchBehaviour descendants) noexcept;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			satisfies(HierarchyIterator,
@@ -515,13 +509,13 @@ namespace core::forms
 
 			::HWND& 
 			dereference() const { 
-				return this->Children[this->Index]; 
+				return this->Results[this->Index]; 
 			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			void 
 			increment() { 
-				if (++this->Index == this->Children.size())
+				if (++this->Index == this->Results.size())
 					*this = type{};
 			}
 		};
@@ -567,7 +561,7 @@ namespace core::forms
 			begin(this Self&& self) {
 				Invariant(self.Parent.exists());
 				return boost::make_transform_iterator(
-					HierarchyIterator{ self.Parent.handle(), HierarchyIterator::DirectDescendants }, 
+					HierarchyIterator{ self.Parent.handle(), HierarchyIterator::Children|HierarchyIterator::Managed }, 
 					&ChildWindowCollection::lookupWindow<nstd::mirror_cv_ref_t<Self,Window>>
 				);
 			}
@@ -1500,6 +1494,11 @@ namespace core::forms
 		}
 	};
 } // namespace core::forms
+
+namespace core::meta
+{
+	metadata bool Settings<bitwise_enum, forms::Window::HierarchyIterator::SearchBehaviour> = true;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

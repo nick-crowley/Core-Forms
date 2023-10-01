@@ -11,6 +11,15 @@ Window::BeneathCursor{};
 Window::ExistingWindowCollection 
 Window::ExistingWindows{};
 
+Window::HierarchyIterator::HierarchyIterator(::HWND parent, SearchBehaviour descendants) noexcept 
+  : Flags{descendants}, Parent{parent}, Index{0}
+{
+	ThrowIf(descendants, (descendants & (Managed|Unmanaged)) == 0);
+	std::ignore = ::EnumChildWindows(parent, &type::onNextChildWindow, (::LPARAM)(uintptr_t)this);
+	if (this->Results.empty()) 
+		*this = type{};
+}
+
 ::BOOL 
 CALLBACK Window::HierarchyIterator::onNextChildWindow(::HWND child, ::LPARAM iterator) 
 {
@@ -19,13 +28,15 @@ CALLBACK Window::HierarchyIterator::onNextChildWindow(::HWND child, ::LPARAM ite
 
 	auto* const thís = reinterpret_cast<type*>(iterator);
 
-	// [OPTIONAL] Exclude non-direct descendants
-	if (thís->Flags == DirectDescendants && ::GetParent(child) != thís->Parent)
+	// [CHILDREN] Exclude non-direct descendants
+	if (thís->Flags.test(SearchBehaviour::Children) && ::GetParent(child) != thís->Parent)
 		return ContinueSearch;
 
-	// Exclude windows we didn't create
-	if (Window::ExistingWindows.contains(child))
-		thís->Children.push_back(child);
+	// [MANAGED] Exclude windows we didn't create
+	bool const isManaged = Window::ExistingWindows.contains(child);
+	if ((thís->Flags.test(SearchBehaviour::Managed) && isManaged)
+	 || (thís->Flags.test(SearchBehaviour::Unmanaged) && !isManaged))
+		thís->Results.push_back(child);
 	
 	return ContinueSearch;
 }
