@@ -78,7 +78,7 @@ protected:
 	{
 		// Enable owner-draw on all subclassed controls to enable look-n-feel support
 		for(auto& ctrl : args.Template.Controls) 
-			if (ctrl.subclassed())
+			if (ctrl.managed())
 				ctrl.setOwnerDraw();
 	}
 	

@@ -70,7 +70,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		bool
-		subclassed() const {
+		managed() const {
 			return !this->ClassName.is_numeric() 
 			    && this->ClassName.as_string().starts_with(L"Custom.");
 		}
