@@ -763,15 +763,15 @@ namespace core::forms
 	public:
 		//! @brief	Sentinel: the message was not handled
 		Response const
-		static inline Unhandled { Response::Unhandled };
+		inline static Unhandled { Response::Unhandled };
 
 		//! @brief	Sentinel: error processing message
 		Response const
-		static inline Error { Response::Error };
+		inline static Error { Response::Error };
 		
 		//! @brief	All window messages and their return values
 		MessageDictionary const
-		static inline MessageDatabase;
+		inline static MessageDatabase;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Representation o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
