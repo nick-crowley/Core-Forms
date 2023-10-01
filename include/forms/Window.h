@@ -210,7 +210,7 @@ namespace core::forms
 		public:
 			std::vector<std::byte> 
 			asBytes() const {
-				Expects(this->Length <= sizeof(Window*));	// FIXME: Replace this @c Expects() with @c Invariant()
+				Invariant(this->Length <= sizeof(Window*));
 				auto const r = std::as_bytes(std::span{&this->Parameter,1});
 				return {r.begin(), r.begin() + this->Length};
 			}
