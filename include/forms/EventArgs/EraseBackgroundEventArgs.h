@@ -46,7 +46,7 @@ namespace core::forms
 	class EraseBackgroundEventArgs
 	{
 	public:
-		mutable DeviceContext  Graphics;
+		DeviceContext  mutable Graphics;
 
 	public:
 		EraseBackgroundEventArgs(::WPARAM w, ::LPARAM)

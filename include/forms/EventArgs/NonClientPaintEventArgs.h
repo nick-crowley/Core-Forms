@@ -79,12 +79,12 @@ namespace core::forms
 
 	class FormsExport NonClientPaintEventArgs {
 	public:
-		Region                                Area;
-		Rect                                  Bounds;
-		mutable std::optional<DeviceContext>  Graphics;
-		std::optional<Region>                 InvalidArea;
-		Window*                               Window;
-		WindowCaptionState                    State;
+		Region                         Area;
+		Rect                           Bounds;
+		std::optional<DeviceContext>   mutable Graphics;
+		std::optional<Region>          InvalidArea;
+		Window*                        Window;
+		WindowCaptionState             State;
 
 	public:
 		NonClientPaintEventArgs(forms::Window* window, ::WPARAM w, ::LPARAM) 

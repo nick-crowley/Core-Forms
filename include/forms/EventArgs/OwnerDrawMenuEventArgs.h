@@ -59,7 +59,7 @@ namespace core::forms
 		nstd::bitset<OwnerDrawAction> Action;
 		ItemData                      Item;
 		::HMENU                       Menu;
-		mutable DeviceContext         Graphics;
+		DeviceContext                 mutable Graphics;
 
 	public:
 		OwnerDrawMenuEventArgs(::WPARAM w, ::LPARAM l);

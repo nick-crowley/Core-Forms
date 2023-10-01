@@ -56,18 +56,18 @@ namespace core::forms
 				ThrowIf(data, data.CtlType == ODT_MENU);
 			}
 
-			uintptr_t          UserData;
-			ItemIndex          Index;
+			uintptr_t     UserData;
+			ItemIndex     Index;
 		};
 
 	public:
-		uint16_t               Ident;		//!< Control Identifier
-		ItemData               Item;	
-		mutable DeviceContext  Graphics;
-		OwnerDrawControl       Type;
-		uint32_t&              Width;
-		uint32_t&              Height;
-		Window*                Window;
+		uint16_t          Ident;		//!< Control Identifier
+		ItemData          Item;	
+		DeviceContext     mutable Graphics;
+		OwnerDrawControl  Type;
+		uint32_t&         Width;
+		uint32_t&         Height;
+		Window*           Window;
 
 	public:
 		MeasureItemEventArgs(forms::Window& wnd, ::WPARAM w, ::LPARAM l)

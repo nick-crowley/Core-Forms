@@ -482,7 +482,7 @@ namespace core::forms
 			enum SearchBehaviour { Ancestors = 1, Children = 2, Managed = 4, Unmanaged = 8 };
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
-			mutable HandleCollection      Results;
+			HandleCollection              mutable Results;
 			nstd::bitset<SearchBehaviour> Flags;
 			::HWND	                      Parent = nullptr;
 			unsigned                      Index = type::npos;
@@ -787,7 +787,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		std::optional<AnyColour>      BackColour;
-		std::optional<Brush> mutable  Background;
+		std::optional<Brush>          mutable Background;
 		std::optional<AnyColour>      TextColour;
 		std::optional<Font>           WindowFont;
 		DebuggingAide              Debug;

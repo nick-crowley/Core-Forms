@@ -49,8 +49,7 @@ namespace core::forms
 
 	public:
 		std::optional<Rect>           Area;
-		mutable 
-		std::optional<DeviceContext>  Graphics;
+		std::optional<DeviceContext>  mutable Graphics;
 		std::optional<bool>           Erase = false, 
 									  Restore = false, 
 									  Update = false;
