@@ -102,9 +102,7 @@ namespace core::forms
 				case CommonControl::ScrollBar: ctrl.ClassName = win::ResourceId(L"Custom.SCROLLBAR"); break;
 				case CommonControl::ComboBox:  ctrl.ClassName = win::ResourceId(L"Custom.COMBOBOX");  break;
 				case CommonControl::Link:      ctrl.ClassName = win::ResourceId(L"Custom.LINK");      break;
-
-				default:
-					throw invalid_argument{"Controls with class id {} not yet supported", core::to_string(id)};
+				default: throw invalid_argument{"Controls with window class {} not yet supported", win::to_string(*ctrl.ClassName)};
 				}
 				
 				// [GROUP-BOX] GroupBoxes must have the @c WindowStyle::ClipSiblings style to prevent them from over-painting
