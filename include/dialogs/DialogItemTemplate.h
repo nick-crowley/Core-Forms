@@ -69,6 +69,11 @@ namespace core::forms
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		CommonControl
+		kind() const {
+			return forms::identifyControl(this->ClassName.as_id());
+		}
+
 		bool
 		managed() const {
 			return !this->ClassName.is_numeric() 
