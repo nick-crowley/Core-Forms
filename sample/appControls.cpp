@@ -76,9 +76,10 @@ protected:
 	void
 	virtual onLoadDialog(forms::LoadDialogEventArgs args) override
 	{
-		// Enable owner-draw on all controls (where supported) to enable look-n-feel support
+		// Enable owner-draw on all subclassed controls to enable look-n-feel support
 		for(auto& ctrl : args.Template.Controls) 
-			ctrl.setOwnerDraw();
+			if (ctrl.subclassed())
+				ctrl.setOwnerDraw();
 	}
 	
 private:
