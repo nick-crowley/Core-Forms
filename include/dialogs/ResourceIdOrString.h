@@ -89,7 +89,7 @@ namespace core::forms
 		as_string() const 
 		{
 			Invariant(!this->is_numeric());
-			this->as_id().as_string();
+			return this->as_id().as_string();
 		}
 
 		bool 
