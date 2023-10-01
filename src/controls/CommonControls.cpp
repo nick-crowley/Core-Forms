@@ -46,24 +46,24 @@ ControlRegistration::ControlRegistration()
 
 CommonControl
 forms::identifyControl(win::ResourceId className) noexcept {
-	win::ResourceId const  static CustomStatic(L"Custom.STATIC");
-	win::ResourceId const  static StandardStatic(WC_STATIC);
-	win::ResourceId const  static NumericStatic(ClassId::Static);
-	win::ResourceId const  static CustomEdit(L"Custom.EDIT");
-	win::ResourceId const  static StandardEdit(WC_EDIT);
-	win::ResourceId const  static NumericEdit(ClassId::Edit);
-	win::ResourceId const  static CustomButton(L"Custom.BUTTON");
-	win::ResourceId const  static StandardButton(WC_BUTTON);
-	win::ResourceId const  static NumericButton(ClassId::Button);
-	win::ResourceId const  static CustomComboBox(L"Custom.COMBOBOX");
-	win::ResourceId const  static StandardComboBox(WC_COMBOBOX);
-	win::ResourceId const  static NumericComboBox(ClassId::ComboBox);
-	win::ResourceId const  static CustomListBox(L"Custom.LISTBOX");
-	win::ResourceId const  static StandardListBox(WC_LISTBOX);
-	win::ResourceId const  static NumericListBox(ClassId::ListBox);
-	win::ResourceId const  static CustomScrollBar(L"Custom.SCROLLBAR");
-	win::ResourceId const  static StandardScrollBar(WC_SCROLLBAR);
-	win::ResourceId const  static NumericScrollBar(ClassId::ScrollBar);
+	win::ResourceId constexpr  static CustomStatic(L"Custom.STATIC");
+	win::ResourceId constexpr  static StandardStatic(WC_STATIC);
+	win::ResourceId constexpr  static NumericStatic(ClassId::Static);
+	win::ResourceId constexpr  static CustomEdit(L"Custom.EDIT");
+	win::ResourceId constexpr  static StandardEdit(WC_EDIT);
+	win::ResourceId constexpr  static NumericEdit(ClassId::Edit);
+	win::ResourceId constexpr  static CustomButton(L"Custom.BUTTON");
+	win::ResourceId constexpr  static StandardButton(WC_BUTTON);
+	win::ResourceId constexpr  static NumericButton(ClassId::Button);
+	win::ResourceId constexpr  static CustomComboBox(L"Custom.COMBOBOX");
+	win::ResourceId constexpr  static StandardComboBox(WC_COMBOBOX);
+	win::ResourceId constexpr  static NumericComboBox(ClassId::ComboBox);
+	win::ResourceId constexpr  static CustomListBox(L"Custom.LISTBOX");
+	win::ResourceId constexpr  static StandardListBox(WC_LISTBOX);
+	win::ResourceId constexpr  static NumericListBox(ClassId::ListBox);
+	win::ResourceId constexpr  static CustomScrollBar(L"Custom.SCROLLBAR");
+	win::ResourceId constexpr  static StandardScrollBar(WC_SCROLLBAR);
+	win::ResourceId constexpr  static NumericScrollBar(ClassId::ScrollBar);
 
 	if (className == NumericButton || className == StandardButton || className == CustomButton)
 		return CommonControl::Button;
