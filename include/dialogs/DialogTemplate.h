@@ -91,6 +91,8 @@ namespace core::forms
 				}
 				else {
 					if (ctrl.ClassName->is_numeric()) {
+						// [GROUP-BOX] GroupBoxes must have the @c WindowStyle::ClipSiblings style to prevent them from over-painting
+						//             the controls beneath. Add this style here rather than forcing all clients to do so themselves.
 						if (ctrl.ClassName->as_number() == ClassId::Button && ctrl.Style.test(ButtonStyle::GroupBox) && !ctrl.Style.test(WindowStyle::ClipSiblings))
 							ctrl.Style |= WindowStyle::ClipSiblings;
 
