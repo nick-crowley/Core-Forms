@@ -786,10 +786,10 @@ namespace core::forms
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		std::optional<AnyColour>      BackColour;
-		std::optional<Brush>          mutable Background;
-		std::optional<AnyColour>      TextColour;
-		std::optional<Font>           WindowFont;
+		std::optional<AnyColour>   BackColour;
+		std::optional<Brush>       mutable Background;
+		std::optional<AnyColour>   TextColour;
+		std::optional<Font>        WindowFont;
 		DebuggingAide              Debug;
 
 	protected:
@@ -798,14 +798,13 @@ namespace core::forms
 	public:
 		ChildWindowCollection	Children;
 		TimerCollection         Timers;
-
-		CreateWindowEvent	Created;
-		WindowEvent         Destroyed;
-		ShowWindowEvent		Shown;
-		ShowWindowEvent		Hidden;
-		PaintWindowEvent	Painted;
-		ResizeWindowEvent   Resized;
-		WindowEvent         Clicked;
+		CreateWindowEvent	    Created;
+		WindowEvent             Destroyed;
+		ShowWindowEvent		    Shown;
+		ShowWindowEvent		    Hidden;
+		PaintWindowEvent	    Painted;
+		ResizeWindowEvent       Resized;
+		WindowEvent             Clicked;
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
