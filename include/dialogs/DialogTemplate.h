@@ -93,16 +93,9 @@ namespace core::forms
 					continue;
 				}
 				
-				switch (CommonControl const id = forms::identifyControl(*ctrl.ClassName); id) {
-				case CommonControl::Button:
-					// [GROUP-BOX] GroupBoxes must have the @c WindowStyle::ClipSiblings style to prevent them from over-painting
-					//             the controls beneath. Add this style here rather than forcing all clients to do so themselves.
-					if (ctrl.Style.test(ButtonStyle::GroupBox) && !ctrl.Style.test(WindowStyle::ClipSiblings))
-						ctrl.Style |= WindowStyle::ClipSiblings;
-
-					ctrl.ClassName = win::ResourceId(L"Custom.BUTTON");
-					break;
-
+				CommonControl const kind = forms::identifyControl(*ctrl.ClassName);
+				switch (kind) {
+				case CommonControl::Button:    ctrl.ClassName = win::ResourceId(L"Custom.BUTTON");    break;
 				case CommonControl::Edit:      ctrl.ClassName = win::ResourceId(L"Custom.EDIT");      break;
 				case CommonControl::Static:    ctrl.ClassName = win::ResourceId(L"Custom.STATIC");    break;
 				case CommonControl::ListBox:   ctrl.ClassName = win::ResourceId(L"Custom.LISTBOX");   break;
@@ -113,6 +106,11 @@ namespace core::forms
 				default:
 					throw invalid_argument{"Controls with class id {} not yet supported", core::to_string(id)};
 				}
+				
+				// [GROUP-BOX] GroupBoxes must have the @c WindowStyle::ClipSiblings style to prevent them from over-painting
+				//             the controls beneath. Add this style here rather than forcing all clients to do so themselves.
+				if (kind == CommonControl::Button && ctrl.Style.test(ButtonStyle::GroupBox) && !ctrl.Style.test(WindowStyle::ClipSiblings))
+					ctrl.Style |= WindowStyle::ClipSiblings;
 
 				Window::CreationData param(bindings[ctrl.Ident]);
 				ctrl.Data = param.asBytes();
