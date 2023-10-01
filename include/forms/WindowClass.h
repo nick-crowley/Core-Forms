@@ -102,14 +102,21 @@ namespace core::forms
 			IsSemiRegular,
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	private:
-		::WNDCLASSEXW
-		static fromHandle(::HWND existingWindow) 
+	public:
+		win::ResourceId
+		static nameFromHandle(::HWND existingWindow) 
 		{
 			wchar_t name[96] {};
 			if (!::GetClassNameW(existingWindow, name, lengthof(name))) 
 				win::LastError{}.throwIfError("Failed to resolve window class");
-			return WindowClass::fromName(win::ResourceId::parse(name), GetWindowInstance(existingWindow));
+			return win::ResourceId::parse(name);
+		}
+
+	private:
+		::WNDCLASSEXW
+		static fromHandle(::HWND existingWindow) 
+		{
+			return WindowClass::fromName(WindowClass::nameFromHandle(existingWindow), GetWindowInstance(existingWindow));
 		}
 
 		::WNDCLASSEXW
