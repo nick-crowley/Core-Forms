@@ -71,7 +71,7 @@ namespace core::forms
 	public:
 		bool
 		subclassed() const {
-			return this->ClassName.is_numeric() 
+			return !this->ClassName.is_numeric() 
 			    && this->ClassName.as_string().starts_with(L"Custom.");
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
