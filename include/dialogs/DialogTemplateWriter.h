@@ -94,7 +94,7 @@ namespace core::forms
 		{
 			return nstd::sizeof_v<uint32_t,ExWindowStyle,WindowStyle,SmallRect,uint32_t> 
 			     + DialogTemplateWriter::measureResourceIdent(ctrl.ClassName)
-			     + DialogTemplateWriter::measureResourceIdent(ctrl.Title)
+			     + DialogTemplateWriter::measureResourceIdent(ctrl.Text)
 			     + DialogTemplateWriter::measureBinaryData(ctrl.Data);
 		}
 
@@ -215,10 +215,10 @@ namespace core::forms
 				this->writeObject(static_cast<uint16_t>(ctrl.Ident));
 			}
 
-			// Class & Title & Data fields must be aligned on 16-bit boundary
+			// Class & Text & Data fields must be aligned on 16-bit boundary
 			//   https://learn.microsoft.com/en-us/windows/win32/api/Winuser/ns-winuser-dlgitemtemplate
 			this->writeResourceIdent(ctrl.ClassName);
-			this->writeResourceIdent(ctrl.Title);
+			this->writeResourceIdent(ctrl.Text);
 			this->writeBinaryData(ctrl.Data);
 		}
 

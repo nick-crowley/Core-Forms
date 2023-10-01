@@ -54,7 +54,7 @@ namespace core::forms
 		nstd::bitset<WindowStyle>    Style;
 		Rect                         Area;
 		uint32_t                     Ident;
-		std::optional<win::ResourceId> Title;
+		std::optional<win::ResourceId> Text;
 		std::optional<win::ResourceId> ClassName;
 		std::vector<std::byte>       Data;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o

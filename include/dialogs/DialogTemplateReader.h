@@ -130,10 +130,10 @@ namespace core::forms
 					ctrl.Ident = this->readObject<uint16_t>();
 				}
 			
-				// Class & Title & Data fields must be aligned on 16-bit boundary
+				// Class & Text & Data fields must be aligned on 16-bit boundary
 				//   https://learn.microsoft.com/en-us/windows/win32/api/Winuser/ns-winuser-dlgitemtemplate
 				ctrl.ClassName = this->readResourceIdent();
-				ctrl.Title = this->readResourceIdent();
+				ctrl.Text = this->readResourceIdent();
 				ctrl.Data = this->readBinaryData();
 
 				// Done
