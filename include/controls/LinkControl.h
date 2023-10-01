@@ -103,15 +103,15 @@ namespace core::forms
 	public:
 		LinkWindowClass::const_reference
 		virtual wndcls() const override {
-			static LinkWindowClass c;
-			return c;
+			LinkWindowClass const  static wc;
+			return wc;
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
 		gsl::czstring
 		virtual notificationName(::UINT notification) override {
-			static const LinkNotificationDictionary names;
+			LinkNotificationDictionary const  static names;
 			return names.at(notification);
 		}
 		

@@ -92,8 +92,8 @@ namespace core::forms
 
 		ProgressBarWindowClass::const_reference
 		virtual wndcls() const override {
-			static ProgressBarWindowClass c;
-			return c;
+			ProgressBarWindowClass const  static wc;
+			return wc;
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o

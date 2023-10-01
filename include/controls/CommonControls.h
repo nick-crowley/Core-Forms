@@ -128,7 +128,7 @@ namespace core::forms
 		void
 		static ensureRegistered()
 		{
-			static ControlRegistration [[maybe_unused]] obj;
+			ControlRegistration [[maybe_unused]]  static obj;
 		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o

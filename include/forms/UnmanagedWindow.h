@@ -173,7 +173,7 @@ namespace core::forms
 		WindowClass::const_reference
 		virtual wndcls() const {
 			Invariant(this->exists());
-			static WindowClass cls{this->handle()};
+			WindowClass const  static cls{this->handle()};
 			return cls;
 		}
 		

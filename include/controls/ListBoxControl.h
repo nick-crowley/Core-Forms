@@ -376,7 +376,7 @@ namespace core::forms
 	public:
 		gsl::czstring
 		static identifyNotification(::UINT notification) {
-			static const ListBoxNotificationDictionary names;
+			ListBoxNotificationDictionary const  static names;
 			return names.at(notification);
 		}
 
@@ -440,8 +440,8 @@ namespace core::forms
 
 		ListBoxWindowClass::const_reference
 		virtual wndcls() const override {
-			static ListBoxWindowClass c;
-			return c;
+			ListBoxWindowClass const  static wc;
+			return wc;
 		}
 
 	protected:

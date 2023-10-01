@@ -242,8 +242,8 @@ namespace core::forms
 
 		WindowClass const& 
 		wndcls() const override {
-			static WindowClass c;
-			return c;
+			WindowClass const  static wc;
+			return wc;
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o

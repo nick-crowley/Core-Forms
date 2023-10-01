@@ -549,7 +549,7 @@ namespace core::forms
 	public:
 		gsl::czstring
 		static identifyNotification(::UINT notification) {
-			static const ComboBoxNotificationDictionary names;
+			ComboBoxNotificationDictionary const  static names;
 			return names.at(notification);
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -651,8 +651,8 @@ namespace core::forms
 		
 		ComboBoxWindowClass::const_reference
 		virtual wndcls() const override {
-			static ComboBoxWindowClass c;
-			return c;
+			ComboBoxWindowClass const  static wc;
+			return wc;
 		}
 
 	protected:

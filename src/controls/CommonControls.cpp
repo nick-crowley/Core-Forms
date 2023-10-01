@@ -30,14 +30,14 @@ forms::detail::ComCtl32Registration::ComCtl32Registration()
 
 ControlRegistration::ControlRegistration()
 {
-	static Dialog::WindowClass [[maybe_unused]] DialogClass;
-	static ButtonControl::WindowClass [[maybe_unused]] ButtonClass;
-	static ComboBoxControl::WindowClass [[maybe_unused]] ComboBoxeClass;
-	static EditControl::WindowClass [[maybe_unused]] EditClass;
-	static ListBoxControl::WindowClass [[maybe_unused]] ListBoxeClass;
-	static ListViewControl::WindowClass [[maybe_unused]] ListViewClass;
-	static ProgressBarControl::WindowClass [[maybe_unused]] ProgressBarClass;
-	static StaticControl::WindowClass [[maybe_unused]] StaticClass;
+	Dialog::WindowClass const              [[maybe_unused]] static DialogClass;
+	ButtonControl::WindowClass const       [[maybe_unused]] static ButtonClass;
+	ComboBoxControl::WindowClass const     [[maybe_unused]] static ComboBoxeClass;
+	EditControl::WindowClass const         [[maybe_unused]] static EditClass;
+	ListBoxControl::WindowClass const      [[maybe_unused]] static ListBoxeClass;
+	ListViewControl::WindowClass const     [[maybe_unused]] static ListViewClass;
+	ProgressBarControl::WindowClass const  [[maybe_unused]] static ProgressBarClass;
+	StaticControl::WindowClass const       [[maybe_unused]] static StaticClass;
 	
 	// Optionally register ComCtl32.dll v6 controls
 	if (this->version() >= com::Version{6,0})

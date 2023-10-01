@@ -133,15 +133,15 @@ namespace core::forms
 
 		ListViewWindowClass::const_reference
 		virtual wndcls() const override {
-			static ListViewWindowClass c;
-			return c;
+			ListViewWindowClass const  static wc;
+			return wc;
 		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
 		gsl::czstring
 		virtual notificationName(::UINT notification) override {
-			static const ListViewNotificationDictionary names;
+			ListViewNotificationDictionary const  static names;
 			return names.at(notification);
 		}
 

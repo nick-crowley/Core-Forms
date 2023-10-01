@@ -123,7 +123,7 @@ namespace core::forms
 	public:
 		gsl::czstring
 		static identifyNotification(::UINT notification) {
-			static const ButtonNotificationDictionary names;
+			ButtonNotificationDictionary const  static names;
 			return names.at(notification);
 		}
 
@@ -142,8 +142,8 @@ namespace core::forms
 	public:
 		ButtonWindowClass::const_reference 
 		virtual wndcls() const override {
-			static ButtonWindowClass c;
-			return c;
+			ButtonWindowClass const  static wc;
+			return wc;
 		}
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
