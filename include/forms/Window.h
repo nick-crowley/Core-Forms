@@ -646,9 +646,18 @@ namespace core::forms
 			Response(RoutingStatus status) noexcept : Status(status)
 			{}
 
+			template <nstd::Integer Result>
 			implicit constexpr
-			Response(::LRESULT value) noexcept : Status(Handled), Value(value)
+			Response(Result value) noexcept : Status(Handled), Value(static_cast<::LRESULT>(value))
 			{}
+
+			template <nstd::ObjectPointer Result>
+			implicit constexpr
+			Response(Result value) noexcept : Response{reinterpret_cast<::LRESULT>(value)}
+			{}
+
+			implicit constexpr
+			Response(std::nullptr_t) noexcept = delete;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			satisfies(Response,
