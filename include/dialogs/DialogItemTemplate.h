@@ -28,10 +28,10 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
 #include "controls/CommonControls.h"
+#include "dialogs/ResourceIdOrString.h"
 #include "graphics/Rectangle.h"
 #include "forms/WindowStyle.h"
 #include "forms/ExWindowStyle.h"
-#include "win/ResourceId.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -54,8 +54,8 @@ namespace core::forms
 		nstd::bitset<WindowStyle>      Style;
 		Rect                           Area;
 		uint32_t                       Ident;
-		std::optional<win::ResourceId> Text;
-		std::optional<win::ResourceId> ClassName;
+		ResourceIdOrString             Text;
+		ResourceIdOrString             ClassName;
 		std::vector<std::byte>         Data;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
@@ -71,16 +71,14 @@ namespace core::forms
 	public:
 		bool
 		subclassed() const {
-			return this->ClassName 
-			    && !this->ClassName->is_numeric() 
-			    && this->ClassName->as_string().starts_with(L"Custom.");
+			return this->ClassName.is_numeric() 
+			    && this->ClassName.as_string().starts_with(L"Custom.");
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
 		setOwnerDraw() {
-			Invariant(this->ClassName);
-			switch (identifyControl(*this->ClassName)) {
+			switch (identifyControl(this->ClassName.as_id())) {
 			case CommonControl::Static:   this->Style = (this->Style & ~StaticStyle::TypeMask) | StaticStyle::OwnerDraw; break;
 			case CommonControl::Button:   this->Style = (this->Style & ~ButtonStyle::TypeMask) | ButtonStyle::OwnerDraw; break;
 			case CommonControl::ComboBox: this->Style |= ComboBoxStyle::OwnerDrawFixed | ComboBoxStyle::HasStrings;      break;

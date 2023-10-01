@@ -71,14 +71,14 @@ namespace core::forms
 		{
 			// DLG-TEMPLATE
 			auto totalSize = nstd::sizeof_v<TemplateIdent,uint32_t,ExWindowStyle,WindowStyle,uint16_t,SmallRect>
-			               + DialogTemplateWriter::measureResourceIdent(dlg.Menu)
-			               + DialogTemplateWriter::measureResourceIdent(dlg.ClassName)
-			               + DialogTemplateWriter::measureResourceIdent(dlg.Title);
+			               + DialogTemplateWriter::measureResourceIdent(dlg.Menu.as_id())
+			               + DialogTemplateWriter::measureResourceIdent(dlg.ClassName.as_id())
+			               + DialogTemplateWriter::measureResourceIdent(dlg.Title.as_id());
 			
 			// [style & DS_FONT] short ptSize, wchar font-name[]
 			if (dlg.Style.test(DialogStyle::SetFont|DialogStyle::ShellFont)) 
 				totalSize += nstd::sizeof_v<uint16_t,uint16_t,uint8_t,uint8_t> 
-				           + DialogTemplateWriter::measureResourceIdent(dlg.Font);
+				           + DialogTemplateWriter::measureResourceIdent(dlg.Font.as_id());
 
 			// DLG-ITEM-TEMPLATE(s)
 			for (const DialogItemTemplate& ctrl : dlg.Controls) {
@@ -93,22 +93,22 @@ namespace core::forms
 		static measureItemTemplate(DialogItemTemplate const& ctrl) 
 		{
 			return nstd::sizeof_v<uint32_t,ExWindowStyle,WindowStyle,SmallRect,uint32_t> 
-			     + DialogTemplateWriter::measureResourceIdent(ctrl.ClassName)
-			     + DialogTemplateWriter::measureResourceIdent(ctrl.Text)
+			     + DialogTemplateWriter::measureResourceIdent(ctrl.ClassName.as_id())
+			     + DialogTemplateWriter::measureResourceIdent(ctrl.Text.as_id())
 			     + DialogTemplateWriter::measureBinaryData(ctrl.Data);
 		}
 
 		size_t
-		static measureResourceIdent(std::optional<win::ResourceId> const& r) 
+		static measureResourceIdent(win::ResourceId const& id) 
 		{	
-			if (!r) {
+			if (id == win::ResourceId::Null) {
 				return sizeof(MissingIdent);
 			}
-			else if (r->is_numeric()) {
+			else if (id.is_numeric()) {
 				return sizeof(NumericIdent);
 			}
 			else 
-				return nstd::sizeof_n<wchar_t>(1+r->as_string().length());
+				return nstd::sizeof_n<wchar_t>(1 + id.as_string().length());
 		}
 		
 		size_t
@@ -155,9 +155,9 @@ namespace core::forms
 			});
 
 			// wchar menu[], wchar class[], wchar title[]
-			this->writeResourceIdent(dlg.Menu);
-			this->writeResourceIdent(dlg.ClassName);
-			this->writeResourceIdent(dlg.Title);
+			this->writeResourceIdent(dlg.Menu.as_id());
+			this->writeResourceIdent(dlg.ClassName.as_id());
+			this->writeResourceIdent(dlg.Title.as_id());
 			
 			// [style & DS_FONT] short ptSize, wchar font-name[]
 			if (dlg.Style.test(DialogStyle::SetFont|DialogStyle::ShellFont)) {
@@ -167,7 +167,7 @@ namespace core::forms
 					this->writeObject<uint8_t>(*dlg.Italic);
 					this->writeObject<uint8_t>(*dlg.CharSet);
 				}
-				this->writeResourceIdent(dlg.Font);
+				this->writeResourceIdent(dlg.Font.as_id());
 			}
 
 			// DLG-ITEM-TEMPLATE(s)
@@ -217,8 +217,8 @@ namespace core::forms
 
 			// Class & Text & Data fields must be aligned on 16-bit boundary
 			//   https://learn.microsoft.com/en-us/windows/win32/api/Winuser/ns-winuser-dlgitemtemplate
-			this->writeResourceIdent(ctrl.ClassName);
-			this->writeResourceIdent(ctrl.Text);
+			this->writeResourceIdent(ctrl.ClassName.as_id());
+			this->writeResourceIdent(ctrl.Text.as_id());
 			this->writeBinaryData(ctrl.Data);
 		}
 
@@ -235,18 +235,18 @@ namespace core::forms
 		}
 	
 		void
-		writeResourceIdent(std::optional<win::ResourceId> const& r) 
+		writeResourceIdent(win::ResourceId const& id) 
 		{	
-			Invariant(this->bufferRemaining.size() >= measureResourceIdent(r));
+			Invariant(this->bufferRemaining.size() >= measureResourceIdent(id));
 
-			if (!r) {
+			if (id == win::ResourceId::Null) {
 				this->writeObject<MissingIdent>({});
 			}
-			else if (r->is_numeric()) {
-				this->writeObject<NumericIdent>({ElementId::Stock, r->as_number()});
+			else if (id.is_numeric()) {
+				this->writeObject<NumericIdent>({ElementId::Stock, id.as_number()});
 			}
 			else {
-				for (auto const& ch : r->as_string()) {
+				for (auto const& ch : id.as_string()) {
 					this->writeObject<wchar_t>(ch);
 				}
 				this->writeObject<wchar_t>('\0');

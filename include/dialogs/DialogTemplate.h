@@ -30,12 +30,12 @@
 #include "controls/ControlDictionary.h"
 #include "controls/CommonControls.h"
 #include "dialogs/DialogItemTemplate.h"
+#include "dialogs/ResourceIdOrString.h"
 #include "graphics/Rectangle.h"
 #include "forms/Window.h"
 #include "forms/ClassId.h"
 #include "forms/WindowStyle.h"
 #include "forms/ExWindowStyle.h"
-#include "win/ResourceId.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -58,10 +58,10 @@ namespace core::forms
 		nstd::bitset<WindowStyle>       Style;
 		uint16_t                        NumControls;
 		Rect                            Area;
-		std::optional<win::ResourceId>  Menu;
-		std::optional<win::ResourceId>  ClassName;
-		std::optional<win::ResourceId>  Title;
-		std::optional<win::ResourceId>  Font;
+		ResourceIdOrString              Menu;
+		ResourceIdOrString              ClassName;
+		ResourceIdOrString              Title;
+		ResourceIdOrString              Font;
 		std::optional<uint16_t>         Height;
 		std::optional<uint16_t>         Weight;
 		std::optional<uint8_t>          Italic;
@@ -89,11 +89,11 @@ namespace core::forms
 					continue;
 				else if (!bindings.contains(ctrl.Ident)) {
 					auto const id = ctrl.Ident == -1 ? "IDC_STATIC" : '#' + std::to_string(ctrl.Ident);
-					clog << Warning{"{} control (id={}) is unmanaged (it will have reduced functionality)", core::to_string(forms::identifyControl(*ctrl.ClassName)), id};
+					clog << Warning{"{} control (id={}) is unmanaged (it will have reduced functionality)", core::to_string(forms::identifyControl(ctrl.ClassName.as_id())), id};
 					continue;
 				}
 				
-				CommonControl const kind = forms::identifyControl(*ctrl.ClassName);
+				CommonControl const kind = forms::identifyControl(ctrl.ClassName.as_id());
 				switch (kind) {
 				case CommonControl::Button:    ctrl.ClassName = win::ResourceId(L"Custom.BUTTON");    break;
 				case CommonControl::Edit:      ctrl.ClassName = win::ResourceId(L"Custom.EDIT");      break;
@@ -102,7 +102,7 @@ namespace core::forms
 				case CommonControl::ScrollBar: ctrl.ClassName = win::ResourceId(L"Custom.SCROLLBAR"); break;
 				case CommonControl::ComboBox:  ctrl.ClassName = win::ResourceId(L"Custom.COMBOBOX");  break;
 				case CommonControl::Link:      ctrl.ClassName = win::ResourceId(L"Custom.LINK");      break;
-				default: throw invalid_argument{"Controls with window class {} not yet supported", win::to_string(*ctrl.ClassName)};
+				default: throw invalid_argument{"Controls with window class {} not yet supported", win::to_string(ctrl.ClassName.as_id())};
 				}
 				
 				// [GROUP-BOX] GroupBoxes must have the @c WindowStyle::ClipSiblings style to prevent them from over-painting
