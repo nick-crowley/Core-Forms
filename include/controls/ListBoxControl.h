@@ -367,7 +367,7 @@ namespace core::forms
 		    SelectedItems(*this), 
 		    Items(*this)
 		{
-			this->backColour(this->LookNFeel->window());
+			this->backColour(this->LookNFeel->control());
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -419,6 +419,18 @@ namespace core::forms
 			ListBox_SetItemHeight(this->handle(), 0, h);
 		}
 	
+		//Response 
+		//virtual onControlColour(ControlColourEventArgs args) override
+		//{
+		//	// Apply the look-n-feel when owner-draw is disabled
+		//	if (args.Managed == this) {
+		//		args.Graphics.textColour(this->textColour());
+		//		return *this->background();
+		//	}
+
+		//	return Unhandled;
+		//}
+
 		Response 
 		virtual onEraseBackground(EraseBackgroundEventArgs args) override {
 			if (!this->style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawFixed|ListBoxStyle::OwnerDrawVariable))

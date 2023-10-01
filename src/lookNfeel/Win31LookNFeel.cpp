@@ -13,6 +13,7 @@ Win31LookNFeel::Win31LookNFeel()
 	this->Fonts.Heading2 = Font{*this->Fonts.Paragraph.handle(), std::nullopt, DeviceContext::ScreenDC.measureFont(12_pt)};
 	this->Fonts.Heading1 = Font{*this->Fonts.Paragraph.handle(), std::nullopt, DeviceContext::ScreenDC.measureFont(14_pt)};
 	this->Colours.Button = SystemColour::ButtonFace;
+	this->Colours.Control = Colour::White;
     this->Colours.Primary = Colour::Black;
     this->Colours.Secondary = SystemColour::GrayText;
 	this->Colours.Window = Colour::White;

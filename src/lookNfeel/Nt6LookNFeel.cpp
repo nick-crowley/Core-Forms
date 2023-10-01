@@ -13,6 +13,7 @@ Nt6LookNFeel::Nt6LookNFeel()
 	this->Fonts.Heading2 = Font{*this->Fonts.Paragraph.handle(), std::nullopt, DeviceContext::ScreenDC.measureFont(12_pt)};
 	this->Fonts.Heading1 = Font{*this->Fonts.Paragraph.handle(), std::nullopt, DeviceContext::ScreenDC.measureFont(14_pt)};
 	this->Colours.Button = SystemColour::ButtonFace;
+	this->Colours.Control = SystemColour::Window;
     this->Colours.Primary = SystemColour::WindowText;
     this->Colours.Secondary = SystemColour::GrayText;
 	this->Colours.Window = SystemColour::Dialog;

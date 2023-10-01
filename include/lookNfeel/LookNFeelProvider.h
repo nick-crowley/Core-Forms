@@ -63,6 +63,7 @@ namespace core::forms
 
 		struct { 
 			AnyColour  Button;
+			AnyColour  Control;
 			AnyColour  Primary;
 			AnyColour  Secondary;
 			AnyColour  Window;
@@ -113,6 +114,9 @@ namespace core::forms
 		
 		AnyColour
 		virtual button() override;
+		
+		AnyColour
+		virtual control() override;
 
 		Font
 		virtual heading1() override;

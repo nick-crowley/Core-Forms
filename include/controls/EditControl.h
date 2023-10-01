@@ -100,7 +100,9 @@ namespace core::forms
 		implicit
 		EditControl(uint16_t id) 
 		  : Control{id}
-		{}
+		{
+			this->backColour(this->LookNFeel->control());
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o

@@ -403,6 +403,11 @@ LookNFeelProvider::button() {
 	return this->Colours.Button;
 }
 
+AnyColour
+LookNFeelProvider::control() {
+	return this->Colours.Control;
+}
+
 Font
 LookNFeelProvider::heading1() {
 	return this->Fonts.Heading1;

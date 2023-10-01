@@ -109,6 +109,9 @@ namespace core::forms
 		
 		AnyColour
 		virtual button() abstract;
+		
+		AnyColour
+		virtual control() abstract;
 
 		Font
 		virtual heading1() abstract;
