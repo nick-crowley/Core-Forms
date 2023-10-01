@@ -27,10 +27,7 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
-#include "controls/StaticStyle.h"
-#include "controls/ButtonStyle.h"
-#include "controls/ComboBoxStyle.h"
-#include "controls/ListBoxStyle.h"
+#include "controls/CommonControls.h"
 #include "graphics/Rectangle.h"
 #include "forms/WindowStyle.h"
 #include "forms/ExWindowStyle.h"
@@ -82,19 +79,13 @@ namespace core::forms
 	public:
 		void
 		setOwnerDraw() {
-			win::ResourceId const static CustomStatic(L"Custom.STATIC");
-			win::ResourceId const static CustomButton(L"Custom.BUTTON");
-			win::ResourceId const static CustomListBox(L"Custom.COMBOBOX");
-			win::ResourceId const static CustomComboBox(L"Custom.LISTBOX");
-
-			if (this->ClassName == CustomStatic)
-				this->Style = (this->Style & ~StaticStyle::TypeMask) | StaticStyle::OwnerDraw;
-			else if (this->ClassName == CustomButton)
-				this->Style = (this->Style & ~ButtonStyle::TypeMask) | ButtonStyle::OwnerDraw;
-			else if (this->ClassName == CustomComboBox)
-				this->Style |= ComboBoxStyle::OwnerDrawFixed | ComboBoxStyle::HasStrings;
-			else if (this->ClassName == CustomListBox)
-				this->Style |= ListBoxStyle::OwnerDrawFixed | ListBoxStyle::HasStrings;
+			Invariant(this->ClassName);
+			switch (identifyControl(*this->ClassName)) {
+			case CommonControl::Static:   this->Style = (this->Style & ~StaticStyle::TypeMask) | StaticStyle::OwnerDraw; break;
+			case CommonControl::Button:   this->Style = (this->Style & ~ButtonStyle::TypeMask) | ButtonStyle::OwnerDraw; break;
+			case CommonControl::ComboBox: this->Style |= ComboBoxStyle::OwnerDrawFixed | ComboBoxStyle::HasStrings;      break;
+			case CommonControl::ListBox:  this->Style |= ListBoxStyle::OwnerDrawFixed | ListBoxStyle::HasStrings;        break;
+			}
 		}
 	};
 }

@@ -39,41 +39,19 @@ Window::Window()
 
 Warning
 Window::unrecognisedNotificationLogEntry(CommandEventArgs args)
-{
-	wchar_t buffer[64] {};
-	auto const nameLength = ::GetClassNameW(args.Notification->Handle, buffer, lengthof(buffer));
-	if (!nameLength)
-		return Warning{"forms::Window::onCommand() received {:#06x} from unmanaged child-window id={} (handle={:#08x})", 
-			args.Notification->Code, args.Ident, (uintptr_t)args.Notification->Handle};
-	
-	std::wstring_view const className{&buffer[0], &buffer[nameLength]};
-	gsl::czstring controlType{};
+{	
+	CommonControl const controlType = forms::identifyControl(WindowClass::nameFromHandle(args.Notification->Handle));
 	std::string messageName{};
-
-	if (className == WC_BUTTON) {
-		messageName = ButtonControl::identifyNotification(args.Notification->Code);
-		controlType = "button";
+	
+	switch (controlType){
+	case CommonControl::Button:   messageName = ButtonControl::identifyNotification(args.Notification->Code);   break;
+	case CommonControl::ComboBox: messageName = ComboBoxControl::identifyNotification(args.Notification->Code); break;
+	case CommonControl::Edit:     messageName = EditControl::identifyNotification(args.Notification->Code);     break;
+	case CommonControl::ListBox:  messageName = ListBoxControl::identifyNotification(args.Notification->Code);  break;
+	case CommonControl::Static:   messageName = StaticControl::identifyNotification(args.Notification->Code);   break;
+	default:                      messageName = to_hexString<4>(args.Notification->Code);                       break;
 	}
-	else if (className == WC_COMBOBOX) {
-		messageName = ComboBoxControl::identifyNotification(args.Notification->Code);
-		controlType = "combobox";
-	}
-	else if (className == WC_EDIT) {
-		messageName = EditControl::identifyNotification(args.Notification->Code);
-		controlType = "edit";
-	}
-	else if (className == WC_LISTBOX || className == L"ComboLBox") {
-		messageName = ListBoxControl::identifyNotification(args.Notification->Code);
-		controlType = "listbox";
-	}
-	else if (className == WC_STATIC) {
-		messageName = StaticControl::identifyNotification(args.Notification->Code);
-		controlType = "static";
-	}
-	else {
-		messageName = to_hexString<4>(args.Notification->Code);
-		controlType = "control";
-	}
+	
 	return Warning{"forms::Window::onCommand() received {} from unmanaged {} id={} (handle={:#08x})", 
-		messageName, controlType, args.Ident, (uintptr_t)args.Notification->Handle};
+		messageName, core::to_string(controlType), args.Ident, (uintptr_t)args.Notification->Handle};
 }

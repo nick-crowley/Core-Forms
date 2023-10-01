@@ -28,6 +28,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
 #include "controls/ControlDictionary.h"
+#include "controls/CommonControls.h"
 #include "dialogs/DialogItemTemplate.h"
 #include "graphics/Rectangle.h"
 #include "forms/Window.h"
@@ -87,31 +88,34 @@ namespace core::forms
 				if (!ctrl.ClassName)
 					continue;
 				else if (!bindings.contains(ctrl.Ident)) {
-					clog << Warning{"Dialog control #{} is unmanaged (so it will not receive look-n-feel)", (signed)ctrl.Ident};
+					auto const id = ctrl.Ident == -1 ? "IDC_STATIC" : '#' + std::to_string(ctrl.Ident);
+					clog << Warning{"{} control (id={}) is unmanaged (it will have reduced functionality)", core::to_string(forms::identifyControl(*ctrl.ClassName)), id};
+					continue;
 				}
-				else {
-					if (ctrl.ClassName->is_numeric()) {
-						// [GROUP-BOX] GroupBoxes must have the @c WindowStyle::ClipSiblings style to prevent them from over-painting
-						//             the controls beneath. Add this style here rather than forcing all clients to do so themselves.
-						if (ctrl.ClassName->as_number() == ClassId::Button && ctrl.Style.test(ButtonStyle::GroupBox) && !ctrl.Style.test(WindowStyle::ClipSiblings))
-							ctrl.Style |= WindowStyle::ClipSiblings;
+				
+				switch (CommonControl const id = forms::identifyControl(*ctrl.ClassName); id) {
+				case CommonControl::Button:
+					// [GROUP-BOX] GroupBoxes must have the @c WindowStyle::ClipSiblings style to prevent them from over-painting
+					//             the controls beneath. Add this style here rather than forcing all clients to do so themselves.
+					if (ctrl.Style.test(ButtonStyle::GroupBox) && !ctrl.Style.test(WindowStyle::ClipSiblings))
+						ctrl.Style |= WindowStyle::ClipSiblings;
 
-						switch (uint16_t id = ctrl.ClassName->as_number(); id) {
-						case ClassId::Button:    ctrl.ClassName = win::ResourceId(L"Custom.BUTTON");    break;
-						case ClassId::Edit:      ctrl.ClassName = win::ResourceId(L"Custom.EDIT");      break;
-						case ClassId::Static:    ctrl.ClassName = win::ResourceId(L"Custom.STATIC");    break;
-						case ClassId::Listbox:   ctrl.ClassName = win::ResourceId(L"Custom.LISTBOX");   break;
-						case ClassId::Scrollbar: ctrl.ClassName = win::ResourceId(L"Custom.SCROLLBAR"); break;
-						case ClassId::Combobox:  ctrl.ClassName = win::ResourceId(L"Custom.COMBOBOX");  break;
-						default: throw invalid_argument{"Controls with class id #{0} not yet supported", id};
-						}
-					}
-					else if (ctrl.ClassName == win::ResourceId{WC_LINK})
-						ctrl.ClassName = win::ResourceId(L"Custom.LINK");
+					ctrl.ClassName = win::ResourceId(L"Custom.BUTTON");
+					break;
 
-					Window::CreationData param(bindings[ctrl.Ident]);
-					ctrl.Data = param.asBytes();
+				case CommonControl::Edit:      ctrl.ClassName = win::ResourceId(L"Custom.EDIT");      break;
+				case CommonControl::Static:    ctrl.ClassName = win::ResourceId(L"Custom.STATIC");    break;
+				case CommonControl::ListBox:   ctrl.ClassName = win::ResourceId(L"Custom.LISTBOX");   break;
+				case CommonControl::ScrollBar: ctrl.ClassName = win::ResourceId(L"Custom.SCROLLBAR"); break;
+				case CommonControl::ComboBox:  ctrl.ClassName = win::ResourceId(L"Custom.COMBOBOX");  break;
+				case CommonControl::Link:      ctrl.ClassName = win::ResourceId(L"Custom.LINK");      break;
+
+				default:
+					throw invalid_argument{"Controls with class id {} not yet supported", core::to_string(id)};
 				}
+
+				Window::CreationData param(bindings[ctrl.Ident]);
+				ctrl.Data = param.asBytes();
 			}
 		}
 
