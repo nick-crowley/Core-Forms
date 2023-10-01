@@ -630,7 +630,7 @@ namespace core::forms
 		class FormsExport Response {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			enum Result { 
+			enum RoutingStatus { 
 				Invalid,        //!< [internal] Design flaw within wndproc
 				Handled,        //!< Message was handled 
 				Unhandled,      //!< Message wasn't handled
@@ -638,12 +638,12 @@ namespace core::forms
 			};
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			Result                    Status = Invalid;
+			RoutingStatus             Status = Invalid;
 			std::optional<::LRESULT>  Value;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			explicit constexpr
-			Response(Result r) noexcept : Status(r)
+			Response(RoutingStatus status) noexcept : Status(status)
 			{}
 
 			implicit constexpr
@@ -739,8 +739,8 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			void 
-			setResult(Response::Result res, ::LRESULT val) { 
-				this->Text += (res == Response::Handled ? "Handled" : "Unhandled");
+			setResult(Response::RoutingStatus status, ::LRESULT val) { 
+				this->Text += (status == Response::Handled ? "Handled" : "Unhandled");
 				this->Text += (" (" + to_hexString(val) + ")");
 			}
 
