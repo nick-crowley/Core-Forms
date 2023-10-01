@@ -294,6 +294,25 @@ namespace core::forms
 		{
 			::EndDialog(this->handle(), id);
 		}
+		
+		Response 
+		virtual onControlColour(ControlColourEventArgs args) override
+		{
+			if (args.Managed && args.Managed != this)
+				return args.Managed->onControlColour(args);
+
+			// Apply the current look-n-feel to dialogs but also unmanaged static controls so that
+			//  applications don't have to bind every static label in the dialog simply to achieve
+			//  a consistent appearance.
+			else if (args.Source == ControlColourEventArgs::Dialog
+			      || (!args.Managed && args.Source == ControlColourEventArgs::Static)) {
+				args.Graphics.setFont(this->font());
+				args.Graphics.textColour(this->textColour());
+				return *this->background();
+			}
+
+			return Unhandled;
+		}
 
 		Response 
 		virtual onDestroy() override {

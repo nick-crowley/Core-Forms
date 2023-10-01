@@ -103,6 +103,19 @@ namespace core::forms
 		}
 
 	protected:
+		Response 
+		virtual onControlColour(ControlColourEventArgs args) override
+		{
+			// Apply the look-n-feel when owner-draw is disabled
+			if (args.Managed == this) {
+				args.Graphics.setFont(this->font());
+				args.Graphics.textColour(this->textColour());
+				return *this->background();
+			}
+
+			return Unhandled;
+		}
+
 		Response
 		virtual onOfferNotification(::UINT [[maybe_unused]] notification) override {
 			auto const _ = this->Debug.setTemporaryState({ProcessingState::NotificationProcessing,
