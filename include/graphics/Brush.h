@@ -42,25 +42,34 @@ namespace core::forms
 {
 	class FormsExport Brush
 	{
-		SharedBrush  Handle;
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		SharedBrush  Handle;
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		explicit
 		Brush(SharedBrush h) : Handle{std::move(ThrowIfEmpty(h))}
 		{
 		}
 
-		Brush(Colour col) : Handle{::CreateSolidBrush(win::DWord{col})}
+		Brush(AnyColour col) : Handle{Brush::fromAnyColour(col)}
 		{
-			if (!this->Handle)
-				win::LastError{}.throwAlways();
 		}
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
 		SharedBrush
-		handle() const
-		{
+		static fromAnyColour(AnyColour col);
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		SharedBrush
+		handle() const {
 			return this->Handle;
 		}
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

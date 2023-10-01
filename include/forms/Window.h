@@ -783,10 +783,10 @@ namespace core::forms
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		std::optional<AnyColour> BackColour;
-		std::optional<Brush>     Background;
-		std::optional<AnyColour> TextColour;
-		std::optional<Font>      WindowFont;
+		std::optional<AnyColour>      BackColour;
+		std::optional<Brush> mutable  Background;
+		std::optional<AnyColour>      TextColour;
+		std::optional<Font>           WindowFont;
 
 	protected:
 		DebuggingAide           Debug;
@@ -943,16 +943,14 @@ namespace core::forms
 		using base::wndRect;
 		using base::wndRgn;
 		
+		//! @brief  Retrieve cached background brush based on the background colour
 		SharedBrush
 		background() const {
 			if (this->Background)
 				return this->Background->handle();
-
-			if (this->BackColour)
-				if (auto* const sysColour = std::get_if<SystemColour>(&*this->BackColour); sysColour)
-					return SystemBrush::get(*sysColour).handle();
 			
-			return this->wndcls().Background;
+			this->Background = Brush{this->BackColour.value_or(this->LookNFeel->window())};
+			return this->Background->handle();
 		}
 
 		AnyColour
@@ -1009,6 +1007,7 @@ namespace core::forms
 		void
 		backColour(AnyColour newColour) {
 			this->BackColour = newColour;
+			this->Background = std::nullopt;
 		}
 		
 		void

@@ -12,6 +12,7 @@
 #include "dialogs/DialogTemplateReader.cpp"
 #include "dialogs/DialogTemplateWriter.cpp"
 
+#include "graphics/Brush.cpp"
 #include "graphics/Font.cpp"
 #include "graphics/Graphics.cpp"
 #include "graphics/StockBrush.cpp"
