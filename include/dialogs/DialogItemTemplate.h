@@ -49,14 +49,14 @@ namespace core::forms
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		std::optional<uint32_t>      HelpId;
-		nstd::bitset<ExWindowStyle>  ExtendedStyle;
-		nstd::bitset<WindowStyle>    Style;
-		Rect                         Area;
-		uint32_t                     Ident;
+		std::optional<uint32_t>        HelpId;
+		nstd::bitset<ExWindowStyle>    ExtendedStyle;
+		nstd::bitset<WindowStyle>      Style;
+		Rect                           Area;
+		uint32_t                       Ident;
 		std::optional<win::ResourceId> Text;
 		std::optional<win::ResourceId> ClassName;
-		std::vector<std::byte>       Data;
+		std::vector<std::byte>         Data;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
