@@ -211,6 +211,9 @@ namespace core::forms
 			std::vector<std::byte> 
 			asBytes() const {
 				Invariant(this->Length <= sizeof(Window*));
+				// Suppress C4366 'result of the unary 'operator' operator may be unaligned' because we
+				//  cast into byte-pointer before any read/writes are performed through it
+#				pragma warning (suppress : 4366) 
 				auto const r = std::as_bytes(std::span{&this->Parameter,1});
 				return {r.begin(), r.begin() + this->Length};
 			}
