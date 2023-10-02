@@ -108,7 +108,6 @@ namespace core::forms
 		{
 			// Apply the look-n-feel when owner-draw is disabled
 			if (args.Managed == this) {
-				args.Graphics.setFont(this->font());
 				args.Graphics.textColour(this->textColour());
 				return *this->background();
 			}

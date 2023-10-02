@@ -61,6 +61,12 @@ namespace core::forms
 {
 	struct ILookNFeelProvider
 	{
+		struct FontDescription 
+		{
+			std::wstring  Name;
+			PointSize     Height;
+		};
+
 		satisfies(ILookNFeelProvider,
 			IsInterface
 		);
@@ -112,6 +118,9 @@ namespace core::forms
 		
 		AnyColour
 		virtual control() abstract;
+		
+		FontDescription
+		virtual default() abstract;
 
 		Font
 		virtual heading1() abstract;

@@ -19,6 +19,13 @@ Win31LookNFeel::Win31LookNFeel()
 	this->Colours.Window = Colour::White;
 }
 
+ILookNFeelProvider::FontDescription
+Win31LookNFeel::default() 
+{
+	using namespace forms::literals;
+	return FontDescription{L"FixedSys", 11_pt};
+}
+
 void
 Win31LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) 
 {

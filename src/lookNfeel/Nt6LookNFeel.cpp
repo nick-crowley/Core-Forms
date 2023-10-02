@@ -19,6 +19,13 @@ Nt6LookNFeel::Nt6LookNFeel()
 	this->Colours.Window = SystemColour::Dialog;
 }
 
+ILookNFeelProvider::FontDescription
+Nt6LookNFeel::default() 
+{
+	using namespace forms::literals;
+	return FontDescription{L"Segoe UI", 11_pt};
+}
+
 void
 Nt6LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) 
 {

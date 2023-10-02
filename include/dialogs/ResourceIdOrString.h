@@ -51,7 +51,6 @@ namespace core::forms
 		ResourceIdOrString(win::ResourceId id) : Value{id} 
 		{}
 
-		explicit
 		ResourceIdOrString(std::wstring&& str) : Value{std::move(str)}
 		{}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o

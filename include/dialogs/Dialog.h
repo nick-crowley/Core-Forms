@@ -306,7 +306,6 @@ namespace core::forms
 			//  a consistent appearance.
 			else if (args.Source == ControlColourEventArgs::Dialog
 			      || (!args.Managed && args.Source == ControlColourEventArgs::Static)) {
-				args.Graphics.setFont(this->font());
 				args.Graphics.textColour(this->textColour());
 				return *this->background();
 			}
@@ -441,6 +440,11 @@ namespace core::forms
 			// Subclass each bound control prior to creation
 			if (!this->BoundControls.empty())
 				customTemplate.subclassControls(this->BoundControls);
+
+			// Set dialog font from look-n-feel
+			auto initialFont = this->LookNFeel->default();
+			customTemplate.Font = std::move(initialFont.Name);
+			customTemplate.Height = -static_cast<int16_t>(initialFont.Height);
 
 			// Offer derived classes opportunity to modify the template
 			this->onLoadDialog(customTemplate);

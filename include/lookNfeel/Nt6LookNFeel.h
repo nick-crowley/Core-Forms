@@ -53,6 +53,9 @@ namespace core::forms
 	public:
 		using base::draw;
 		
+		FontDescription
+		virtual default() override;
+
 		void
 		draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
