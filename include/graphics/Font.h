@@ -130,7 +130,7 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms::literals
 {
-PointSize consteval
+	PointSize consteval
 	operator""_pt(uint64_t n) noexcept {
 		return static_cast<PointSize>(n);
 	}
