@@ -429,7 +429,7 @@ namespace core::forms
 		createInternal(win::Module source, DialogMode mode, Window* parent)
 		{
 			// Aggregate all template customizations into a new template resource
-			DialogTemplateBlob blob = this->loadTemplate();
+			DialogTemplateBlob const blob = this->loadTemplate();
 			
 			// Indirectly pass our custom window creation data to the dialog's WM_NCCREATE handler
 			//  by storing it temporarily in a static variable because the APIs for creating dialogs
