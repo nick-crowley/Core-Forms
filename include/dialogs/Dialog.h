@@ -464,6 +464,7 @@ namespace core::forms
 
 			// Store any early-bound controls provided to our constructor
 			//! @bug  Prevent callers from wrapping more than one window handle using the same C++ object
+			//! @bug  Early-bound controls should not be copied when displaying this dialog for a second time
 			this->BoundControls += this->EarlyBoundControls.to_dictionary();
 			
 			// Subclass the dialog window
