@@ -116,13 +116,6 @@ namespace core::forms
 			return Unhandled;
 		}
 
-		Response
-		virtual onOfferNotification(::UINT [[maybe_unused]] notification) override {
-			auto const _ = this->setTemporaryState({ProcessingState::NotificationProcessing,
-			                                        Window::MessageDatabase.name(notification)});
-			return Unhandled;
-		}
-
 		template <meta::SubclassedControl Self>
 		::LRESULT
 		subclassedWndProc(this Self&& self, unsigned message, std::optional<::WPARAM> w = std::nullopt, std::optional<::LPARAM> l = std::nullopt) {
