@@ -38,7 +38,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	enum class PointSize : uint32_t 
+	enum class PointSize : int16_t 
 	{ 
 		Undefined = 0,
 		Default = 12,
@@ -128,11 +128,19 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::forms::literals
+namespace core::forms 
 {
-	PointSize consteval
-	operator""_pt(uint64_t n) noexcept {
-		return static_cast<PointSize>(n);
+	PointSize constexpr
+	operator-(PointSize pt) noexcept {
+		return static_cast<PointSize>(-std::to_underlying(pt));
+	}
+
+	namespace literals
+	{
+		PointSize consteval
+		operator""_pt(uint64_t n) noexcept {
+			return static_cast<PointSize>(n);
+		}
 	}
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

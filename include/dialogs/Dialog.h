@@ -428,29 +428,8 @@ namespace core::forms
 		std::optional<intptr_t>
 		createInternal(win::Module source, DialogMode mode, Window* parent)
 		{
-			// Subclass the dialog prior to creation
-			DialogTemplate customTemplate = this->Template;
-			customTemplate.subclassDialog(this->wndcls().Name);
-
-			// BUG: Prevent callers from wrapping more than one window handle using the same C++ object
-			
-			// Store any early-bound controls provided to our constructor
-			this->BoundControls += this->EarlyBoundControls.to_dictionary();
-
-			// Subclass each bound control prior to creation
-			if (!this->BoundControls.empty())
-				customTemplate.subclassControls(this->BoundControls);
-
-			// Set dialog font from look-n-feel
-			auto initialFont = this->LookNFeel->default();
-			customTemplate.Font = std::move(initialFont.Name);
-			customTemplate.Height = -static_cast<int16_t>(initialFont.Height);
-
-			// Offer derived classes opportunity to modify the template
-			this->onLoadDialog(customTemplate);
-			
 			// Aggregate all template customizations into a new template resource
-			DialogTemplateBlob blob = DialogTemplateWriter{}.writeTemplate(customTemplate);
+			DialogTemplateBlob blob = this->loadTemplate();
 			
 			// Indirectly pass our custom window creation data to the dialog's WM_NCCREATE handler
 			//  by storing it temporarily in a static variable because the APIs for creating dialogs
@@ -478,6 +457,34 @@ namespace core::forms
 				this->attach(dlg);
 			return std::nullopt;
 		}
+		
+		DialogTemplateBlob
+		loadTemplate() {
+			DialogTemplate customTemplate = this->Template;
+
+			// Store any early-bound controls provided to our constructor
+			//! @bug  Prevent callers from wrapping more than one window handle using the same C++ object
+			this->BoundControls += this->EarlyBoundControls.to_dictionary();
+			
+			// Subclass the dialog window
+			customTemplate.subclassDialog(this->wndcls().Name);
+
+			// Subclass each bound control
+			if (!this->BoundControls.empty())
+				customTemplate.subclassControls(this->BoundControls);
+
+			// Set dialog font from look-n-feel
+			auto initialFont = this->LookNFeel->default();
+			customTemplate.Font = std::move(initialFont.Name);
+			customTemplate.Height = std::to_underlying(-initialFont.Height);
+
+			// Offer derived classes opportunity to modify the template
+			this->onLoadDialog(customTemplate);
+			
+			// Aggregate all template customizations into a new template resource
+			return DialogTemplateWriter{}.writeTemplate(customTemplate);
+		}
+
 	};
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
