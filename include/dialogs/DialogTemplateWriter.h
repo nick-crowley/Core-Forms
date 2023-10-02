@@ -161,7 +161,7 @@ namespace core::forms
 			
 			// [style & DS_FONT] short ptSize, wchar font-name[]
 			if (dlg.Style.test(DialogStyle::SetFont|DialogStyle::ShellFont)) {
-				this->writeObject<uint16_t>(*dlg.Height);
+				this->writeObject<int16_t>(*dlg.Height);
 				if (DialogTemplateWriter::AlwaysUseDlgTemplateEx) {
 					this->writeObject<uint16_t>(*dlg.Weight);
 					this->writeObject<uint8_t>(*dlg.Italic);

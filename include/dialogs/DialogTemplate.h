@@ -62,7 +62,7 @@ namespace core::forms
 		ResourceIdOrString              ClassName;
 		ResourceIdOrString              Title;
 		ResourceIdOrString              Font;
-		std::optional<uint16_t>         Height;
+		std::optional<int16_t>          Height;
 		std::optional<uint16_t>         Weight;
 		std::optional<uint8_t>          Italic;
 		std::optional<uint8_t>          CharSet;
