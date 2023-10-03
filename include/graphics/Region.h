@@ -77,8 +77,12 @@ namespace core::forms
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		Region(type const& r)  
-		  : Region{}
+		satisfies(Region,
+			/*IsRegular*/
+			NotSortable
+		);
+
+		Region(type const& r) : Region{}
 		{
 			if (::CombineRgn(this->Handle, r.Handle, nullptr, RGN_COPY) == ERROR)
 				win::LastError{}.throwAlways("Cannot copy region {}", to_string(r.Handle));
@@ -148,10 +152,6 @@ namespace core::forms
 			return ::EqualRgn(this->Handle, r.Handle) == FALSE;
 		}
 
-		//! No ordering relation
-		auto constexpr
-		operator<=>(type const&) const noexcept = delete;
-	
 		type
 		operator|(type const& r) const noexcept {
 			type lhs{*this};
