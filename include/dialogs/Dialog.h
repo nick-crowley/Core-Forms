@@ -149,11 +149,13 @@ namespace core::forms
 		};
 
 	public:
-		class FormsExport WindowClass : public forms::WindowClass {
+		class FormsExport DialogWindowClass : public forms::WindowClass {
+		public:
+			using const_reference = DialogWindowClass const&;
 		public:
 			::WNDPROC	OriginalWndProc;
 		public:
-			WindowClass() : forms::WindowClass(win::ResourceId::parse(WC_DIALOG))
+			DialogWindowClass() : forms::WindowClass(win::ResourceId::parse(WC_DIALOG))
 			{
 				this->Name = win::ResourceId{L"Custom.DIALOG"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Dialog::interceptMessageHandler);
@@ -161,6 +163,8 @@ namespace core::forms
 				this->registér();
 			}
 		};
+
+		using WindowClass = DialogWindowClass;
 
 	protected:
 		enum DialogMode { Modal, NonModal };
@@ -279,7 +283,7 @@ namespace core::forms
 			return WindowRole::Dialog;
 		}
 
-		nstd::return_t<WindowClass const&>
+		DialogWindowClass::const_reference
 		virtual wndcls() const override {
 			WindowClass const  static wc;
 			return wc;
