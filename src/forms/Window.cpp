@@ -1,7 +1,6 @@
 #include "forms/Window.h"
 #include "controls/CommonControls.h"
 #include "graphics/SystemBrush.h"
-#include "lookNfeel/Nt6LookNFeel.h"
 using namespace core;
 using namespace forms;
 
@@ -43,9 +42,10 @@ CALLBACK Window::HierarchyIterator::onNextChildWindow(::HWND child, ::LPARAM ite
 
 Window::Window()
   : Children(*this),
-    LookNFeel{Nt6LookNFeel::Instance},
+    LookNFeel{forms::lookNFeel},
     Timers(*this)
 {
+	Invariant(forms::lookNFeel != nullptr);
 }
 
 Warning

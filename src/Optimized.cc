@@ -20,6 +20,7 @@
 #include "graphics/StockFont.cpp"
 #include "graphics/SystemBrush.cpp"
 
+#include "lookNfeel/DefaultLookNFeel.cpp"
 #include "lookNfeel/LookNFeelProvider.cpp"
 #include "lookNfeel/Nt6LookNFeel.cpp"
 #include "lookNfeel/RetroLookNFeel.cpp"
