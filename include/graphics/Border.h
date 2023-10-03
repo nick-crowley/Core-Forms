@@ -108,10 +108,10 @@ namespace core::forms
 	inline to_string(Border const& b)
 	{
 		if (b.Left == b.Top == b.Right == b.Bottom)
-			return std::format("{{Border={}}}", b.Left);
+			return std::to_string(b.Left);
 		else if (b.Left == b.Right && b.Top == b.Bottom)
-			return std::format("{{Horz={} Vert={}}}", b.Left, b.Top);
-		return std::format("{{{},{},{},{}}}", b.Left, b.Top, b.Right, b.Bottom);
+			return std::format("[H={} V={}]", b.Left, b.Top);
+		return std::format("[{},{},{},{}]", b.Left, b.Top, b.Right, b.Bottom);
 	}
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

@@ -258,12 +258,12 @@ namespace core::forms
 	inline to_string(::HRGN rgn)
 	{
 		if (auto data = Region::getData(rgn); !data)
-			return "{Invalid region}";
+			return "<Invalid region>";
 		else if (data->rdh.iType != RDH_RECTANGLES) 
-			return std::format("{{Unknown format #{}}}", data->rdh.iType);
+			return std::format("<Unknown format #{}>", data->rdh.iType);
 		else {
 			Rect bounds = data->rdh.rcBound;
-			return std::format("{{RDH_RECTANGLES: Count={} Bounds={}x{}}}", data->rdh.nCount, bounds.width(), bounds.height());
+			return std::format("[Rectangular: Num={} Bounds={}x{}]", data->rdh.nCount, bounds.width(), bounds.height());
 		}
 	}
 }

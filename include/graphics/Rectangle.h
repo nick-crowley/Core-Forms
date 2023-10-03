@@ -326,7 +326,7 @@ namespace core::forms
 	std::string
 	inline to_string(Rect const& r)
 	{
-		return std::format("{{Rect={{{}x{}}},{{{}x{}}} Area={}x{}}}", r.Left,r.Top, r.Right,r.Bottom, r.width(), r.height());
+		return std::format("[Rect=[{}x{}],[{}x{}] Area={}x{}]", r.Left,r.Top, r.Right,r.Bottom, r.width(), r.height());
 	}
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

@@ -315,19 +315,19 @@ namespace core::forms
 	std::string
 	inline to_string(GuiMeasurement const& value)
 	{
-		return std::format("{{{}}}", static_cast<int>(value));
+		return std::to_string(static_cast<int>(value));
 	}
 
 	std::string
 	inline to_string(Point const& pt)
 	{
-		return std::format("{{X={} Y={}}}", pt.X, pt.Y);
+		return std::format("[X={} Y={}]", pt.X, pt.Y);
 	}
 
 	std::string
 	inline to_string(Size const& sz)
 	{
-		return std::format("{{Width={} Height={}}}", sz.Width, sz.Height);
+		return std::format("[Width={} Height={}]", sz.Width, sz.Height);
 	}
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

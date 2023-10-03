@@ -92,7 +92,7 @@ namespace core::forms
 														IMAGE_ICON, 
 														dimensions.Width, dimensions.Height, 
 														LR_LOADTRANSPARENT); !icon)
-				win::LastError{}.throwAlways("LoadImage({:#06x}, {}, {}) failed", (void*)source.handle(), to_string(name), to_string(dimensions));
+				win::LastError{}.throwAlways("LoadImage({}, {}) failed", to_string(name), to_string(dimensions));
 			else
 				return Icon{SharedIcon{icon,&::DestroyIcon}, dimensions};
 		}
