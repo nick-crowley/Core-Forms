@@ -50,7 +50,43 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		using base = Window;
+		
+		//! @brief  Manages capturing mouse input
+		class MouseCaptureState {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			Window&  Owner;
+			bool     IsCaptured = false;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			MouseCaptureState(Window& owner) : Owner{owner}
+			{}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			bool
+			captured() const {
+				return this->IsCaptured;
+			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			void
+			capture() {
+				::SetCapture(this->Owner.handle());
+				this->IsCaptured = true;
+			}
+
+			void
+			release() {
+				::ReleaseCapture();
+				this->IsCaptured = false;
+			}
+		};
+		
 	protected:
 		//! @brief	Temporary storage for controls of _derived_ classes 
 		//! 
@@ -143,6 +179,8 @@ namespace core::forms
 		DialogTemplate const            Template;
 		EarlyBoundControlCollection const EarlyBoundControls;
 		ControlDictionary               BoundControls;
+		WindowCaptionButtons            CaptionButtons;
+		MouseCaptureState               MouseCapture;
 
 	public:
 		InitDialogEvent		Initialized;
@@ -157,7 +195,8 @@ namespace core::forms
 		Dialog(win::ResourceId resource, win::Module source, EarlyBoundControlCollection controls = {})
 		  : DialogId{resource},
 		    Template{DialogTemplateReader{source.loadResource(resource, RT_DIALOG)}.readTemplate()},
-			EarlyBoundControls{controls}
+			EarlyBoundControls{controls},
+			MouseCapture{*this}
 		{
 			ControlRegistration::ensureRegistered();
 		}
@@ -328,6 +367,85 @@ namespace core::forms
 			return FALSE;
 		}
 	
+		Response
+		virtual onNonClientActivate(NonClientActivateEventArgs args) {
+			this->onNonClientPaint(NonClientPaintEventArgs{std::move(args)});
+			
+			//! @todo  Returning TRUE/FALSE matters 
+			//! @see  https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-ncactivate#remarks
+			return 0;  
+		}
+	
+		Response
+		virtual onNonClientHitTest(NonClientHitTestEventArgs args) {
+			if (NonClientComponentBounds const bounds{this->style(), this->wndRect(), Coords::Screen}; bounds.MaximizeBtn.contains(args.Position))
+				return WindowHitTest::MaxButton;
+			else if (bounds.MinimizeBtn.contains(args.Position))
+				return WindowHitTest::MinButton;
+			else if (bounds.SysMenuBtn.contains(args.Position))
+				return WindowHitTest::SysMenu;
+			else if (bounds.Caption.contains(args.Position))
+				return WindowHitTest::Caption;
+
+			return Unhandled;
+		}
+
+		Response
+		virtual onNonClientMouseDown(NonClientMouseEventArgs args) {
+			// Repeat hit-test for our custom non-client area
+			if (auto const response = this->onNonClientHitTest(NonClientHitTestEventArgs{args.Position}); response)
+				args.Object = static_cast<WindowHitTest>(*response.Value);
+
+			// Intercept presses of the minimize and maximize buttons to prevent default-behaviour
+			//  (and its associated painting into the non-client area). 
+			if (args.Object == WindowHitTest::MinButton
+			 || args.Object == WindowHitTest::MaxButton) {
+				NonClientComponentBounds const bounds{this->style(), this->wndRect(), Coords::Screen};
+				std::optional<Region> update;
+
+				if (args.Object == WindowHitTest::MinButton) {
+					update = Region{bounds.MinimizeBtn};
+					this->CaptionButtons.MinimizeBtn = ButtonState::Pushed;
+				}
+				else {
+					update = Region{bounds.MaximizeBtn};
+					this->CaptionButtons.MaximizeBtn = ButtonState::Pushed;
+				}
+
+				this->MouseCapture.capture();
+				this->onNonClientPaint(NonClientPaintEventArgs{*this,*update});
+				return 0;
+			}
+			
+			// Allow remaining presses to retain existingfunctionality
+			// * Moving the window by pressing the title-bar
+			// * Display the system context-menu by double-pressing its button
+			// * Resizing the window by dragging the frame
+			return Unhandled;
+		}
+	
+		Response
+		virtual onMouseUp(MouseEventArgs args) {
+			if (this->MouseCapture.captured()) 
+			{
+				NonClientComponentBounds const bounds {this->style(), this->wndRect(), Coords::Screen};
+				Region update{this->CaptionButtons.MaximizeBtn == ButtonState::Pushed ? bounds.MaximizeBtn : bounds.MinimizeBtn};
+				
+				this->MouseCapture.release();
+				this->CaptionButtons = WindowCaptionButtons{};
+				this->onNonClientPaint(NonClientPaintEventArgs{*this, update});
+			}
+			return Unhandled;
+		}
+
+		Response
+		virtual onNonClientPaint(NonClientPaintEventArgs args) override {
+			args.beginPaint(this->CaptionButtons);
+			this->LookNFeel->draw(*this, args);
+			args.endPaint();
+			return 0;
+		}
+
 		Response
 		virtual onPaint(PaintWindowEventArgs args) override {
 			args.beginPaint();

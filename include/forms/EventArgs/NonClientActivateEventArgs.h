@@ -45,20 +45,26 @@ namespace core::forms
 namespace core::forms
 {
 	class NonClientActivateEventArgs {
+		::WPARAM constexpr
+		inline static DontRepaint = static_cast<::WPARAM>(-1);
+
 	public:
 		std::optional<Region>  InvalidArea;
-		WindowCaptionState     State;
-		Window*                Window;
+		WindowCaptionState     CaptionState;
+		Window&                Window;
 		bool                   Repaint;
 
 	public:
-		NonClientActivateEventArgs(forms::Window* window, ::WPARAM w, ::LPARAM l) 
-		  : State{static_cast<WindowCaptionState>(w)},
+		NonClientActivateEventArgs(forms::Window& window, ::WPARAM capState, ::LPARAM updRegion) 
+		  : CaptionState{static_cast<WindowCaptionState>(capState)},
 			Window{window},
-			Repaint{l != -1}
+			Repaint{updRegion != NonClientActivateEventArgs::DontRepaint}
 		{
-			if (l > NULLREGION && !::IsAppThemed())
-				this->InvalidArea = reinterpret_cast<::HRGN>(l);
+			//! @remarks  Update region is not used when visual style enabled for window
+			//! @see  https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-ncactivate#parameters
+			if (!::IsAppThemed() && updRegion)
+				if (auto rgn = reinterpret_cast<::HRGN>(updRegion); rgn != Region::Null)
+					this->InvalidArea = Region{rgn, adopt};
 		}
 
 		~NonClientActivateEventArgs() noexcept 

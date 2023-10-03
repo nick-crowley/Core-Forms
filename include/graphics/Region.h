@@ -48,6 +48,10 @@ namespace core::forms
 		using type = Region;
 		using reference = Region&;
 
+	public:
+		::HRGN constexpr
+		static Null = reinterpret_cast<::HRGN>(NULLREGION);
+
 	private:
 		::HRGN  Handle = nullptr;
 
@@ -60,11 +64,9 @@ namespace core::forms
 		  : Handle{::CreateRectRgn(r.Left,r.Top,r.Right,r.Bottom)}
 		{}
 	
-		Region(::HRGN rgn)  
-		  : Handle{ThrowIfNull(rgn)}
+		Region(::HRGN rgn, meta::adopt_t)
+		  : Handle{ThrowIf(rgn, !rgn || rgn == Region::Null)}
 		{
-			if (rgn == (::HRGN)NULLREGION)
-				throw invalid_argument{"Region::ctor() 'rgn' is NULLREGION"};
 		}
 	
 		~Region() noexcept

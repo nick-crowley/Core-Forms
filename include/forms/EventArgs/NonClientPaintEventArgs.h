@@ -29,6 +29,7 @@
 #include "library/core.Forms.h"
 #include "core/ObservableEvent.h"
 #include "graphics/Graphics.h"
+#include "forms/WindowStyle.h"
 #include "forms/WindowInfo.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -43,7 +44,13 @@ namespace core::forms
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
-{
+{	
+	enum class Coords {
+		Screen, 
+		Window, 
+		Client,
+	};
+
 	class NonClientComponentBounds
 	{
 	public:
@@ -56,23 +63,39 @@ namespace core::forms
 
 	public:
 		explicit
-		NonClientComponentBounds(Rect wnd) noexcept
+		NonClientComponentBounds(nstd::bitset<WindowStyle> style, Rect wnd, Coords results) noexcept
 		  : Window{wnd}
 		{
+			ThrowIf(results, results == Coords::Client);
+
+			// Caption
 			this->Caption = Rect{0, 0, wnd.width(), SystemMetric::cyCaption};
-			this->Caption.inflate(-2*Size{SystemMetric::cxSizeFrame,0});
-			this->Caption.translate(2*Point{0,SystemMetric::cySizeFrame});
+			this->Caption.inflate(-Size{SystemMetric::cxSizeFrame, 0} * 2);
+			this->Caption.translate(Point{0, SystemMetric::cySizeFrame} * 2);
 
 			// Caption text
 			Size const rcIcon {this->Caption.height(), this->Caption.height()};
 			this->Title = this->Caption;
 			this->Title.Left += rcIcon.Width + (LONG)GuiMeasurement{SystemMetric::cxSizeFrame}*2;
 		
-			// Caption buttons
+			// System Menu
 			this->SysMenuBtn = Rect{this->Caption.topLeft(), rcIcon};
 			--this->SysMenuBtn.Left; --this->SysMenuBtn.Top;
-			this->MaximizeBtn = Rect{this->Caption.topRight(),rcIcon} - Point{rcIcon.Width,0};
-			this->MinimizeBtn = Rect{this->Caption.topRight(),rcIcon} - Point{2*rcIcon.Width,0};
+
+			// Caption buttons
+			this->MaximizeBtn = Rect{this->Caption.topRight(), rcIcon, Rect::FromTopRight};
+			if (!style.test(WindowStyle::MaximizeBox)) 
+				this->MinimizeBtn = std::exchange(this->MaximizeBtn, Rect::Empty);
+			else
+				this->MinimizeBtn = this->MaximizeBtn - Point{rcIcon.Width,0};
+
+			if (results == Coords::Screen) {
+				this->Caption += wnd.topLeft();
+				this->Title += wnd.topLeft();
+				this->SysMenuBtn += wnd.topLeft();
+				this->MaximizeBtn += wnd.topLeft();
+				this->MinimizeBtn += wnd.topLeft();
+			}
 		}
 	};
 
@@ -83,23 +106,34 @@ namespace core::forms
 		Rect                           Bounds;
 		std::optional<DeviceContext>   mutable Graphics;
 		std::optional<Region>          InvalidArea;
-		Window*                        Window;
-		WindowCaptionState             State;
+		Window&                        Window;
+		WindowCaptionState             CaptionState;
+		WindowCaptionButtons           CaptionButtons;
 
 	public:
-		NonClientPaintEventArgs(forms::Window* window, ::WPARAM w, ::LPARAM) 
+		NonClientPaintEventArgs(forms::Window& window, ::WPARAM update, ::LPARAM) 
 		  : Window{window}, 
-			State{WindowCaptionState::Unknown}
+			CaptionState{WindowCaptionState::Unknown}
 		{
-			if (w > NULLREGION)
-				this->InvalidArea = reinterpret_cast<::HRGN>(w);
+			if (::HRGN const rgn = reinterpret_cast<::HRGN>(update); rgn && rgn != Region::Null)
+				this->InvalidArea = Region{rgn, adopt};
 		}
-	
-		NonClientPaintEventArgs(NonClientActivateEventArgs const& args) 
-		  : InvalidArea{args.InvalidArea},
+		
+		explicit
+		NonClientPaintEventArgs(NonClientActivateEventArgs&& args) 
+		  : InvalidArea{std::move(args.InvalidArea)},
 			Window{args.Window},
-			State{args.State}
+			CaptionState{args.CaptionState}
 		{}
+
+		explicit
+		NonClientPaintEventArgs(forms::Window& window, ::HRGN update) 
+		  : Window{window},
+		    CaptionState{WindowCaptionState::Active}
+		{
+			if (update && update != Region::Null)
+				this->InvalidArea = Region{update,adopt};
+		}
 	
 		~NonClientPaintEventArgs() noexcept 
 		{
@@ -109,7 +143,7 @@ namespace core::forms
 
 	public:
 		bool 
-		beginPaint();
+		beginPaint(WindowCaptionButtons const& curButtonState);
 
 		void 
 		endPaint();

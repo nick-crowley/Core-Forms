@@ -672,7 +672,11 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+		public:
+			explicit
+			operator bool() const {
+				return this->Status == Response::Handled;
+			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 
@@ -1362,7 +1366,7 @@ namespace core::forms
 				return this->onTimer({wParam, lParam});
 		
 			case WM_NCACTIVATE: 
-				return this->onNonClientActivate({this,wParam,lParam});
+				return this->onNonClientActivate({*this,wParam,lParam});
 			
 			case WM_NCCREATE: 
 				return this->onNonClientCreate({wParam,lParam});
@@ -1386,7 +1390,7 @@ namespace core::forms
 				return this->onNonClientMouseUp({MouseMessage::ButtonUp,MouseButton::Left,wParam,lParam});
 			
 			case WM_NCPAINT:
-				return this->onNonClientPaint({this,wParam,lParam});
+				return this->onNonClientPaint({*this,wParam,lParam});
 
 			default:
 				if (message >= WM_USER && message < WM_APP)

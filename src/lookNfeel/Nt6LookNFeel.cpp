@@ -72,8 +72,8 @@ Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs const& args)
 {
 	Invariant(args.Graphics);
 
-	auto const activeCaption = args.State == WindowCaptionState::Active;
-	auto const components = NonClientComponentBounds{args.Bounds};
+	auto const activeCaption = args.CaptionState == WindowCaptionState::Active;
+	auto const components = NonClientComponentBounds{args.Window.style(), args.Bounds, Coords::Window};
 
 	// Draw frame
 	args.Graphics->setBrush(StockBrush::LightGrey);
@@ -91,9 +91,21 @@ Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs const& args)
 		args.Graphics->fillRect(components.Caption);
 	
 	// Draw caption text
-	args.Graphics->setFont(StockFont::SystemFixed);
+	args.Graphics->setFont(wnd.font());
 	args.Graphics->textColour(SystemColour::HighlightText, transparent);
-	args.Graphics->drawText(wnd.text(), components.Title, DrawTextFlags::SimpleCentre);
+	args.Graphics->drawText(wnd.text(), components.Title, DrawTextFlags::SimpleLeft);
+	
+	// Draw maximize button
+	if (wnd.style().test(WindowStyle::MaximizeBox)) {
+		bool const pressed = args.CaptionButtons.MaximizeBtn == ButtonState::Pushed;
+		args.Graphics->drawControl(components.MaximizeBtn, DFC_CAPTION, DFCS_CAPTIONMAX|(pressed?DFCS_PUSHED:0));
+	}
 
+	// Draw minimize button
+	if (wnd.style().test(WindowStyle::MinimizeBox)) {
+		bool const pressed = args.CaptionButtons.MinimizeBtn == ButtonState::Pushed;
+		args.Graphics->drawControl(components.MinimizeBtn, DFC_CAPTION, DFCS_CAPTIONMIN|(pressed?DFCS_PUSHED:0));
+	}
+	
 	args.Graphics->restore();
 }

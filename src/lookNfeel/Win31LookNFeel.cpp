@@ -64,8 +64,10 @@ Win31LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 void
 Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs const& args) 
 {
-	auto const activeCaption = args.State == WindowCaptionState::Active;
-	auto const components = NonClientComponentBounds{args.Bounds};
+	ThrowIf(args, !args.Graphics);
+
+	auto const activeCaption = args.CaptionState == WindowCaptionState::Active;
+	auto const components = NonClientComponentBounds{args.Window.style(), args.Bounds, Coords::Window};
 
 	// Draw window frame
 	args.Graphics->setBrush(StockBrush::LightGrey);
@@ -100,18 +102,22 @@ Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs const& args)
 
 	// Draw maximize button
 	if (wnd.style().test(WindowStyle::MaximizeBox)) {
+		bool const pressed = args.CaptionButtons.MaximizeBtn == ButtonState::Pushed;
 		args.Graphics->fillRect(components.MaximizeBtn, SystemColour::ButtonFace);
-		args.Graphics->drawEdge(components.MaximizeBtn, EdgeFlags::Raised);
-		args.Graphics->textColour(SystemColour::WindowText);
-		args.Graphics->drawText(L"▲", components.MaximizeBtn, DrawTextFlags::SimpleCentre);
+		args.Graphics->drawEdge(components.MaximizeBtn, pressed ? EdgeFlags::Sunken : EdgeFlags::Raised);
+		args.Graphics->textColour(activeCaption ? SystemColour::WindowText : SystemColour::GrayText);
+		auto const btnRect = components.MaximizeBtn + (pressed ? Point{1,1} : Point::Zero);
+		args.Graphics->drawText(L"▲", btnRect, DrawTextFlags::SimpleCentre);
 	}
 
 	// Draw minimize button
 	if (wnd.style().test(WindowStyle::MinimizeBox)) {
+		bool const pressed = args.CaptionButtons.MinimizeBtn == ButtonState::Pushed;
 		args.Graphics->fillRect(components.MinimizeBtn, SystemColour::ButtonFace);
-		args.Graphics->drawEdge(components.MinimizeBtn, EdgeFlags::Raised);
-		args.Graphics->textColour(SystemColour::WindowText);
-		args.Graphics->drawText(L"▼", components.MinimizeBtn, DrawTextFlags::SimpleCentre);
+		args.Graphics->drawEdge(components.MinimizeBtn, pressed ? EdgeFlags::Sunken : EdgeFlags::Raised);
+		args.Graphics->textColour(activeCaption ? SystemColour::WindowText : SystemColour::GrayText);
+		auto const btnRect = components.MinimizeBtn + (pressed ? Point{1,1} : Point::Zero);
+		args.Graphics->drawText(L"▼", btnRect, DrawTextFlags::SimpleCentre);
 	}
 	
 	args.Graphics->restore();

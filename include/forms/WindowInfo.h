@@ -28,6 +28,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "forms/ExWindowStyle.h"
 #include "forms/WindowStyle.h"
+#include "controls/ButtonState.h"
 #include "graphics/SizePoint.h"
 #include "graphics/Rectangle.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -37,12 +38,20 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
-// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
 	enum class WindowCaptionState {Inactive = FALSE, Active = TRUE, Unknown = -1};
-	
+}
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::forms
+{	
+	struct WindowCaptionButtons 
+	{
+		ButtonState CloseBtn = ButtonState::None,
+			        MaximizeBtn = ButtonState::None, 
+		            MinimizeBtn = ButtonState::None;
+	};
+
 	struct WindowInfo
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -50,22 +59,21 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Size const               Border;
+		WindowCaptionState const Caption;
 		Rect const               Client;
 		Rect const               Window;
 		WindowStyle const        Style;
 		ExWindowStyle const      ExStyle;
-		WindowCaptionState const State;
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		explicit
 		WindowInfo(::WINDOWINFO const& wi)
 		  : Border{wi.cxWindowBorders, wi.cyWindowBorders},
+			Caption{static_cast<WindowCaptionState>(wi.dwWindowStatus)},
 			Client{wi.rcClient},
 			Window{wi.rcWindow},
 			Style{static_cast<WindowStyle>(wi.dwStyle)},
-			ExStyle{static_cast<ExWindowStyle>(wi.dwExStyle)},
-			State{static_cast<WindowCaptionState>(wi.dwWindowStatus)}
+			ExStyle{static_cast<ExWindowStyle>(wi.dwExStyle)}
 		{}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
