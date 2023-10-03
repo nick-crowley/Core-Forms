@@ -122,12 +122,12 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		bool
-		ownerDraw() const override {
+		virtual ownerDraw() const override {
 			return false;		// FIXME: Implement ListViewControl::ownerDraw()
 		}
 		
 		WindowRole
-		role() const override {
+		virtual role() const override {
 			return WindowRole::List;
 		}
 

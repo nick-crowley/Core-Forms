@@ -275,12 +275,12 @@ namespace core::forms
 		}
 	
 		WindowRole
-		role() const override {
+		virtual role() const override {
 			return WindowRole::Dialog;
 		}
 
-		WindowClass const& 
-		wndcls() const override {
+		nstd::return_t<WindowClass const&>
+		virtual wndcls() const override {
 			WindowClass const  static wc;
 			return wc;
 		}
@@ -368,7 +368,7 @@ namespace core::forms
 		}
 	
 		Response
-		virtual onNonClientActivate(NonClientActivateEventArgs args) {
+		virtual onNonClientActivate(NonClientActivateEventArgs args) override {
 			this->onNonClientPaint(NonClientPaintEventArgs{std::move(args)});
 			
 			//! @todo  Returning TRUE/FALSE matters 
@@ -377,7 +377,7 @@ namespace core::forms
 		}
 	
 		Response
-		virtual onNonClientHitTest(NonClientHitTestEventArgs args) {
+		virtual onNonClientHitTest(NonClientHitTestEventArgs args) override {
 			if (NonClientComponentBounds const bounds{this->style(), this->wndRect(), Coords::Screen}; bounds.MaximizeBtn.contains(args.Position))
 				return WindowHitTest::MaxButton;
 			else if (bounds.MinimizeBtn.contains(args.Position))
@@ -391,7 +391,7 @@ namespace core::forms
 		}
 
 		Response
-		virtual onNonClientMouseDown(NonClientMouseEventArgs args) {
+		virtual onNonClientMouseDown(NonClientMouseEventArgs args) override {
 			// Repeat hit-test for our custom non-client area
 			if (auto const response = this->onNonClientHitTest(NonClientHitTestEventArgs{args.Position}); response)
 				args.Object = static_cast<WindowHitTest>(*response.Value);
@@ -425,7 +425,7 @@ namespace core::forms
 		}
 	
 		Response
-		virtual onMouseUp(MouseEventArgs args) {
+		virtual onMouseUp(MouseEventArgs args) override {
 			if (this->MouseCapture.captured()) 
 			{
 				NonClientComponentBounds const bounds {this->style(), this->wndRect(), Coords::Screen};

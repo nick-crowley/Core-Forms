@@ -96,7 +96,7 @@ namespace core::forms
 		}
 		
 		WindowRole
-		role() const override {
+		virtual role() const override {
 			return WindowRole::Link;
 		}
 

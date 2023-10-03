@@ -80,37 +80,37 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
-		draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
 		void
-		draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
 		void
-		draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
 		void
-		measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& args) override;
+		virtual measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& args) override;
 	
 		void
-		erase(GroupBoxControl& ctrl, EraseBackgroundEventArgs const& args) override;
+		virtual erase(GroupBoxControl& ctrl, EraseBackgroundEventArgs const& args) override;
 	
 		void
-		draw(LabelControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(LabelControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
 		void
-		draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
 		void
-		erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& args) override;
+		virtual erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& args) override;
 	
 		void
-		draw(PictureControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(PictureControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
 		void
-		draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args) override;
 
 		void
-		draw(StaticControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(StaticControl& ctrl, OwnerDrawEventArgs const& args) override;
 		
 		AnyColour
 		virtual button() override;

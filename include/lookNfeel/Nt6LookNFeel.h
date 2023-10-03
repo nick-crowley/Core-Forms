@@ -57,13 +57,13 @@ namespace core::forms
 		virtual default() override;
 
 		void
-		draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
 		void
-		draw(Dialog& dlg, PaintWindowEventArgs const& args) override;
+		virtual draw(Dialog& dlg, PaintWindowEventArgs const& args) override;
 	
 		void
-		draw(Window& wnd, NonClientPaintEventArgs const& args) override;
+		virtual draw(Window& wnd, NonClientPaintEventArgs const& args) override;
 	};
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
