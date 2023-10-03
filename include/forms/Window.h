@@ -951,6 +951,7 @@ namespace core::forms
 		using base::send;
 		using base::style;
 		using base::text;
+		using base::wndcls;
 		using base::wndRect;
 		using base::wndRgn;
 		
