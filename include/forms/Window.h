@@ -649,7 +649,9 @@ namespace core::forms
 			Response(RoutingStatus status) noexcept : Status(status)
 			{}
 
-			template <nstd::Integer Result>
+			template <typename Result>
+				requires nstd::Integer<Result> 
+			          || nstd::Enumeration<Result>
 			implicit constexpr
 			Response(Result value) noexcept : Status(Handled), Value(static_cast<::LRESULT>(value))
 			{}
