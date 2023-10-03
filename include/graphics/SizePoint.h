@@ -144,7 +144,12 @@ namespace core::forms
 		operator*(::LONG scale) const noexcept {
 			return Point{this->X*scale, this->Y*scale};
 		}
-
+		
+		Point constexpr
+		inline friend operator*(::LONG scale, Point const& pt) noexcept {
+			return pt * scale;
+		}
+	
 		implicit operator 
 		::POINT const*() const noexcept {
 			static_assert(sizeof(Point)==sizeof(::POINT));
@@ -238,6 +243,11 @@ namespace core::forms
 					static_cast<::LONG>(this->Height*scale)};
 		}
 	
+		Size constexpr
+		inline friend operator*(float scale, Size const& sz) noexcept {
+			return sz * scale;
+		}
+
 		implicit operator 
 		::SIZE const*() const noexcept {
 			static_assert(sizeof(Size)==sizeof(::SIZE));
@@ -283,16 +293,6 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	Point constexpr
-	operator*(::LONG scale, Point const& pt) noexcept {
-		return pt * scale;
-	}
-	
-	Size constexpr
-	operator*(float scale, Size const& sz) noexcept {
-		return sz * scale;
-	}
-
 	std::string
 	inline to_string(GuiMeasurement const& value)
 	{
