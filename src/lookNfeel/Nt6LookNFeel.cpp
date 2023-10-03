@@ -95,6 +95,15 @@ Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs const& args)
 	args.Graphics->textColour(SystemColour::HighlightText, transparent);
 	args.Graphics->drawText(wnd.text(), components.Title, DrawTextFlags::SimpleLeft);
 	
+	// Draw window icon
+	/*if (wnd.wndcls().SmallIcon)
+		args.Graphics->drawIcon(wnd.wndcls().SmallIcon, components.SysMenuBtn);
+	else {
+		auto const
+		static applicationIcon = Icon::load(win::SystemResource, win::ResourceId::parse(IDI_APPLICATION), Size{SystemMetric::cxSmallIcon,SystemMetric::cySmallIcon});
+		args.Graphics->drawIcon(applicationIcon.handle(), components.SysMenuBtn);
+	}*/
+
 	// Draw maximize button
 	if (wnd.style().test(WindowStyle::MaximizeBox)) {
 		bool const pressed = args.CaptionButtons.MaximizeBtn == ButtonState::Pushed;
