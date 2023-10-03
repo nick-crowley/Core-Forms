@@ -177,7 +177,7 @@ namespace core::forms
 			return lhs;
 		}
 
-		/*implicit*/ operator 
+		implicit operator 
 		std::remove_pointer_t<::HRGN> const*() const noexcept {
 			return this->Handle;
 		}
@@ -241,7 +241,7 @@ namespace core::forms
 			return *this;
 		}
 
-		/*implicit*/ operator 
+		implicit operator 
 		::HRGN() noexcept {
 			return this->Handle;
 		}
