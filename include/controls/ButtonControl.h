@@ -28,6 +28,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
 #include "controls/Control.h"
+#include "controls/ButtonState.h"
 #include "controls/ButtonStyle.h"
 #include "forms/WindowClass.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -37,21 +38,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::forms
-{
-	enum class ButtonState {	
-		Unchecked      = BST_UNCHECKED,     // 
-		Checked        = BST_CHECKED,       // 
-		Indeterminate  = BST_INDETERMINATE, // 
-		Pushed         = BST_PUSHED,        // 
-		Focus          = BST_FOCUS,         // 
-		None           = Unchecked,
-	};
-}
-namespace core::meta
-{
-	metadata bool Settings<bitwise_enum, forms::ButtonState> = true;
-}
+
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
