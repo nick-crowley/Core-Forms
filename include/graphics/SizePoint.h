@@ -85,6 +85,9 @@ namespace core::forms
 	class Point 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		using reference = Point&;
+
 	public:
 		Point const
 		static Zero;
@@ -164,6 +167,22 @@ namespace core::forms
 			this->Y += r.Y;
 		}
 	
+		//! @brief	Translate by @p r
+		reference constexpr
+		operator+=(Point const& r) noexcept {
+			this->X += r.X;
+			this->Y += r.Y;
+			return *this;
+		}
+	
+		//! @brief	Translate by @p r
+		reference constexpr
+		operator-=(Point const& r) noexcept {
+			this->X -= r.X;
+			this->Y -= r.Y;
+			return *this;
+		}
+
 		implicit operator 
 		::POINT*() noexcept {
 			static_assert(sizeof(Point)==sizeof(::POINT));
