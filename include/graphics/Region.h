@@ -44,6 +44,7 @@ namespace core::forms
 namespace core::forms
 {
 	class Region {
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		using type = Region;
 		using reference = Region&;
@@ -51,10 +52,10 @@ namespace core::forms
 	public:
 		::HRGN constexpr
 		static Null = reinterpret_cast<::HRGN>(NULLREGION);
-
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		::HRGN  Handle = nullptr;
-
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Region() noexcept 
 		  : Handle{::CreateRectRgn(0,0,0,0)}
@@ -74,7 +75,7 @@ namespace core::forms
 			if (this->Handle)
 				::DeleteObject(this->Handle);
 		}
-
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Region(type const& r)  
 		  : Region{}
@@ -107,7 +108,7 @@ namespace core::forms
 			type{std::move(r)}.swap(*this);
 			return *this;
 		}
-
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		std::unique_ptr<::RGNDATA>
 		static getData(::HRGN rgn) {
@@ -117,7 +118,7 @@ namespace core::forms
 				return nullptr;
 			return data;
 		}
-
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Rect
 		bounds() const noexcept {
@@ -183,7 +184,7 @@ namespace core::forms
 		std::remove_pointer_t<::HRGN> const*() const noexcept {
 			return this->Handle;
 		}
-
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
 		combine(type const& r) noexcept {
