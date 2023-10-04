@@ -79,6 +79,10 @@
 		<DisplayString>{Debug}</DisplayString>
 		<Expand>
 			<Item Name="[class]">Debug.Class._Elems,sb</Item>
+			<Item Name="[background]" Condition="Background._Has_value">Background</Item>
+			<Item Name="[backcolour]" Condition="BackColour._Has_value">BackColour</Item>
+			<Item Name="[forecolour]" Condition="TextColour._Has_value">TextColour</Item>
+			<Item Name="[font]" Condition="CustomFont._Has_value">CustomFont</Item>
 			<Item Name="[preview]">Debug.Text._Elems,s</Item>
 			<Item Name="[state]">Debug.State</Item>
 			<Synthetic Name="[listeners]">
