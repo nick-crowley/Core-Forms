@@ -29,14 +29,27 @@
 		<DisplayString>{{ {ClassName,sub} (#{(signed)Ident}) {Title} }}</DisplayString>
 	</Type>
 
+	<Type Name="core::forms::UnmanagedWindow">
+		<DisplayString Condition="!Handle">{{ empty }}</DisplayString>
+		<DisplayString>{{ present }}</DisplayString>
+	</Type>
+
+	<Type Name="core::forms::Window::ChildWindowCollection">
+		<DisplayString>{{ virtual-collection }}</DisplayString>
+	</Type>
+
+	<Type Name="core::forms::Window::TimerCollection">
+		<DisplayString>{{ virtual-collection }}</DisplayString>
+	</Type>
+
 	<Type Name="core::forms::Window::DebuggingAide::StateDescription">
-		<DisplayString Condition="strlen(Message)">{State,en} ({Message,s})</DisplayString>
+		<DisplayString Condition="strlen(Message)">{State,en} {Message,sb}</DisplayString>
 		<DisplayString>{State,en}</DisplayString>
 	</Type>
 
 	<Type Name="core::forms::Window::DebuggingAide">
-		<DisplayString Condition="strlen(Class._Elems) &amp;&amp; strlen(Text._Elems)">{{ {Class._Elems,s}: {Text._Elems,s} ({State}) }}</DisplayString>
-		<DisplayString Condition="strlen(Class._Elems)">{{ {Class._Elems,s}: {State} }}</DisplayString>
+		<DisplayString Condition="strlen(Class._Elems) &amp;&amp; strlen(Text._Elems)">{{ {Class._Elems,sb}: {Text._Elems,s} [{State}] }}</DisplayString>
+		<DisplayString Condition="strlen(Class._Elems)">{{ {Class._Elems,sb}: {State} }}</DisplayString>
 		<DisplayString Condition="State.State == forms::Window::ProcessingState::NotApplicable">{{ N/A }}</DisplayString>
 		<DisplayString>{{ {State} }}</DisplayString>
 	</Type>
@@ -48,7 +61,7 @@
 	<Type Name="core::forms::Window">
 		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
 		<DisplayString Condition="!Handle">{{ &lt;Not a window&gt; }}</DisplayString>
-		<DisplayString>{{ {Debug} }}</DisplayString>
+		<DisplayString>{Debug}</DisplayString>
 	</Type>
 	
 	<Type Name="core::forms::Control">
