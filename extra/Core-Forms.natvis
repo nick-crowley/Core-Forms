@@ -91,7 +91,7 @@
 	</Type>
 
 	<Type Name="core::forms::Window">
-		<Intrinsic Name="size" Expression="Created.size()+Destroyed.size()+Shown.size()+Hidden.size()+Painted.size()+Resized.size()+Clicked.size()+FontChanged.size()" />
+		<Intrinsic Name="numWindowListeners" Expression="Created.size()+Destroyed.size()+Shown.size()+Hidden.size()+Painted.size()+Resized.size()+Clicked.size()+FontChanged.size()" />
 		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
 		<DisplayString Condition="!Handle">{{ &lt;Not a window&gt; }}</DisplayString>
 		<DisplayString>{Debug}</DisplayString>
@@ -103,8 +103,8 @@
 			<Item Name="[font]" Condition="CustomFont._Has_value">CustomFont</Item>
 			<Item Name="[preview]">Debug.Text._Elems,s</Item>
 			<Item Name="[state]">Debug.State</Item>
-			<Synthetic Name="[listeners]">
-				<DisplayString>{size()} listener(s)</DisplayString>
+			<Synthetic Name="[window-events]">
+				<DisplayString>{numWindowListeners()} listener(s)</DisplayString>
 				<Expand>
 					<Item Name="[created]" Condition="Created.size()">Created</Item>
 					<Item Name="[destroyed]" Condition="Destroyed.size()">Destroyed</Item>
@@ -148,6 +148,7 @@
 	</Type>
 
 	<Type Name="core::forms::Dialog">
+		<Intrinsic Name="numDialogListeners" Expression="Initialized.size()" />
 		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
 		<DisplayString Condition="!Handle">{{ Dialog id={DialogId} &lt;Not a window&gt; }}</DisplayString>
 		<DisplayString>{{ Dialog: {Debug.Text._Elems,s}  id={DialogId}  {DisplayMode,en}  {Debug.State} }}</DisplayString>
@@ -155,6 +156,12 @@
 			<Item Name="[ident]">DialogId</Item>
 			<Item Name="[mode]">DisplayMode</Item>
 			<ExpandedItem>*(core::forms::Window*)this,nd</ExpandedItem>
+			<Synthetic Name="[dialog-events]">
+				<DisplayString>{numDialogListeners()} listener(s)</DisplayString>
+				<Expand>
+					<Item Name="[created]" Condition="Created.size()">Created</Item>
+				</Expand>
+			</Synthetic>
 		</Expand>
 	</Type>
 
