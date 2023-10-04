@@ -111,6 +111,35 @@
 		</Expand>
 	</Type>
 
+	<Type Name="core::forms::ControlDictionary">
+		<Intrinsic Name="size" Expression="(size_t)m_items._Mypair._Myval2._Myval2._Mysize"/>
+		<DisplayString>{{ {size()} controls }}</DisplayString>
+	</Type>
+
+	<Type Name="core::forms::Dialog::EarlyBoundControlCollection">
+		<DisplayString>{{ {Controls.size()} controls }}</DisplayString>
+	</Type>
+
+	<Type Name="core::forms::Dialog::MouseCaptureState">
+		<DisplayString Condition="IsCaptured">{{ captured }}</DisplayString>
+		<DisplayString>{{ not-captured }}</DisplayString>
+	</Type>
+
+	<Type Name="core::forms::WindowCaptionButtons">
+		<DisplayString>{{ 3 buttons }}</DisplayString>
+	</Type>
+
+	<Type Name="core::forms::Dialog">
+		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
+		<DisplayString Condition="!Handle">{{ Dialog id={DialogId} &lt;Not a window&gt; }}</DisplayString>
+		<DisplayString>{{ Dialog: {Debug.Text._Elems,s}  id={DialogId}  {DisplayMode,en}  {Debug.State} }}</DisplayString>
+		<Expand>
+			<Item Name="[ident]">DialogId</Item>
+			<Item Name="[mode]">DisplayMode</Item>
+			<ExpandedItem>*(core::forms::Window*)this,nd</ExpandedItem>
+		</Expand>
+	</Type>
+
 	<Type Name="core::forms::ButtonControl">
 		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
 		<DisplayString Condition="!Handle">{{ Button: id={Ident,d} &lt;Not a window&gt; }}</DisplayString>
