@@ -23,6 +23,10 @@
 		<DisplayString>&lt;Cannot determine&gt;</DisplayString>
 	</Type>
 
+	<Type Name="core::forms::Brush">
+		<DisplayString>{Handle}</DisplayString>
+	</Type>
+
 	<Type Name="core::forms::Rect">
 		<DisplayString>{{ {Left},{Top} [{Right-Left}x{Bottom-Top}] }}</DisplayString>
 	</Type>
@@ -100,6 +104,16 @@
 		<Expand>
 			<Item Name="[ident]">Ident</Item>
 			<ExpandedItem>*(core::forms::Window*)this,nd</ExpandedItem>
+		</Expand>
+	</Type>
+
+	<Type Name="core::forms::LabelControl">
+		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
+		<DisplayString Condition="!Handle">{{ id={Ident,d} &lt;Not a window&gt; }}</DisplayString>
+		<DisplayString>{{ id={Ident,d} {Debug} }}</DisplayString>
+		<Expand>
+			<Item Name="[alignment]">TextAlignment,en</Item>
+			<ExpandedItem>*(core::forms::Control*)this,nd</ExpandedItem>
 		</Expand>
 	</Type>
 
