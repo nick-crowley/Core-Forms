@@ -39,6 +39,24 @@
 		<DisplayString>&lt;Not implemented&gt;</DisplayString>
 	</Type>
 
+	<Type Name="core::forms::ResourceIdOrString">
+		<DisplayString Condition="Value.index()==0">{Value._Head}</DisplayString>
+		<DisplayString>{Value._Tail._Head}</DisplayString>
+	</Type>
+
+	<Type Name="core::forms::DialogTemplate">
+		<DisplayString>{{ {Title}  ({Controls.size()} controls) }}</DisplayString>
+		<Expand>
+			<Item Name="[class]">ClassName</Item>
+			<Item Name="[title]">Title</Item>
+			<Item Name="[style]">Style</Item>
+			<Item Name="[exStyle]">ExtendedStyle</Item>
+			<Item Name="[font]">Font</Item>
+			<Item Name="[points]">Height</Item>
+			<Item Name="[controls]">Controls</Item>
+		</Expand>
+	</Type>
+
 	<Type Name="core::forms::DialogItemTemplate">
 		<DisplayString>{{ {ClassName,sub} (#{(signed)Ident}) {Title} }}</DisplayString>
 	</Type>
