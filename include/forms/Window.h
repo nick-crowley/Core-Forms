@@ -798,7 +798,7 @@ namespace core::forms
 		std::optional<AnyColour>   BackColour;
 		std::optional<Brush>       mutable Background;
 		std::optional<AnyColour>   TextColour;
-		std::optional<Font>        WindowFont;
+		std::optional<Font>        CustomFont;
 		DebuggingAide              Debug;
 
 	protected:
@@ -977,7 +977,7 @@ namespace core::forms
 
 		Font
 		font() const {
-			return this->WindowFont.value_or(this->LookNFeel->paragraph());
+			return this->CustomFont.value_or(this->LookNFeel->paragraph());
 		}
 
 		Window*
@@ -1061,7 +1061,7 @@ namespace core::forms
 		
 		void
 		font(const Font& newFont) {
-			this->WindowFont = newFont; 
+			this->CustomFont = newFont; 
 		}
 		
 		void
