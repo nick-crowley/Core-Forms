@@ -154,6 +154,7 @@
 		<DisplayString>{{ Dialog: {Debug.Text._Elems,s}  id={DialogId}  {DisplayMode,en}  {Debug.State} }}</DisplayString>
 		<Expand>
 			<Item Name="[ident]">DialogId</Item>
+			<Item Name="[controls]">BoundControls.m_items,na</Item>
 			<Item Name="[mode]">DisplayMode</Item>
 			<ExpandedItem>*(core::forms::Window*)this,nd</ExpandedItem>
 			<Synthetic Name="[dialog-events]">
