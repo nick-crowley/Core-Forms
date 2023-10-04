@@ -12,8 +12,8 @@
 	</Type>
 	
 	<Type Name="core::SmartHandle&lt;*,*&gt;">
-		<DisplayString Condition="m_object._Rep == 0">{{ empty }}</DisplayString>
-		<DisplayString>{{non-empty}}</DisplayString>
+		<DisplayString Condition="Object._Rep == 0">{{ empty }}</DisplayString>
+		<DisplayString>{{ present }}</DisplayString>
 	</Type>
 
 	<Type Name="core::win::ResourceId">
