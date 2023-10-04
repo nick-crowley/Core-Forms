@@ -27,6 +27,10 @@
 		<DisplayString>{{ {Left},{Top} [{Right-Left}x{Bottom-Top}] }}</DisplayString>
 	</Type>
 
+	<Type Name="core::forms::Font">
+		<DisplayString>{Handle}</DisplayString>
+	</Type>
+
 	<Type Name="core::forms::DeviceContext">
 		<DisplayString>&lt;Not implemented&gt;</DisplayString>
 	</Type>
