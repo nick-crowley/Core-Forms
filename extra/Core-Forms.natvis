@@ -111,10 +111,37 @@
 		</Expand>
 	</Type>
 
+	<Type Name="core::forms::ButtonControl">
+		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
+		<DisplayString Condition="!Handle">{{ Button: id={Ident,d} &lt;Not a window&gt; }}</DisplayString>
+		<DisplayString>{{ Button: {Debug.Text._Elems,s}  id={Ident,d}  {Debug.State} }}</DisplayString>
+		<Expand>
+			<ExpandedItem>*(core::forms::Control*)this,nd</ExpandedItem>
+		</Expand>
+	</Type>
+
+	<Type Name="core::forms::CheckBoxControl">
+		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
+		<DisplayString Condition="!Handle">{{ CheckBox: id={Ident,d} &lt;Not a window&gt; }}</DisplayString>
+		<DisplayString>{{ CheckBox: {Debug.Text._Elems,s}  id={Ident,d}  {Debug.State} }}</DisplayString>
+		<Expand>
+			<ExpandedItem>*(core::forms::Control*)this,nd</ExpandedItem>
+		</Expand>
+	</Type>
+
+	<Type Name="core::forms::GroupBoxControl">
+		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
+		<DisplayString Condition="!Handle">{{ GroupBox: id={Ident,d} &lt;Not a window&gt; }}</DisplayString>
+		<DisplayString>{{ GroupBox: {Debug.Text._Elems,s}  id={Ident,d}  {Debug.State} }}</DisplayString>
+		<Expand>
+			<ExpandedItem>*(core::forms::Control*)this,nd</ExpandedItem>
+		</Expand>
+	</Type>
+
 	<Type Name="core::forms::LabelControl">
 		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
-		<DisplayString Condition="!Handle">{{ id={Ident,d} &lt;Not a window&gt; }}</DisplayString>
-		<DisplayString>{{ LabelControl: {Debug.Text._Elems,s}  id={Ident,d}  {Debug.State} }}</DisplayString>
+		<DisplayString Condition="!Handle">{{ Label: id={Ident,d} &lt;Not a window&gt; }}</DisplayString>
+		<DisplayString>{{ Label: {Debug.Text._Elems,s}  id={Ident,d}  {Debug.State} }}</DisplayString>
 		<Expand>
 			<Item Name="[alignment]">TextAlignment,en</Item>
 			<ExpandedItem>*(core::forms::Control*)this,nd</ExpandedItem>
