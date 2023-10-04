@@ -53,7 +53,7 @@
 	</Type>
 
 	<Type Name="core::forms::Window::DebuggingAide::StateDescription">
-		<DisplayString Condition="strlen(Message)">{State,en} {Message,sb}</DisplayString>
+		<DisplayString Condition="strlen(Message)">{State,en}: {Message,sb}</DisplayString>
 		<DisplayString>{State,en}</DisplayString>
 	</Type>
 
@@ -69,9 +69,28 @@
 	</Type>
 
 	<Type Name="core::forms::Window">
+		<Intrinsic Name="size" Expression="Created.size()+Destroyed.size()+Shown.size()+Hidden.size()+Painted.size()+Resized.size()+Clicked.size()+FontChanged.size()" />
 		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
 		<DisplayString Condition="!Handle">{{ &lt;Not a window&gt; }}</DisplayString>
 		<DisplayString>{Debug}</DisplayString>
+		<Expand>
+			<Item Name="[class]">Debug.Class._Elems,sb</Item>
+			<Item Name="[preview]">Debug.Text._Elems,s</Item>
+			<Item Name="[state]">Debug.State</Item>
+			<Synthetic Name="[listeners]">
+				<DisplayString>{size()} listener(s)</DisplayString>
+				<Expand>
+					<Item Name="[created]" Condition="Created.size()">Created</Item>
+					<Item Name="[destroyed]" Condition="Destroyed.size()">Destroyed</Item>
+					<Item Name="[shown]" Condition="Shown.size()">Shown</Item>
+					<Item Name="[hidden]" Condition="Hidden.size()">Hidden</Item>
+					<Item Name="[painted]" Condition="Painted.size()">Painted</Item>
+					<Item Name="[resized]" Condition="Resized.size()">Resized</Item>
+					<Item Name="[clicked]" Condition="Clicked.size()">Clicked</Item>
+					<Item Name="[font-changed]" Condition="FontChanged.size()">FontChanged</Item>
+				</Expand>
+			</Synthetic>
+		</Expand>
 	</Type>
 	
 	<Type Name="core::forms::Control">
