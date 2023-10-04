@@ -23,6 +23,14 @@
 		<DisplayString>&lt;Cannot determine&gt;</DisplayString>
 	</Type>
 
+	<Type Name="std::variant&lt;enum core::forms::Colour,enum core::forms::SystemColour,core::meta::transparent_t&gt;"> 
+		 <Intrinsic Name="index" Expression="(int)_Which"/>
+		 <DisplayString Condition="index() == 0" Optional="true">{_Head,x}</DisplayString>
+		 <DisplayString Condition="index() == 1" Optional="true">{_Tail._Head,en}</DisplayString>
+		 <DisplayString Condition="index() == 2" Optional="true">transparent</DisplayString>
+		<DisplayString>&lt;Cannot determine&gt;</DisplayString>
+	</Type>
+
 	<Type Name="core::forms::Brush">
 		<DisplayString>{Handle}</DisplayString>
 	</Type>
