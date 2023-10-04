@@ -97,6 +97,10 @@
 		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
 		<DisplayString Condition="!Handle">{{ id={Ident,d} &lt;Not a window&gt; }}</DisplayString>
 		<DisplayString>{{ id={Ident,d} {Debug} }}</DisplayString>
+		<Expand>
+			<Item Name="[ident]">Ident</Item>
+			<ExpandedItem>*(core::forms::Window*)this,nd</ExpandedItem>
+		</Expand>
 	</Type>
 
 	<Type Name="core::forms::OwnerDrawEventArgs">
