@@ -216,9 +216,8 @@ namespace core::forms
 			return r;
 		}
 	
-		constexpr
-		implicit operator 
-		::RECT const*() const noexcept {
+		implicit constexpr
+		operator ::RECT const*() const noexcept {
 			static_assert(sizeof(Rect)==sizeof(::RECT));
 			return std::bit_cast<::RECT const*>(this);
 		}
@@ -309,9 +308,8 @@ namespace core::forms
 			return *this;
 		}
 	
-		constexpr
-		implicit operator 
-		::RECT*() noexcept {
+		implicit constexpr
+		operator ::RECT*() noexcept {
 			static_assert(sizeof(Rect)==sizeof(::RECT));
 			return std::bit_cast<::RECT*>(this);
 		}

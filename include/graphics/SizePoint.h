@@ -73,9 +73,8 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		template <std::integral Integral>
-		constexpr
-		implicit operator
-		Integral() const noexcept {
+		constexpr implicit 
+		operator Integral() const noexcept {
 			return static_cast<Integral>(this->Value);
 		}
 
@@ -153,9 +152,8 @@ namespace core::forms
 			return pt * scale;
 		}
 	
-		constexpr
-		implicit operator 
-		::POINT const*() const noexcept {
+		constexpr implicit
+		operator ::POINT const*() const noexcept {
 			static_assert(sizeof(Point)==sizeof(::POINT));
 			return std::bit_cast<::POINT const*>(this);
 		}
@@ -184,9 +182,8 @@ namespace core::forms
 			return *this;
 		}
 		
-		constexpr
-		implicit operator 
-		::POINT*() noexcept {
+		constexpr implicit
+		operator ::POINT*() noexcept {
 			static_assert(sizeof(Point)==sizeof(::POINT));
 			return std::bit_cast<::POINT*>(this);
 		}
@@ -269,9 +266,8 @@ namespace core::forms
 			return sz * scale;
 		}
 
-		constexpr
-		implicit operator 
-		::SIZE const*() const noexcept {
+		constexpr implicit
+		operator ::SIZE const*() const noexcept {
 			static_assert(sizeof(Size)==sizeof(::SIZE));
 			return std::bit_cast<::SIZE const*>(this);
 		}
@@ -302,9 +298,8 @@ namespace core::forms
 			return *this;
 		}
 
-		constexpr
-		implicit operator 
-		::SIZE*() noexcept {
+		constexpr implicit
+		operator ::SIZE*() noexcept {
 			static_assert(sizeof(Size)==sizeof(::SIZE));
 			return std::bit_cast<::SIZE*>(this);
 		}

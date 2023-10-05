@@ -84,12 +84,13 @@ namespace core::forms
 
 	public:
 		template <nstd::RealNumber Result> 
-		implicit operator Result() const {
+		implicit constexpr
+		operator Result() const {
 			return static_cast<Result>(this->Value);
 		}
 
 		template <nstd::RealNumber Result> 
-		Result
+		Result constexpr
 		operator*(Result const rhs) const
 		{
 			return static_cast<Result>(this->Value * rhs / 100.0f);

@@ -101,8 +101,8 @@ namespace core::forms
 			return rhs.as_id() == lhs;
 		}
 
-		implicit operator 
-		gsl::cwzstring() const 
+		implicit 
+		operator gsl::cwzstring() const 
 		{
 			if (this->is_numeric())
 				return MAKEINTRESOURCE(this->as_number());

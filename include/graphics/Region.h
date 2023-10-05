@@ -180,8 +180,8 @@ namespace core::forms
 			return lhs;
 		}
 
-		implicit operator 
-		std::remove_pointer_t<::HRGN> const*() const noexcept {
+		implicit 
+		operator std::remove_pointer_t<::HRGN> const*() const noexcept {
 			return this->Handle;
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -244,8 +244,8 @@ namespace core::forms
 			return *this;
 		}
 
-		implicit operator 
-		::HRGN() noexcept {
+		implicit 
+		operator ::HRGN() noexcept {
 			return this->Handle;
 		}
 	};

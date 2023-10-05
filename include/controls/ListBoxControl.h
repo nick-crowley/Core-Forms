@@ -149,8 +149,8 @@ namespace core::forms
 					ItemProxy(Item item) : Value{item}
 					{}
 
-					implicit operator
-					Item&() {
+					implicit
+					operator Item&() {
 						return this->Value;
 					}
 				};

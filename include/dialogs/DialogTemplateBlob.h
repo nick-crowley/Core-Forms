@@ -62,24 +62,24 @@ namespace core::forms
 		);
 		
 	public:
-		implicit operator 
-		::DLGTEMPLATE const* () const {
+		implicit 
+		operator ::DLGTEMPLATE const* () const {
 			return reinterpret_cast<::DLGTEMPLATE const*>(this->Bytes.data());
 		}
 	
-		implicit operator 
-		std::byte const* () const {
+		implicit 
+		operator std::byte const* () const {
 			return this->Bytes.data();
 		}
 
 	public:
-		implicit operator 
-		::DLGTEMPLATE const* () {
+		implicit 
+		operator ::DLGTEMPLATE const* () {
 			return reinterpret_cast<::DLGTEMPLATE*>(this->Bytes.data());
 		}
 
-		implicit operator 
-		std::byte const* () {
+		implicit 
+		operator std::byte const* () {
 			return this->Bytes.data();
 		}
 	};
