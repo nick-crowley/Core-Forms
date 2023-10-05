@@ -658,7 +658,7 @@ namespace core::forms
 
 			template <nstd::ObjectPointer Result>
 			implicit constexpr
-			Response(Result value) noexcept : Response{reinterpret_cast<::LRESULT>(value)}
+			Response(Result value) noexcept : Response{std::bit_cast<::LRESULT>(value)}
 			{}
 
 			implicit constexpr

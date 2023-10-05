@@ -153,10 +153,11 @@ namespace core::forms
 			return pt * scale;
 		}
 	
+		constexpr
 		implicit operator 
 		::POINT const*() const noexcept {
 			static_assert(sizeof(Point)==sizeof(::POINT));
-			return reinterpret_cast<::POINT const*>(this);
+			return std::bit_cast<::POINT const*>(this);
 		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -182,11 +183,12 @@ namespace core::forms
 			this->Y -= r.Y;
 			return *this;
 		}
-
+		
+		constexpr
 		implicit operator 
 		::POINT*() noexcept {
 			static_assert(sizeof(Point)==sizeof(::POINT));
-			return reinterpret_cast<::POINT*>(this);
+			return std::bit_cast<::POINT*>(this);
 		}
 	};
 
@@ -267,10 +269,11 @@ namespace core::forms
 			return sz * scale;
 		}
 
+		constexpr
 		implicit operator 
 		::SIZE const*() const noexcept {
 			static_assert(sizeof(Size)==sizeof(::SIZE));
-			return reinterpret_cast<::SIZE const*>(this);
+			return std::bit_cast<::SIZE const*>(this);
 		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -299,10 +302,11 @@ namespace core::forms
 			return *this;
 		}
 
+		constexpr
 		implicit operator 
 		::SIZE*() noexcept {
 			static_assert(sizeof(Size)==sizeof(::SIZE));
-			return reinterpret_cast<::SIZE*>(this);
+			return std::bit_cast<::SIZE*>(this);
 		}
 	};
 

@@ -216,10 +216,11 @@ namespace core::forms
 			return r;
 		}
 	
+		constexpr
 		implicit operator 
 		::RECT const*() const noexcept {
 			static_assert(sizeof(Rect)==sizeof(::RECT));
-			return reinterpret_cast<::RECT const*>(this);
+			return std::bit_cast<::RECT const*>(this);
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -308,10 +309,11 @@ namespace core::forms
 			return *this;
 		}
 	
+		constexpr
 		implicit operator 
 		::RECT*() noexcept {
 			static_assert(sizeof(Rect)==sizeof(::RECT));
-			return reinterpret_cast<::RECT*>(this);
+			return std::bit_cast<::RECT*>(this);
 		}
 	};
 
