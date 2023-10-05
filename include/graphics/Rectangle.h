@@ -97,8 +97,7 @@ namespace core::forms
 		}
 	
 		//! @brief	Construct from Windows RECT (ie. LONG 4-tuple)
-		constexpr
-		implicit
+		implicit constexpr
 		Rect(::RECT const& rc) noexcept
 		  : Left{static_cast<::LONG>(rc.left)}, 
 			Top{static_cast<::LONG>(rc.top)}, 

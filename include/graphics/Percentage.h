@@ -59,8 +59,7 @@ namespace core::forms
 
 	public:
 		template <nstd::RealNumber T>
-		constexpr
-		explicit  
+		explicit constexpr
 		Percentage(T v) : Value{static_cast<float>(v)}
 		{
 			if (this->Value < Percentage::MinValue)
@@ -70,8 +69,7 @@ namespace core::forms
 		}
 		
 		template <nstd::RealNumber T>
-		constexpr
-		explicit
+		explicit constexpr
 		Percentage(T v, meta::unconstrained_t) : Value{static_cast<float>(v)}
 		{
 		}

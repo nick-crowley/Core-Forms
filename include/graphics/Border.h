@@ -46,26 +46,22 @@ namespace core::forms
 
 		::LONG const Left = 0, Top = 0, Right = 0, Bottom = 0;
 
-		constexpr
-		explicit
+		explicit constexpr
 		Border(GuiMeasurement amount) noexcept 
 		  : Left{amount}, Top{amount}, Right{amount}, Bottom{amount}
 		{}
 
-		constexpr
-		explicit
+		explicit constexpr
 		Border(GuiMeasurement horz, GuiMeasurement vert) noexcept 
 		  : Left{horz}, Top{vert}, Right{horz}, Bottom{vert}
 		{}
 		
-		constexpr
-		explicit
+		explicit constexpr
 		Border(GuiMeasurement left, GuiMeasurement top, GuiMeasurement right, GuiMeasurement bottom) noexcept 
 		  : Left{left}, Top{top}, Right{right}, Bottom{bottom}
 		{}
 
-		constexpr 
-		explicit
+		explicit constexpr
 		Border(Size const& amount) noexcept 
 		  : Left{amount.Width}, Top{amount.Height}, Right{amount.Width}, Bottom{amount.Height}
 		{}

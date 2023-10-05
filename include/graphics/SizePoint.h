@@ -49,8 +49,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		template <std::integral Integral>
-		constexpr
-		implicit
+		implicit constexpr
 		GuiMeasurement(Integral n) noexcept
 		  : Value{static_cast<int>(n)}
 		{}
@@ -73,7 +72,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		template <std::integral Integral>
-		constexpr implicit 
+		implicit constexpr
 		operator Integral() const noexcept {
 			return static_cast<Integral>(this->Value);
 		}
@@ -106,8 +105,7 @@ namespace core::forms
 		{}
 
 		//! @brief	Construct from Windows POINT (ie. LONG pair)
-		constexpr
-		implicit
+		implicit constexpr
 		Point(::POINT const& pt) noexcept
 		  : X{static_cast<::LONG>(pt.x)}, 
 			Y{static_cast<::LONG>(pt.y)}
@@ -152,7 +150,7 @@ namespace core::forms
 			return pt * scale;
 		}
 	
-		constexpr implicit
+		implicit constexpr
 		operator ::POINT const*() const noexcept {
 			static_assert(sizeof(Point)==sizeof(::POINT));
 			return std::bit_cast<::POINT const*>(this);
@@ -182,7 +180,7 @@ namespace core::forms
 			return *this;
 		}
 		
-		constexpr implicit
+		implicit constexpr
 		operator ::POINT*() noexcept {
 			static_assert(sizeof(Point)==sizeof(::POINT));
 			return std::bit_cast<::POINT*>(this);
@@ -218,8 +216,7 @@ namespace core::forms
 		{}
 
 		//! @brief	Construct from Windows SIZE (ie. LONG pair)
-		constexpr
-		implicit
+		implicit constexpr
 		Size(::SIZE const& sz) noexcept
 		  : Width{static_cast<::LONG>(sz.cx)}, 
 			Height{static_cast<::LONG>(sz.cy)}
@@ -266,7 +263,7 @@ namespace core::forms
 			return sz * scale;
 		}
 
-		constexpr implicit
+		implicit constexpr
 		operator ::SIZE const*() const noexcept {
 			static_assert(sizeof(Size)==sizeof(::SIZE));
 			return std::bit_cast<::SIZE const*>(this);
@@ -298,7 +295,7 @@ namespace core::forms
 			return *this;
 		}
 
-		constexpr implicit
+		implicit constexpr
 		operator ::SIZE*() noexcept {
 			static_assert(sizeof(Size)==sizeof(::SIZE));
 			return std::bit_cast<::SIZE*>(this);
