@@ -1,6 +1,6 @@
 #include "library/core.forms.h"
 #include "dialogs/Dialog.h"
-#include "lookNFeel/RetroLookNFeel.h"
+#include "lookNFeel/DarkRetroLookNFeel.h"
 #include "Resource.h"
 using namespace core;
 using namespace forms::literals;
@@ -69,7 +69,7 @@ try
 	startupBanner();
 
 	// Set modern look-n-feel
-	forms::lookNFeel = forms::RetroLookNFeel::Instance;
+	forms::lookNFeel = forms::DarkRetroLookNFeel::Instance;
 	
 	// Display modal dialog
 	ModernUi mainDlg;

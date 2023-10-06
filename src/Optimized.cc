@@ -25,6 +25,7 @@
 #include "lookNfeel/Nt6LookNFeel.cpp"
 #include "lookNfeel/RetroLookNFeel.cpp"
 #include "lookNfeel/Win31LookNFeel.cpp"
+#include "lookNfeel/DarkRetroLookNFeel.cpp"
 
 #include "system/Message.cpp"
 #include "system/MessageQueue.cpp"
