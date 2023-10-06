@@ -304,7 +304,7 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	bool const selected = args.Item.State.test(OwnerDrawState::Selected);
 	
 	// Draw item background
-	Rect const rcItem = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
+	Rect const rcItem = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width, 0};
 	args.Graphics.setBrush(selected ? SystemBrush::Highlight : SystemBrush::Window);
 	args.Graphics.fillRect(rcItem);
 
