@@ -118,7 +118,14 @@ namespace core::forms
 			constexpr NotSortable noexcept
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		Point constexpr
+		static midPoint(Point const& a, Point const& b) noexcept {
+			return Point{
+				std::midpoint(a.X, b.X),
+				std::midpoint(a.Y, b.Y)
+			};
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		//! @brief	Negation operator
