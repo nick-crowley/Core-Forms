@@ -106,6 +106,14 @@ namespace core::forms
 			else
 				this->Handle.reset(font);
 		}
+
+	public:
+		satisfies(Font,
+			IsCopyable,
+			IsMovable,
+			IsEqualityComparable,
+			NotSortable
+		);
 		
 	public:
 		int32_t
