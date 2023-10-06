@@ -54,6 +54,7 @@ namespace core::forms
 		{
 		}
 
+		explicit
 		Brush(AnyColour col) : Handle{Brush::fromAnyColour(col)}
 		{
 		}
