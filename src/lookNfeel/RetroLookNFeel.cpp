@@ -130,8 +130,12 @@ RetroLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	
 	// Draw focus rectangle
 	auto const focused = ctrl.state().test(ButtonState::Focus);
-	if (focused)
-		args.Graphics.drawFocus(content);
+	if (focused) {
+		Pen outline{SystemColour::ButtonShadow, 2, PenStyle::InsideFrame};
+		args.Graphics.setBrush(StockBrush::Hollow);
+		args.Graphics.setPen(outline);
+		args.Graphics.drawRect(args.Item.Area);
+	}
 
 	args.Graphics.restore();
 }
