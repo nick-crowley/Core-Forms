@@ -49,16 +49,22 @@ namespace core::forms
 		{
 		}
 
-		Pen(Colour col, unsigned width, PenStyle s = PenStyle::Solid) 
-		  : Handle{::CreatePen(static_cast<int>(s), width, win::DWord{col})}
+		Pen(AnyColour col, unsigned width, PenStyle style = PenStyle::Solid) 
+		  : Handle{fromColour(col, width, style)}
 		{
 			if (!this->Handle)
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("CreatePen() failed");
 		}
-		
-		Pen(SystemColour col, unsigned width, PenStyle s = PenStyle::Solid) 
-			: Pen{to_colour(col), width, s}
-		{}
+
+	private:
+		SharedPen
+		static fromColour(AnyColour col, unsigned width, PenStyle style) {
+			ThrowIf(col, std::holds_alternative<meta::transparent_t>(col));
+			
+			Colour const rgb = std::holds_alternative<Colour>(col) ? std::get<Colour>(col)
+			                                                       : to_colour(std::get<SystemColour>(col));
+			return SharedPen{::CreatePen(static_cast<int>(style), width, win::DWord{rgb})};
+		}
 
 	public:
 		SharedPen
