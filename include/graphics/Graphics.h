@@ -140,7 +140,21 @@ namespace core::forms
 		{
 			return ::WindowFromDC(this->handle());
 		}
-	
+
+		//! @brief  Start definition of a path
+		void
+		beginPath() {
+			if (!::BeginPath(this->handle()))
+				win::LastError{}.throwAlways();
+		}
+		
+		//! @brief  End path definition and select it
+		void
+		endPath() {
+			if (!::EndPath(this->handle()))
+				win::LastError{}.throwAlways();
+		}
+		
 		void
 		copyBitmap(::HDC source, Rect const& dest, RasterOp op = RasterOp::SrcCopy) const
 		{
@@ -295,7 +309,21 @@ namespace core::forms
 			else
 				return height;
 		}
-	
+		
+		//! @brief  Fill current path using current brush
+		void
+		fillPath() {
+			if (!::FillPath(this->handle()))
+				win::LastError{}.throwAlways();
+		}
+		
+		//! @brief  Outline and fill current path using current pen and brush
+		void
+		fillPathAndOutline() {
+			if (!::StrokeAndFillPath(this->handle()))
+				win::LastError{}.throwAlways();
+		}
+
 		//!	@brief	Fills a rectangle interior with the current brush
 		void
 		fillRect(Rect const& rc) const
@@ -425,6 +453,12 @@ namespace core::forms
 			return rc.size();
 		}
 	
+		//! @brief  Outline current path using current pen
+		void
+		outlinePath() {
+			if (!::StrokePath(this->handle()))
+				win::LastError{}.throwAlways();
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		//!	@brief	Add rectangle to clip region
