@@ -279,6 +279,13 @@ namespace core::forms
 				win::LastError{}.throwAlways("Unable to draw icon");
 		}
 	
+		//! @brief  Draws line from current position to @p to
+		void
+		drawLine(Point const& to) {
+			if (!::LineTo(this->handle(), to.X, to.Y))
+				win::LastError{}.throwAlways();
+		}
+
 		//! @brief	Draws a filled rectangle using the current brush and pen
 		void  
 		drawRect(Rect const& rc) const
@@ -398,13 +405,6 @@ namespace core::forms
 			this->frameRegion(rgn, brush.handle(), thickness);
 		}
 		
-		//! @brief  Draws line from current position to @p to
-		void
-		lineTo(Point const& to) {
-			if (!::LineTo(this->handle(), to.X, to.Y))
-				win::LastError{}.throwAlways();
-		}
-
 		//! @brief  Moves the current position
 		//! @returns Previous position
 		Point

@@ -108,10 +108,10 @@ ModernLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		args.Graphics.beginPath();
 		args.Graphics.drawArc(toggle[0], toggle[0].topMiddle(), toggle[0].bottomMiddle());
 		args.Graphics.moveTo(toggle[0].bottomMiddle());
-		args.Graphics.lineTo(toggle[1].bottomMiddle());
+		args.Graphics.drawLine(toggle[1].bottomMiddle());
 		args.Graphics.drawArc(toggle[1], toggle[1].bottomMiddle(), toggle[1].topMiddle());
 		args.Graphics.moveTo(toggle[1].topMiddle());
-		args.Graphics.lineTo(toggle[0].topMiddle());
+		args.Graphics.drawLine(toggle[0].topMiddle());
 		args.Graphics.endPath();
 
 		// [UNCHECKED] Draw outline extended oval
