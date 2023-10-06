@@ -9,7 +9,7 @@ RetroLookNFeel::Instance = std::make_shared<RetroLookNFeel>();
 RetroLookNFeel::RetroLookNFeel()
 {
 	using namespace forms::literals;
-	this->Fonts.Paragraph = Font{L"FixedSys", DeviceContext::ScreenDC.measureFont(11_pt)};
+	this->Fonts.Paragraph = Font{this->default().Name, DeviceContext::ScreenDC.measureFont(this->default().Height)};
 	this->Fonts.Heading2 = Font{*this->Fonts.Paragraph.handle(), std::nullopt, DeviceContext::ScreenDC.measureFont(12_pt)};
 	this->Fonts.Heading1 = Font{*this->Fonts.Paragraph.handle(), std::nullopt, DeviceContext::ScreenDC.measureFont(14_pt)};
 	this->Colours.Button = SystemColour::ButtonFace;
@@ -23,7 +23,7 @@ ILookNFeelProvider::FontDescription
 RetroLookNFeel::default() 
 {
 	using namespace forms::literals;
-	return FontDescription{L"FixedSys", 11_pt};
+	return FontDescription{L"Lucida Console", 11_pt};
 }
 
 void
