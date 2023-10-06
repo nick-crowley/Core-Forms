@@ -75,17 +75,20 @@ ModernLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	// Define toggle area
 	Rect const  content = args.Item.Area;
 	Size const  smallIcon {SystemMetric::cxSmallIcon,SystemMetric::cySmallIcon};
-	Rect const  toggle {content.topLeft()+Point{2, (content.height()-(smallIcon*1.25f).Height)/2}, 1.25f*smallIcon};
-	Point const bottomMiddle = Point::midPoint(toggle.bottomLeft(), toggle.bottomRight());
-	Point const topMiddle = Point::midPoint(toggle.topLeft(), toggle.topRight());
-	Rect const  ball {toggle.centre(), toggle.size()*.6f, Rect::FromCentre};
+	Size const  ballSize = smallIcon * .75f;
+	Size const  toggleSize {long(smallIcon.Width * 2.5f), long(smallIcon.Height * 1.25f)};
+	Point const toggleOffset = content.topLeft() + Point{SystemMetric::cxFixedFrame,(content.height()-toggleSize.Height)/2};
+	Rect const  toggle[2] {
+		Rect{toggleOffset,                               Size{toggleSize.Width/2, toggleSize.Height}},
+		Rect{toggleOffset + Point{toggleSize.Width/2,0}, Size{toggleSize.Width/2, toggleSize.Height}}
+	};
 	
 	if (auto const checked = ctrl.checked(); checked) {
 		// Fillable path requires a central rectangle
 		args.Graphics.beginPath();
-		args.Graphics.drawArc(toggle, topMiddle, bottomMiddle);
-		args.Graphics.drawRect(Rect{topMiddle+Point{1,0}, Size{25,toggle.height()+1}});
-		args.Graphics.drawArc(toggle + Point{25,0}, bottomMiddle + Point{25,0}, topMiddle + Point{25,0});
+		args.Graphics.drawArc(toggle[0], toggle[0].topMiddle(), toggle[0].bottomMiddle());
+		args.Graphics.drawRect(toggle[0] + Point{toggle[0].width()/2, 0} + Border{0,0,0,1});
+		args.Graphics.drawArc(toggle[1], toggle[1].bottomMiddle(), toggle[1].topMiddle());
 		args.Graphics.endPath();
 		
 		// [CHECKED] Fill extended oval
@@ -98,17 +101,17 @@ ModernLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		// Draw white ball on right
 		args.Graphics.setPen(StockPen::White);
 		args.Graphics.setBrush(StockBrush::White);
-		args.Graphics.drawEllipse(ball + Point{25,0});
+		args.Graphics.drawEllipse(Rect{toggle[1].centre(), ballSize, Rect::FromCentre});
 	}
 	else {
 		// Outline path mustn't contain vertical lines of a rectangle
 		args.Graphics.beginPath();
-		args.Graphics.drawArc(toggle, topMiddle, bottomMiddle);
-		args.Graphics.moveTo(bottomMiddle);
-		args.Graphics.lineTo(bottomMiddle + Point{25,0});
-		args.Graphics.drawArc(toggle + Point{25,0}, bottomMiddle + Point{25,0}, topMiddle + Point{25,0});
-		args.Graphics.moveTo(topMiddle + Point{25,0});
-		args.Graphics.lineTo(topMiddle);
+		args.Graphics.drawArc(toggle[0], toggle[0].topMiddle(), toggle[0].bottomMiddle());
+		args.Graphics.moveTo(toggle[0].bottomMiddle());
+		args.Graphics.lineTo(toggle[1].bottomMiddle());
+		args.Graphics.drawArc(toggle[1], toggle[1].bottomMiddle(), toggle[1].topMiddle());
+		args.Graphics.moveTo(toggle[1].topMiddle());
+		args.Graphics.lineTo(toggle[0].topMiddle());
 		args.Graphics.endPath();
 
 		// [UNCHECKED] Draw outline extended oval
@@ -119,7 +122,7 @@ ModernLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		// Draw dark ball on left
 		Brush interior{this->primary()};
 		args.Graphics.setBrush(interior);
-		args.Graphics.drawEllipse(ball);
+		args.Graphics.drawEllipse(Rect{toggle[0].centre(), ballSize, Rect::FromCentre});
 	}
 	
 	// Draw text

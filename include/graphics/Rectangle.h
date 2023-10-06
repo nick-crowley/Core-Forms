@@ -122,6 +122,11 @@ namespace core::forms
 		}
 	
 		Point constexpr
+		bottomMiddle() const noexcept {
+			return Point::midPoint(this->bottomLeft(), this->bottomRight());
+		}
+	
+		Point constexpr
 		bottomRight() const noexcept {
 			return {this->Right, this->Bottom};
 		}
@@ -158,6 +163,11 @@ namespace core::forms
 		Point constexpr
 		topLeft() const noexcept {
 			return {this->Left, this->Top};
+		}
+	
+		Point constexpr
+		topMiddle() const noexcept {
+			return Point::midPoint(this->topLeft(), this->topRight());
 		}
 	
 		Point constexpr
