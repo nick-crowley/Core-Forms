@@ -189,6 +189,13 @@ namespace core::forms
 				win::LastError{}.throwAlways();
 		}
 		
+		//! @brief  Draws a partial ellipse
+		void
+		drawArc(Rect const& ellipse, Point const& from, Point const& to) {
+			if (!::Arc(this->handle(), ellipse.Left, ellipse.Top, ellipse.Right, ellipse.Bottom, from.X, from.Y, to.X, to.Y))
+				win::LastError{}.throwAlways();
+		}
+
 		//! @brief	Draws component of built-in control
 		void 
 		drawControl(Rect const& rc, UINT ctrl, UINT state) const
@@ -206,6 +213,13 @@ namespace core::forms
 				win::LastError{}.throwAlways();
 		}
 	
+		//! @brief  Draws a complete ellipse
+		void
+		drawEllipse(Rect const& ellipse) {
+			if (!::Ellipse(this->handle(), ellipse.Left, ellipse.Top, ellipse.Right, ellipse.Bottom))
+				win::LastError{}.throwAlways();
+		}
+		
 		//!	@brief	Fills a focus rectangle 
 		void 
 		drawFocus(Rect const& rc) const
@@ -354,6 +368,23 @@ namespace core::forms
 		void
 		frameRegion(Region const& rgn, Brush const& brush, Size const thickness) const {
 			this->frameRegion(rgn, brush.handle(), thickness);
+		}
+		
+		//! @brief  Draws line from current position to @p to
+		void
+		lineTo(Point const& to) {
+			if (!::LineTo(this->handle(), to.X, to.Y))
+				win::LastError{}.throwAlways();
+		}
+
+		//! @brief  Moves the current position
+		//! @returns Previous position
+		Point
+		moveTo(Point const& to) {
+			::POINT prev{};
+			if (!::MoveToEx(this->handle(), to.X, to.Y, &prev))
+				win::LastError{}.throwAlways();
+			return prev;
 		}
 
 		//! @brief    Calculate font height 
