@@ -111,7 +111,7 @@ namespace core::forms
 		satisfies(Font,
 			IsCopyable,
 			IsMovable,
-			IsEqualityComparable,
+			NotEqualityComparable,
 			NotSortable
 		);
 		
