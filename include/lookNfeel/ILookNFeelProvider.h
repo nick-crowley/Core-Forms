@@ -29,6 +29,7 @@
 #include "library/core.Forms.h"
 #include "graphics/Colours.h"
 #include "graphics/Font.h"
+#include "forms/Response.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -110,8 +111,8 @@ namespace core::forms
 		void
 		virtual draw(Dialog& dlg, PaintWindowEventArgs const& args) abstract;
 	
-		void
-		virtual draw(Window& wnd, NonClientPaintEventArgs const& args) abstract;
+		Response
+		virtual draw(Window& wnd, NonClientPaintEventArgs args) abstract;
 		
 		AnyColour
 		virtual button() abstract;

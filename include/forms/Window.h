@@ -34,6 +34,7 @@
 #include "core/ObservableEvent.h"
 #include "forms/Accessible.h"
 #include "forms/BuiltInWindowMessages.h"
+#include "forms/Response.h"
 #include "forms/UnmanagedWindow.h"
 #include "forms/WindowEventArgs.h"
 #pragma comment (lib, "OleAcc.lib")
@@ -629,57 +630,6 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 	
-		//! @brief	Enhances message results with state indicating whether they were handled at all
-		class FormsExport Response {
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-		public:
-			enum RoutingStatus { 
-				Invalid,        //!< [internal] Design flaw within wndproc
-				Handled,        //!< Message was handled 
-				Unhandled,      //!< Message wasn't handled
-				Error           //!< Error during handling [result will be 'unhandled']
-			};
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-		public:
-			RoutingStatus             Status = Invalid;
-			std::optional<::LRESULT>  Value;
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
-		public:
-			explicit constexpr
-			Response(RoutingStatus status) noexcept : Status(status)
-			{}
-
-			template <typename Result>
-				requires nstd::Integer<Result> 
-			          || nstd::Enumeration<Result>
-			implicit constexpr
-			Response(Result value) noexcept : Status(Handled), Value(static_cast<::LRESULT>(value))
-			{}
-
-			template <nstd::ObjectPointer Result>
-			implicit constexpr
-			Response(Result value) noexcept : Response{std::bit_cast<::LRESULT>(value)}
-			{}
-
-			implicit constexpr
-			Response(std::nullptr_t) noexcept = delete;
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-		public:
-			satisfies(Response,
-				constexpr IsRegular noexcept,
-				NotSortable
-			);
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
-		public:
-			explicit
-			operator bool() const {
-				return this->Status == Response::Handled;
-			}
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
-		};
-
 		//! @brief	Virtual collection of registered timers for this window
 		class FormsExport TimerCollection
 		{

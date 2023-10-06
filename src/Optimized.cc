@@ -24,6 +24,7 @@
 #include "lookNfeel/LookNFeelProvider.cpp"
 #include "lookNfeel/Nt6LookNFeel.cpp"
 #include "lookNfeel/RetroLookNFeel.cpp"
+#include "lookNfeel/ModernLookNFeel.cpp"
 #include "lookNfeel/Win31LookNFeel.cpp"
 #include "lookNfeel/DarkRetroLookNFeel.cpp"
 

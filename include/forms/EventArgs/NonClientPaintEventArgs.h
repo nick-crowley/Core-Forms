@@ -143,7 +143,7 @@ namespace core::forms
 
 	public:
 		bool 
-		beginPaint(WindowCaptionButtons const& curButtonState);
+		beginPaint();
 
 		void 
 		endPaint();

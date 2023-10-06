@@ -447,10 +447,8 @@ namespace core::forms
 
 		Response
 		virtual onNonClientPaint(NonClientPaintEventArgs args) override {
-			args.beginPaint(this->CaptionButtons);
-			this->LookNFeel->draw(*this, args);
-			args.endPaint();
-			return 0;
+			args.CaptionButtons = this->CaptionButtons;
+			return this->LookNFeel->draw(*this, args);
 		}
 
 		Response

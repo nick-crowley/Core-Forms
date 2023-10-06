@@ -66,7 +66,7 @@ public:
 	}
 
 protected:
-	Response
+	forms::Response
 	virtual onInitDialog(forms::InitDialogEventArgs args) override
 	{
 		this->PopulateBtn.focus();

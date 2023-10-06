@@ -37,7 +37,7 @@ public:
 	}
 
 protected:
-	Response 
+	forms::Response 
 	virtual onInitDialog(forms::InitDialogEventArgs args) override {
 		std::ignore = base::onInitDialog(args);
 

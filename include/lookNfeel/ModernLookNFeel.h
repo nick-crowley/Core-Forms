@@ -26,7 +26,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "lookNfeel/ModernLookNFeel.h"
+#include "lookNfeel/LookNFeelProvider.h"
 #include "graphics/Graphics.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -39,16 +39,16 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class FormsExport RetroLookNFeel : public ModernLookNFeel
+	class FormsExport ModernLookNFeel : public LookNFeelProvider
 	{
-		using base = ModernLookNFeel;
+		using base = LookNFeelProvider;
 
 	public:
 		std::shared_ptr<ILookNFeelProvider> const
 		static Instance;
 
 	public:
-		RetroLookNFeel();
+		ModernLookNFeel();
 
 	public:
 		using base::draw;
@@ -57,8 +57,17 @@ namespace core::forms
 		virtual default() override;
 		
 		void
+		virtual draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) override;
+	
+		void
+		virtual draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
+	
+		void
 		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
+		void
+		virtual draw(Dialog& dlg, PaintWindowEventArgs const& args) override;
+		
 		Response
 		virtual draw(Window& wnd, NonClientPaintEventArgs args) override;
 	};

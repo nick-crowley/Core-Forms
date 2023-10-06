@@ -56,7 +56,7 @@ void
 Nt6LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 {
 	// Erase background
-	args.Graphics->setBrush(SystemBrush::Dialog);
+	args.Graphics->setBrush(this->window());
 	args.Graphics->fillRect(*args.Area);
 
 	// [SIZE-GRIP]
@@ -68,10 +68,11 @@ Nt6LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 	args.Graphics->restore();
 }
 
-void
-Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs const& args) 
+Response
+Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs args) 
 {
-	Invariant(args.Graphics);
+	ThrowIfNot(args, args.Graphics == std::nullopt);
+	args.beginPaint();
 
 	auto const activeCaption = args.CaptionState == WindowCaptionState::Active;
 	auto const components = NonClientComponentBounds{args.Window.style(), args.Bounds, Coords::Window};
@@ -118,4 +119,6 @@ Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs const& args)
 	}
 	
 	args.Graphics->restore();
+	args.endPaint();
+	return 0;
 }

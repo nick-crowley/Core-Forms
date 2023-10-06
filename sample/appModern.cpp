@@ -38,7 +38,7 @@ public:
 	}
 
 protected:
-	Response 
+	forms::Response 
 	virtual onInitDialog(forms::InitDialogEventArgs args) override {
 		this->Heading.font(this->LookNFeel->heading1());
 		this->SubHeading.font(this->LookNFeel->heading2());

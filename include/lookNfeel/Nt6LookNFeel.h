@@ -62,8 +62,8 @@ namespace core::forms
 		void
 		virtual draw(Dialog& dlg, PaintWindowEventArgs const& args) override;
 	
-		void
-		virtual draw(Window& wnd, NonClientPaintEventArgs const& args) override;
+		Response
+		virtual draw(Window& wnd, NonClientPaintEventArgs args) override;
 	};
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

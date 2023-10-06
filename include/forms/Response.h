@@ -26,8 +26,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "lookNfeel/ModernLookNFeel.h"
-#include "graphics/Graphics.h"
+#include "library/core.Forms.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -39,30 +38,57 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class FormsExport RetroLookNFeel : public ModernLookNFeel
-	{
-		using base = ModernLookNFeel;
-
+	//! @brief	Enhances message results with state indicating whether they were handled at all
+	class Response {
+		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 	public:
-		std::shared_ptr<ILookNFeelProvider> const
-		static Instance;
-
+		enum RoutingStatus { 
+			Invalid,        //!< [internal] Design flaw within wndproc
+			Handled,        //!< Message was handled 
+			Unhandled,      //!< Message wasn't handled
+			Error           //!< Error during handling [result will be 'unhandled']
+		};
+		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 	public:
-		RetroLookNFeel();
-
+		RoutingStatus             Status = Invalid;
+		std::optional<::LRESULT>  Value;
+		// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 	public:
-		using base::draw;
-		
-		FontDescription
-		virtual default() override;
-		
-		void
-		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
-	
-		Response
-		virtual draw(Window& wnd, NonClientPaintEventArgs args) override;
+		explicit constexpr
+		Response(RoutingStatus status) noexcept : Status(status)
+		{}
+
+		template <typename Result>
+			requires nstd::Integer<Result> 
+			        || nstd::Enumeration<Result>
+		implicit constexpr
+		Response(Result value) noexcept : Status(Handled), Value(static_cast<::LRESULT>(value))
+		{}
+
+		template <nstd::ObjectPointer Result>
+		implicit constexpr
+		Response(Result value) noexcept : Response{std::bit_cast<::LRESULT>(value)}
+		{}
+
+		implicit constexpr
+		Response(std::nullptr_t) noexcept = delete;
+		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+	public:
+		satisfies(Response,
+			constexpr IsRegular noexcept,
+			NotSortable
+		);
+		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+		// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+	public:
+		explicit
+		operator bool() const {
+			return this->Status == Response::Handled;
+		}
+		// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 	};
-}	// namespace core::forms
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

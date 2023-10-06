@@ -4,7 +4,7 @@ using namespace core;
 using namespace forms;
 
 bool
-forms::NonClientPaintEventArgs::beginPaint(WindowCaptionButtons const& curButtonState)
+forms::NonClientPaintEventArgs::beginPaint()
 {
 	auto constexpr
 	static Flags = DCX_WINDOW|DCX_CACHE|DCX_LOCKWINDOWUPDATE;
@@ -31,7 +31,6 @@ forms::NonClientPaintEventArgs::beginPaint(WindowCaptionButtons const& curButton
 	}
 	this->Bounds = rcWindow;
 	this->Graphics = DeviceContext{SharedDeviceContext{dc}};
-	this->CaptionButtons = curButtonState;
 	if (this->CaptionState == WindowCaptionState::Unknown)
 		this->CaptionState = this->Window.info().Caption;
 	

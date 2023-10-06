@@ -56,16 +56,17 @@ void
 Win31LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 {
 	// Erase background
-	args.Graphics->setBrush(StockBrush::White);
+	args.Graphics->setBrush(this->window());
 	args.Graphics->fillRect(*args.Area);
 
 	args.Graphics->restore();
 }
 
-void
-Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs const& args) 
+Response
+Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs args) 
 {
-	ThrowIf(args, !args.Graphics);
+	ThrowIfNot(args, args.Graphics == std::nullopt);
+	args.beginPaint();
 
 	auto const activeCaption = args.CaptionState == WindowCaptionState::Active;
 	auto const components = NonClientComponentBounds{args.Window.style(), args.Bounds, Coords::Window};
@@ -122,4 +123,6 @@ Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs const& args)
 	}
 	
 	args.Graphics->restore();
+	args.endPaint();
+	return 0;
 }
