@@ -799,7 +799,7 @@ namespace core::forms
 		std::optional<Brush>       mutable Background;
 		std::optional<AnyColour>   TextColour;
 		std::optional<Font>        CustomFont;
-		std::optional<Font>        Font;
+		Font                       Font;
 		DebuggingAide              Debug;
 
 	protected:
@@ -904,6 +904,7 @@ namespace core::forms
 					result = *response.Value;
 
 				// [UNHANDLED/ERROR] Let the C++ object managing this handle pass message to ::DefWindowProc()
+				//                   -or- if subclassed, pass message to next wndproc in the chain
 				else if (wnd) 
 					result = wnd->routeUnhandled(message, wParam, lParam);
 				
@@ -979,7 +980,7 @@ namespace core::forms
 
 		forms::Font
 		font() const {
-			return this->CustomFont.value_or(this->Font.value_or(this->LookNFeel->paragraph()));
+			return this->CustomFont.value_or(this->Font);
 		}
 
 		Window*
@@ -1527,7 +1528,7 @@ namespace core::forms
 		this_FontChanged(Window&, SetWindowFontEventArgs args) {
 			// Store a weak-reference to the incoming window font unless this message was generated
 			//  due to calling @c Window::font() (because that just stored a strong-reference)
-			if (!this->Font || args.NewFont != this->Font->handle())
+			if (args.NewFont != this->Font.handle())
 				this->Font = forms::Font{args.NewFont};
 		}
 	};

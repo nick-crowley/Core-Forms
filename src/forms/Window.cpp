@@ -41,8 +41,9 @@ CALLBACK Window::HierarchyIterator::onNextChildWindow(::HWND child, ::LPARAM ite
 }
 
 Window::Window()
-  : Children(*this),
+  : Font{StockFont::SystemFixed},
     LookNFeel{forms::lookNFeel},
+    Children(*this),
     Timers(*this)
 {
 	Invariant(forms::lookNFeel != nullptr);
