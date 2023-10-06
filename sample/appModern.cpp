@@ -44,6 +44,13 @@ protected:
 		this->SubHeading.font(this->LookNFeel->heading2());
 		return FALSE;
 	}
+
+	void
+	virtual onLoadDialog(forms::LoadDialogEventArgs args) override {
+		auto const  static isCheckBox = [](forms::DialogItemTemplate& ctrl){ return ctrl.Ident == IDC_CHECK1; };
+
+		ranges::find_if(args.Template.Controls, isCheckBox)->setOwnerDraw();
+	}
 	
 private:
 	void

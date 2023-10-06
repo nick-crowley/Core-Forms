@@ -27,6 +27,81 @@ RetroLookNFeel::default()
 }
 
 void
+RetroLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) 
+{
+	if (!ctrl.ownerDraw())
+		throw runtime_error{"CheckBox #{} must be OwnerDraw", args.Ident};
+	
+	// Erase background
+	args.Graphics.setBrush(ctrl.backColour());
+	args.Graphics.fillRect(args.Item.Area);
+	
+	// Define toggle area
+	Rect const  content = args.Item.Area;
+	Size const  smallIcon {SystemMetric::cxSmallIcon,SystemMetric::cySmallIcon};
+	Rect const  toggle {content.topLeft()+Point{2, (content.height()-(smallIcon*1.25f).Height)/2}, 1.25f*smallIcon};
+	Point const bottomMiddle = Point::midPoint(toggle.bottomLeft(), toggle.bottomRight());
+	Point const topMiddle = Point::midPoint(toggle.topLeft(), toggle.topRight());
+	Rect const  ball {toggle.centre(), toggle.size()*.6f, Rect::FromCentre};
+	
+	if (auto const checked = ctrl.checked(); checked) {
+		// Fillable path requires a central rectangle
+		args.Graphics.beginPath();
+		args.Graphics.drawArc(toggle, topMiddle, bottomMiddle);
+		args.Graphics.drawRect(Rect{topMiddle+Point{1,0}, Size{25,toggle.height()+1}});
+		args.Graphics.drawArc(toggle + Point{25,0}, bottomMiddle + Point{25,0}, topMiddle + Point{25,0});
+		args.Graphics.endPath();
+		
+		// [CHECKED] Fill extended oval
+		Brush interior{SystemColour::Highlight};
+		Pen   outline{SystemColour::Highlight, 2};
+		args.Graphics.setPen(outline);
+		args.Graphics.setBrush(interior);
+		args.Graphics.fillPathAndOutline();
+		
+		// Draw white ball on right
+		args.Graphics.setPen(StockPen::White);
+		args.Graphics.setBrush(StockBrush::White);
+		args.Graphics.drawEllipse(ball + Point{25,0});
+	}
+	else {
+		// Outline path mustn't contain vertical lines of a rectangle
+		args.Graphics.beginPath();
+		args.Graphics.drawArc(toggle, topMiddle, bottomMiddle);
+		args.Graphics.moveTo(bottomMiddle);
+		args.Graphics.lineTo(bottomMiddle + Point{25,0});
+		args.Graphics.drawArc(toggle + Point{25,0}, bottomMiddle + Point{25,0}, topMiddle + Point{25,0});
+		args.Graphics.moveTo(topMiddle + Point{25,0});
+		args.Graphics.lineTo(topMiddle);
+		args.Graphics.endPath();
+
+		// [UNCHECKED] Draw outline extended oval
+		Pen outline{this->primary(), 2};
+		args.Graphics.setPen(outline);
+		args.Graphics.outlinePath();
+		
+		// Draw dark ball on left
+		Brush interior{this->primary()};
+		args.Graphics.setBrush(interior);
+		args.Graphics.drawEllipse(ball);
+	}
+	
+	// Draw text
+	auto const enabled = ctrl.enabled();
+	Rect const areaText = content - Border{smallIcon.Width,0,0,0} - Border{SystemMetric::cxEdge,0,0,0};
+	args.Graphics.setFont(ctrl.font());
+	args.Graphics.textColour(enabled ? ctrl.textColour() : SystemColour::GrayText, ctrl.backColour());
+	args.Graphics.drawText(ctrl.text(), areaText, calculateFlags(ctrl.style<ButtonStyle>()));
+	
+	// Draw focus rectangle
+	auto const focused = ctrl.state().test(ButtonState::Focus);
+	if (focused)
+		args.Graphics.drawFocus(content);
+
+	args.Graphics.restore();
+}
+
+void
 RetroLookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) 
 {
 	if (!ctrl.ownerDraw())
