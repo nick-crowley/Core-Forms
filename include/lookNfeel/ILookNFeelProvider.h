@@ -127,15 +127,18 @@ namespace core::forms
 
 		Font
 		virtual heading2() abstract;
-
+		
 		Font
 		virtual paragraph() abstract;
 
 		AnyColour
 		virtual primary() abstract;
-
+		
 		AnyColour
 		virtual secondary() abstract;
+		
+		AnyColour
+		virtual tertiary() abstract;
 
 		AnyColour
 		virtual window() abstract;

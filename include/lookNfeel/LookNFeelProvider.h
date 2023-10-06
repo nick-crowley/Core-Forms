@@ -66,6 +66,7 @@ namespace core::forms
 			AnyColour  Control;
 			AnyColour  Primary;
 			AnyColour  Secondary;
+			AnyColour  Tertiary;
 			AnyColour  Window;
 		} Colours;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -132,6 +133,9 @@ namespace core::forms
 
 		AnyColour
 		virtual secondary() override;
+		
+		AnyColour
+		virtual tertiary() override;
 
 		AnyColour
 		virtual window() override;

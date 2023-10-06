@@ -79,6 +79,7 @@ LookNFeelProvider::LookNFeelProvider()
     .Button{SystemColour::ButtonFace},
     .Primary{SystemColour::WindowText},
     .Secondary{SystemColour::GrayText},
+	.Tertiary{SystemColour::GrayText},
     .Window{SystemColour::Window}
   }
 {
@@ -431,6 +432,11 @@ LookNFeelProvider::primary() {
 AnyColour
 LookNFeelProvider::secondary() {
 	return this->Colours.Secondary;
+}
+
+AnyColour
+LookNFeelProvider::tertiary() {
+	return this->Colours.Tertiary;
 }
 
 AnyColour

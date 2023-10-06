@@ -16,6 +16,7 @@ Win31LookNFeel::Win31LookNFeel()
 	this->Colours.Control = Colour::White;
     this->Colours.Primary = Colour::Black;
     this->Colours.Secondary = SystemColour::GrayText;
+    this->Colours.Tertiary = SystemColour::GrayText;
 	this->Colours.Window = Colour::White;
 }
 

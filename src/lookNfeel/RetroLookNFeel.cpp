@@ -15,7 +15,8 @@ RetroLookNFeel::RetroLookNFeel()
 	this->Colours.Button = SystemColour::ButtonFace;
 	this->Colours.Control = Colour::White;
     this->Colours.Primary = Colour::Black;
-    this->Colours.Secondary = SystemColour::GrayText;
+    this->Colours.Secondary = SystemColour::ButtonFace;
+    this->Colours.Tertiary = SystemColour::ButtonShadow;
 	this->Colours.Window = Colour::White;
 }
 

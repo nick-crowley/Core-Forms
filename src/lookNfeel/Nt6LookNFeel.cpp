@@ -16,6 +16,7 @@ Nt6LookNFeel::Nt6LookNFeel()
 	this->Colours.Control = SystemColour::Window;
     this->Colours.Primary = SystemColour::WindowText;
     this->Colours.Secondary = SystemColour::GrayText;
+    this->Colours.Tertiary = SystemColour::GrayText;
 	this->Colours.Window = SystemColour::Dialog;
 }
 
