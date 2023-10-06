@@ -799,6 +799,7 @@ namespace core::forms
 		std::optional<Brush>       mutable Background;
 		std::optional<AnyColour>   TextColour;
 		std::optional<Font>        CustomFont;
+		std::optional<Font>        Font;
 		DebuggingAide              Debug;
 
 	protected:
@@ -809,6 +810,7 @@ namespace core::forms
 		TimerCollection         Timers;
 		CreateWindowEvent	    Created;
 		WindowEvent             Destroyed;
+		SetFontEvent            FontChanged;
 		ShowWindowEvent		    Shown;
 		ShowWindowEvent		    Hidden;
 		PaintWindowEvent	    Painted;
@@ -975,9 +977,9 @@ namespace core::forms
 			return base::clientRect(alternateCoordinateSystem.handle());
 		}
 
-		Font
+		forms::Font
 		font() const {
-			return this->CustomFont.value_or(this->LookNFeel->paragraph());
+			return this->CustomFont.value_or(this->Font.value_or(this->LookNFeel->paragraph()));
 		}
 
 		Window*
@@ -1060,8 +1062,10 @@ namespace core::forms
 		}
 		
 		void
-		font(const Font& newFont) {
+		font(const forms::Font& newFont) {
+			Invariant(this->exists());
 			this->CustomFont = newFont; 
+			base::font(*newFont.handle(), true);
 		}
 		
 		void
@@ -1453,6 +1457,10 @@ namespace core::forms
 			case WM_PAINT:
 				this->Painted.raise(*this, PaintWindowEventArgs{this});
 				return;
+			
+			case WM_SETFONT:
+				this->FontChanged.raise(*this, SetWindowFontEventArgs{wParam,lParam});
+				return;
 			}
 		} 
 	
@@ -1513,6 +1521,14 @@ namespace core::forms
 		void
 		onDestructionStarted() {
 			this->Debug.setState(ProcessingState::BeingDestroyed);
+		}
+
+		void
+		this_FontChanged(Window&, SetWindowFontEventArgs args) {
+			// Store a weak-reference to the incoming window font unless this message was generated
+			//  due to calling @c Window::font() (because that just stored a strong-reference)
+			if (!this->Font || args.NewFont != this->Font->handle())
+				this->Font = forms::Font{args.NewFont};
 		}
 	};
 } // namespace core::forms

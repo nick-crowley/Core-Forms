@@ -46,6 +46,7 @@ Window::Window()
     Timers(*this)
 {
 	Invariant(forms::lookNFeel != nullptr);
+	this->FontChanged += {*this, &Window::this_FontChanged}; 
 }
 
 Warning

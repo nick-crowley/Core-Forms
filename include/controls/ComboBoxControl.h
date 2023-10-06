@@ -522,8 +522,8 @@ namespace core::forms
 		forms::UnmanagedWindow  SelectedItemEdit;
 		
 	private:
-		std::optional<Font>   EditFont;
-		std::optional<Font>   TitleFont;
+		std::optional<forms::Font>   EditFont;
+		std::optional<forms::Font>   TitleFont;
 
 		//! @bug  When 'HasStrings' and 'OwnerDraw' are both active and items are added, supplementary
 		//!       item text should be provided for screen-readers; however, the API only permits item
@@ -566,7 +566,7 @@ namespace core::forms
 			return rc;
 		}
 		
-		Font
+		forms::Font
 		editFont() {
 			return this->EditFont.value_or(this->font());
 		}
@@ -593,7 +593,7 @@ namespace core::forms
 			return WindowRole::ComboBox;
 		}
 		
-		std::optional<Font>
+		std::optional<forms::Font>
 		titleFont() const {
 			return this->TitleFont;
 		}
@@ -601,7 +601,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
-		editFont(const Font& newFont) {
+		editFont(const forms::Font& newFont) {
 			Invariant(!this->exists());
 			this->EditFont = newFont;
 		}
@@ -645,7 +645,7 @@ namespace core::forms
 		}
 		
 		void
-		titleFont(const Font& newFont) {
+		titleFont(const forms::Font& newFont) {
 			this->TitleFont = newFont;
 		}
 		
