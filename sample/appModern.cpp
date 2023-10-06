@@ -47,9 +47,10 @@ protected:
 
 	void
 	virtual onLoadDialog(forms::LoadDialogEventArgs args) override {
-		auto const  static isCheckBox = [](forms::DialogItemTemplate& ctrl){ return ctrl.Ident == IDC_CHECK1; };
-
-		ranges::find_if(args.Template.Controls, isCheckBox)->setOwnerDraw();
+		auto const ownerDrawControls = {IDOK,IDCANCEL,IDC_CHECK1};
+		for (auto& item : args.Template.Controls)
+			if (ranges::any_of(ownerDrawControls, [id=item.Ident](uint32_t arg){ return arg==id; }))
+				item.setOwnerDraw();
 	}
 	
 private:

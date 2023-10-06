@@ -57,6 +57,9 @@ namespace core::forms
 		virtual default() override;
 		
 		void
+		virtual draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) override;
+	
+		void
 		virtual draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
 		void

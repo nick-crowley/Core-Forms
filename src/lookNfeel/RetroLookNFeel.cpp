@@ -27,6 +27,41 @@ RetroLookNFeel::default()
 }
 
 void
+RetroLookNFeel::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) 
+{
+	if (!ctrl.ownerDraw())
+		throw runtime_error{"Button #{} must be OwnerDraw", args.Ident};
+	
+	// Erase background
+	args.Graphics.setBrush(ctrl.backColour());
+	args.Graphics.fillRect(args.Item.Area);
+
+	// Draw background
+	auto const state = ctrl.state();
+	auto const pushed = state.test(ButtonState::Pushed);
+	auto const backcolour = pushed ? SystemColour::ButtonShadow : SystemColour::ButtonFace;
+	args.Graphics.fillRect(args.Item.Area, backcolour);
+
+	// Draw text
+	auto const enabled = ctrl.enabled();
+	Rect const content = args.Item.Area - Border{SystemMetric::cxFixedFrame} + (pushed ? Point{1,1} : Point::Zero);
+	args.Graphics.setFont(ctrl.font());
+	args.Graphics.textColour(enabled ? ctrl.textColour() : SystemColour::GrayText, backcolour);
+	args.Graphics.drawText(ctrl.text(), content, calculateFlags(ctrl.style<ButtonStyle>()));
+
+	// Draw focus rectangle
+	auto const focused = state.test(ButtonState::Focus);
+	if (focused && !pushed) {
+		Pen outline{SystemColour::ButtonShadow, 2, PenStyle::InsideFrame};
+		args.Graphics.setBrush(StockBrush::Hollow);
+		args.Graphics.setPen(outline);
+		args.Graphics.drawRect(args.Item.Area);
+	}
+
+	args.Graphics.restore();
+}
+
+void
 RetroLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) 
 {
 	if (!ctrl.ownerDraw())
