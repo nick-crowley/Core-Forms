@@ -40,20 +40,20 @@ RetroLookNFeel::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args)
 	// Draw background
 	auto const state = ctrl.state();
 	auto const pushed = state.test(ButtonState::Pushed);
-	auto const backcolour = pushed ? SystemColour::ButtonShadow : SystemColour::ButtonFace;
-	args.Graphics.fillRect(args.Item.Area, backcolour);
+	auto const backcolour = !pushed ? this->button() : this->tertiary();
+	args.Graphics.fillRect(args.Item.Area, Brush{backcolour}.handle());
 
 	// Draw text
 	auto const enabled = ctrl.enabled();
 	Rect const content = args.Item.Area - Border{SystemMetric::cxFixedFrame} + (pushed ? Point{1,1} : Point::Zero);
 	args.Graphics.setFont(ctrl.font());
-	args.Graphics.textColour(enabled ? ctrl.textColour() : SystemColour::GrayText, backcolour);
+	args.Graphics.textColour(enabled ? ctrl.textColour() : this->tertiary(), backcolour);
 	args.Graphics.drawText(ctrl.text(), content, calculateFlags(ctrl.style<ButtonStyle>()));
 
 	// Draw focus rectangle
 	auto const focused = state.test(ButtonState::Focus);
 	if (focused && !pushed) {
-		Pen outline{SystemColour::ButtonShadow, 2, PenStyle::InsideFrame};
+		Pen outline{this->tertiary(), 2, PenStyle::InsideFrame};
 		args.Graphics.setBrush(StockBrush::Hollow);
 		args.Graphics.setPen(outline);
 		args.Graphics.drawRect(args.Item.Area);
@@ -126,7 +126,7 @@ RetroLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	auto const enabled = ctrl.enabled();
 	Rect const areaText = content - Border{smallIcon.Width,0,0,0} - Border{SystemMetric::cxEdge,0,0,0};
 	args.Graphics.setFont(ctrl.font());
-	args.Graphics.textColour(enabled ? ctrl.textColour() : SystemColour::GrayText, ctrl.backColour());
+	args.Graphics.textColour(enabled ? ctrl.textColour() : this->tertiary(), ctrl.backColour());
 	args.Graphics.drawText(ctrl.text(), areaText, calculateFlags(ctrl.style<ButtonStyle>()));
 	
 	// Draw focus rectangle
@@ -170,7 +170,7 @@ void
 RetroLookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 {
 	// Erase background
-	args.Graphics->setBrush(StockBrush::White);
+	args.Graphics->setBrush(this->window());
 	args.Graphics->fillRect(*args.Area);
 
 	args.Graphics->restore();
