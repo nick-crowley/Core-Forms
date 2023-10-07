@@ -285,6 +285,14 @@ namespace core::forms
 			if (!::LineTo(this->handle(), to.X, to.Y))
 				win::LastError{}.throwAlways();
 		}
+		
+		//! @brief  Draws series of connected line-segments from specified @p points
+		template <nstd::ContiguousRangeOf<Point> R>
+		void
+		drawLines(R&& points) {
+			if (!::Polyline(this->handle(), *ranges::begin(points), win::DWord{ranges::size(points)}))
+				win::LastError{}.throwAlways("Polyline() failed");
+		}
 
 		//! @brief	Draws a filled rectangle using the current brush and pen
 		void  
@@ -300,6 +308,14 @@ namespace core::forms
 		{
 			if (!::RoundRect(this->handle(), rc.Left, rc.Top, rc.Right, rc.Bottom, corners.Width, corners.Height))
 				win::LastError{}.throwAlways();
+		}
+		
+		//! @brief  Draws any shape from specified @p points
+		template <nstd::ContiguousRangeOf<Point> R>
+		void
+		drawShape(R&& points) {
+			if (!::Polygon(this->handle(), *ranges::begin(points), win::DWord{ranges::size(points)}))
+				win::LastError{}.throwAlways("Polygon() failed");
 		}
 
 		//! @brief	Writes text into a rectangle
