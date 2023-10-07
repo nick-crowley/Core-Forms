@@ -25,7 +25,8 @@ ILookNFeelProvider::FontDescription
 RetroLookNFeel::default() 
 {
 	using namespace forms::literals;
-	return FontDescription{L"Lucida Console", 11_pt};
+	return FontDescription{L"Eight Bit Dragon", 11_pt};
+}
 
 //! @brief  Generates the points of an octagon
 class Octagon {
