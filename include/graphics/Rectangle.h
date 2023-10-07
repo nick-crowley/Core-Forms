@@ -138,6 +138,16 @@ namespace core::forms
 					this->Top + this->height()/2};
 		}
 	
+		Point constexpr
+		centreLeft() const noexcept {
+			return Point::midPoint(this->topLeft(), this->bottomLeft());
+		}
+	
+		Point constexpr
+		centreRight() const noexcept {
+			return Point::midPoint(this->topRight(), this->bottomRight());
+		}
+	
 		bool constexpr
 		contains(Point const& pt) const noexcept {
 			return pt.X >= this->Left
