@@ -49,6 +49,8 @@ namespace core::forms
 	public:
 		enum Origin { FromTopLeft, FromTopRight, FromCentre, FromBottomLeft, FromBottomRight };
 
+		using value_type = ::LONG;
+
 		Rect const
 		static Empty;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
