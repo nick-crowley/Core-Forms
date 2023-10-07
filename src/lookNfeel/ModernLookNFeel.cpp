@@ -77,7 +77,7 @@ ModernLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	Size const  smallIcon {SystemMetric::cxSmallIcon,SystemMetric::cySmallIcon};
 	Size const  ballSize = smallIcon * .75f;
 	Size const  toggleSize {long(smallIcon.Width * 2.5f), long(smallIcon.Height * 1.25f)};
-	Point const toggleOffset = content.topLeft() + Point{SystemMetric::cxFixedFrame,(content.height()-toggleSize.Height)/2};
+	Point const toggleOffset = content.topLeft() + Point{0,(content.height()-toggleSize.Height)/2} + 2*Point{SystemMetric::cxFixedFrame,0};
 	Rect const  toggle[2] {
 		Rect{toggleOffset,                               Size{toggleSize.Width/2, toggleSize.Height}},
 		Rect{toggleOffset + Point{toggleSize.Width/2,0}, Size{toggleSize.Width/2, toggleSize.Height}}
