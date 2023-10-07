@@ -47,11 +47,10 @@ namespace core::forms
 		using reference = Rect&;
 
 	public:
-		Rect const
-		static Empty;
-
 		enum Origin { FromTopLeft, FromTopRight, FromCentre, FromBottomLeft, FromBottomRight };
 
+		Rect const
+		static Empty;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		::LONG Left = 0;
