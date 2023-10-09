@@ -652,8 +652,7 @@ namespace core::forms
 		{
 			ThrowIf(foreground, std::holds_alternative<meta::transparent_t>(foreground));
 
-			auto const* colour = std::get_if<Colour>(&foreground);
-			this->setTextColour(colour ? *colour : to_colour(std::get<SystemColour>(foreground)));
+			this->setTextColour(forms::to_colour(foreground));
 			this->backMode(DrawingMode::Transparent);
 		}
 		
@@ -664,14 +663,12 @@ namespace core::forms
 		{
 			ThrowIf(foreground, std::holds_alternative<meta::transparent_t>(foreground));
 
-			auto const* colour = std::get_if<Colour>(&foreground);
-			this->setTextColour(colour ? *colour : to_colour(std::get<SystemColour>(foreground)));
+			this->setTextColour(forms::to_colour(foreground));
 
 			if (std::holds_alternative<meta::transparent_t>(background))
 				this->backMode(DrawingMode::Transparent);
 			else {
-				colour = std::get_if<Colour>(&background);
-				this->backColour(colour ? *colour : to_colour(std::get<SystemColour>(background)));
+				this->backColour(forms::to_colour(background));
 				this->backMode(DrawingMode::Opaque);
 			}
 		}

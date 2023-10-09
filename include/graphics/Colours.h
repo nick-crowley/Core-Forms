@@ -175,12 +175,16 @@ namespace core
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	Colour
-	inline to_colour(SystemColour sc) 
-	{
-		return static_cast<Colour>(::GetSysColor(win::DWord{sc}));
-	}
-
 	using AnyColour = std::variant<Colour,SystemColour,meta::transparent_t>;
+
+	Colour
+	inline to_colour(AnyColour c) 
+	{
+        ThrowIf(c, std::holds_alternative<meta::transparent_t>(c));
+        
+        if (auto const* rgb = std::get_if<Colour>(&c); rgb)
+            return *rgb;
+		return static_cast<Colour>(::GetSysColor(win::DWord{std::get<SystemColour>(c)}));
+	}
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

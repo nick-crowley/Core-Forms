@@ -61,9 +61,7 @@ namespace core::forms
 		static fromColour(AnyColour col, unsigned width, PenStyle style) {
 			ThrowIf(col, std::holds_alternative<meta::transparent_t>(col));
 			
-			Colour const rgb = std::holds_alternative<Colour>(col) ? std::get<Colour>(col)
-			                                                       : to_colour(std::get<SystemColour>(col));
-			return SharedPen{::CreatePen(static_cast<int>(style), width, win::DWord{rgb})};
+			return SharedPen{::CreatePen(static_cast<int>(style), width, win::DWord{forms::to_colour(col)})};
 		}
 
 	public:
