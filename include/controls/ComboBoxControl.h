@@ -625,6 +625,22 @@ namespace core::forms
 			return base::onCommand(args);
 		}
 	
+		Response 
+		virtual onControlColour(ControlColourEventArgs args) override
+		{
+			// Apply the font and colour of the selected item
+			if (args.Window == this->SelectedItemEdit) {
+				if (auto const selected = this->Items.selected(); selected) {
+					auto const element = selected->heading().value_or(selected->detail());
+					args.Graphics.textColour(element.Colour.value_or(this->textColour()));
+					args.Graphics.setFont(element.Font.value_or(this->editFont()));
+					return *this->background();
+				}
+			}
+
+			return Unhandled;
+		}
+
 		//! TODO: Delete item data
 		Response
 		virtual onDeleteItem(void* args) = delete;
