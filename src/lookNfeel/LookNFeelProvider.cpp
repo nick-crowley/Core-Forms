@@ -162,6 +162,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 
 	bool const variable = ctrl.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable);
 	bool const selected = args.Item.State.test(OwnerDrawState::Selected);
+	bool const withinEdit = args.Item.State.test(OwnerDrawState::ComboBoxEdit);
 	auto const backColour = selected ? SystemColour::Highlight : ctrl.backColour();
 	
 	// Draw item background
@@ -179,7 +180,8 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	Rect rcDetail = rcItem;
 
 	// [ALIGNMENT] Item detail may be multi-line when using OD-variable mode; otherwise they're v-centred
-	auto const flagsDetail = variable ? DrawTextFlags::Left|DrawTextFlags::WordBreak : DrawTextFlags::SimpleLeft;
+	//              When drawing occurs within the selected-item field though, they're already v-centred
+	auto const flagsDetail = variable && !withinEdit ? DrawTextFlags::Left|DrawTextFlags::WordBreak : DrawTextFlags::SimpleLeft;
 
 	// [TITLE] Draw title and calculate different rectangle for (multi-line) detail text
 	auto const title = item.heading(); 
