@@ -432,6 +432,7 @@ namespace core::forms
 			       RichText                   text,
 			       std::optional<forms::Icon> icon = nullopt) 
 			{
+				Invariant(this->Owner.ownerDraw());
 				auto data = std::make_unique<ItemData>(text, nullopt, icon);
 				
 				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
@@ -485,6 +486,7 @@ namespace core::forms
 			void
 			push_back(RichText                   text,
 			          std::optional<forms::Icon> icon = nullopt) {
+				Invariant(this->Owner.ownerDraw());
 				this->insert(static_cast<size_t>(-1), text, icon);
 			}
 			
