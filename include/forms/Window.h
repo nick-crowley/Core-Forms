@@ -766,7 +766,7 @@ namespace core::forms
 		PaintWindowEvent	    Painted;
 		ResizeWindowEvent       Resized;
 		WindowEvent             Clicked;
-	
+		TimerEvent              Tick;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Window();
@@ -1411,6 +1411,10 @@ namespace core::forms
 			
 			case WM_SETFONT:
 				this->FontChanged.raise(*this, SetWindowFontEventArgs{wParam,lParam});
+				return;
+
+			case WM_TIMER:
+				this->Tick.raise(*this, TimerEventArgs{wParam,lParam});
 				return;
 			}
 		} 
