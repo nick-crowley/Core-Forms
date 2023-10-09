@@ -45,15 +45,15 @@ namespace core::forms
 
 	public:
 		explicit
-		Pen(SharedPen existingPen) : Handle{std::move(ThrowIfEmpty(existingPen))}
+		Pen(SharedPen existingPen) 
+		  : Handle{std::move(ThrowIfEmpty(existingPen))}
 		{
 		}
 
 		Pen(AnyColour col, unsigned width, PenStyle style = PenStyle::Solid) 
-		  : Handle{fromColour(col, width, style)}
+		  : Handle{Pen::fromColour(col, width, style)}
 		{
-			if (!this->Handle)
-				win::LastError{}.throwAlways("CreatePen() failed");
+			ThrowIf(width, width == 0);
 		}
 
 	private:
@@ -61,7 +61,10 @@ namespace core::forms
 		static fromColour(AnyColour col, unsigned width, PenStyle style) {
 			ThrowIf(col, std::holds_alternative<meta::transparent_t>(col));
 			
-			return SharedPen{::CreatePen(static_cast<int>(style), width, win::DWord{forms::to_colour(col)})};
+			if (SharedPen handle{::CreatePen(std::to_underlying(style), width, win::DWord{forms::to_colour(col)})}; !handle)
+				win::LastError{}.throwAlways("CreatePen() failed");
+			else 
+				return handle;
 		}
 
 	public:
