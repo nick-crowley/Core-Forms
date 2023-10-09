@@ -171,9 +171,11 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	args.Graphics.fillRect(rcItem);
 
 	// [NO-SELECTED-ITEM] Occurs in DropDownList mode
-	if (args.Item.Index == args.Empty && !ctrl.Items.selected())
+	if (args.Item.Index == args.Empty && !ctrl.Items.selected()) {
+		args.Graphics.restore();
 		return;
-	
+	}
+
 	// Setup item
 	auto const item = ctrl.Items[args.Item.Index];
 	auto const detail = item.detail();
@@ -207,8 +209,14 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 			auto const titleHeight = args.Graphics.drawText(title->Text, rcItem, DrawTextFlags::Left);
 			rcDetail = rcItem + Point{0, titleHeight};
 		}
-	}
 
+		// Currently selected item should skip the detail if it possesses a title
+		if (withinEdit) {
+			args.Graphics.restore();
+			return;
+		}
+	}
+	
 	// [SMALL-ICON] Draw on left; position detail text to right
 	if (icon && !title) {
 		Size const iconSize{rcDetail.height(), rcDetail.height()};
