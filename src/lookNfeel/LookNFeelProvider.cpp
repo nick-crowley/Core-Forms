@@ -191,7 +191,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		args.Graphics.setFont(title->Font.value_or(ctrl.titleFont().value_or(ctrl.font())));
 		args.Graphics.textColour(selectedTextColour.value_or(title->Colour.value_or(ctrl.textColour())), transparent);
 		
-		// [ICON] Draw icon on left; position both title and detail text beside it
+		// [LARGE-ICON] Draw icon on left; position both title and detail text beside it
 		if (icon)
 		{
 			Size const iconSize{rcItem.height(), rcItem.height()};
@@ -207,14 +207,16 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		}
 	}
 
-	// [TEXT] Draw using custom font/colour, if any; otherwise use ComboBox colours
-	args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
-	args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(ctrl.textColour())), transparent);
+	// [SMALL-ICON] Draw on left; position detail text to right
 	if (icon && !title) {
 		Size const iconSize{rcDetail.height(), rcDetail.height()};
 		args.Graphics.drawIcon(icon->handle(), rcItem.topLeft(), iconSize);
 		rcDetail += Rect{Percentage{115,unconstrained}*iconSize.Width, 0, 0, 0};
 	}
+	
+	// [TEXT] Draw using custom font/colour, if any; otherwise use ComboBox colours
+	args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
+	args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(ctrl.textColour())), transparent);
 	args.Graphics.drawText(detail.Text, rcDetail, flagsDetail);
 	
 	args.Graphics.restore();
