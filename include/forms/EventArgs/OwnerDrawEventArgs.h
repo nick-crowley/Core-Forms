@@ -55,6 +55,18 @@ namespace core::forms
 			ItemIndex                    Index;
 			nstd::bitset<OwnerDrawState> State;
 			uintptr_t                    UserData;
+
+			template <nstd::Class CustomData>
+			CustomData*
+			data() const noexcept {
+				return reinterpret_cast<CustomData*>(this->UserData);
+			}
+
+			template <nstd::Class CustomData>
+			void
+			data(CustomData* d) noexcept {
+				this->UserData = reinterpret_cast<uintptr_t>(d);
+			}
 		};
 
 	public:
