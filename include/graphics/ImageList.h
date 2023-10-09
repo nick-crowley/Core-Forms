@@ -103,7 +103,7 @@ namespace core::forms
 		CoImageListImpl Impl;
 
 	public:
-		ImageList(Size imageSize, unsigned capacity, std::optional<unsigned> growCount = std::nullopt)
+		ImageList(Size imageSize, unsigned capacity, std::optional<unsigned> growCount = nullopt)
 		  : Impl{com::make_shared<::IImageList2,CLSID_ImageList>(CLSCTX_INPROC_SERVER)}
 		{
 			this->Impl.initialize(imageSize.Width, imageSize.Height, ILC_COLOR32|ILC_MASK, capacity, growCount.value_or(0));

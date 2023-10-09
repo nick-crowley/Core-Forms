@@ -117,7 +117,7 @@ namespace core::forms
 
 		template <meta::SubclassedControl Self>
 		::LRESULT
-		subclassedWndProc(this Self&& self, unsigned message, std::optional<::WPARAM> w = std::nullopt, std::optional<::LPARAM> l = std::nullopt) {
+		subclassedWndProc(this Self&& self, unsigned message, std::optional<::WPARAM> w = nullopt, std::optional<::LPARAM> l = nullopt) {
 			return ::CallWindowProc(self.wndcls().OriginalWndProc, self.handle(), message, w.value_or(0), l.value_or(0));
 		}
 	};

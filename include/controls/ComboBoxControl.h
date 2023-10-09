@@ -109,8 +109,8 @@ namespace core::forms
 			explicit
 			RichText(
 				std::wstring_view          text, 
-				std::optional<AnyColour>   colour = std::nullopt, 
-				std::optional<forms::Font> font = std::nullopt
+				std::optional<AnyColour>   colour = nullopt, 
+				std::optional<forms::Font> font = nullopt
 			) : Text{text}, 
 				Colour{colour}, 
 				Font{font}
@@ -134,8 +134,8 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			explicit
 			ItemData(std::wstring_view                 text, 
-			         std::optional<std::wstring_view>  heading = std::nullopt, 
-			         std::optional<forms::Icon>        icon = std::nullopt) 
+			         std::optional<std::wstring_view>  heading = nullopt, 
+			         std::optional<forms::Icon>        icon = nullopt) 
 			  : Detail{text}, 
 			    Heading{heading}, 
 			    Icon{icon}
@@ -143,8 +143,8 @@ namespace core::forms
 			
 			explicit
 			ItemData(RichText                    text, 
-			         std::optional<RichText>     heading = std::nullopt, 
-			         std::optional<forms::Icon>  icon = std::nullopt) 
+			         std::optional<RichText>     heading = nullopt, 
+			         std::optional<forms::Icon>  icon = nullopt) 
 			  : Detail{text}, 
 			    Heading{heading}, 
 			    Icon{icon}
@@ -211,7 +211,7 @@ namespace core::forms
 				Invariant(this->Owner.ownerDraw());
 				if (auto const hasTitle = this->data<ItemData>()->Heading; hasTitle)
 					return hasTitle->Text;
-				return std::nullopt;
+				return nullopt;
 			}
 			
 			std::wstring
@@ -359,7 +359,7 @@ namespace core::forms
 			std::optional<Item>
 			find(std::wstring_view item) const {
 				if (signed const idx = ComboBox_FindStringExact(this->Owner.handle(), 0, item.data()); idx == -1)
-					return std::nullopt;
+					return nullopt;
 				else
 					return Item{this->Owner, static_cast<size_t>(idx)};
 			}
@@ -373,7 +373,7 @@ namespace core::forms
 			std::optional<Item>
 			selected() const {
 				if (signed const idx = ComboBox_GetCurSel(this->Owner.handle()); idx == -1)
-					return std::nullopt;
+					return nullopt;
 				else 
 					return Item{this->Owner, static_cast<size_t>(idx)};
 			}
@@ -386,7 +386,7 @@ namespace core::forms
 			std::optional<Item>
 			substr(std::wstring_view substring) const {
 				if (signed const idx = ComboBox_FindStringExact(this->Owner.handle(), 0, substring.data()); idx == -1)
-					return std::nullopt;
+					return nullopt;
 				else
 					return Item{this->Owner, static_cast<size_t>(idx)};
 			}
@@ -430,9 +430,9 @@ namespace core::forms
 			void
 			insert(size_t                     idx, 
 			       RichText                   text,
-			       std::optional<forms::Icon> icon = std::nullopt) 
+			       std::optional<forms::Icon> icon = nullopt) 
 			{
-				auto data = std::make_unique<ItemData>(text, std::nullopt, icon);
+				auto data = std::make_unique<ItemData>(text, nullopt, icon);
 				
 				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 				if (this->Owner.hasStrings()) {
@@ -450,7 +450,7 @@ namespace core::forms
 			insert(size_t              idx, 
 			       std::wstring_view   text, 
 			       std::wstring_view   heading, 
-			       std::optional<Icon> icon = std::nullopt)
+			       std::optional<Icon> icon = nullopt)
 			{
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
 				this->insert(idx, RichText{text}, RichText{heading}, icon);
@@ -460,7 +460,7 @@ namespace core::forms
 			insert(size_t                     idx, 
 			       RichText                   text,
 			       RichText                   heading,
-			       std::optional<forms::Icon> icon = std::nullopt) 
+			       std::optional<forms::Icon> icon = nullopt) 
 			{
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
 				auto data = std::make_unique<ItemData>(text, heading, icon);
@@ -484,14 +484,14 @@ namespace core::forms
 
 			void
 			push_back(RichText                   text,
-			          std::optional<forms::Icon> icon = std::nullopt) {
+			          std::optional<forms::Icon> icon = nullopt) {
 				this->insert(static_cast<size_t>(-1), text, icon);
 			}
 			
 			void
 			push_back(std::wstring_view   text, 
 			          std::wstring_view   heading, 
-			          std::optional<Icon> icon = std::nullopt) 
+			          std::optional<Icon> icon = nullopt) 
 			{
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
 				this->insert(static_cast<size_t>(-1), text, heading, icon);
@@ -500,7 +500,7 @@ namespace core::forms
 			void
 			push_back(RichText                   text,
 			          RichText                   heading,
-			          std::optional<forms::Icon> icon = std::nullopt) 
+			          std::optional<forms::Icon> icon = nullopt) 
 			{
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
 				this->insert(static_cast<size_t>(-1), text, heading, icon);
@@ -583,7 +583,7 @@ namespace core::forms
 		ComboBoxInfo
 		info() const {
 			::COMBOBOXINFO info{sizeof ::COMBOBOXINFO}; 
-			this->send<CB_GETCOMBOBOXINFO>(std::nullopt, (::LPARAM)&info);
+			this->send<CB_GETCOMBOBOXINFO>(nullopt, (::LPARAM)&info);
 			return ComboBoxInfo{info};
 		}
 

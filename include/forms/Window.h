@@ -972,7 +972,7 @@ namespace core::forms
 		void
 		backColour(AnyColour newColour) {
 			this->BackColour = newColour;
-			this->Background = std::nullopt;
+			this->Background = nullopt;
 		}
 		
 		void
@@ -982,7 +982,7 @@ namespace core::forms
 		}
 
 		void 
-		create(std::wstring_view text, WindowStyle style, std::optional<Rect> area = std::nullopt) {
+		create(std::wstring_view text, WindowStyle style, std::optional<Rect> area = nullopt) {
 			auto params = CreateWindowParamsBuilder{}.withClass(this->wndcls())
 			                                         .withStyle(style)
 			                                         .withText(text)

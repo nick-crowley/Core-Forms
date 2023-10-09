@@ -67,7 +67,7 @@ namespace core::forms
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		WindowClass(win::ResourceId name, std::optional<::HMODULE> container = std::nullopt) 
+		WindowClass(win::ResourceId name, std::optional<::HMODULE> container = nullopt) 
 		  : WindowClass{WindowClass::fromName(name,container)}
 		{
 		}
@@ -120,7 +120,7 @@ namespace core::forms
 		}
 
 		::WNDCLASSEXW
-		static fromName(win::ResourceId name, std::optional<::HMODULE> container = std::nullopt) 
+		static fromName(win::ResourceId name, std::optional<::HMODULE> container = nullopt) 
 		{
 			::WNDCLASSEXW wndcls{sizeof(::WNDCLASSEXW)};
 			if (!::GetClassInfoExW(container.value_or(nullptr), name, &wndcls)) 

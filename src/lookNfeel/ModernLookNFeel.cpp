@@ -11,8 +11,8 @@ ModernLookNFeel::ModernLookNFeel()
 {
 	using namespace forms::literals;
 	this->Fonts.Paragraph = Font{this->default().Name, DeviceContext::ScreenDC.measureFont(this->default().Height)};
-	this->Fonts.Heading2 = Font{*this->Fonts.Paragraph.handle(), std::nullopt, DeviceContext::ScreenDC.measureFont(18_pt)};
-	this->Fonts.Heading1 = Font{*this->Fonts.Paragraph.handle(), std::nullopt, DeviceContext::ScreenDC.measureFont(24_pt)};
+	this->Fonts.Heading2 = Font{*this->Fonts.Paragraph.handle(), nullopt, DeviceContext::ScreenDC.measureFont(18_pt)};
+	this->Fonts.Heading1 = Font{*this->Fonts.Paragraph.handle(), nullopt, DeviceContext::ScreenDC.measureFont(24_pt)};
 	this->Colours.Button = SystemColour::ButtonFace;
 	this->Colours.Control = Colour::White;
     this->Colours.Primary = Colour::Black;

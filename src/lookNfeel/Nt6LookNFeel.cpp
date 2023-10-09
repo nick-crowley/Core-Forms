@@ -10,8 +10,8 @@ Nt6LookNFeel::Nt6LookNFeel()
 {
 	using namespace forms::literals;
 	this->Fonts.Paragraph = Font{this->default().Name, DeviceContext::ScreenDC.measureFont(this->default().Height)};
-	this->Fonts.Heading2 = Font{*this->Fonts.Paragraph.handle(), std::nullopt, DeviceContext::ScreenDC.measureFont(12_pt)};
-	this->Fonts.Heading1 = Font{*this->Fonts.Paragraph.handle(), std::nullopt, DeviceContext::ScreenDC.measureFont(14_pt)};
+	this->Fonts.Heading2 = Font{*this->Fonts.Paragraph.handle(), nullopt, DeviceContext::ScreenDC.measureFont(12_pt)};
+	this->Fonts.Heading1 = Font{*this->Fonts.Paragraph.handle(), nullopt, DeviceContext::ScreenDC.measureFont(14_pt)};
 	this->Colours.Button = SystemColour::ButtonFace;
 	this->Colours.Control = SystemColour::Window;
     this->Colours.Primary = SystemColour::WindowText;
@@ -71,7 +71,7 @@ Nt6LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 Response
 Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs args) 
 {
-	ThrowIfNot(args, args.Graphics == std::nullopt);
+	ThrowIfNot(args, args.Graphics == nullopt);
 	args.beginPaint();
 
 	auto const activeCaption = args.CaptionState == WindowCaptionState::Active;

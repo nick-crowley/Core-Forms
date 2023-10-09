@@ -81,11 +81,11 @@ namespace core::forms
 		}
 		
 		Font(::HFONT                           existing, 
-			 std::optional<std::wstring_view>  name = std::nullopt,
-			 std::optional<int32_t>            twipsHeight = std::nullopt, 
-			 std::optional<FontWeight>         weight = std::nullopt, 
-			 std::optional<bool>               italic = std::nullopt, 
-			 std::optional<bool>               underline = std::nullopt
+			 std::optional<std::wstring_view>  name = nullopt,
+			 std::optional<int32_t>            twipsHeight = nullopt, 
+			 std::optional<FontWeight>         weight = nullopt, 
+			 std::optional<bool>               italic = nullopt, 
+			 std::optional<bool>               underline = nullopt
 		) {
 			::LOGFONT props {};
 			if (!::GetObjectW(existing, sizeof(::LOGFONT), &props))

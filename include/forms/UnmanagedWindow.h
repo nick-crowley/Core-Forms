@@ -142,13 +142,13 @@ namespace core::forms
 		
 		template <unsigned MessageId>
 		::LRESULT
-		post(std::optional<::WPARAM> first = std::nullopt, std::optional<::LPARAM> second = std::nullopt) const {
+		post(std::optional<::WPARAM> first = nullopt, std::optional<::LPARAM> second = nullopt) const {
 			return ::PostMessageW(this->handle(), MessageId, first.value_or(0), second.value_or(0));
 		}
 		
 		template <unsigned MessageId>
 		::LRESULT
-		send(std::optional<::WPARAM> first = std::nullopt, std::optional<::LPARAM> second = std::nullopt) const {
+		send(std::optional<::WPARAM> first = nullopt, std::optional<::LPARAM> second = nullopt) const {
 			return ::SendMessageW(this->handle(), MessageId, first.value_or(0), second.value_or(0));
 		}
 
@@ -196,7 +196,7 @@ namespace core::forms
 		wndRgn() const {
 			Region rgn;
 			if (!::GetWindowRgn(this->handle(), rgn))
-				return std::nullopt;
+				return nullopt;
 			return rgn;
 		}
 		

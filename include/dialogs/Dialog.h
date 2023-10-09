@@ -265,7 +265,7 @@ namespace core::forms
 
 				::CREATESTRUCT replacement = *args.Data;
 				replacement.lpCreateParams = &Dialog::DialogCreationParameter.value();	// BUG: Returning address which is invalidated on next line
-				Dialog::DialogCreationParameter = std::nullopt;
+				Dialog::DialogCreationParameter = nullopt;
 
 				return Window::defaultMessageHandler(hWnd, message, wParam, (LPARAM)&replacement);
 			} 
@@ -571,14 +571,14 @@ namespace core::forms
 				if (result == -1)
 					win::LastError{}.throwIfError("Failed to display '{}' dialog", to_string(this->DialogId));
 
-				this->DisplayMode = std::nullopt;
+				this->DisplayMode = nullopt;
 				return result;
 			}
 
 			// [MODELESS] Display, set handle, and return nothing
 			if (auto* const dlg = ::CreateDialogIndirectW(container, blob, owner, this->DialogProc); dlg)
 				this->attach(dlg);
-			return std::nullopt;
+			return nullopt;
 		}
 		
 		DialogTemplateBlob
