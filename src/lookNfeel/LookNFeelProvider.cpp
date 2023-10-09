@@ -205,7 +205,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 
 	// [TEXT] Draw using custom font/colour, if any; otherwise use ComboBox colours
 	args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
-	args.Graphics.textColour(selectedTextColour.value_or(title->Colour.value_or(ctrl.textColour())), transparent);
+	args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(ctrl.textColour())), transparent);
 	if (icon && !title) {
 		Size const iconSize{rcDetail.height(), rcDetail.height()};
 		args.Graphics.drawIcon(icon->handle(), rcItem.topLeft(), iconSize);
