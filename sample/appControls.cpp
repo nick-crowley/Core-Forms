@@ -1,6 +1,9 @@
 #include "library/core.forms.h"
 #include "dialogs/Dialog.h"
 #include "Resource.h"
+#ifdef ENABLE_VISUAL_STYLES_v6
+#	pragma comment(linker,R"("/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'")")
+#endif
 using namespace core;
 
 // Define program meta-data
