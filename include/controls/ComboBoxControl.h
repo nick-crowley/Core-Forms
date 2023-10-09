@@ -31,6 +31,7 @@
 #include "controls/ComboBoxStyle.h"
 #include "controls/ComboBoxInfo.h"
 #include "graphics/Icon.h"
+#include "lookNfeel/LookNFeelProvider.h"
 #include "forms/WindowClass.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -46,6 +47,9 @@ namespace core::forms
 	//! @brief	ComboBox supporting item text, item headings, custom fonts, and icons
 	class ComboBoxControl : public Control 
 	{
+		void
+		friend LookNFeelProvider::measure(ComboBoxControl&, MeasureItemEventArgs const&);
+	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		using base = Control;
 

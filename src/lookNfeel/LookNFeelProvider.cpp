@@ -242,7 +242,7 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 	}
 	// [VARIABLE-HEIGHT] Calculate per-item height
 	else {
-		auto const& item = *reinterpret_cast<ComboBoxControl::ComboBoxItemData*>(args.Item.UserData);
+		auto const& item = *reinterpret_cast<ComboBoxControl::ItemData*>(args.Item.UserData);
 		args.Height = 0;
 
 		// [TITLE] Measure title using custom font, if provided; otherwise ComboBox's heading-font
