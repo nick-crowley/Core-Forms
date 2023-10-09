@@ -124,16 +124,14 @@ namespace core::forms
         Decorative = (5<<4),       //!< Old English, etc. 
     };
   
-    //! \enum HatchStyle - Defines brush hatch styles
-    enum class HatchStyle : uint32_t
-    {
-        Horizontal = 0,                     //!<      /* ----- */
-        Vertical = 1,                       //!<      /* ||||| */
-        ForwardDiagonal = 2,                //!<      /* \\\\\ */
-        BackwardDiagonal = 3,               //!<      /* ///// */
-        Cross = 4,                          //!<      /* +++++ */
-        CrossDiagonal = 5,                  //!<      /* xxxxx */
-    };
+    enum class HatchStyle {
+		Horizontal = HS_HORIZONTAL,    //!< Horizontal hatch
+		Vertical = HS_VERTICAL,        //!< Vertical hatch
+		Cross = HS_CROSS,              //!< Horizontal and vertical crosshatch
+		NorthEast = HS_BDIAGONAL,      //!< 45-degree upward left-to-right hatch
+		NorthWest = HS_FDIAGONAL,      //!< 45-degree downward left-to-right hatch
+		DiagonalCross = HS_DIAGCROSS,  //!< 45-degree crosshatch
+	};
 
     //! \enum PenStyle - Defines cosmetic and geometric pen styles
     enum class PenStyle : int32_t
