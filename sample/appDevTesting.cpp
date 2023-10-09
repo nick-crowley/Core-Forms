@@ -62,15 +62,15 @@ protected:
 		};
 		for (auto item : itemDefinitions) {
 			this->WideComboBox.Items.push_back(
-				forms::ComboBoxItemElement{item.detail, forms::Colour::Grey, detailFont},
-				forms::ComboBoxItemElement{item.title},
+				forms::ComboBoxElement{item.detail, forms::Colour::Grey, detailFont},
+				forms::ComboBoxElement{item.title},
 				sampleIcon
 			);
 		}
 
-		this->NarrowComboBox.Items.push_back(forms::ComboBoxItemElement{L"Rain in Spain", forms::Colour::DarkBlue, forms::StockFont::SystemFixed}, sampleIcon);
+		this->NarrowComboBox.Items.push_back(forms::ComboBoxElement{L"Rain in Spain", forms::Colour::DarkBlue, forms::StockFont::SystemFixed}, sampleIcon);
 		this->NarrowComboBox.Items.push_back(L"Quick Brown Fox");
-		this->NarrowComboBox.Items.push_back(forms::ComboBoxItemElement{L"Very Earthly Mother", forms::Colour::Red, forms::StockFont::AnsiFixed}, sampleIcon);
+		this->NarrowComboBox.Items.push_back(forms::ComboBoxElement{L"Very Earthly Mother", forms::Colour::Red, forms::StockFont::AnsiFixed}, sampleIcon);
 
 		return FALSE;
 	}

@@ -44,14 +44,14 @@
 namespace core::forms
 {
 	//! @brief	Display element of each owner-draw item
-	struct ComboBoxItemElement {
+	struct ComboBoxElement {
 		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		std::wstring              Text;
 		std::optional<AnyColour>  Colour = SystemColour::WindowText;
 		std::optional<Font>       Font;
 		// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		explicit
-		ComboBoxItemElement(
+		ComboBoxElement(
 			std::wstring_view          text, 
 			std::optional<AnyColour>   colour = std::nullopt, 
 			std::optional<forms::Font> font = std::nullopt
@@ -60,7 +60,7 @@ namespace core::forms
 			Font{font}
 		{}
 		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-		satisfies(ComboBoxItemElement,
+		satisfies(ComboBoxElement,
 			IsSemiRegular,
 			NotEqualityComparable,
 			NotSortable
@@ -120,8 +120,8 @@ namespace core::forms
 		//! @brief	Custom item data used for each element when in owner-draw mode
 		struct ComboBoxItemData {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			ComboBoxItemElement                Detail;   //!< Primary item content when no title present
-			std::optional<ComboBoxItemElement> Heading;
+			ComboBoxElement                Detail;   //!< Primary item content when no title present
+			std::optional<ComboBoxElement> Heading;
 			std::optional<Icon>                Icon;
 			void*                              UserData = nullptr;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -135,8 +135,8 @@ namespace core::forms
 			{}
 			
 			explicit
-			ComboBoxItemData(ComboBoxItemElement                text, 
-			                 std::optional<ComboBoxItemElement> heading = std::nullopt, 
+			ComboBoxItemData(ComboBoxElement                text, 
+			                 std::optional<ComboBoxElement> heading = std::nullopt, 
 			                 std::optional<forms::Icon>         icon = std::nullopt) 
 			  : Detail{text}, 
 			    Heading{heading}, 
@@ -171,7 +171,7 @@ namespace core::forms
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			ComboBoxItemElement
+			ComboBoxElement
 			detail() const {
 				Invariant(this->Owner.ownerDraw());
 				return this->data<ComboBoxItemData>()->Detail;
@@ -188,7 +188,7 @@ namespace core::forms
 				return this->Index;
 			}
 			
-			std::optional<ComboBoxItemElement>
+			std::optional<ComboBoxElement>
 			heading() const {
 				Invariant(this->Owner.ownerDraw());
 				return this->data<ComboBoxItemData>()->Heading;
@@ -423,7 +423,7 @@ namespace core::forms
 			
 			void
 			insert(size_t                     idx, 
-			       ComboBoxItemElement        text,
+			       ComboBoxElement        text,
 			       std::optional<forms::Icon> icon = std::nullopt) 
 			{
 				auto data = std::make_unique<ComboBoxItemData>(text, std::nullopt, icon);
@@ -447,13 +447,13 @@ namespace core::forms
 			       std::optional<Icon> icon = std::nullopt)
 			{
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
-				this->insert(idx, ComboBoxItemElement{text}, ComboBoxItemElement{heading}, icon);
+				this->insert(idx, ComboBoxElement{text}, ComboBoxElement{heading}, icon);
 			}
 			
 			void
 			insert(size_t                     idx, 
-			       ComboBoxItemElement        text,
-			       ComboBoxItemElement        heading,
+			       ComboBoxElement        text,
+			       ComboBoxElement        heading,
 			       std::optional<forms::Icon> icon = std::nullopt) 
 			{
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
@@ -477,7 +477,7 @@ namespace core::forms
 			}
 
 			void
-			push_back(ComboBoxItemElement        text,
+			push_back(ComboBoxElement        text,
 			          std::optional<forms::Icon> icon = std::nullopt) {
 				this->insert(static_cast<size_t>(-1), text, icon);
 			}
@@ -492,8 +492,8 @@ namespace core::forms
 			}
 			
 			void
-			push_back(ComboBoxItemElement        text,
-			          ComboBoxItemElement        heading,
+			push_back(ComboBoxElement        text,
+			          ComboBoxElement        heading,
 			          std::optional<forms::Icon> icon = std::nullopt) 
 			{
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
