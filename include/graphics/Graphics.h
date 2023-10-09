@@ -659,7 +659,7 @@ namespace core::forms
 		}
 
 		//! @brief	Sets the text colour and transparent background
-		//! @throws	Text colour is transparent
+		//! @throws	 std::invalid_argument  Text colour is transparent
 		void
 		textColour(AnyColour foreground)
 		{
@@ -671,7 +671,7 @@ namespace core::forms
 		}
 		
 		//! @brief	Set the text colour
-		//! @throws	Text colour is transparent
+		//! @throws	 std::invalid_argument  Text colour is transparent
 		void
 		textColour(AnyColour foreground, AnyColour background) 
 		{
