@@ -169,6 +169,10 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	args.Graphics.setBrush(backColour);
 	args.Graphics.fillRect(rcItem);
 
+	// [NO-SELECTED-ITEM] Occurs in DropDownList mode
+	if (args.Item.Index == args.Empty && !ctrl.Items.selected())
+		return;
+	
 	// Setup item
 	auto const item = ctrl.Items[args.Item.Index];
 	auto const detail = item.detail();
