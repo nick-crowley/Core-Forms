@@ -63,8 +63,6 @@ namespace core::forms
 	protected:
 		struct EarlierState
 		{
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			std::optional<DrawingMode> PrevDrawingMode;
 			std::optional<Colour>      PrevBackColour;
@@ -73,23 +71,12 @@ namespace core::forms
 			std::optional<::HBRUSH>    PrevBrush;
 			std::optional<::HFONT>     PrevFont;
 			std::optional<::HPEN>      PrevPen;
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			satisfies(EarlierState, 
 				IsSemiRegular noexcept,
 				NotEqualityComparable,
 				NotSortable
 			);
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
-
-			/*bool
-			empty() const {
-				return this->PrevDrawingMode || this->PrevBackColour || this->PrevTextColour
-					|| this->PrevBitmap || this->PrevBrush || this->PrevFont || this->PrevPen;
-			}*/
 		};
 
 		using SharedEarlierState = std::shared_ptr<EarlierState>;
@@ -192,7 +179,7 @@ namespace core::forms
 		copyBitmap(::HDC source, ColourDepth depth, Rect const& src, Rect const& dest, Percentage opacity = Percentage::Max) const
 		{
 			::BLENDFUNCTION const blend{
-				AC_SRC_OVER, win::Reserved<BYTE>, opacity*255ui8, /*(BYTE)(depth == ColourDepth::bpp32)*/ 0ui8
+				AC_SRC_OVER, win::Reserved<BYTE>, opacity*255ui8, 0ui8
 			};
 		
 			if (!::AlphaBlend(this->handle(), 
