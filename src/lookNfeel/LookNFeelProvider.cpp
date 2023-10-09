@@ -198,9 +198,11 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		// [LARGE-ICON] Draw icon on left; position both title and detail text beside it
 		if (icon)
 		{
-			Size const iconSize{rcItem.height(), rcItem.height()};
-			Rect const rcTitle = rcItem + Point{Percentage{115,unconstrained}*iconSize.Width,0};
-			args.Graphics.drawIcon(icon->handle(), rcItem.topLeft(), iconSize);
+			GuiMeasurement const border{SystemMetric::cyFixedFrame};
+			Size const iconSize = Size{rcItem.height(), rcItem.height()} - Size{border,border} * (!withinEdit ? 2.0f : 0.0f);
+			Point const iconPosition = rcItem.topLeft() + (!withinEdit ? Point{border,border} : Point::Zero);
+			args.Graphics.drawIcon(icon->handle(), iconPosition, iconSize);
+			Rect const rcTitle = rcItem + Point{3.0f*border + iconSize.Width,0};
 			auto const titleHeight = args.Graphics.drawText(title->Text, rcTitle, DrawTextFlags::Left);
 			rcDetail = rcTitle + Point{0, titleHeight};
 		}
@@ -244,7 +246,7 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 		//!           so it's not even feasible to rely on its window font because the control hasn't yet
 		//!           received its first WM_SETFONT
 		auto const fontHeight = ctrl.editFont().height();
-		args.Height = std::abs(fontHeight);
+		args.Height = std::abs(fontHeight) + 2*GuiMeasurement{SystemMetric::cyFixedFrame};
 		return;
 	}
 
@@ -264,6 +266,8 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 			args.Graphics.setFont(title->Font.value_or(ctrl.titleFont().value_or(ctrl.font())));
 			args.Height += args.Graphics.measureText(title->Text).Height;
 		}
+		else
+			args.Height += int(2*GuiMeasurement{SystemMetric::cyFixedFrame});
 
 		// Calculate size required for (potentially multi-line) item text. Use custom font, if one
 		//  was provided; otherwise ComboBox's text-font
