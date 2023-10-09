@@ -163,11 +163,6 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	bool const variable = ctrl.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable);
 	bool const selected = args.Item.State.test(OwnerDrawState::Selected);
 	auto const backColour = selected ? SystemColour::Highlight : ctrl.backColour();
-	auto const chooseTextColour = [&](std::optional<AnyColour> const& itemColour) -> AnyColour {
-		if (selected)
-			return SystemColour::HighlightText;
-		return itemColour ? *itemColour : ctrl.textColour();
-	};
 	
 	// Draw item background
 	Rect const rcItem = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
@@ -185,10 +180,12 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	// [TITLE] Draw title and calculate different rectangle for (multi-line) detail text
 	auto const title = item.heading(); 
 	auto const icon = item.icon();
+	auto const selectedTextColour = nstd::make_optional_if<AnyColour>(selected, SystemColour::HighlightText);
+
 	if (title)
 	{
 		args.Graphics.setFont(title->Font.value_or(ctrl.titleFont().value_or(ctrl.font())));
-		args.Graphics.textColour(chooseTextColour(title->Colour), backColour);
+		args.Graphics.textColour(selectedTextColour.value_or(title->Colour.value_or(ctrl.textColour())), transparent);
 		
 		// [ICON] Draw icon on left; position both title and detail text beside it
 		if (icon)
@@ -208,7 +205,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 
 	// [TEXT] Draw using custom font/colour, if any; otherwise use ComboBox colours
 	args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
-	args.Graphics.textColour(chooseTextColour(detail.Colour), backColour);
+	args.Graphics.textColour(selectedTextColour.value_or(title->Colour.value_or(ctrl.textColour())), transparent);
 	if (icon && !title) {
 		Size const iconSize{rcDetail.height(), rcDetail.height()};
 		args.Graphics.drawIcon(icon->handle(), rcItem.topLeft(), iconSize);
