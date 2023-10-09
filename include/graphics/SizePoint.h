@@ -71,6 +71,45 @@ namespace core::forms
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		//! @brief	Scale by @p scale
+		GuiMeasurement constexpr
+		operator*(float scale) const noexcept {
+			return GuiMeasurement{static_cast<int>(this->Value * scale)};
+		}
+		
+		GuiMeasurement constexpr
+		inline friend operator*(float scale, GuiMeasurement const& rhs) noexcept {
+			return rhs * scale;
+		}
+	
+		//! @brief	Add @p rhs
+		GuiMeasurement constexpr
+		operator+(int rhs) const noexcept {
+			return GuiMeasurement{this->Value + rhs};
+		}
+		
+		GuiMeasurement constexpr
+		inline friend operator+(int lhs, GuiMeasurement const& rhs) noexcept {
+			return rhs + lhs;
+		}
+
+		//! @brief	Subtract @p rhs
+		GuiMeasurement constexpr
+		operator-(int rhs) const noexcept {
+			return GuiMeasurement{this->Value - rhs};
+		}
+		
+		GuiMeasurement constexpr
+		inline friend operator-(int lhs, GuiMeasurement const& rhs) noexcept {
+			return GuiMeasurement{lhs - rhs.Value};
+		}
+	
+		//! @brief	Unary minus
+		GuiMeasurement constexpr
+		operator-() const noexcept {
+			return GuiMeasurement{-this->Value};
+		}
+		
 		template <std::integral Integral>
 		implicit constexpr
 		operator Integral() const noexcept {
