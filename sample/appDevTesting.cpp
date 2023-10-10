@@ -47,14 +47,10 @@ public:
 protected:
 	forms::Response 
 	virtual onInitDialog(forms::InitDialogEventArgs args) override {
-		std::ignore = base::onInitDialog(args);
-
-		for (int idx = 1; idx <= 8; ++idx) {
+		
+		for (int idx = 1; idx <= 8; ++idx) 
 			this->ListBox.Items.push_back(std::format(L"Item #{}", idx));
-		}
-
-		forms::Icon const sampleIcon = forms::Icon::load(win::ProcessModule, win::ResourceId{IDI_ICON1});
-
+		
 		// Separate design flaw means custom font for currently selected ComboBox item must be
 		//  specified again after creation of the ComboBox. This can be changed at runtime but
 		//  the control will never resize to fit the new font.
@@ -66,6 +62,8 @@ protected:
 			{L"Quick Brown Fox",     L"The quick brown fox jumped over the lazy dog"},
 			{L"Very Earthly Mother", L"My very earthly mother just said you're nearly perfect"}
 		};
+		forms::Icon const sampleIcon = forms::Icon::load(win::ProcessModule, win::ResourceId{IDI_ICON1});
+
 		for (auto item : itemDefinitions) {
 			this->WideComboBox.Items.push_back(
 				forms::ComboBoxElement{item.detail, forms::Colour::Grey, this->DetailFont},
