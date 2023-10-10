@@ -46,13 +46,13 @@ namespace core::forms
 		static_assert(sizeof(::LPARAM) == sizeof(void*));
 
 	public:
-		::HWND		InitialFocus;
-		::LPARAM	CustomData;
+		UnmanagedWindow	 InitialFocus;
+		::LPARAM	     CustomData;
 
 	public:
 		InitDialogEventArgs(::WPARAM focusCtrl, ::LPARAM data) 
-		  : InitialFocus(reinterpret_cast<::HWND>(focusCtrl)),
-			CustomData(data) 
+		  : InitialFocus{reinterpret_cast<::HWND>(focusCtrl)},
+		    CustomData{data}
 		{}
 
 	public:
