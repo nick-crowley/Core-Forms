@@ -27,18 +27,47 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
-#include "dialogs/EventArgs/InitDialogEventArgs.h"
-#include "dialogs/EventArgs/LoadDialogEventArgs.h"
+#include "core/ObservableEvent.h"
+#include "forms/UnmanagedWindow.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+namespace core::forms
+{
+	class Window;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::forms
+{
+	class InitDialogEventArgs {
+		static_assert(sizeof(::LPARAM) == sizeof(void*));
 
+	public:
+		UnmanagedWindow	 InitialFocus;
+		::LPARAM	     CustomData;
+
+	public:
+		InitDialogEventArgs(::WPARAM focusCtrl, ::LPARAM data) 
+		  : InitialFocus{reinterpret_cast<::HWND>(focusCtrl)},
+		    CustomData{data}
+		{}
+
+	public:
+		template <nstd::Class CustomData>
+		CustomData*
+		data() {
+			return reinterpret_cast<CustomData*>(this->CustomData);
+		}
+	};
+
+	using InitDialogDelegate = Delegate<void (Window&,InitDialogEventArgs)>;
+	using InitDialogEvent = ObservableEvent<InitDialogDelegate>;
+
+}	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
