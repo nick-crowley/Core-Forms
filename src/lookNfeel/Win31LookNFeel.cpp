@@ -11,8 +11,8 @@ Win31LookNFeel::Win31LookNFeel()
 {
 	using namespace forms::literals;
 	this->Fonts.Paragraph = this->makeDefault();
-	this->Fonts.Heading2 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(12_pt).build();
-	this->Fonts.Heading1 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(14_pt).build();
+	this->Fonts.Heading2 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(12_pt);
+	this->Fonts.Heading1 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(14_pt);
 	this->Colours.Button = SystemColour::ButtonFace;
 	this->Colours.Control = Colour::White;
     this->Colours.Primary = Colour::Black;

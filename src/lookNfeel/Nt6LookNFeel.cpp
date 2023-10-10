@@ -11,8 +11,8 @@ Nt6LookNFeel::Nt6LookNFeel()
 {
 	using namespace forms::literals;
 	this->Fonts.Paragraph = this->makeDefault();
-	this->Fonts.Heading2 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(12_pt).build();
-	this->Fonts.Heading1 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(14_pt).build();
+	this->Fonts.Heading2 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(12_pt);
+	this->Fonts.Heading1 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(14_pt);
 	this->Colours.Button = SystemColour::ButtonFace;
 	this->Colours.Control = SystemColour::Window;
     this->Colours.Primary = SystemColour::WindowText;

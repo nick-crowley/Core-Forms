@@ -23,12 +23,10 @@ private:
 	forms::ComboBoxControl NarrowComboBox = IDC_COMBO2;
 	forms::ListBoxControl ListBox = IDC_LIST1;
 	forms::Font  DetailFont = forms::FontBuilder{}.withName(L"Consolas")
-	                                              .withSize(11_pt)
-	                                              .build();
+	                                              .withSize(11_pt);
 	forms::Font  TitleFont = forms::FontBuilder{}.withName(L"Consolas")
 	                                             .withSize(14_pt)
-	                                             .withWeight(forms::FontWeight::Bold)
-	                                             .build();
+	                                             .withWeight(forms::FontWeight::Bold);
 
 public:
 	DevTesting() 

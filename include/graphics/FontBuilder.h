@@ -96,6 +96,11 @@ namespace core::forms
 			else
 				return Font{SharedFont{font}};
 		}
+
+		implicit
+		operator Font() const {
+			return this->build();
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		FontBuilder&

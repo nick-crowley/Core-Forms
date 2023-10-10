@@ -88,7 +88,7 @@ LookNFeelProvider::LookNFeelProvider()
 
 Font
 LookNFeelProvider::makeDefault() {
-	return FontBuilder{}.withName(this->default().Name).withSize(this->default().Height).build();
+	return FontBuilder{}.withName(this->default().Name).withSize(this->default().Height);
 }
 
 void
