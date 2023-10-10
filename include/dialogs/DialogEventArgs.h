@@ -56,11 +56,10 @@ namespace core::forms
 		{}
 
 	public:
-		template <typename Pointer>
-		Pointer
+		template <nstd::Class CustomData>
+		CustomData*
 		data() {
-			static_assert(std::is_pointer_v<Pointer>);
-			return reinterpret_cast<Pointer>(this->CustomData);
+			return reinterpret_cast<CustomData*>(this->CustomData);
 		}
 	};
 
