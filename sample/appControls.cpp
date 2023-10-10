@@ -73,7 +73,7 @@ protected:
 	virtual onInitDialog(forms::InitDialogEventArgs args) override
 	{
 		this->PopulateBtn.focus();
-		return FALSE;
+		return args.SetInitialFocus;
 	}
 
 	void

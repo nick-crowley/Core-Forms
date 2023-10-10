@@ -47,6 +47,13 @@ namespace core::forms
 		static_assert(sizeof(::LPARAM) == sizeof(void*));
 
 	public:
+		BOOL constexpr
+		inline static SetInitialFocus = TRUE;
+		
+		BOOL constexpr
+		inline static SkipInitialFocus = FALSE;
+
+	public:
 		UnmanagedWindow	 InitialFocus;
 		::LPARAM	     CustomData;
 

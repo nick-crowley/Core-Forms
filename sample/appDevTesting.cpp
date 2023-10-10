@@ -78,7 +78,7 @@ protected:
 		this->NarrowComboBox.Items.push_back(L"Quick Brown Fox");
 		this->NarrowComboBox.Items.push_back(forms::ComboBoxElement{L"Very Earthly Mother", forms::Colour::Red, forms::StockFont::AnsiFixed}, sampleIcon);
 
-		return FALSE;
+		return args.SetInitialFocus;
 	}
 	
 private:
