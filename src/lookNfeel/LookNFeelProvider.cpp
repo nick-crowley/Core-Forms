@@ -1,5 +1,6 @@
 ﻿#include "lookNfeel/LookNFeelProvider.h"
 #include "controls/CommonControls.h"
+#include "graphics/FontBuilder.h"
 using namespace core;
 using namespace forms;
 
@@ -83,6 +84,11 @@ LookNFeelProvider::LookNFeelProvider()
     .Window{SystemColour::Window}
   }
 {
+}
+
+Font
+LookNFeelProvider::makeDefault() {
+	return FontBuilder{}.withName(this->default().Name).withSize(this->default().Height).build();
 }
 
 void

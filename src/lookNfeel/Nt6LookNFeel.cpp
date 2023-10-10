@@ -1,5 +1,6 @@
 ﻿#include "lookNfeel/Nt6LookNFeel.h"
 #include "controls/CommonControls.h"
+#include "graphics/FontBuilder.h"
 using namespace core;
 using namespace forms;
 	
@@ -9,9 +10,9 @@ Nt6LookNFeel::Instance = std::make_shared<Nt6LookNFeel>();
 Nt6LookNFeel::Nt6LookNFeel()
 {
 	using namespace forms::literals;
-	this->Fonts.Paragraph = Font{this->default().Name, DeviceContext::ScreenDC.measureFont(this->default().Height)};
-	this->Fonts.Heading2 = Font{*this->Fonts.Paragraph.handle(), nullopt, DeviceContext::ScreenDC.measureFont(12_pt)};
-	this->Fonts.Heading1 = Font{*this->Fonts.Paragraph.handle(), nullopt, DeviceContext::ScreenDC.measureFont(14_pt)};
+	this->Fonts.Paragraph = this->makeDefault();
+	this->Fonts.Heading2 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(12_pt).build();
+	this->Fonts.Heading1 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(14_pt).build();
 	this->Colours.Button = SystemColour::ButtonFace;
 	this->Colours.Control = SystemColour::Window;
     this->Colours.Primary = SystemColour::WindowText;

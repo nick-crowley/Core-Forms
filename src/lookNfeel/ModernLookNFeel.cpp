@@ -1,6 +1,7 @@
 ﻿#include "lookNfeel/ModernLookNFeel.h"
 #include "lookNfeel/Nt6LookNFeel.h"
 #include "controls/CommonControls.h"
+#include "graphics/FontBuilder.h"
 using namespace core;
 using namespace forms;
 
@@ -10,9 +11,9 @@ ModernLookNFeel::Instance = std::make_shared<ModernLookNFeel>();
 ModernLookNFeel::ModernLookNFeel()
 {
 	using namespace forms::literals;
-	this->Fonts.Paragraph = Font{this->default().Name, DeviceContext::ScreenDC.measureFont(this->default().Height)};
-	this->Fonts.Heading2 = Font{*this->Fonts.Paragraph.handle(), nullopt, DeviceContext::ScreenDC.measureFont(18_pt)};
-	this->Fonts.Heading1 = Font{*this->Fonts.Paragraph.handle(), nullopt, DeviceContext::ScreenDC.measureFont(24_pt)};
+	this->Fonts.Paragraph = this->makeDefault();
+	this->Fonts.Heading2 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(18_pt).build();
+	this->Fonts.Heading1 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(24_pt).build();
 	this->Colours.Button = SystemColour::ButtonFace;
 	this->Colours.Control = Colour::White;
     this->Colours.Primary = Colour::Black;

@@ -1,7 +1,9 @@
 #include "library/core.forms.h"
 #include "dialogs/Dialog.h"
+#include "graphics/FontBuilder.h"
 #include "graphics/ImageList.h"
 #include "graphics/Icon.h"
+#include "lookNFeel/DarkRetroLookNFeel.h"
 #include "Resource.h"
 using namespace core;
 using namespace forms::literals;
@@ -20,6 +22,13 @@ private:
 	forms::ComboBoxControl WideComboBox = IDC_COMBO1;
 	forms::ComboBoxControl NarrowComboBox = IDC_COMBO2;
 	forms::ListBoxControl ListBox = IDC_LIST1;
+	forms::Font  DetailFont = forms::FontBuilder{}.withName(L"Consolas")
+	                                              .withSize(11_pt)
+	                                              .build();
+	forms::Font  TitleFont = forms::FontBuilder{}.withName(L"Consolas")
+	                                             .withSize(14_pt)
+	                                             .withWeight(forms::FontWeight::Bold)
+	                                             .build();
 
 public:
 	DevTesting() 
@@ -32,8 +41,7 @@ public:
 		
 		// A design flaw means custom fonts for currently selected ComboBox item must be
 		//  specified prior to creation of the ComboBox and, once set, cannot be changed.
-		forms::Font const titleFont{L"Consolas", this->clientDC().measureFont(24_pt), forms::FontWeight::Bold};
-		this->WideComboBox.editFont(titleFont);
+		this->WideComboBox.editFont(this->TitleFont);
 	}
 
 protected:
@@ -45,15 +53,13 @@ protected:
 			this->ListBox.Items.push_back(std::format(L"Item #{}", idx));
 		}
 
-		forms::Font const titleFont{L"Consolas", this->clientDC().measureFont(24_pt), forms::FontWeight::Bold};
-		forms::Font const detailFont{L"Segoe UI", this->clientDC().measureFont(11_pt)};
 		forms::Icon const sampleIcon = forms::Icon::load(win::ProcessModule, win::ResourceId{IDI_ICON1});
 
 		// Separate design flaw means custom font for currently selected ComboBox item must be
 		//  specified again after creation of the ComboBox. This can be changed at runtime but
 		//  the control will never resize to fit the new font.
-		this->WideComboBox.font(titleFont);
-		this->WideComboBox.titleFont(titleFont);
+		this->WideComboBox.font(this->TitleFont);
+		this->WideComboBox.titleFont(this->TitleFont);
 
 		struct { gsl::cwzstring title; gsl::cwzstring detail; } const itemDefinitions[3] {
 			{L"Rain in Spain",       L"The rain in spain falls mainly on the plane"},
@@ -62,7 +68,7 @@ protected:
 		};
 		for (auto item : itemDefinitions) {
 			this->WideComboBox.Items.push_back(
-				forms::ComboBoxElement{item.detail, forms::Colour::Grey, detailFont},
+				forms::ComboBoxElement{item.detail, forms::Colour::Grey, this->DetailFont},
 				forms::ComboBoxElement{item.title},
 				sampleIcon
 			);

@@ -1,5 +1,6 @@
 ﻿#include "lookNfeel/Win31LookNFeel.h"
 #include "controls/CommonControls.h"
+#include "graphics/FontBuilder.h"
 using namespace core;
 using namespace forms;
 
@@ -9,9 +10,9 @@ Win31LookNFeel::Instance = std::make_shared<Win31LookNFeel>();
 Win31LookNFeel::Win31LookNFeel()
 {
 	using namespace forms::literals;
-	this->Fonts.Paragraph = Font{this->default().Name, DeviceContext::ScreenDC.measureFont(this->default().Height)};
-	this->Fonts.Heading2 = Font{*this->Fonts.Paragraph.handle(), nullopt, DeviceContext::ScreenDC.measureFont(12_pt)};
-	this->Fonts.Heading1 = Font{*this->Fonts.Paragraph.handle(), nullopt, DeviceContext::ScreenDC.measureFont(14_pt)};
+	this->Fonts.Paragraph = this->makeDefault();
+	this->Fonts.Heading2 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(12_pt).build();
+	this->Fonts.Heading1 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(14_pt).build();
 	this->Colours.Button = SystemColour::ButtonFace;
 	this->Colours.Control = Colour::White;
     this->Colours.Primary = Colour::Black;
