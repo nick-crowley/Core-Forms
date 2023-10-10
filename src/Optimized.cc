@@ -27,6 +27,7 @@
 #include "lookNfeel/ModernLookNFeel.cpp"
 #include "lookNfeel/Win31LookNFeel.cpp"
 #include "lookNfeel/DarkRetroLookNFeel.cpp"
+#include "lookNfeel/DarkModernLookNFeel.cpp"
 
 #include "system/Message.cpp"
 #include "system/MessageQueue.cpp"
