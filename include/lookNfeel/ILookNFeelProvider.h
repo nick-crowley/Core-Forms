@@ -46,6 +46,7 @@ namespace core::forms
 	class PictureControl;
 	class RadioButtonControl;
 	class StaticControl;
+	class CreateWindowEventArgs;
 	class EraseBackgroundEventArgs;
 	class InitDialogEventArgs;
 	class MeasureItemEventArgs;
@@ -113,6 +114,9 @@ namespace core::forms
 	
 		Response
 		virtual draw(Window& wnd, NonClientPaintEventArgs args) abstract;
+		
+		void
+		virtual onCreated(Window&, CreateWindowEventArgs args) abstract;
 		
 		AnyColour
 		virtual button() abstract;

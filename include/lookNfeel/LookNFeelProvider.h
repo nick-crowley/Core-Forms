@@ -114,6 +114,9 @@ namespace core::forms
 
 		void
 		virtual draw(StaticControl& ctrl, OwnerDrawEventArgs const& args) override;
+
+		void
+		virtual onCreated(Window&, CreateWindowEventArgs args) override;
 		
 		AnyColour
 		virtual button() override;

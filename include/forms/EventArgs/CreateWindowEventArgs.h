@@ -42,14 +42,17 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	struct CreateWindowEventArgs {
+	class CreateWindowEventArgs {
 		static_assert(sizeof(::LPARAM) == sizeof(::CREATESTRUCT*));
 
+	public:
 		::CREATESTRUCT*	Data;
 
+	public:
 		CreateWindowEventArgs(::WPARAM, ::LPARAM data) : Data(reinterpret_cast<::CREATESTRUCT*>(data)) 
 		{}
 
+	public:
 		template <typename Pointer>
 		Pointer
 		data() {

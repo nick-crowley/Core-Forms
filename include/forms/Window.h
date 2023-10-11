@@ -1477,6 +1477,11 @@ namespace core::forms
 		onDestructionStarted() {
 			this->Debug.setState(ProcessingState::BeingDestroyed);
 		}
+		
+		void
+		this_Created(Window&, CreateWindowEventArgs args) {
+			this->LookNFeel->onCreated(*this, args);
+		}
 
 		void
 		this_FontChanged(Window&, SetWindowFontEventArgs args) {

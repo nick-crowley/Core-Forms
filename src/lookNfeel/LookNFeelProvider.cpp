@@ -422,6 +422,11 @@ LookNFeelProvider::draw(StaticControl& ctrl, OwnerDrawEventArgs const& args)
 	args.Graphics.restore();
 }
 
+void
+LookNFeelProvider::onCreated(Window&, CreateWindowEventArgs args) {
+	// nothing
+}
+
 AnyColour
 LookNFeelProvider::button() {
 	return this->Colours.Button;
