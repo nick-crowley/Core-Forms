@@ -170,7 +170,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	bool const variable = ctrl.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable);
 	bool const selected = args.Item.State.test(OwnerDrawState::Selected);
 	bool const withinEdit = args.Item.State.test(OwnerDrawState::ComboBoxEdit);
-	auto const backColour = selected ? SystemColour::Highlight : ctrl.backColour();
+	auto const backColour = selected ? this->highlight() : ctrl.backColour();
 	
 	// Draw item background
 	Rect const rcItem = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
@@ -329,7 +329,7 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	
 	// Draw item background
 	Rect const rcItem = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width, 0};
-	auto const backColour = !selected ? ctrl.backColour() : SystemColour::Highlight;
+	auto const backColour = !selected ? ctrl.backColour() : this->highlight();
 	args.Graphics.setBrush(backColour);
 	args.Graphics.fillRect(rcItem);
 
@@ -337,7 +337,7 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	if (args.Item.Index != args.Empty) {
 		args.Graphics.setFont(ctrl.font());
 		args.Graphics.textColour(selected ? SystemColour::HighlightText : ctrl.textColour(),
-								 selected ? SystemColour::Highlight : ctrl.backColour());
+								 selected ? this->highlight() : ctrl.backColour());
 		args.Graphics.drawText(ctrl.Items[args.Item.Index].text(), rcItem);
 	}
 
