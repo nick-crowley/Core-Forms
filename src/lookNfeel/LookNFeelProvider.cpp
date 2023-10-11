@@ -176,6 +176,13 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	Rect const rcItem = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
 	args.Graphics.setBrush(backColour);
 	args.Graphics.fillRect(rcItem);
+	
+	// FIX: Manually erase background of gap beneath bottom item
+	//! @todo  Determine whether this gap only exists because measuring code has falling out-of-sync with drawing code for multi-line items with a title
+	if (ctrl.dropped() && args.Item.Index == ctrl.Items.size()-1) {
+		Rect const rcBottom = {rcItem.Left, rcItem.Top, rcItem.Right, ctrl.info().DroppedItemList.clientRect().Bottom};
+		args.Graphics.fillRect(rcBottom);
+	}
 
 	// [NO-SELECTED-ITEM] Occurs in DropDownList mode
 	if (args.Item.Index == args.Empty && !ctrl.Items.selected()) {
