@@ -11,6 +11,7 @@ DarkModernLookNFeel::DarkModernLookNFeel()
 {
 	this->Colours.Button = SystemColour::ButtonDkShadow;
 	this->Colours.Control = Colour::Black;
+    this->Colours.Highlight = SystemColour::GrayText;
     this->Colours.Primary = Colour::White;
     this->Colours.Secondary = SystemColour::ButtonDkShadow;
     this->Colours.Tertiary = SystemColour::ButtonShadow;

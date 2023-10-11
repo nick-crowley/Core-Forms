@@ -16,6 +16,7 @@ ModernLookNFeel::ModernLookNFeel()
 	this->Fonts.Heading1 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(24_pt);
 	this->Colours.Button = SystemColour::ButtonFace;
 	this->Colours.Control = Colour::White;
+    this->Colours.Highlight = SystemColour::Highlight;
     this->Colours.Primary = Colour::Black;
     this->Colours.Secondary = SystemColour::ButtonFace;
     this->Colours.Tertiary = SystemColour::ButtonShadow;

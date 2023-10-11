@@ -15,6 +15,7 @@ Nt6LookNFeel::Nt6LookNFeel()
 	this->Fonts.Heading1 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(14_pt);
 	this->Colours.Button = SystemColour::ButtonFace;
 	this->Colours.Control = SystemColour::Window;
+    this->Colours.Highlight = SystemColour::Highlight;
     this->Colours.Primary = SystemColour::WindowText;
     this->Colours.Secondary = SystemColour::GrayText;
     this->Colours.Tertiary = SystemColour::GrayText;

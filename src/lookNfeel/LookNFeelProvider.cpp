@@ -78,6 +78,7 @@ LookNFeelProvider::LookNFeelProvider()
   },
   Colours{
     .Button{SystemColour::ButtonFace},
+	.Highlight{SystemColour::Highlight},
     .Primary{SystemColour::WindowText},
     .Secondary{SystemColour::GrayText},
 	.Tertiary{SystemColour::GrayText},
@@ -446,6 +447,11 @@ LookNFeelProvider::heading1() {
 Font
 LookNFeelProvider::heading2() {
 	return this->Fonts.Heading2;
+}
+
+AnyColour
+LookNFeelProvider::highlight() {
+	return this->Colours.Highlight;
 }
 
 Font
