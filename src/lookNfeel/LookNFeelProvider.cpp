@@ -328,7 +328,8 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	
 	// Draw item background
 	Rect const rcItem = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width, 0};
-	args.Graphics.setBrush(selected ? SystemBrush::Highlight : SystemBrush::Window);
+	auto const backColour = !selected ? ctrl.backColour() : SystemColour::Highlight;
+	args.Graphics.setBrush(backColour);
 	args.Graphics.fillRect(rcItem);
 
 	// Draw item text
@@ -347,7 +348,7 @@ LookNFeelProvider::erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& a
 {
 	// Erase background
 	Rect const rcClient = ctrl.clientRect();
-	args.Graphics.setBrush(SystemBrush::Window);
+	args.Graphics.setBrush(ctrl.background());
 	args.Graphics.fillRect(rcClient);
 
 	// Draw window border
