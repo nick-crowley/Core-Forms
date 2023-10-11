@@ -49,6 +49,10 @@ namespace core::forms
 
 	public:
 		DarkModernLookNFeel();
+
+	public:
+		void
+		virtual onCreated(Window&, CreateWindowEventArgs args) override;
 	};
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

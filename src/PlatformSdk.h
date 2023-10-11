@@ -15,4 +15,5 @@
 #include <Vssym32.h>                              //!< Properties
 #include <Uxtheme.h>
 #include <shellapi.h>                             //!< ShellImageList
+#include <dwmapi.h>                               //!< Desktop Window Manager (darkmode support)
 #include "win/LResult.h"
