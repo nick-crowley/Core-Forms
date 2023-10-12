@@ -55,17 +55,16 @@ protected:
 		this->WideComboBox.font(this->TitleFont);
 		this->WideComboBox.titleFont(this->TitleFont);
 
-		struct { gsl::cwzstring title; gsl::cwzstring detail; } const itemDefinitions[3] {
+		forms::Icon const sampleIcon = forms::Icon::load(win::ProcessModule, win::ResourceId{IDI_ICON1});
+		struct ExampleData { gsl::cwzstring title; gsl::cwzstring detail; };
+		for (auto const [title,detail] : std::initializer_list<ExampleData>{
 			{L"Rain in Spain",       L"The rain in spain falls mainly on the plane"},
 			{L"Quick Brown Fox",     L"The quick brown fox jumped over the lazy dog"},
 			{L"Very Earthly Mother", L"My very earthly mother just said you're nearly perfect"}
-		};
-		forms::Icon const sampleIcon = forms::Icon::load(win::ProcessModule, win::ResourceId{IDI_ICON1});
-
-		for (auto item : itemDefinitions) {
+		}) {
 			this->WideComboBox.Items.push_back(
-				forms::ComboBoxElement{item.detail, forms::Colour::Grey, this->DetailFont},
-				forms::ComboBoxElement{item.title},
+				forms::ComboBoxElement{detail, forms::Colour::Grey, this->DetailFont},
+				forms::ComboBoxElement{title},
 				sampleIcon
 			);
 		}
