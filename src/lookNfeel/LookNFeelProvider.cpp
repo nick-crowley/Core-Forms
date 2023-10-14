@@ -388,7 +388,8 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	auto const item = ctrl.Items[args.Item.Index];
 	auto const selectedTextColour = nstd::make_optional_if<AnyColour>(selected, SystemColour::HighlightText);
 	bool const useHeadings = ctrl.features().test(ComboBoxFeature::Headings);
-	bool const useIcons = ctrl.features().test(ComboBoxFeature::Icons);
+	bool const useBigIcons = ctrl.features().test(ListBoxFeature::BigIcons);
+	bool const useIcons = useBigIcons || ctrl.features().test(ComboBoxFeature::Icons);
 	auto const heading = item.heading(); 
 	auto const icon = item.icon();
 
@@ -422,7 +423,7 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	
 	// [DETAIL-ICON] Draw on left; position detail text to right
 	if (useIcons && !useHeadings) {
-		Size const iconSize = SmallIcon;
+		Size const iconSize = (useBigIcons ? BigIcon : SmallIcon);
 		if (icon)
 			args.Graphics.drawIcon(icon->handle(), rcContent.topLeft(), iconSize);
 		rcDetailText.Left += iconSize.Width + 3*Measurement{SystemMetric::cxFixedFrame};
@@ -453,7 +454,8 @@ LookNFeelProvider::measure(ListBoxControl& ctrl, MeasureItemEventArgs const& arg
 	Size constexpr  static SmallIcon{24,24};
 
 	bool const useHeadings = ctrl.features().test(ListBoxFeature::Headings);
-	bool const useIcons = ctrl.features().test(ListBoxFeature::Icons);
+	bool const useBigIcons = ctrl.features().test(ListBoxFeature::BigIcons);
+	bool const useIcons = useBigIcons || ctrl.features().test(ListBoxFeature::Icons);
 
 	// [FIXED-HEIGHT] Return greater of the detail height, icon height, or user-requested item height.
 	//                 Font measured is 
@@ -461,7 +463,7 @@ LookNFeelProvider::measure(ListBoxControl& ctrl, MeasureItemEventArgs const& arg
 		args.Graphics.setFont(ctrl.font());
 		args.Height = args.Graphics.measureText(L"Wjgy").Height;
 		if (useIcons)
-			args.Height = std::max<LONG>(args.Height, SmallIcon.Height);
+			args.Height = std::max<LONG>(args.Height, (useBigIcons ? BigIcon : SmallIcon).Height);
 		args.Height = std::max<LONG>(args.Height, ctrl.Items.height());
 	}
 	// [VARIABLE-HEIGHT] Calculate per-item height
@@ -487,7 +489,7 @@ LookNFeelProvider::measure(ListBoxControl& ctrl, MeasureItemEventArgs const& arg
 
 		// Detail may be offset by icon
 		if (useIcons)
-			rcDetailText.Left += (useHeadings ? BigIcon.Height : SmallIcon.Height) + 3*Measurement{SystemMetric::cxFixedFrame};
+			rcDetailText.Left += (useHeadings || useBigIcons ? BigIcon : SmallIcon).Width + 3*Measurement{SystemMetric::cxFixedFrame};
 
 		// Measure multiline height
 		args.Height += args.Graphics.measureText(detail.Text, Size{rcDetailText.width(),1}).Height;
@@ -498,7 +500,7 @@ LookNFeelProvider::measure(ListBoxControl& ctrl, MeasureItemEventArgs const& arg
 
 		// Return greater of combined height or icon height
 		if (useIcons)
-			args.Height = std::max<LONG>(args.Height, SmallIcon.Height);
+			args.Height = std::max<LONG>(args.Height, (useBigIcons ? BigIcon : SmallIcon).Height);
 	}
 
 	args.Graphics.restore();
