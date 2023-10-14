@@ -30,6 +30,7 @@
 #include "controls/Control.h"
 #include "controls/ComboBoxStyle.h"
 #include "controls/ComboBoxInfo.h"
+#include "controls/ListBoxItemData.h"
 #include "controls/RichText.h"
 #include "graphics/Icon.h"
 #include "forms/WindowClass.h"
@@ -106,37 +107,7 @@ namespace core::forms
 		};
 		
 		//! @brief	Custom item data used for each element when in owner-draw mode
-		struct ItemData {
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			RichText                Detail;   //!< Primary item content when no title present
-			std::optional<RichText> Heading;
-			std::optional<Icon>     Icon;
-			void*                   UserData = nullptr;
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			explicit
-			ItemData(std::wstring_view                 text, 
-			         std::optional<std::wstring_view>  heading = nullopt, 
-			         std::optional<forms::Icon>        icon = nullopt) 
-			  : Detail{text}, 
-			    Heading{heading}, 
-			    Icon{icon}
-			{}
-			
-			explicit
-			ItemData(RichText                    text, 
-			         std::optional<RichText>     heading = nullopt, 
-			         std::optional<forms::Icon>  icon = nullopt) 
-			  : Detail{text}, 
-			    Heading{heading}, 
-			    Icon{icon}
-			{}
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			satisfies(ItemData,
-				IsSemiRegular,
-				NotEqualityComparable,
-				NotSortable
-			);
-		};
+		using ItemData = ListBoxItemData;
 
 		//! @brief	Facade for a single item at a fixed index
 		class Item {

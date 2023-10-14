@@ -28,6 +28,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
 #include "controls/Control.h"
+#include "controls/ListBoxItemData.h"
 #include "controls/ListBoxStyle.h"
 #include "forms/WindowClass.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -79,7 +80,9 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 		
-	public:
+		//! @brief	Custom item data used for each element when in owner-draw mode
+		using ItemData = ListBoxItemData;
+
 		class Item {
 			ListBoxControl&		ListBox;
 			size_t				Index;
@@ -353,6 +356,7 @@ namespace core::forms
 			}
 		};
 		
+	public:
 		using WindowClass = ListBoxWindowClass;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
