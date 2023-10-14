@@ -176,10 +176,10 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			ComboBoxControl&  Owner;
-			size_t            Index;
+			int32_t           Index;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			Item(ComboBoxControl& Combo, size_t idx) 
+			Item(ComboBoxControl& Combo, int32_t idx) 
 			  : Owner{Combo}, 
 			    Index{idx}
 			{}
@@ -201,7 +201,7 @@ namespace core::forms
 				return this->data<ItemData>()->Icon;
 			}
 
-			size_t
+			int32_t
 			index() const {
 				return this->Index;
 			}
@@ -273,7 +273,7 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			template <nstd::AnyOf<Item,Item const> ValueType>
-			class Iterator : public boost::iterator_facade<Iterator<ValueType>, ValueType, boost::random_access_traversal_tag>
+			class Iterator : public boost::iterator_facade<Iterator<ValueType>, ValueType, boost::random_access_traversal_tag, ValueType&, int32_t>
 			{
 				template <nstd::AnyOf<Item,Item const>>
 				friend class Iterator;
@@ -283,17 +283,17 @@ namespace core::forms
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
 				ComboBoxControl* Owner;
-				size_t			 Index;
+				int32_t			 Index;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
-				Iterator(ComboBoxControl& owner, unsigned initialIdx) 
+				Iterator(ComboBoxControl& owner, int32_t initialIdx) 
 				  : Owner{&owner}, 
 				    Index{initialIdx}
 				{}
 
 				Iterator(ComboBoxControl& owner) noexcept
 				  : Owner{&owner}, 
-				    Index{(size_t)ComboBox_GetCount(owner.handle())}
+				    Index{ComboBox_GetCount(owner.handle())}
 				{}
 				
 				template <nstd::AnyOf<Item const> Other>
@@ -314,13 +314,13 @@ namespace core::forms
 
 				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
-				size_t
+				int32_t
 				index() const {
 					return this->Index;
 				}
 
 				implicit
-				operator size_t() const {
+				operator int32_t() const {
 					return this->Index;
 				}
 
@@ -337,14 +337,14 @@ namespace core::forms
 					return ValueType{*this->Owner, this->Index};
 				}
 
-				ptrdiff_t
+				int32_t
 				distance_to(const type& r) const {
-					return static_cast<ptrdiff_t>(r.Index) - static_cast<ptrdiff_t>(this->Index);
+					return r.Index - this->Index;
 				}
 				// o~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
 				void 
-				advance(ptrdiff_t n) { 
+				advance(int32_t n) { 
 					this->Index += n;
 				}
 
@@ -364,8 +364,8 @@ namespace core::forms
 			using reference = Item&;
 			using const_reference = Item const&;
 			using value_type = Item;
-			using size_type = std::size_t;
-			using difference_type = std::ptrdiff_t;
+			using size_type = iterator::difference_type;
+			using difference_type = iterator::difference_type;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			ComboBoxControl& Owner;
@@ -402,10 +402,10 @@ namespace core::forms
 
 			std::optional<Item>
 			find(std::wstring_view item) const {
-				if (signed const idx = ComboBox_FindStringExact(this->Owner.handle(), 0, item.data()); idx == -1)
+				if (size_type const idx = ComboBox_FindStringExact(this->Owner.handle(), 0, item.data()); idx == CB_ERR)
 					return nullopt;
 				else
-					return Item{this->Owner, static_cast<size_t>(idx)};
+					return Item{this->Owner, idx};
 			}
 		
 			uint32_t
@@ -416,27 +416,27 @@ namespace core::forms
 
 			std::optional<Item>
 			selected() const {
-				if (signed const idx = ComboBox_GetCurSel(this->Owner.handle()); idx == -1)
+				if (size_type const idx = ComboBox_GetCurSel(this->Owner.handle()); idx == CB_ERR)
 					return nullopt;
 				else 
-					return Item{this->Owner, static_cast<size_t>(idx)};
+					return Item{this->Owner, idx};
 			}
 			
-			size_t 
+			size_type 
 			size() const {
 				return ComboBox_GetCount(this->Owner.handle());
 			}
 			
 			std::optional<Item>
 			substr(std::wstring_view substring) const {
-				if (signed const idx = ComboBox_FindStringExact(this->Owner.handle(), 0, substring.data()); idx == -1)
+				if (size_type const idx = ComboBox_FindStringExact(this->Owner.handle(), 0, substring.data()); idx == CB_ERR)
 					return nullopt;
 				else
-					return Item{this->Owner, static_cast<size_t>(idx)};
+					return Item{this->Owner, idx};
 			}
 
 			Item
-			operator[](size_t idx) const {
+			operator[](size_type idx) const {
 				return Item(this->Owner, idx);
 			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -460,7 +460,7 @@ namespace core::forms
 			iterator
 			insert(const_iterator pos, std::wstring_view text) 
 			{
-				signed idx{};
+				size_type idx{};
 				// [NOT OWNER-DRAW] Store (or duplicate) a simple string (according to its 'HasStrings' style)
 				if (!this->Owner.ownerDraw()) 
 					idx = ComboBox_InsertString(this->Owner.handle(), pos, text.data());
@@ -479,7 +479,7 @@ namespace core::forms
 					else
 						idx = ComboBox_InsertItemData(this->Owner.handle(), pos, data.release());
 				}
-				return iterator{this->Owner, static_cast<unsigned>(idx)};
+				return iterator{this->Owner, idx};
 			}
 			
 			iterator
@@ -489,7 +489,7 @@ namespace core::forms
 			{
 				Invariant(this->Owner.ownerDraw());
 				auto data = std::make_unique<ItemData>(text, nullopt, icon);
-				signed idx{};
+				size_type idx{};
 				
 				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 				if (this->Owner.hasStrings()) {
@@ -502,7 +502,7 @@ namespace core::forms
 				else
 					idx = ComboBox_InsertItemData(this->Owner.handle(), pos, data.release());
 
-				return iterator{this->Owner, static_cast<unsigned>(idx)};
+				return iterator{this->Owner, idx};
 			}
 			
 			iterator
@@ -525,7 +525,7 @@ namespace core::forms
 				Invariant(this->Owner.features().test(ComboBoxFeature::Headings));
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
 				auto data = std::make_unique<ItemData>(text, heading, icon);
-				signed idx{};
+				size_type idx{};
 				
 				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 				if (this->Owner.hasStrings()) {
@@ -538,19 +538,19 @@ namespace core::forms
 				else
 					idx = ComboBox_InsertItemData(this->Owner.handle(), pos, data.release());
 				
-				return iterator{this->Owner, static_cast<unsigned>(idx)};
+				return iterator{this->Owner, idx};
 			}
 			
 			void
 			push_back(std::wstring_view text) {
-				this->insert(const_iterator{this->Owner,static_cast<unsigned>(-1)}, text);
+				this->insert(const_iterator{this->Owner,-1}, text);
 			}
 
 			void
 			push_back(RichText                   text,
 			          std::optional<forms::Icon> icon = nullopt) {
 				Invariant(this->Owner.ownerDraw());
-				this->insert(const_iterator{this->Owner,static_cast<unsigned>(-1)}, text, icon);
+				this->insert(const_iterator{this->Owner,-1}, text, icon);
 			}
 			
 			void
@@ -560,7 +560,7 @@ namespace core::forms
 			{
 				Invariant(this->Owner.features().test(ComboBoxFeature::Headings));
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
-				this->insert(const_iterator{this->Owner,static_cast<unsigned>(-1)}, text, heading, icon);
+				this->insert(const_iterator{this->Owner,-1}, text, heading, icon);
 			}
 			
 			void
@@ -570,7 +570,7 @@ namespace core::forms
 			{
 				Invariant(this->Owner.features().test(ComboBoxFeature::Headings));
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
-				this->insert(const_iterator{this->Owner,static_cast<unsigned>(-1)}, text, heading, icon);
+				this->insert(const_iterator{this->Owner,-1}, text, heading, icon);
 			}
 
 			void
@@ -579,7 +579,7 @@ namespace core::forms
 			}
 
 			void
-			select(size_t idx) {
+			select(size_type idx) {
 				ComboBox_SetCurSel(this->Owner.handle(), idx);
 			}
 		};
