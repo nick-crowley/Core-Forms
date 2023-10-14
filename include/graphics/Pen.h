@@ -60,7 +60,12 @@ namespace core::forms
 			ThrowIf(width, width == 0);
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+		satisfies(Pen,
+			IsCopyable noexcept,
+			IsMovable noexcept,
+			NotEqualityComparable,
+			NotSortable
+		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		SharedPen

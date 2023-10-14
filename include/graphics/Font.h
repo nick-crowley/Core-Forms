@@ -64,8 +64,8 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(Font,
-			IsCopyable,
-			IsMovable,
+			IsCopyable noexcept,
+			IsMovable noexcept,
 			NotEqualityComparable,
 			NotSortable
 		);

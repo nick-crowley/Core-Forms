@@ -61,7 +61,7 @@ namespace core::forms
 	public:
 		satisfies(Icon,
 			NotDefaultConstructible,
-			IsCopyable,
+			IsCopyable noexcept,
 			IsMovable noexcept,
 			IsEqualityComparable,
 			NotSortable

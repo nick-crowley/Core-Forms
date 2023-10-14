@@ -87,7 +87,7 @@ namespace core::forms
 	public:
 		satisfies(Bitmap,
 			NotDefaultConstructible,
-			IsCopyable,
+			IsCopyable noexcept,
 			IsMovable noexcept,
 			IsEqualityComparable,
 			NotSortable
