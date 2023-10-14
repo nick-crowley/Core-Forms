@@ -42,21 +42,22 @@ namespace core::forms
 	class GuiMeasurement
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		using value_type = ::LONG;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		int Value;
+		value_type  Value;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		template <nstd::Integer Integer>
 		constexpr implicit
 		GuiMeasurement(Integer n) noexcept
-		  : Value{static_cast<int>(n)}
+		  : Value{static_cast<value_type>(n)}
 		{}
 
 		implicit
 		GuiMeasurement(SystemMetric metric) noexcept
-		  : Value{::GetSystemMetrics(static_cast<int>(metric))}
+		  : Value{::GetSystemMetrics(static_cast<value_type>(metric))}
 		{}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -76,7 +77,7 @@ namespace core::forms
 		GuiMeasurement constexpr
 		operator*(Arithmetic scale) const noexcept {
 			// Promote operands as necessary, perform multiplication, then convert result to @c value_type
-			return GuiMeasurement{static_cast<int>(this->Value * scale)};
+			return GuiMeasurement{static_cast<value_type>(this->Value * scale)};
 		}
 		
 		template <nstd::AnyArithmeticExcept<bool,wchar_t,char8_t,char16_t,char32_t> Arithmetic>
@@ -92,8 +93,8 @@ namespace core::forms
 		}
 		
 		constexpr implicit
-		operator ::LONG() const noexcept {
-			return static_cast<::LONG>(this->Value);
+		operator value_type() const noexcept {
+			return static_cast<value_type>(this->Value);
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
