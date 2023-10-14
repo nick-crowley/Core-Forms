@@ -285,7 +285,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void 
-		virtual createEmbedded(win::Module source, Window& parent, Border border)
+		createEmbedded(win::Module source, Window& parent, Border border)
 		{
 			auto const Area = parent.clientRect() - border;
 			this->createInternal(source, DialogMode::NonModal, &parent);
@@ -294,32 +294,32 @@ namespace core::forms
 		}
 
 		void 
-		virtual createEmbedded(Window& parent, Border border)
+		createEmbedded(Window& parent, Border border)
 		{
 			this->createEmbedded(win::ProcessModule, parent, border);
 		}
 
 		void 
-		virtual createModeless(win::Module source, Window* parent = nullptr)
+		createModeless(win::Module source, Window* parent = nullptr)
 		{
 			this->createInternal(source, DialogMode::NonModal, parent);
 		}
 		
 		void 
-		virtual createModeless(Window* parent = nullptr)
+		createModeless(Window* parent = nullptr)
 		{
 			this->createModeless(win::ProcessModule, parent);
 		}
 		
 		intptr_t 
-		virtual showModal(win::Module source, Window* parent = nullptr)
+		showModal(win::Module source, Window* parent = nullptr)
 		{
 			// FIXME: It'd be preferable if Dialog::showModal() were not virtual so it could be a template
 			return *this->createInternal(source, DialogMode::Modal, parent);
 		}
 	
 		intptr_t 
-		virtual showModal(Window* parent = nullptr)
+		showModal(Window* parent = nullptr)
 		{
 			return this->showModal(win::ProcessModule, parent);
 		}
