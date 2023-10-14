@@ -38,13 +38,28 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+namespace core::forms
+{
+	enum class ListBoxFeature : uint32_t { 
+		None, 
+		Headings = 0x01,
+		Icons = 0x04,
+		BigIcons = 0x02,
+	};
+}
+namespace core::meta 
+{
+	metadata bool Settings<bitwise_enum, forms::ListBoxFeature> = true;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
+	//! @brief	ComboBox supporting item text, item headings, custom fonts, and icons
 	class ListBoxControl : public Control 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		using base = Control;
+
 	protected:
 		class ListBoxNotificationDictionary : public forms::MessageDictionary {
 			using base = forms::MessageDictionary;
@@ -82,192 +97,456 @@ namespace core::forms
 		
 		//! @brief	Custom item data used for each element when in owner-draw mode
 		using ItemData = ListBoxItemData;
-
+		
+		//! @brief	Facade for a single item at a fixed index
 		class Item {
-			ListBoxControl&		ListBox;
-			size_t				Index;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			ListBoxControl*  Owner;
+			int32_t          Index;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			Item(ListBoxControl& list, size_t idx) noexcept
-				: ListBox(list), Index(idx)
+			Item(ListBoxControl& owner, int32_t idx) noexcept
+			  : Owner{&owner}, 
+			    Index{idx}
 			{}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			satisfies(Item, 
+				NotDefaultConstructible,
+				IsCopyable, 
+				IsMovable,
+				NotEqualityComparable,
+				NotSortable
+			);
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			Rect
 			area() const noexcept {
 				Rect r;
-				ListBox_GetItemRect(this->ListBox.handle(), this->Index, static_cast<::RECT*>(r));
-				return std::move(r);
+				ListBox_GetItemRect(this->Owner->handle(), this->Index, static_cast<::RECT*>(r));
+				return r;
+			}
+			
+			RichText
+			detail() const {
+				Invariant(this->Owner->ownerDraw());
+				return this->data<ItemData>()->Detail;
 			}
 
-			template <typename Pointer>
-			Pointer
-			data() const noexcept {
-				return (Pointer)ListBox_GetItemData(this->ListBox.handle(), this->Index);
+			std::optional<Icon>
+			icon() const {
+				Invariant(this->Owner->ownerDraw());
+				return this->data<ItemData>()->Icon;
 			}
 
+			int32_t
+			index() const noexcept {
+				return this->Index;
+			}
+			
+			std::optional<RichText>
+			heading() const {
+				Invariant(this->Owner->ownerDraw());
+				return this->data<ItemData>()->Heading;
+			}
+
+			uint32_t
+			height() const {
+				Invariant(this->Owner->style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawVariable));
+				return static_cast<uint32_t>(ListBox_GetItemHeight(this->Owner->handle(), this->Index));
+			}
+			
 			std::wstring
 			text() const {
-				if (size_t const length = ListBox_GetTextLen(this->ListBox.handle(), this->Index)+1; !length)
-					throw runtime_error{"ListBox_GetTextLen(#{}) failed", this->Index};
-				else if (length == 1)
+				if (this->Owner->ownerDraw())
+					return this->data<ItemData>()->Detail.Text;
+				else if (auto const length = ListBox_GetTextLen(this->Owner->handle(), this->Index); !length)
 					return {};
 				else {
-					std::wstring buffer(length, L'\0');
-					ListBox_GetText(this->ListBox.handle(), this->Index, buffer.data());
-					buffer.pop_back();
-					return buffer;
+					std::wstring content(static_cast<size_t>(length), L'\0');
+					ListBox_GetText(this->Owner->handle(), this->Index, &content[0]);
+					return content;
 				}
 			}
-
-			size_t
-			height() const noexcept {
-				return (size_t)ListBox_GetItemHeight(this->ListBox.handle(), this->Index);
+			
+			template <typename UserData>
+			UserData*
+			userData() const {
+				// When owner-draw is active, the item-data slot addresses an 'ItemData' object
+				if (!this->Owner->ownerDraw())
+					return this->data<UserData>();
+				else
+					return static_cast<UserData*>(this->data<ItemData>()->UserData);
 			}
-
+			
+		protected:
+			template <typename AnyType>
+			AnyType*
+			data() const {
+				if (::LRESULT itemData = ListBox_GetItemData(this->Owner->handle(), this->Index); !itemData)
+					throw runtime_error{"Missing ListBox data for item {}", this->Index};
+				else 
+					return reinterpret_cast<AnyType*>(itemData);
+			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			template <typename Pointer>
 			void
-			data(Pointer ptr) noexcept {
-				ListBox_SetItemData(this->ListBox.handle(), this->Index, ptr);
+			height(uint32_t individualItem) {
+				Invariant(this->Owner->style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawVariable));
+				ListBox_SetItemHeight(this->Owner->handle(), this->Index, individualItem);
 			}
 
+			template <typename AnyType>
 			void
-			height(size_t h) noexcept {
-				ListBox_SetItemHeight(this->ListBox.handle(), this->Index, h);
+			userData(AnyType* customUserData) {
+				// When owner-draw is active, the item-data slot addresses an 'ItemData' object
+				if (!this->Owner->ownerDraw())
+					ListBox_SetItemData(this->Owner->handle(), this->Index, customUserData);
+				else
+					this->data<ItemData>()->UserData = static_cast<void*>(customUserData);
 			}
 		};
-
+		
 		class ItemCollection {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			class ItemIterator : public boost::iterator_facade<ItemIterator, Item, boost::random_access_traversal_tag>{
-				friend class boost::iterator_core_access;
-				using type = ItemIterator;
-
-				class ItemProxy {
-					Item  Value;
-
-				public:
-					explicit
-					ItemProxy(Item item) noexcept : Value{item}
-					{}
-
-					implicit
-					operator Item&() noexcept {
-						return this->Value;
-					}
-				};
-
+			template <nstd::AnyOf<Item,Item const> ValueType>
+			class Iterator : public boost::iterator_facade<Iterator<ValueType>, ValueType, boost::random_access_traversal_tag, ValueType&, int32_t>
+			{
+				template <nstd::AnyOf<Item,Item const>>
+				friend class Iterator;
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
-				ListBoxControl& ListBox;
-				size_t			Index;
-
+				using type = Iterator<ValueType>;
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			private:
+				ListBoxControl* Owner;
+				int32_t         Index;
+				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
-				ItemIterator(ListBoxControl& listbox, unsigned initialIdx) noexcept
-				  : ListBox(listbox), 
-					Index(initialIdx)
+				Iterator(ListBoxControl& owner, int32_t initialIdx) noexcept
+				  : Owner{&owner}, 
+				    Index{initialIdx}
 				{}
 
-				ItemIterator(ListBoxControl& listbox) noexcept
-				  : ListBox(listbox), Index(ListBox_GetCount(listbox.handle()))
+				explicit
+				Iterator(ListBoxControl& owner) noexcept
+				  : Owner{&owner}, 
+				    Index{ListBox_GetCount(owner.handle())}
 				{}
-			
-				satisfies(ItemIterator,
+				
+				template <nstd::AnyOf<Item const> Other>
+					requires std::same_as<ValueType,Item>
+				implicit
+				Iterator(Iterator<Other> const& r) noexcept
+				  : Owner{r.Owner},
+				    Index{r.Index}
+				{}
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			public:
+				satisfies(Iterator,
 					NotDefaultConstructible,
-					IsCopyable noexcept,
-					IsMovable noexcept,
+					IsCopyable,
+					IsMovable,
 					NotSortable
 				);
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
+			public:
+				int32_t
+				index() const noexcept {
+					return this->Index;
+				}
+
+				implicit
+				operator int32_t() const noexcept {
+					return this->Index;
+				}
 
 			private:
+				template <nstd::AnyOf<Item,Item const> Other>
 				bool 
-				equal(const type& r) const noexcept {
-					return this->ListBox.handle() == r.ListBox.handle()
+				equal(const Iterator<Other>& r) const noexcept {
+					return this->Owner->handle() == r.Owner->handle()
 						&& this->Index == r.Index;
 				}
 
-				ItemProxy
-				dereference() const noexcept {
-					return ItemProxy{Item(this->ListBox, this->Index)};
+				ValueType
+				dereference() const noexcept { 
+					return ValueType{*this->Owner, this->Index};
 				}
 
-				ptrdiff_t
+				int32_t
 				distance_to(const type& r) const noexcept {
-					return static_cast<ptrdiff_t>(r.Index) - static_cast<ptrdiff_t>(this->Index);
+					return r.Index - this->Index;
 				}
-
+				// o~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
 				void 
-				advance(ptrdiff_t n) noexcept {
+				advance(int32_t n) noexcept { 
 					this->Index += n;
 				}
 
 				void 
-				decrement() noexcept {
+				decrement() noexcept { 
 					--this->Index;
 				}
 
 				void 
-				increment() noexcept {
+				increment() noexcept { 
 					++this->Index;
 				}
 			};
-
+			
+			using iterator = Iterator<Item>;
+			using const_iterator = Iterator<Item const>;
+			using reference = Item&;
+			using const_reference = Item const&;
+			using value_type = Item;
+			using size_type = iterator::difference_type;
+			using difference_type = iterator::difference_type;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
-			ListBoxControl& ListBox;
-
+			ListBoxControl& Owner;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
+			explicit
 			ItemCollection(ListBoxControl& ctrl) noexcept
-				: ListBox(ctrl)
+			  : Owner{ctrl}
 			{}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			satisfies(ItemCollection,
+				NotDefaultConstructible,
+				NotCopyable,
+				NotMovable,
+				NotSortable,
+				NotEqualityComparable
+			);
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			ItemIterator
+			const_iterator
 			begin() const noexcept {
-				return ItemIterator(this->ListBox, 0);
+				return const_iterator{this->Owner, 0};
 			}
 		
-			ItemIterator
+			const_iterator
 			end() const noexcept {
-				return ItemIterator(this->ListBox);
+				return const_iterator{this->Owner};
 			}
-
-			std::optional<size_t>
-			find(std::wstring const& txt) const noexcept {
-				signed idx = ListBox_FindStringExact(this->ListBox.handle(), 0, txt.c_str());
-				return idx != -1 ? std::optional<size_t>(idx) : std::optional<size_t>{};
+			
+			const_iterator
+			cbegin() const noexcept {
+				return const_iterator{this->Owner, 0};
 			}
 		
-			std::optional<size_t>
-			search(std::wstring const& substring) const noexcept {
-				signed idx = ListBox_FindString(this->ListBox.handle(), 0, substring.c_str());
-				return idx != -1 ? std::optional<size_t>(idx) : std::optional<size_t>{};
+			const_iterator
+			cend() const noexcept {
+				return const_iterator{this->Owner};
 			}
 
-			size_t 
+			std::optional<Item>
+			find(std::wstring_view item) const noexcept {
+				if (size_type const idx = ListBox_FindStringExact(this->Owner.handle(), 0, item.data()); idx == CB_ERR)
+					return nullopt;
+				else
+					return Item{this->Owner, idx};
+			}
+		
+			uint32_t
+			height() const {
+				Invariant(!this->Owner.style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawVariable));
+				return static_cast<uint32_t>(this->Owner.send<LB_GETITEMHEIGHT>(0));
+			}
+
+			std::optional<Item>
+			selected() const noexcept {
+				if (size_type const idx = ListBox_GetCurSel(this->Owner.handle()); idx == CB_ERR)
+					return nullopt;
+				else 
+					return Item{this->Owner, idx};
+			}
+			
+			size_type 
 			size() const noexcept {
-				return ListBox_GetCount(this->ListBox.handle());
+				return ListBox_GetCount(this->Owner.handle());
+			}
+			
+			std::optional<Item>
+			substr(std::wstring_view substring) const noexcept {
+				if (size_type const idx = ListBox_FindStringExact(this->Owner.handle(), 0, substring.data()); idx == CB_ERR)
+					return nullopt;
+				else
+					return Item{this->Owner, idx};
 			}
 
 			Item
-			operator[](size_t idx) const noexcept {
-				return Item(this->ListBox, idx);
+			operator[](size_type idx) const noexcept {
+				return Item(this->Owner, idx);
 			}
-
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
+			iterator
+			begin() noexcept {
+				return iterator{this->Owner, 0};
+			}
+		
+			iterator
+			end() noexcept {
+				return iterator{this->Owner};
+			}
+			
 			void
 			clear() noexcept {
-				ListBox_ResetContent(this->ListBox.handle());
+				ListBox_ResetContent(this->Owner.handle());
+			}
+			
+			void 
+			focus(const_iterator pos) noexcept {
+				ListBox_SetCaretIndex(this->Owner.handle(), pos);
+			}
+	
+			void
+			height(uint32_t allItems) {
+				Invariant(!this->Owner.style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawVariable));
+				ListBox_SetItemHeight(this->Owner.handle(), 0, allItems);
+			}
+			
+			iterator
+			insert(const_iterator pos, std::wstring_view text) 
+			{
+				size_type idx{};
+				// [NOT OWNER-DRAW] Store (or duplicate) a simple string (according to its 'HasStrings' style)
+				if (!this->Owner.ownerDraw()) 
+					idx = ListBox_InsertString(this->Owner.handle(), pos, text.data());
+
+				else {
+					auto data = std::make_unique<ItemData>(text);
+					
+					// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
+					if (this->Owner.hasStrings()) {
+						this->Owner.ExposingOwnerDrawItemsBugfix = {data->Detail, data->Heading};
+						idx = ListBox_InsertString(this->Owner.handle(), pos, data->Detail.Text.c_str());
+						ListBox_SetItemData(this->Owner.handle(), idx, data.release());
+						this->Owner.ExposingOwnerDrawItemsBugfix = nullopt;
+					}
+					// [NO-STRING] Only store our owner-draw data
+					else
+						idx = ListBox_InsertItemData(this->Owner.handle(), pos, data.release());
+				}
+				return iterator{this->Owner, idx};
+			}
+			
+			iterator
+			insert(const_iterator             pos, 
+			       RichText                   text,
+			       std::optional<forms::Icon> icon = nullopt) 
+			{
+				Invariant(this->Owner.ownerDraw());
+				auto data = std::make_unique<ItemData>(text, nullopt, icon);
+				size_type idx{};
+				
+				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
+				if (this->Owner.hasStrings()) {
+					this->Owner.ExposingOwnerDrawItemsBugfix = {data->Detail, data->Heading};
+					idx = ListBox_InsertString(this->Owner.handle(), pos, data->Detail.Text.c_str());
+					ListBox_SetItemData(this->Owner.handle(), idx, data.release());
+					this->Owner.ExposingOwnerDrawItemsBugfix = nullopt;
+				}
+				// [NO-STRING] Only store our owner-draw data
+				else
+					idx = ListBox_InsertItemData(this->Owner.handle(), pos, data.release());
+
+				return iterator{this->Owner, idx};
+			}
+			
+			iterator
+			insert(const_iterator      pos, 
+			       std::wstring_view   text, 
+			       std::wstring_view   heading, 
+			       std::optional<Icon> icon = nullopt)
+			{
+				Invariant(this->Owner.features().test(ListBoxFeature::Headings));
+				Invariant(this->Owner.style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawVariable));
+				return this->insert(pos, RichText{text}, RichText{heading}, icon);
+			}
+			
+			iterator
+			insert(const_iterator             pos, 
+			       RichText                   text,
+			       RichText                   heading,
+			       std::optional<forms::Icon> icon = nullopt) 
+			{
+				Invariant(this->Owner.features().test(ListBoxFeature::Headings));
+				Invariant(this->Owner.style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawVariable));
+				auto data = std::make_unique<ItemData>(text, heading, icon);
+				size_type idx{};
+				
+				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
+				if (this->Owner.hasStrings()) {
+					this->Owner.ExposingOwnerDrawItemsBugfix = {data->Detail, data->Heading};
+					idx = ListBox_InsertString(this->Owner.handle(), pos, data->Heading->Text.c_str());
+					ListBox_SetItemData(this->Owner.handle(), idx, data.release());
+					this->Owner.ExposingOwnerDrawItemsBugfix = nullopt;
+				}
+				// [NO-STRING] Only store our owner-draw data
+				else
+					idx = ListBox_InsertItemData(this->Owner.handle(), pos, data.release());
+				
+				return iterator{this->Owner, idx};
+			}
+			
+			void
+			push_back(std::wstring_view text) {
+				this->insert(const_iterator{this->Owner,-1}, text);
 			}
 
 			void
-			insert(size_t idx, std::wstring const& txt) noexcept {
-				ListBox_InsertString(this->ListBox.handle(), idx, txt.c_str());
+			push_back(RichText                   text,
+			          std::optional<forms::Icon> icon = nullopt) {
+				Invariant(this->Owner.ownerDraw());
+				this->insert(const_iterator{this->Owner,-1}, text, icon);
 			}
-
+			
 			void
-			push_back(std::wstring const& txt) noexcept {
-				ListBox_InsertString(this->ListBox.handle(), -1, txt.c_str());
+			push_back(std::wstring_view   text, 
+			          std::wstring_view   heading, 
+			          std::optional<Icon> icon = nullopt) 
+			{
+				Invariant(this->Owner.features().test(ListBoxFeature::Headings));
+				Invariant(this->Owner.style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawVariable));
+				this->insert(const_iterator{this->Owner,-1}, text, heading, icon);
+			}
+			
+			void
+			push_back(RichText                   text,
+			          RichText                   heading,
+			          std::optional<forms::Icon> icon = nullopt) 
+			{
+				Invariant(this->Owner.features().test(ListBoxFeature::Headings));
+				Invariant(this->Owner.style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawVariable));
+				this->insert(const_iterator{this->Owner,-1}, text, heading, icon);
+			}
+			
+			void
+			scrollTo(const_iterator pos) noexcept {
+				ListBox_SetTopIndex(this->Owner.handle(), pos);
+			}
+	
+			void
+			select(Item const& item) noexcept {
+				ListBox_SetCurSel(this->Owner.handle(), item.index());
+			}
+			
+			void
+			select(const_iterator pos) noexcept {
+				ListBox_SetCurSel(this->Owner.handle(), pos);
 			}
 		};
 	
@@ -357,12 +636,28 @@ namespace core::forms
 		};
 		
 	public:
+		//! @brief	Temporary data passed to WM_MEASUREITEM handler to fix design flaw
+		struct TemporaryMeasureItemData {
+			RichText                Detail; 
+			std::optional<RichText> Heading;
+		};
+
 		using WindowClass = ListBoxWindowClass;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		SelectedIndexCollection		SelectedItems;
 		ItemCollection				Items;
+		
+	private:
+		std::optional<forms::Font>   HeadingFont;
 
+		//! @bug  When 'HasStrings' and 'OwnerDraw' are both active and items are added, supplementary
+		//!       item text should be provided for screen-readers; however, the API only permits item
+		//!       data to be added retrospectively, so text must added first. This triggers a design
+		//!       flaw whereby WM_MEASUREITEM is sent prior to item data being added. This fix is the 
+		//!       suggested workaround.
+		//! @see https://learn.microsoft.com/en-us/windows/win32/winauto/exposing-owner-drawn-combo-box-items
+		std::optional<TemporaryMeasureItemData>  ExposingOwnerDrawItemsBugfix; 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		implicit
@@ -396,6 +691,21 @@ namespace core::forms
 			return (size_t)ListBox_GetTopIndex(this->handle());
 		}
 		
+		nstd::bitset<ListBoxFeature>
+		features() const noexcept {
+			return base::features<ListBoxFeature>();
+		}
+	
+		bool
+		hasStrings() const noexcept {
+			return this->style<ListBoxStyle>().test(ListBoxStyle::HasStrings);
+		}
+		
+		std::optional<forms::Font>
+		headingFont() const noexcept {
+			return this->HeadingFont;
+		}
+		
 		bool
 		virtual ownerDraw() const noexcept override {
 			return this->style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawFixed|ListBoxStyle::OwnerDrawVariable);
@@ -408,21 +718,16 @@ namespace core::forms
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		void 
-		caret(size_t idx) noexcept {
-			ListBox_SetCaretIndex(this->handle(), idx);
+		void
+		features(nstd::bitset<ListBoxFeature> newStyle) noexcept {
+			base::features(newStyle);
 		}
 	
 		void
-		first(size_t idx) noexcept {
-			ListBox_SetTopIndex(this->handle(), idx);
+		headingFont(const forms::Font& newFont) {
+			this->HeadingFont = newFont;
 		}
-	
-		void
-		item_height(size_t h) noexcept {
-			ListBox_SetItemHeight(this->handle(), 0, h);
-		}
-	
+		
 		//Response 
 		//virtual onControlColour(ControlColourEventArgs args) override
 		//{
@@ -437,11 +742,23 @@ namespace core::forms
 
 		Response 
 		virtual onEraseBackground(EraseBackgroundEventArgs args) override {
-			if (!this->style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawFixed|ListBoxStyle::OwnerDrawVariable))
+			if (!this->ownerDraw())
 				return Unhandled;
 
 			this->LookNFeel->erase(*this, args);
 			return 0;
+		}
+		
+		Response 
+		virtual onMeasureItem(MeasureItemEventArgs args) override {
+			if (args.Ident == this->ident()) {
+				if (this->ExposingOwnerDrawItemsBugfix)
+					args.Item.UserData = reinterpret_cast<uintptr_t>(&this->ExposingOwnerDrawItemsBugfix);
+				this->LookNFeel->measure(*this, args);
+				return TRUE;
+			}
+
+			return Unhandled;
 		}
 
 		Response 

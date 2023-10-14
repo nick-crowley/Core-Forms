@@ -95,6 +95,9 @@ namespace core::forms
 		virtual erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& args) abstract;
 	
 		void
+		virtual measure(ListBoxControl& ctrl, MeasureItemEventArgs const& args) abstract;
+	
+		void
 		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) abstract;
 	
 		void

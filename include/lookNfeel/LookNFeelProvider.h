@@ -108,6 +108,9 @@ namespace core::forms
 		virtual erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& args) override;
 	
 		void
+		virtual measure(ListBoxControl& ctrl, MeasureItemEventArgs const& args) override;
+	
+		void
 		virtual draw(PictureControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
 		void

@@ -248,7 +248,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(ctrl.textColour())), transparent);
 
 	// [DETAIL] Detail can be multi-line when drawing an OD-variable ListBox item; but they are
-	//              vertically when OD-fixed or item is being drawn within the ComboBox/Edit
+	//              vertically centred when OD-fixed (or item is being drawn within the ComboBox/Edit)
 	DrawTextFlags constexpr  static MultilineFlags = DrawTextFlags::Left|DrawTextFlags::WordBreak;
 	DrawTextFlags constexpr  static SinglelineFlags = DrawTextFlags::SimpleLeft;
 	bool const odVariable = ctrl.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable);
@@ -292,6 +292,7 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 	}
 	// [VARIABLE-HEIGHT] Calculate per-item height
 	else {
+		Invariant(args.Item.UserData != NULL);
 		auto const& item = *reinterpret_cast<ComboBoxControl::TemporaryMeasureItemData*>(args.Item.UserData);
 		args.Height = 0;
 		
@@ -368,20 +369,136 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"ListBox #{} must be OwnerDraw", args.Ident};
 
+	Size constexpr  static BigIcon{48,48};
+	Size constexpr  static SmallIcon{24,24};
+
+	// Query basic item state
 	bool const selected = args.Item.State.test(OwnerDrawState::Selected);
+	auto const backColour = selected ? this->highlight() : ctrl.backColour();
 	
 	// Draw item background
-	Rect const rcItem = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width, 0};
-	auto const backColour = !selected ? ctrl.backColour() : this->highlight();
+	Rect const rcContent = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
 	args.Graphics.setBrush(backColour);
-	args.Graphics.fillRect(rcItem);
+	args.Graphics.fillRect(rcContent);
+	final_act(&) noexcept { 
+		args.Graphics.restore();
+	};
+	
+	// Query custom features
+	auto const item = ctrl.Items[args.Item.Index];
+	auto const selectedTextColour = nstd::make_optional_if<AnyColour>(selected, SystemColour::HighlightText);
+	bool const useHeadings = ctrl.features().test(ComboBoxFeature::Headings);
+	bool const useIcons = ctrl.features().test(ComboBoxFeature::Icons);
+	auto const heading = item.heading(); 
+	auto const icon = item.icon();
 
-	// Draw item text
-	if (args.Item.Index != args.Empty) {
+	// [HEADING] Draw heading and calculate different rectangle for (multi-line) detail text
+	Rect rcDetailText = rcContent;
+	if (useHeadings) {
+		Invariant(heading.has_value());
+
+		// Prefer heading font + selected-text colour; fallback to heading-default then control-default
+		args.Graphics.setFont(heading->Font.value_or(ctrl.headingFont().value_or(ctrl.font())));
+		args.Graphics.textColour(selectedTextColour.value_or(heading->Colour.value_or(ctrl.textColour())), transparent);
+		
+		// [HEADING-ICON] Draw icon on left; position both heading and detail text beside it
+		Rect rcHeadingText = rcContent;
+		if (useIcons) {
+			Size const iconSize = BigIcon;
+			Point const iconPosition = rcContent.topLeft();
+			if (icon)
+				args.Graphics.drawIcon(icon->handle(), iconPosition, iconSize);
+
+			// Offset heading/detail drawing rectangles
+			LONG const horzOffset = iconSize.Width + 3*Measurement{SystemMetric::cxFixedFrame};
+			rcHeadingText.Left += horzOffset;
+			rcDetailText.Left += horzOffset;
+		}
+
+		// Draw heading and offset detail below
+		auto const titleHeight = args.Graphics.drawText(heading->Text, rcHeadingText, DrawTextFlags::Left);
+		rcDetailText += Point{0, titleHeight};
+	}
+	
+	// [DETAIL-ICON] Draw on left; position detail text to right
+	if (useIcons && !useHeadings) {
+		Size const iconSize = SmallIcon;
+		if (icon)
+			args.Graphics.drawIcon(icon->handle(), rcContent.topLeft(), iconSize);
+		rcDetailText.Left += iconSize.Width + 3*Measurement{SystemMetric::cxFixedFrame};
+	}
+	
+	// Prefer detail font + selected-text colour; fallback to control-default
+	auto const detail = item.detail();
+	args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
+	args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(ctrl.textColour())), transparent);
+
+	// [DETAIL] Detail can be multi-line when drawing an OD-variable ListBox item; but they are
+	//              vertically centred when OD-fixed
+	DrawTextFlags constexpr  static MultilineFlags = DrawTextFlags::Left|DrawTextFlags::WordBreak;
+	DrawTextFlags constexpr  static SinglelineFlags = DrawTextFlags::SimpleLeft;
+	bool const odVariable = ctrl.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable);
+	auto const flags = odVariable ? MultilineFlags : SinglelineFlags;
+
+	args.Graphics.drawText(detail.Text, rcDetailText, flags);
+}
+
+void
+LookNFeelProvider::measure(ListBoxControl& ctrl, MeasureItemEventArgs const& args)
+{
+	if (!ctrl.ownerDraw())
+		throw runtime_error{"ListBox #{} must be OwnerDraw", args.Ident};
+	
+	Size constexpr  static BigIcon{48,48};
+	Size constexpr  static SmallIcon{24,24};
+
+	bool const useHeadings = ctrl.features().test(ListBoxFeature::Headings);
+	bool const useIcons = ctrl.features().test(ListBoxFeature::Icons);
+
+	// [FIXED-HEIGHT] Return greater of the detail height, icon height, or user-requested item height.
+	//                 Font measured is 
+	if (ctrl.style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawFixed)) {
 		args.Graphics.setFont(ctrl.font());
-		args.Graphics.textColour(selected ? SystemColour::HighlightText : ctrl.textColour(),
-								 selected ? this->highlight() : ctrl.backColour());
-		args.Graphics.drawText(ctrl.Items[args.Item.Index].text(), rcItem);
+		args.Height = args.Graphics.measureText(L"Wjgy").Height;
+		if (useIcons)
+			args.Height = std::max<LONG>(args.Height, SmallIcon.Height);
+		args.Height = std::max<LONG>(args.Height, ctrl.Items.height());
+	}
+	// [VARIABLE-HEIGHT] Calculate per-item height
+	else {
+		Invariant(args.Item.UserData != NULL);
+		auto const& item = *reinterpret_cast<ListBoxControl::TemporaryMeasureItemData*>(args.Item.UserData);
+		args.Height = 0;
+		
+		// [HEADING] Prefer heading font; fallback to heading-default then control-default
+		if (useHeadings) {
+			auto const heading = item.Heading; 
+			Invariant(heading.has_value());
+			args.Graphics.setFont(heading->Font.value_or(ctrl.headingFont().value_or(ctrl.font())));
+			args.Height += args.Graphics.measureText(heading->Text).Height;
+		}
+
+		// Prefer detail font; fallback to control-default
+		auto const detail = item.Detail;
+		args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
+		
+		// Its difficult to measure the dropped rectangle width because the scrollbar is optional :/
+		Rect rcDetailText = ctrl.clientRect() - Border{SystemMetric::cxFixedFrame, 0} - Border{0,0,0,SystemMetric::cxHScroll};
+
+		// Detail may be offset by icon
+		if (useIcons)
+			rcDetailText.Left += (useHeadings ? BigIcon.Height : SmallIcon.Height) + 3*Measurement{SystemMetric::cxFixedFrame};
+
+		// Measure multiline height
+		args.Height += args.Graphics.measureText(detail.Text, Size{rcDetailText.width(),1}).Height;
+		
+		// [NO-HEADING] Add small gap between items
+		if (!useHeadings) 
+			args.Height += 2*Measurement{SystemMetric::cyFixedFrame};
+
+		// Return greater of combined height or icon height
+		if (useIcons)
+			args.Height = std::max<LONG>(args.Height, SmallIcon.Height);
 	}
 
 	args.Graphics.restore();
