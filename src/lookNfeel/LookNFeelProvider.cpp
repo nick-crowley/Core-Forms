@@ -220,7 +220,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 				args.Graphics.drawIcon(icon->handle(), iconPosition, iconSize);
 
 			// Offset heading/detail drawing rectangles
-			auto const horzOffset = iconSize.Width + LONG{3.f*GuiMeasurement{SystemMetric::cxFixedFrame}};
+			LONG const horzOffset = iconSize.Width + 3.f*GuiMeasurement{SystemMetric::cxFixedFrame};
 			rcHeadingText.Left += horzOffset;
 			rcDetailText.Left += horzOffset;
 		}
@@ -240,7 +240,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		Size const iconSize = SmallIcon;
 		if (icon)	//Invariant(icon.has_value());
 			args.Graphics.drawIcon(icon->handle(), rcContent.topLeft(), iconSize);
-		rcDetailText.Left += iconSize.Width + LONG{3.f*GuiMeasurement{SystemMetric::cxFixedFrame}};
+		rcDetailText.Left += iconSize.Width + 3.f*GuiMeasurement{SystemMetric::cxFixedFrame};
 	}
 	
 	// Prefer detail font + selected-text colour; fallback to control-default
@@ -273,7 +273,7 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 		//!           so it's not even feasible to rely on its window font because the control hasn't yet
 		//!           received its first WM_SETFONT
 		auto const fontHeight = ctrl.editFont().height();
-		args.Height = std::abs(fontHeight) + LONG{2.f*GuiMeasurement{SystemMetric::cyFixedFrame}};
+		args.Height = std::abs(fontHeight) + 2.f*GuiMeasurement{SystemMetric::cyFixedFrame};
 		if (useIcons)
 			args.Height = std::max<LONG>(args.Height, useHeadings ? 48 : 24);
 		return;
@@ -310,14 +310,14 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 
 		// Detail may be offset by icon
 		if (useIcons)
-			rcDetailText.Left += (useHeadings ? 48 : 24) + LONG{3.f*GuiMeasurement{SystemMetric::cxFixedFrame}};
+			rcDetailText.Left += (useHeadings ? 48 : 24) + 3.f*GuiMeasurement{SystemMetric::cxFixedFrame};
 
 		// Measure multiline height
 		args.Height += args.Graphics.measureText(detail.Text, Size{rcDetailText.width(),1}).Height;
 		
 		// [NO-HEADING] Add small gap between items
 		if (!useHeadings) 
-			args.Height += LONG{2.f*GuiMeasurement{SystemMetric::cyFixedFrame}};
+			args.Height += 2.f*GuiMeasurement{SystemMetric::cyFixedFrame};
 
 		// Return greater of combined height, icon height, or user-requested height
 		if (useIcons)

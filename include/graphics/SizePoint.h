@@ -48,9 +48,9 @@ namespace core::forms
 		int Value;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		template <std::integral Integral>
+		template <nstd::Integer Integer>
 		implicit constexpr
-		GuiMeasurement(Integral n) noexcept
+		GuiMeasurement(Integer n) noexcept
 		  : Value{static_cast<int>(n)}
 		{}
 
@@ -82,38 +82,15 @@ namespace core::forms
 			return rhs * scale;
 		}
 	
-		//! @brief	Add @p rhs
-		GuiMeasurement constexpr
-		operator+(int rhs) const noexcept {
-			return GuiMeasurement{this->Value + rhs};
-		}
-		
-		GuiMeasurement constexpr
-		inline friend operator+(int lhs, GuiMeasurement const& rhs) noexcept {
-			return rhs + lhs;
-		}
-
-		//! @brief	Subtract @p rhs
-		GuiMeasurement constexpr
-		operator-(int rhs) const noexcept {
-			return GuiMeasurement{this->Value - rhs};
-		}
-		
-		GuiMeasurement constexpr
-		inline friend operator-(int lhs, GuiMeasurement const& rhs) noexcept {
-			return GuiMeasurement{lhs - rhs.Value};
-		}
-	
 		//! @brief	Unary minus
 		GuiMeasurement constexpr
 		operator-() const noexcept {
 			return GuiMeasurement{-this->Value};
 		}
 		
-		template <std::integral Integral>
 		implicit constexpr
-		operator Integral() const noexcept {
-			return static_cast<Integral>(this->Value);
+		operator ::LONG() const noexcept {
+			return static_cast<::LONG>(this->Value);
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
