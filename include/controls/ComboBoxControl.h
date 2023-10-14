@@ -376,7 +376,13 @@ namespace core::forms
 			  : Owner{ctrl}
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+			satisfies(ItemCollection,
+				NotDefaultConstructible,
+				NotCopyable,
+				NotMovable,
+				NotSortable,
+				NotEqualityComparable
+			);
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
