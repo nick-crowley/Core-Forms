@@ -64,10 +64,10 @@ namespace core::forms
 	public:
 		//! @brief	Construct from (any combination of) values or system-metrics
 		constexpr
-		Rect(GuiMeasurement left, 
-			 GuiMeasurement top, 
-			 GuiMeasurement right, 
-			 GuiMeasurement bottom) noexcept
+		Rect(Measurement left, 
+			 Measurement top, 
+			 Measurement right, 
+			 Measurement bottom) noexcept
 		  : Left{left},
 			Top{top},
 			Right{right},

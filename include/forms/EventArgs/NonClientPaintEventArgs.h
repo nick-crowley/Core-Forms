@@ -76,7 +76,7 @@ namespace core::forms
 			// Caption text
 			Size const rcIcon {this->Caption.height(), this->Caption.height()};
 			this->Title = this->Caption;
-			this->Title.Left += rcIcon.Width + (LONG)GuiMeasurement{SystemMetric::cxSizeFrame}*2;
+			this->Title.Left += rcIcon.Width + (LONG)Measurement{SystemMetric::cxSizeFrame}*2;
 		
 			// System Menu
 			this->SysMenuBtn = Rect{this->Caption.topLeft(), rcIcon};

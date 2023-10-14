@@ -39,7 +39,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class GuiMeasurement
+	class Measurement
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -51,18 +51,18 @@ namespace core::forms
 	public:
 		template <nstd::Integer Integer>
 		constexpr implicit
-		GuiMeasurement(Integer n) noexcept
+		Measurement(Integer n) noexcept
 		  : Value{static_cast<value_type>(n)}
 		{}
 
 		implicit
-		GuiMeasurement(SystemMetric metric) noexcept
+		Measurement(SystemMetric metric) noexcept
 		  : Value{::GetSystemMetrics(static_cast<value_type>(metric))}
 		{}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		satisfies(GuiMeasurement,
+		satisfies(Measurement,
 			constexpr NotDefaultConstructible noexcept,
 			constexpr IsCopyable noexcept,
 			constexpr IsEqualityComparable noexcept,
@@ -74,22 +74,22 @@ namespace core::forms
 	public:
 		//! @brief	Scale by @p scale
 		template <nstd::AnyArithmeticExcept<bool,wchar_t,char8_t,char16_t,char32_t> Arithmetic>
-		GuiMeasurement constexpr
+		Measurement constexpr
 		operator*(Arithmetic scale) const noexcept {
 			// Promote operands as necessary, perform multiplication, then convert result to @c value_type
-			return GuiMeasurement{static_cast<value_type>(this->Value * scale)};
+			return Measurement{static_cast<value_type>(this->Value * scale)};
 		}
 		
 		template <nstd::AnyArithmeticExcept<bool,wchar_t,char8_t,char16_t,char32_t> Arithmetic>
-		GuiMeasurement constexpr
-		inline friend operator*(Arithmetic scale, GuiMeasurement const& rhs) noexcept {
+		Measurement constexpr
+		inline friend operator*(Arithmetic scale, Measurement const& rhs) noexcept {
 			return rhs * scale;
 		}
 	
 		//! @brief	Unary minus
-		GuiMeasurement constexpr
+		Measurement constexpr
 		operator-() const noexcept {
-			return GuiMeasurement{-this->Value};
+			return Measurement{-this->Value};
 		}
 		
 		constexpr implicit
@@ -119,7 +119,7 @@ namespace core::forms
 	public:
 		//! @brief	Construct from (any combination of) values or system-metrics
 		constexpr
-		Point(GuiMeasurement x, GuiMeasurement y) noexcept
+		Point(Measurement x, Measurement y) noexcept
 		  : X{x}, 
 			Y{y}
 		{}
@@ -237,7 +237,7 @@ namespace core::forms
 	public:
 		//! @brief	Construct from (any combination of) values or system-metrics
 		constexpr
-		Size(GuiMeasurement width, GuiMeasurement height) noexcept
+		Size(Measurement width, Measurement height) noexcept
 		  : Width{width}, 
 			Height{height}
 		{}
@@ -336,7 +336,7 @@ namespace core::forms
 namespace core::forms
 {
 	std::string
-	inline to_string(GuiMeasurement const& value)
+	inline to_string(Measurement const& value)
 	{
 		return std::to_string(static_cast<int>(value));
 	}
