@@ -407,21 +407,23 @@ LookNFeelProvider::draw(PictureControl& ctrl, OwnerDrawEventArgs const& args)
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"Picture #{} must be OwnerDraw", args.Ident};
 	
+	// Query properties
+	bool const DontResize = ctrl.style<StaticStyle>().test(StaticStyle::RealSizeImage);
+
+	// Picture can be either bitmap or icon
 	if (auto bitmap = ctrl.image(); bitmap) {
 		DeviceContext memory = DeviceContext::create(args.Graphics.handle());
 		memory.setBitmap(bitmap->handle());
 
-		Rect rcDest = args.Item.Area;
-		if (ctrl.style<StaticStyle>().test(StaticStyle::RealSizeImage)) 
-			rcDest = Rect{args.Item.Area.topLeft(), bitmap->size()};	
+		// Optionally stretch the image into the client area
+		Rect const rcDest = !DontResize ? args.Item.Area : Rect{args.Item.Area.topLeft(), bitmap->size()};
 		args.Graphics.copyBitmap(memory.handle(), bitmap->depth(), bitmap->rect(), rcDest);
 
 		memory.restore();
 	}
 	else if (auto icon = ctrl.icon(); icon) {
-		Rect rcDest = args.Item.Area;
-		if (ctrl.style<StaticStyle>().test(StaticStyle::RealSizeImage)) 
-			rcDest = Rect{args.Item.Area.topLeft(), icon->size()};	
+		// Optionally stretch the icon into the client area
+		Rect const rcDest = !DontResize ? args.Item.Area : Rect{args.Item.Area.topLeft(), icon->size()};
 		args.Graphics.drawIcon(icon->handle(), rcDest);
 	}
 }
