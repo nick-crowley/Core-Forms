@@ -39,6 +39,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
+	//! @brief  User-provided or system-defined integer metric
 	class Measurement
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -49,12 +50,14 @@ namespace core::forms
 		value_type  Value;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		//! @brief	Construct from user-supplied integer
 		template <nstd::Integer Integer>
 		constexpr implicit
 		Measurement(Integer n) noexcept
 		  : Value{static_cast<value_type>(n)}
 		{}
 
+		//! @brief	Construct from any integral system-defined metric
 		implicit
 		Measurement(SystemMetric metric) noexcept
 		  : Value{::GetSystemMetrics(static_cast<value_type>(metric))}
@@ -71,7 +74,7 @@ namespace core::forms
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		//! @brief	Scale by @p scale
+		//! @brief	Scale current value by @p scale
 		template <nstd::AnyArithmeticExcept<bool,wchar_t,char8_t,char16_t,char32_t> Arithmetic>
 		Measurement constexpr
 		operator*(Arithmetic scale) const noexcept {
@@ -79,6 +82,7 @@ namespace core::forms
 			return Measurement{static_cast<value_type>(this->Value * scale)};
 		}
 		
+		//! @brief	Scale current value by @p scale
 		template <nstd::AnyArithmeticExcept<bool,wchar_t,char8_t,char16_t,char32_t> Arithmetic>
 		Measurement constexpr
 		inline friend operator*(Arithmetic scale, Measurement const& rhs) noexcept {
@@ -91,6 +95,7 @@ namespace core::forms
 			return Measurement{-this->Value};
 		}
 		
+		//! @brief	Convert current value to @c value_type
 		constexpr implicit
 		operator value_type() const noexcept {
 			return static_cast<value_type>(this->Value);
