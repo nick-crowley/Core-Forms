@@ -30,6 +30,7 @@
 #include "controls/Control.h"
 #include "controls/ComboBoxStyle.h"
 #include "controls/ComboBoxInfo.h"
+#include "controls/RichText.h"
 #include "graphics/Icon.h"
 #include "lookNfeel/LookNFeelProvider.h"
 #include "forms/WindowClass.h"
@@ -111,30 +112,6 @@ namespace core::forms
 	public:
 		using WindowClass = ComboBoxWindowClass;
 
-		//! @brief	Display element of each owner-draw item
-		struct RichText {
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			std::wstring               Text;
-			std::optional<AnyColour>   Colour = SystemColour::WindowText;
-			std::optional<forms::Font> Font;
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			explicit
-			RichText(
-				std::wstring_view          text, 
-				std::optional<AnyColour>   colour = nullopt, 
-				std::optional<forms::Font> font = nullopt
-			) : Text{text}, 
-				Colour{colour}, 
-				Font{font}
-			{}
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			satisfies(RichText,
-				IsSemiRegular,
-				NotEqualityComparable,
-				NotSortable
-			);
-		};
-		
 	protected:
 		//! @brief	Custom item data used for each element when in owner-draw mode
 		struct ItemData {
@@ -796,8 +773,6 @@ namespace core::forms
 			this->SelectedItemEdit = info.SelectedItemEdit;
 		}
 	};
-
-	using ComboBoxElement = ComboBoxControl::RichText;
 
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

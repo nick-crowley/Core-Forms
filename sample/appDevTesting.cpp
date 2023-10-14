@@ -69,15 +69,15 @@ protected:
 			{L"Very Earthly Mother", L"My very earthly mother just said you're nearly perfect"}
 		}) {
 			this->WideComboBox.Items.push_back(
-				forms::ComboBoxElement{detail, forms::Colour::Grey, this->DetailFont},
-				forms::ComboBoxElement{title},
+				forms::RichText{detail, forms::Colour::Grey, this->DetailFont},
+				forms::RichText{title},
 				sampleIcon
 			);
 		}
 
-		this->NarrowComboBox.Items.push_back(forms::ComboBoxElement{L"Rain in Spain", forms::Colour::DarkBlue, forms::StockFont::SystemFixed}, sampleIcon);
+		this->NarrowComboBox.Items.push_back(forms::RichText{L"Rain in Spain", forms::Colour::DarkBlue, forms::StockFont::SystemFixed}, sampleIcon);
 		this->NarrowComboBox.Items.push_back(L"Quick Brown Fox");
-		this->NarrowComboBox.Items.push_back(forms::ComboBoxElement{L"Very Earthly Mother", forms::Colour::Red, forms::StockFont::AnsiFixed}, sampleIcon);
+		this->NarrowComboBox.Items.push_back(forms::RichText{L"Very Earthly Mother", forms::Colour::Red, forms::StockFont::AnsiFixed}, sampleIcon);
 
 		return args.SetInitialFocus;
 	}
