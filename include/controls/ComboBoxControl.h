@@ -405,6 +405,11 @@ namespace core::forms
 			end() noexcept {
 				return iterator{this->Owner};
 			}
+			
+			void
+			clear() noexcept {
+				ComboBox_ResetContent(this->Owner.handle());
+			}
 
 			void
 			height(uint32_t allItems) {
