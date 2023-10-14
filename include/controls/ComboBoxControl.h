@@ -371,6 +371,7 @@ namespace core::forms
 			ComboBoxControl& Owner;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
+			explicit
 			ItemCollection(ComboBoxControl& ctrl)
 			  : Owner{ctrl}
 			{}
