@@ -32,7 +32,6 @@
 #include "controls/ComboBoxInfo.h"
 #include "controls/RichText.h"
 #include "graphics/Icon.h"
-#include "lookNfeel/LookNFeelProvider.h"
 #include "forms/WindowClass.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -60,9 +59,6 @@ namespace core::forms
 	//! @brief	ComboBox supporting item text, item headings, custom fonts, and icons
 	class ComboBoxControl : public Control 
 	{
-		void
-		friend LookNFeelProvider::measure(ComboBoxControl&, MeasureItemEventArgs const&);
-	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		using base = Control;
 
@@ -109,10 +105,6 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 		
-	public:
-		using WindowClass = ComboBoxWindowClass;
-
-	protected:
 		//! @brief	Custom item data used for each element when in owner-draw mode
 		struct ItemData {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -462,10 +454,10 @@ namespace core::forms
 					
 					// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 					if (this->Owner.hasStrings()) {
-						this->Owner.ExposingOwnerDrawItemsBugfix = data.get();
+						this->Owner.ExposingOwnerDrawItemsBugfix = {data->Detail, data->Heading};
 						idx = ComboBox_InsertString(this->Owner.handle(), pos, data->Detail.Text.c_str());
 						ComboBox_SetItemData(this->Owner.handle(), idx, data.release());
-						this->Owner.ExposingOwnerDrawItemsBugfix = nullptr;
+						this->Owner.ExposingOwnerDrawItemsBugfix = nullopt;
 					}
 					// [NO-STRING] Only store our owner-draw data
 					else
@@ -485,10 +477,10 @@ namespace core::forms
 				
 				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 				if (this->Owner.hasStrings()) {
-					this->Owner.ExposingOwnerDrawItemsBugfix = data.get();
+					this->Owner.ExposingOwnerDrawItemsBugfix = {data->Detail, data->Heading};
 					idx = ComboBox_InsertString(this->Owner.handle(), pos, data->Detail.Text.c_str());
 					ComboBox_SetItemData(this->Owner.handle(), idx, data.release());
-					this->Owner.ExposingOwnerDrawItemsBugfix = nullptr;
+					this->Owner.ExposingOwnerDrawItemsBugfix = nullopt;
 				}
 				// [NO-STRING] Only store our owner-draw data
 				else
@@ -521,10 +513,10 @@ namespace core::forms
 				
 				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 				if (this->Owner.hasStrings()) {
-					this->Owner.ExposingOwnerDrawItemsBugfix = data.get();
+					this->Owner.ExposingOwnerDrawItemsBugfix = {data->Detail, data->Heading};
 					idx = ComboBox_InsertString(this->Owner.handle(), pos, data->Heading->Text.c_str());
 					ComboBox_SetItemData(this->Owner.handle(), idx, data.release());
-					this->Owner.ExposingOwnerDrawItemsBugfix = nullptr;
+					this->Owner.ExposingOwnerDrawItemsBugfix = nullopt;
 				}
 				// [NO-STRING] Only store our owner-draw data
 				else
@@ -575,7 +567,15 @@ namespace core::forms
 				ComboBox_SetCurSel(this->Owner.handle(), pos);
 			}
 		};
-	
+
+	public:
+		//! @brief	Temporary data passed to WM_MEASUREITEM handler to fix design flaw
+		struct TemporaryMeasureItemData {
+			RichText                Detail; 
+			std::optional<RichText> Heading;
+		};
+
+		using WindowClass = ComboBoxWindowClass;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		ItemCollection   Items;
@@ -594,7 +594,7 @@ namespace core::forms
 		//!       flaw whereby WM_MEASUREITEM is sent prior to item data being added. This fix is the 
 		//!       suggested workaround.
 		//! @see https://learn.microsoft.com/en-us/windows/win32/winauto/exposing-owner-drawn-combo-box-items
-		ItemData* ExposingOwnerDrawItemsBugfix; 
+		std::optional<TemporaryMeasureItemData>  ExposingOwnerDrawItemsBugfix; 
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -719,7 +719,8 @@ namespace core::forms
 		Response 
 		virtual onMeasureItem(MeasureItemEventArgs args) override {
 			if (args.Ident == this->ident()) {
-				args.Item.UserData = (uintptr_t)this->ExposingOwnerDrawItemsBugfix;
+				Invariant(this->ExposingOwnerDrawItemsBugfix.has_value());
+				args.Item.UserData = reinterpret_cast<uintptr_t>(&this->ExposingOwnerDrawItemsBugfix);
 				this->LookNFeel->measure(*this, args);
 				return TRUE;
 			}
