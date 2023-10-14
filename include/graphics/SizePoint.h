@@ -28,6 +28,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
 #include "graphics/DrawFlags.h"
+#include "graphics/Measurement.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -39,67 +40,6 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class Measurement
-	{
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		using value_type = ::LONG;
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	private:
-		value_type  Value;
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		template <nstd::Integer Integer>
-		constexpr implicit
-		Measurement(Integer n) noexcept
-		  : Value{static_cast<value_type>(n)}
-		{}
-
-		implicit
-		Measurement(SystemMetric metric) noexcept
-		  : Value{::GetSystemMetrics(static_cast<value_type>(metric))}
-		{}
-
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		satisfies(Measurement,
-			constexpr NotDefaultConstructible noexcept,
-			constexpr IsCopyable noexcept,
-			constexpr IsEqualityComparable noexcept,
-			constexpr IsSortable noexcept
-		);
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		//! @brief	Scale by @p scale
-		template <nstd::AnyArithmeticExcept<bool,wchar_t,char8_t,char16_t,char32_t> Arithmetic>
-		Measurement constexpr
-		operator*(Arithmetic scale) const noexcept {
-			// Promote operands as necessary, perform multiplication, then convert result to @c value_type
-			return Measurement{static_cast<value_type>(this->Value * scale)};
-		}
-		
-		template <nstd::AnyArithmeticExcept<bool,wchar_t,char8_t,char16_t,char32_t> Arithmetic>
-		Measurement constexpr
-		inline friend operator*(Arithmetic scale, Measurement const& rhs) noexcept {
-			return rhs * scale;
-		}
-	
-		//! @brief	Unary minus
-		Measurement constexpr
-		operator-() const noexcept {
-			return Measurement{-this->Value};
-		}
-		
-		constexpr implicit
-		operator value_type() const noexcept {
-			return static_cast<value_type>(this->Value);
-		}
-
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	};
-
 	class Point 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -335,12 +275,6 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	std::string
-	inline to_string(Measurement const& value)
-	{
-		return std::to_string(static_cast<int>(value));
-	}
-
 	std::string
 	inline to_string(Point const& pt)
 	{
