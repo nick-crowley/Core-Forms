@@ -575,12 +575,12 @@ namespace core::forms
 
 			void
 			select(Item const& item) {
-				this->select(item.index());
+				ComboBox_SetCurSel(this->Owner.handle(), item.index());
 			}
 
 			void
-			select(size_type idx) {
-				ComboBox_SetCurSel(this->Owner.handle(), idx);
+			select(const_iterator pos) {
+				ComboBox_SetCurSel(this->Owner.handle(), pos);
 			}
 		};
 	
