@@ -179,7 +179,7 @@ namespace core::forms
 			int32_t           Index;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			Item(ComboBoxControl& owner, int32_t idx) 
+			Item(ComboBoxControl& owner, int32_t idx) noexcept
 			  : Owner{&owner}, 
 			    Index{idx}
 			{}
@@ -208,7 +208,7 @@ namespace core::forms
 			}
 
 			int32_t
-			index() const {
+			index() const noexcept {
 				return this->Index;
 			}
 			
@@ -292,7 +292,7 @@ namespace core::forms
 				int32_t			 Index;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
-				Iterator(ComboBoxControl& owner, int32_t initialIdx) 
+				Iterator(ComboBoxControl& owner, int32_t initialIdx) noexcept
 				  : Owner{&owner}, 
 				    Index{initialIdx}
 				{}
@@ -306,7 +306,7 @@ namespace core::forms
 				template <nstd::AnyOf<Item const> Other>
 					requires std::same_as<ValueType,Item>
 				implicit
-				Iterator(Iterator<Other> const& r) 
+				Iterator(Iterator<Other> const& r) noexcept
 				  : Owner{r.Owner},
 				    Index{r.Index}
 				{}
@@ -323,46 +323,46 @@ namespace core::forms
 				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
 				int32_t
-				index() const {
+				index() const noexcept {
 					return this->Index;
 				}
 
 				implicit
-				operator int32_t() const {
+				operator int32_t() const noexcept {
 					return this->Index;
 				}
 
 			private:
 				template <nstd::AnyOf<Item,Item const> Other>
 				bool 
-				equal(const Iterator<Other>& r) const {
+				equal(const Iterator<Other>& r) const noexcept {
 					return this->Owner->handle() == r.Owner->handle()
 						&& this->Index == r.Index;
 				}
 
 				ValueType
-				dereference() const { 
+				dereference() const noexcept { 
 					return ValueType{*this->Owner, this->Index};
 				}
 
 				int32_t
-				distance_to(const type& r) const {
+				distance_to(const type& r) const noexcept {
 					return r.Index - this->Index;
 				}
 				// o~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
 				void 
-				advance(int32_t n) { 
+				advance(int32_t n) noexcept { 
 					this->Index += n;
 				}
 
 				void 
-				decrement() { 
+				decrement() noexcept { 
 					--this->Index;
 				}
 
 				void 
-				increment() { 
+				increment() noexcept { 
 					++this->Index;
 				}
 			};
@@ -380,7 +380,7 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			explicit
-			ItemCollection(ComboBoxControl& ctrl)
+			ItemCollection(ComboBoxControl& ctrl) noexcept
 			  : Owner{ctrl}
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -396,27 +396,27 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			const_iterator
-			begin() const {
+			begin() const noexcept {
 				return const_iterator{this->Owner, 0};
 			}
 		
 			const_iterator
-			end() const {
+			end() const noexcept {
 				return const_iterator{this->Owner};
 			}
 			
 			const_iterator
-			cbegin() const {
+			cbegin() const noexcept {
 				return const_iterator{this->Owner, 0};
 			}
 		
 			const_iterator
-			cend() const {
+			cend() const noexcept {
 				return const_iterator{this->Owner};
 			}
 
 			std::optional<Item>
-			find(std::wstring_view item) const {
+			find(std::wstring_view item) const noexcept {
 				if (size_type const idx = ComboBox_FindStringExact(this->Owner.handle(), 0, item.data()); idx == CB_ERR)
 					return nullopt;
 				else
@@ -430,7 +430,7 @@ namespace core::forms
 			}
 
 			std::optional<Item>
-			selected() const {
+			selected() const noexcept {
 				if (size_type const idx = ComboBox_GetCurSel(this->Owner.handle()); idx == CB_ERR)
 					return nullopt;
 				else 
@@ -438,12 +438,12 @@ namespace core::forms
 			}
 			
 			size_type 
-			size() const {
+			size() const noexcept {
 				return ComboBox_GetCount(this->Owner.handle());
 			}
 			
 			std::optional<Item>
-			substr(std::wstring_view substring) const {
+			substr(std::wstring_view substring) const noexcept {
 				if (size_type const idx = ComboBox_FindStringExact(this->Owner.handle(), 0, substring.data()); idx == CB_ERR)
 					return nullopt;
 				else
@@ -451,18 +451,18 @@ namespace core::forms
 			}
 
 			Item
-			operator[](size_type idx) const {
+			operator[](size_type idx) const noexcept {
 				return Item(this->Owner, idx);
 			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			iterator
-			begin() {
+			begin() noexcept {
 				return iterator{this->Owner, 0};
 			}
 		
 			iterator
-			end() {
+			end() noexcept {
 				return iterator{this->Owner};
 			}
 
@@ -589,12 +589,12 @@ namespace core::forms
 			}
 
 			void
-			select(Item const& item) {
+			select(Item const& item) noexcept {
 				ComboBox_SetCurSel(this->Owner.handle(), item.index());
 			}
 
 			void
-			select(const_iterator pos) {
+			select(const_iterator pos) noexcept {
 				ComboBox_SetCurSel(this->Owner.handle(), pos);
 			}
 		};
@@ -641,12 +641,12 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		bool
-		dropped() const {
+		dropped() const noexcept {
 			return ComboBox_GetDroppedState(this->handle()) != FALSE;
 		}
 
 		Rect
-		droppedRect() const {
+		droppedRect() const noexcept {
 			Rect rc;
 			ComboBox_GetDroppedControlRect(this->handle(), rc);
 			return rc;
@@ -658,34 +658,34 @@ namespace core::forms
 		}
 		
 		nstd::bitset<ComboBoxFeature>
-		features() const {
+		features() const noexcept {
 			return base::features<ComboBoxFeature>();
 		}
 	
 		bool
-		hasStrings() const {
+		hasStrings() const noexcept {
 			return this->style<ComboBoxStyle>().test(ComboBoxStyle::HasStrings);
 		}
 
 		ComboBoxInfo
-		info() const {
+		info() const noexcept {
 			::COMBOBOXINFO info{sizeof ::COMBOBOXINFO}; 
 			this->send<CB_GETCOMBOBOXINFO>(nullopt, (::LPARAM)&info);
 			return ComboBoxInfo{info};
 		}
 
 		bool
-		virtual ownerDraw() const override {
+		virtual ownerDraw() const noexcept override {
 			return this->style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawFixed|ComboBoxStyle::OwnerDrawVariable);
 		}
 		
 		WindowRole
-		virtual role() const override {
+		virtual role() const noexcept override {
 			return WindowRole::ComboBox;
 		}
 		
 		std::optional<forms::Font>
-		headingFont() const {
+		headingFont() const noexcept {
 			return this->TitleFont;
 		}
 		
@@ -698,7 +698,7 @@ namespace core::forms
 		}
 		
 		void
-		features(nstd::bitset<ComboBoxFeature> newStyle) {
+		features(nstd::bitset<ComboBoxFeature> newStyle) noexcept {
 			using enum ComboBoxFeature;
 			base::features(newStyle);
 		}

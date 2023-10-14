@@ -53,7 +53,7 @@ namespace core::forms
 		UnmanagedWindow const  SelectedItemEdit;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		ComboBoxInfo(::COMBOBOXINFO const& info)
+		ComboBoxInfo(::COMBOBOXINFO const& info) noexcept
 		  : Item{info.rcItem},
 		    Button{info.rcButton},
 		    State{static_cast<WindowState>(info.stateButton)},

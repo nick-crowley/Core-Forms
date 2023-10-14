@@ -64,7 +64,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		std::optional<Icon>
-		icon() const {
+		icon() const noexcept {
 			if (Icon const* icon = (this->Image ? std::get_if<Icon>(&*this->Image) : nullptr); !icon)
 				return {};
 			else
@@ -72,7 +72,7 @@ namespace core::forms
 		}
 	
 		std::optional<Bitmap>
-		image() const {
+		image() const noexcept {
 			if (Bitmap const* bitmap = (this->Image ? std::get_if<Bitmap>(&*this->Image) : nullptr); !bitmap)
 				return {};
 			else
@@ -80,19 +80,19 @@ namespace core::forms
 		}
 		
 		WindowRole
-		virtual role() const override {
+		virtual role() const noexcept override {
 			return WindowRole::Graphic;
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
-		icon(Icon icon) {
+		icon(Icon icon) noexcept {
 			this->Image = icon;
 		}
 	
 		void
-		image(Bitmap bmp) {
+		image(Bitmap bmp) noexcept {
 			this->Image = bmp;
 		}
 	

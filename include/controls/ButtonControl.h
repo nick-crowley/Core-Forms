@@ -117,12 +117,12 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		bool
-		virtual ownerDraw() const override {
+		virtual ownerDraw() const noexcept override {
 			return (this->style<ButtonStyle>() & ButtonStyle::TypeMask).test(ButtonStyle::OwnerDraw);
 		}
 		
 		WindowRole
-		virtual role() const override {
+		virtual role() const noexcept override {
 			return WindowRole::PushButton;
 		}
 
@@ -146,7 +146,7 @@ namespace core::forms
 		}
 
 		nstd::bitset<ButtonState>
-		state() const {
+		state() const noexcept {
 			return static_cast<ButtonState>(this->send<BM_GETSTATE>(0,0));
 		}
 

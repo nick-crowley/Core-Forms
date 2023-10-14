@@ -102,12 +102,12 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		bool
-		virtual ownerDraw() const override {
+		virtual ownerDraw() const noexcept override {
 			return (this->style<StaticStyle>() & StaticStyle::TypeMask).test(StaticStyle::OwnerDraw);
 		}
 		
 		WindowRole
-		virtual role() const override {
+		virtual role() const noexcept override {
 			return WindowRole::StaticText;
 		}
 

@@ -59,7 +59,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		bool
-		checked() const {
+		checked() const noexcept {
 			// Owner-draw buttons don't maintain radio-button state
 			if (this->ownerDraw()) 
 				return this->Checked;
@@ -68,14 +68,14 @@ namespace core::forms
 		}
 		
 		WindowRole
-		virtual role() const override {
+		virtual role() const noexcept override {
 			return WindowRole::RadioButton;
 		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
-		check() {
+		check() noexcept {
 			Button_SetCheck(this->handle(), ButtonState::Checked);
 
 			if (this->ownerDraw()) {
@@ -97,7 +97,7 @@ namespace core::forms
 		}
 		
 		void
-		uncheck() {
+		uncheck() noexcept {
 			Button_SetCheck(this->handle(), ButtonState::Unchecked);
 			
 			if (this->ownerDraw()) {

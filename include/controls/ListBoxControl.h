@@ -85,13 +85,13 @@ namespace core::forms
 			size_t				Index;
 
 		public:
-			Item(ListBoxControl& list, size_t idx) 
+			Item(ListBoxControl& list, size_t idx) noexcept
 				: ListBox(list), Index(idx)
 			{}
 
 		public:
 			Rect
-			area() const {
+			area() const noexcept {
 				Rect r;
 				ListBox_GetItemRect(this->ListBox.handle(), this->Index, static_cast<::RECT*>(r));
 				return std::move(r);
@@ -99,7 +99,7 @@ namespace core::forms
 
 			template <typename Pointer>
 			Pointer
-			data() const {
+			data() const noexcept {
 				return (Pointer)ListBox_GetItemData(this->ListBox.handle(), this->Index);
 			}
 
@@ -118,19 +118,19 @@ namespace core::forms
 			}
 
 			size_t
-			height() const {
+			height() const noexcept {
 				return (size_t)ListBox_GetItemHeight(this->ListBox.handle(), this->Index);
 			}
 
 		public:
 			template <typename Pointer>
 			void
-			data(Pointer ptr) {
+			data(Pointer ptr) noexcept {
 				ListBox_SetItemData(this->ListBox.handle(), this->Index, ptr);
 			}
 
 			void
-			height(size_t h) {
+			height(size_t h) noexcept {
 				ListBox_SetItemHeight(this->ListBox.handle(), this->Index, h);
 			}
 		};
@@ -146,11 +146,11 @@ namespace core::forms
 
 				public:
 					explicit
-					ItemProxy(Item item) : Value{item}
+					ItemProxy(Item item) noexcept : Value{item}
 					{}
 
 					implicit
-					operator Item&() {
+					operator Item&() noexcept {
 						return this->Value;
 					}
 				};
@@ -160,7 +160,7 @@ namespace core::forms
 				size_t			Index;
 
 			public:
-				ItemIterator(ListBoxControl& listbox, unsigned initialIdx) 
+				ItemIterator(ListBoxControl& listbox, unsigned initialIdx) noexcept
 				  : ListBox(listbox), 
 					Index(initialIdx)
 				{}
@@ -171,41 +171,41 @@ namespace core::forms
 			
 				satisfies(ItemIterator,
 					NotDefaultConstructible,
-					IsCopyable,
-					IsMovable,
+					IsCopyable noexcept,
+					IsMovable noexcept,
 					NotSortable
 				);
 
 			private:
 				bool 
-				equal(const type& r) const {
+				equal(const type& r) const noexcept {
 					return this->ListBox.handle() == r.ListBox.handle()
 						&& this->Index == r.Index;
 				}
 
 				ItemProxy
-				dereference() const { 
+				dereference() const noexcept {
 					return ItemProxy{Item(this->ListBox, this->Index)};
 				}
 
 				ptrdiff_t
-				distance_to(const type& r) const {
+				distance_to(const type& r) const noexcept {
 					return static_cast<ptrdiff_t>(r.Index) - static_cast<ptrdiff_t>(this->Index);
 				}
 
 			private:
 				void 
-				advance(ptrdiff_t n) { 
+				advance(ptrdiff_t n) noexcept {
 					this->Index += n;
 				}
 
 				void 
-				decrement() { 
+				decrement() noexcept {
 					--this->Index;
 				}
 
 				void 
-				increment() { 
+				increment() noexcept {
 					++this->Index;
 				}
 			};
@@ -214,56 +214,56 @@ namespace core::forms
 			ListBoxControl& ListBox;
 
 		public:
-			ItemCollection(ListBoxControl& ctrl)
+			ItemCollection(ListBoxControl& ctrl) noexcept
 				: ListBox(ctrl)
 			{}
 
 		public:
 			ItemIterator
-			begin() const {
+			begin() const noexcept {
 				return ItemIterator(this->ListBox, 0);
 			}
 		
 			ItemIterator
-			end() const {
+			end() const noexcept {
 				return ItemIterator(this->ListBox);
 			}
 
 			std::optional<size_t>
-			find(std::wstring const& txt) const {
+			find(std::wstring const& txt) const noexcept {
 				signed idx = ListBox_FindStringExact(this->ListBox.handle(), 0, txt.c_str());
 				return idx != -1 ? std::optional<size_t>(idx) : std::optional<size_t>{};
 			}
 		
 			std::optional<size_t>
-			search(std::wstring const& substring) const {
+			search(std::wstring const& substring) const noexcept {
 				signed idx = ListBox_FindString(this->ListBox.handle(), 0, substring.c_str());
 				return idx != -1 ? std::optional<size_t>(idx) : std::optional<size_t>{};
 			}
 
 			size_t 
-			size() const {
+			size() const noexcept {
 				return ListBox_GetCount(this->ListBox.handle());
 			}
 
 			Item
-			operator[](size_t idx) const {
+			operator[](size_t idx) const noexcept {
 				return Item(this->ListBox, idx);
 			}
 
 		public:
 			void
-			clear() {
+			clear() noexcept {
 				ListBox_ResetContent(this->ListBox.handle());
 			}
 
 			void
-			insert(size_t idx, std::wstring const& txt) {
+			insert(size_t idx, std::wstring const& txt) noexcept {
 				ListBox_InsertString(this->ListBox.handle(), idx, txt.c_str());
 			}
 
 			void
-			push_back(std::wstring const& txt) {
+			push_back(std::wstring const& txt) noexcept {
 				ListBox_InsertString(this->ListBox.handle(), -1, txt.c_str());
 			}
 		};
@@ -309,18 +309,18 @@ namespace core::forms
 
 			private:
 				bool 
-				equal(const type& r) const {
+				equal(const type& r) const noexcept {
 					return this->ListBox.handle() == r.ListBox.handle()
 						&& this->Index == r.Index;
 				}
 
 				size_t
-				dereference() const { 
+				dereference() const noexcept {
 					return this->Indicies[this->Index]; 
 				}
 
 				void 
-				increment() { 
+				increment() noexcept {
 					if (++this->Index == this->Indicies.size()) {
 						this->Index = npos;
 					}
@@ -332,7 +332,7 @@ namespace core::forms
 		public:
 		
 		public:
-			SelectedIndexCollection(ListBoxControl& listbox) 
+			SelectedIndexCollection(ListBoxControl& listbox) noexcept 
 			  : ListBox(listbox)
 			{}
 
@@ -348,7 +348,7 @@ namespace core::forms
 			}
 
 			size_t
-			size() const { 
+			size() const noexcept {
 				return (size_t)ListBox_GetSelCount(this->ListBox.handle());
 			}
 		};
@@ -383,39 +383,39 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		size_t 
-		caret() const {
+		caret() const noexcept {
 			return (size_t)ListBox_GetCaretIndex(this->handle());
 		}
 	
 		size_t 
-		first() const {
+		first() const noexcept {
 			return (size_t)ListBox_GetTopIndex(this->handle());
 		}
 		
 		bool
-		virtual ownerDraw() const override {
+		virtual ownerDraw() const noexcept override {
 			return this->style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawFixed|ListBoxStyle::OwnerDrawVariable);
 		}
 		
 		WindowRole
-		virtual role() const override {
+		virtual role() const noexcept override {
 			return WindowRole::List;
 		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void 
-		caret(size_t idx) {
+		caret(size_t idx) noexcept {
 			ListBox_SetCaretIndex(this->handle(), idx);
 		}
 	
 		void
-		first(size_t idx) {
+		first(size_t idx) noexcept {
 			ListBox_SetTopIndex(this->handle(), idx);
 		}
 	
 		void
-		item_height(size_t h) {
+		item_height(size_t h) noexcept {
 			ListBox_SetItemHeight(this->handle(), 0, h);
 		}
 	

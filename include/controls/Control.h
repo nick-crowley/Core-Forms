@@ -83,38 +83,38 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		nstd::bitset<Side>
-		anchors() const {
+		anchors() const noexcept {
 			return this->Anchors;
 		}
 		
 		template <nstd::Enumeration Style>
 			requires std::same_as<std::underlying_type_t<Style>, std::underlying_type_t<FakeStyle>>
 		nstd::bitset<Style>
-		features() const {
+		features() const noexcept {
 			return static_cast<Style>(this->CustomStyle.value());
 		}
 	
 		uint16_t
-		ident() const {
+		ident() const noexcept {
 			return this->Ident;
 		}
 		
 		bool
-		virtual ownerDraw() const {
+		virtual ownerDraw() const noexcept {
 			return false;
 		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
-		anchors(nstd::bitset<Side> newAnchors) {
+		anchors(nstd::bitset<Side> newAnchors) noexcept {
 			this->Anchors = newAnchors;
 		}
 		
 		template <nstd::Enumeration Style>
 			requires std::same_as<std::underlying_type_t<Style>, std::underlying_type_t<FakeStyle>>
 		void
-		features(nstd::bitset<Style> newStyle) {
+		features(nstd::bitset<Style> newStyle) noexcept {
 			this->CustomStyle = static_cast<FakeStyle>(newStyle.value());
 		}
 	
