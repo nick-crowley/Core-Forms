@@ -389,6 +389,16 @@ namespace core::forms
 			end() const {
 				return const_iterator{this->Owner};
 			}
+			
+			const_iterator
+			cbegin() const {
+				return const_iterator{this->Owner, 0};
+			}
+		
+			const_iterator
+			cend() const {
+				return const_iterator{this->Owner};
+			}
 
 			std::optional<Item>
 			find(std::wstring_view item) const {
@@ -447,12 +457,13 @@ namespace core::forms
 				ComboBox_SetItemHeight(this->Owner.handle(), 0, allItems);
 			}
 			
-			void
-			insert(size_t idx, std::wstring_view text) 
+			iterator
+			insert(const_iterator pos, std::wstring_view text) 
 			{
+				signed idx{};
 				// [NOT OWNER-DRAW] Store (or duplicate) a simple string (according to its 'HasStrings' style)
 				if (!this->Owner.ownerDraw()) 
-					ComboBox_InsertString(this->Owner.handle(), idx, text.data());
+					idx = ComboBox_InsertString(this->Owner.handle(), pos, text.data());
 
 				else {
 					auto data = std::make_unique<ItemData>(text);
@@ -460,49 +471,53 @@ namespace core::forms
 					// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 					if (this->Owner.hasStrings()) {
 						this->Owner.ExposingOwnerDrawItemsBugfix = data.get();
-						idx = ComboBox_InsertString(this->Owner.handle(), idx, data->Detail.Text.c_str());
+						idx = ComboBox_InsertString(this->Owner.handle(), pos, data->Detail.Text.c_str());
 						ComboBox_SetItemData(this->Owner.handle(), idx, data.release());
 						this->Owner.ExposingOwnerDrawItemsBugfix = nullptr;
 					}
 					// [NO-STRING] Only store our owner-draw data
 					else
-						ComboBox_InsertItemData(this->Owner.handle(), idx, data.release());
+						idx = ComboBox_InsertItemData(this->Owner.handle(), pos, data.release());
 				}
+				return iterator{this->Owner, static_cast<unsigned>(idx)};
 			}
 			
-			void
-			insert(size_t                     idx, 
+			iterator
+			insert(const_iterator             pos, 
 			       RichText                   text,
 			       std::optional<forms::Icon> icon = nullopt) 
 			{
 				Invariant(this->Owner.ownerDraw());
 				auto data = std::make_unique<ItemData>(text, nullopt, icon);
+				signed idx{};
 				
 				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 				if (this->Owner.hasStrings()) {
 					this->Owner.ExposingOwnerDrawItemsBugfix = data.get();
-					idx = ComboBox_InsertString(this->Owner.handle(), idx, data->Detail.Text.c_str());
+					idx = ComboBox_InsertString(this->Owner.handle(), pos, data->Detail.Text.c_str());
 					ComboBox_SetItemData(this->Owner.handle(), idx, data.release());
 					this->Owner.ExposingOwnerDrawItemsBugfix = nullptr;
 				}
 				// [NO-STRING] Only store our owner-draw data
 				else
-					ComboBox_InsertItemData(this->Owner.handle(), idx, data.release());
+					idx = ComboBox_InsertItemData(this->Owner.handle(), pos, data.release());
+
+				return iterator{this->Owner, static_cast<unsigned>(idx)};
 			}
 			
-			void
-			insert(size_t              idx, 
+			iterator
+			insert(const_iterator      pos, 
 			       std::wstring_view   text, 
 			       std::wstring_view   heading, 
 			       std::optional<Icon> icon = nullopt)
 			{
 				Invariant(this->Owner.features().test(ComboBoxFeature::Headings));
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
-				this->insert(idx, RichText{text}, RichText{heading}, icon);
+				return this->insert(pos, RichText{text}, RichText{heading}, icon);
 			}
 			
-			void
-			insert(size_t                     idx, 
+			iterator
+			insert(const_iterator             pos, 
 			       RichText                   text,
 			       RichText                   heading,
 			       std::optional<forms::Icon> icon = nullopt) 
@@ -510,29 +525,32 @@ namespace core::forms
 				Invariant(this->Owner.features().test(ComboBoxFeature::Headings));
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
 				auto data = std::make_unique<ItemData>(text, heading, icon);
+				signed idx{};
 				
 				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 				if (this->Owner.hasStrings()) {
 					this->Owner.ExposingOwnerDrawItemsBugfix = data.get();
-					idx = ComboBox_InsertString(this->Owner.handle(), idx, data->Heading->Text.c_str());
+					idx = ComboBox_InsertString(this->Owner.handle(), pos, data->Heading->Text.c_str());
 					ComboBox_SetItemData(this->Owner.handle(), idx, data.release());
 					this->Owner.ExposingOwnerDrawItemsBugfix = nullptr;
 				}
 				// [NO-STRING] Only store our owner-draw data
 				else
-					ComboBox_InsertItemData(this->Owner.handle(), idx, data.release());
+					idx = ComboBox_InsertItemData(this->Owner.handle(), pos, data.release());
+				
+				return iterator{this->Owner, static_cast<unsigned>(idx)};
 			}
 			
 			void
 			push_back(std::wstring_view text) {
-				this->insert(static_cast<size_t>(-1), text);
+				this->insert(const_iterator{this->Owner,static_cast<unsigned>(-1)}, text);
 			}
 
 			void
 			push_back(RichText                   text,
 			          std::optional<forms::Icon> icon = nullopt) {
 				Invariant(this->Owner.ownerDraw());
-				this->insert(static_cast<size_t>(-1), text, icon);
+				this->insert(const_iterator{this->Owner,static_cast<unsigned>(-1)}, text, icon);
 			}
 			
 			void
@@ -542,7 +560,7 @@ namespace core::forms
 			{
 				Invariant(this->Owner.features().test(ComboBoxFeature::Headings));
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
-				this->insert(static_cast<size_t>(-1), text, heading, icon);
+				this->insert(const_iterator{this->Owner,static_cast<unsigned>(-1)}, text, heading, icon);
 			}
 			
 			void
@@ -552,7 +570,7 @@ namespace core::forms
 			{
 				Invariant(this->Owner.features().test(ComboBoxFeature::Headings));
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
-				this->insert(static_cast<size_t>(-1), text, heading, icon);
+				this->insert(const_iterator{this->Owner,static_cast<unsigned>(-1)}, text, heading, icon);
 			}
 
 			void
