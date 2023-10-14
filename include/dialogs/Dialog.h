@@ -43,6 +43,11 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::meta 
+{
+	template <typename R>
+	concept DialogResult = std::is_pointer_v<R> || sizeof(R) <= sizeof(intptr_t);
+}
 namespace core::forms
 {
 	class FormsExport Dialog : public Window 
@@ -311,17 +316,18 @@ namespace core::forms
 			this->createModeless(win::ProcessModule, parent);
 		}
 		
-		intptr_t 
+		template <meta::DialogResult Result = intptr_t>
+		Result
 		showModal(win::Module source, Window* parent = nullptr)
 		{
-			// FIXME: It'd be preferable if Dialog::showModal() were not virtual so it could be a template
-			return *this->createInternal(source, DialogMode::Modal, parent);
+			return nstd::cstyle_cast<Result>(*this->createInternal(source, DialogMode::Modal, parent));
 		}
 	
-		intptr_t 
+		template <meta::DialogResult Result = intptr_t>
+		Result 
 		showModal(Window* parent = nullptr)
 		{
-			return this->showModal(win::ProcessModule, parent);
+			return this->showModal<Result>(win::ProcessModule, parent);
 		}
 	
 	protected:
