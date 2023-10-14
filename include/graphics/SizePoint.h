@@ -72,13 +72,16 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		//! @brief	Scale by @p scale
+		template <nstd::AnyArithmeticExcept<bool,wchar_t,char8_t,char16_t,char32_t> Arithmetic>
 		GuiMeasurement constexpr
-		operator*(float scale) const noexcept {
+		operator*(Arithmetic scale) const noexcept {
+			// Promote operands as necessary, perform multiplication, then convert result to @c value_type
 			return GuiMeasurement{static_cast<int>(this->Value * scale)};
 		}
 		
+		template <nstd::AnyArithmeticExcept<bool,wchar_t,char8_t,char16_t,char32_t> Arithmetic>
 		GuiMeasurement constexpr
-		inline friend operator*(float scale, GuiMeasurement const& rhs) noexcept {
+		inline friend operator*(Arithmetic scale, GuiMeasurement const& rhs) noexcept {
 			return rhs * scale;
 		}
 	
