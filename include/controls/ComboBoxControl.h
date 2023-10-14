@@ -695,8 +695,8 @@ namespace core::forms
 		Response 
 		virtual onMeasureItem(MeasureItemEventArgs args) override {
 			if (args.Ident == this->ident()) {
-				Invariant(this->ExposingOwnerDrawItemsBugfix.has_value());
-				args.Item.UserData = reinterpret_cast<uintptr_t>(&this->ExposingOwnerDrawItemsBugfix);
+				if (this->ExposingOwnerDrawItemsBugfix)
+					args.Item.UserData = reinterpret_cast<uintptr_t>(&this->ExposingOwnerDrawItemsBugfix);
 				this->LookNFeel->measure(*this, args);
 				return TRUE;
 			}
