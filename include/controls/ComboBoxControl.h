@@ -175,29 +175,35 @@ namespace core::forms
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
-			ComboBoxControl&  Owner;
+			ComboBoxControl*  Owner;
 			int32_t           Index;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			Item(ComboBoxControl& Combo, int32_t idx) 
-			  : Owner{Combo}, 
+			Item(ComboBoxControl& owner, int32_t idx) 
+			  : Owner{&owner}, 
 			    Index{idx}
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+			satisfies(Item, 
+				NotDefaultConstructible,
+				IsCopyable, 
+				IsMovable,
+				NotEqualityComparable,
+				NotSortable
+			);
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			RichText
 			detail() const {
-				Invariant(this->Owner.ownerDraw());
+				Invariant(this->Owner->ownerDraw());
 				return this->data<ItemData>()->Detail;
 			}
 
 			std::optional<Icon>
 			icon() const {
-				Invariant(this->Owner.ownerDraw());
+				Invariant(this->Owner->ownerDraw());
 				return this->data<ItemData>()->Icon;
 			}
 
@@ -208,25 +214,25 @@ namespace core::forms
 			
 			std::optional<RichText>
 			heading() const {
-				Invariant(this->Owner.ownerDraw());
+				Invariant(this->Owner->ownerDraw());
 				return this->data<ItemData>()->Heading;
 			}
 
 			uint32_t
 			height() const {
-				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
-				return static_cast<uint32_t>(this->Owner.send<CB_GETITEMHEIGHT>(this->Index));
+				Invariant(this->Owner->style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
+				return static_cast<uint32_t>(this->Owner->send<CB_GETITEMHEIGHT>(this->Index));
 			}
 			
 			std::wstring
 			text() const {
-				if (this->Owner.ownerDraw())
+				if (this->Owner->ownerDraw())
 					return this->data<ItemData>()->Detail.Text;
-				else if (auto const length = ComboBox_GetLBTextLen(this->Owner.handle(), this->Index); !length)
+				else if (auto const length = ComboBox_GetLBTextLen(this->Owner->handle(), this->Index); !length)
 					return {};
 				else {
 					std::wstring content(static_cast<size_t>(length), L'\0');
-					ComboBox_GetLBText(this->Owner.handle(), this->Index, &content[0]);
+					ComboBox_GetLBText(this->Owner->handle(), this->Index, &content[0]);
 					return content;
 				}
 			}
@@ -235,7 +241,7 @@ namespace core::forms
 			UserData*
 			userData() const {
 				// When owner-draw is active, the item-data slot addresses an 'ItemData' object
-				if (!this->Owner.ownerDraw())
+				if (!this->Owner->ownerDraw())
 					return this->data<UserData>();
 				else
 					return static_cast<UserData*>(this->data<ItemData>()->UserData);
@@ -245,7 +251,7 @@ namespace core::forms
 			template <typename AnyType>
 			AnyType*
 			data() const {
-				if (::LRESULT itemData = ComboBox_GetItemData(this->Owner.handle(), this->Index); !itemData)
+				if (::LRESULT itemData = ComboBox_GetItemData(this->Owner->handle(), this->Index); !itemData)
 					throw runtime_error{"Missing ComboBox data for item {}", this->Index};
 				else 
 					return reinterpret_cast<AnyType*>(itemData);
@@ -254,16 +260,16 @@ namespace core::forms
 		public:
 			void
 			height(uint32_t individualItem) {
-				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
-				ComboBox_SetItemHeight(this->Owner.handle(), this->Index, individualItem);
+				Invariant(this->Owner->style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
+				ComboBox_SetItemHeight(this->Owner->handle(), this->Index, individualItem);
 			}
 
 			template <typename AnyType>
 			void
 			userData(AnyType* customUserData) {
 				// When owner-draw is active, the item-data slot addresses an 'ItemData' object
-				if (!this->Owner.ownerDraw())
-					ComboBox_SetItemData(this->Owner.handle(), this->Index, customUserData);
+				if (!this->Owner->ownerDraw())
+					ComboBox_SetItemData(this->Owner->handle(), this->Index, customUserData);
 				else
 					this->data<ItemData>()->UserData = static_cast<void*>(customUserData);
 			}
