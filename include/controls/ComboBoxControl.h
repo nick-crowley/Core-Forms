@@ -218,14 +218,6 @@ namespace core::forms
 				return static_cast<uint32_t>(this->Owner.send<CB_GETITEMHEIGHT>(this->Index));
 			}
 			
-			std::optional<std::wstring>
-			title() const {
-				Invariant(this->Owner.ownerDraw());
-				if (auto const hasTitle = this->data<ItemData>()->Heading; hasTitle)
-					return hasTitle->Text;
-				return nullopt;
-			}
-			
 			std::wstring
 			text() const {
 				if (this->Owner.ownerDraw())
