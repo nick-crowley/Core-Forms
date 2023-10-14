@@ -183,8 +183,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		args.Graphics.restore();
 	};
 	
-	// FIX: Manually erase background of gap beneath bottom item
-	//! @todo  Determine whether this gap only exists because measuring code has falling out-of-sync with drawing code for multi-line items with a title
+	//! @fix  Manually erase background of gap beneath bottom item
 	if (ctrl.dropped() && args.Item.Index == ctrl.Items.size()-1) {
 		Rect const rcBottom = {rcContent.Left, rcContent.Top, rcContent.Right, ctrl.info().DroppedItemList.clientRect().Bottom};
 		args.Graphics.fillRect(rcBottom);
@@ -216,7 +215,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		if (useIcons) {
 			Size const iconSize = withinEdit ? SmallIcon : BigIcon;
 			Point const iconPosition = rcContent.topLeft();
-			if (icon)  // Invariant(icon.has_value());
+			if (icon)
 				args.Graphics.drawIcon(icon->handle(), iconPosition, iconSize);
 
 			// Offset heading/detail drawing rectangles
@@ -238,7 +237,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	// [DETAIL-ICON] Draw on left; position detail text to right
 	if (useIcons && !useHeadings) {
 		Size const iconSize = SmallIcon;
-		if (icon)	//Invariant(icon.has_value());
+		if (icon)
 			args.Graphics.drawIcon(icon->handle(), rcContent.topLeft(), iconSize);
 		rcDetailText.Left += iconSize.Width + 3*Measurement{SystemMetric::cxFixedFrame};
 	}
