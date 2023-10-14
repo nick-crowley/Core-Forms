@@ -49,7 +49,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		template <nstd::Integer Integer>
-		implicit constexpr
+		constexpr implicit
 		GuiMeasurement(Integer n) noexcept
 		  : Value{static_cast<int>(n)}
 		{}
@@ -88,7 +88,7 @@ namespace core::forms
 			return GuiMeasurement{-this->Value};
 		}
 		
-		implicit constexpr
+		constexpr implicit
 		operator ::LONG() const noexcept {
 			return static_cast<::LONG>(this->Value);
 		}
