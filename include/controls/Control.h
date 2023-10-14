@@ -62,11 +62,13 @@ namespace core::forms
 	class Control : public Window
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	private:
+		enum class FakeStyle : uint32_t { None, /*Placeholder for control-defined*/ };
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		uint16_t const  Ident;
 		nstd::bitset<Side>  Anchors = Side::Left|Side::Top;
+		nstd::bitset<FakeStyle>  CustomStyle;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -84,7 +86,14 @@ namespace core::forms
 		anchors() const {
 			return this->Anchors;
 		}
-
+		
+		template <nstd::Enumeration Style>
+			requires std::same_as<std::underlying_type_t<Style>, std::underlying_type_t<FakeStyle>>
+		nstd::bitset<Style>
+		features() const {
+			return static_cast<Style>(this->CustomStyle.value());
+		}
+	
 		uint16_t
 		ident() const {
 			return this->Ident;
@@ -101,7 +110,14 @@ namespace core::forms
 		anchors(nstd::bitset<Side> newAnchors) {
 			this->Anchors = newAnchors;
 		}
-
+		
+		template <nstd::Enumeration Style>
+			requires std::same_as<std::underlying_type_t<Style>, std::underlying_type_t<FakeStyle>>
+		void
+		features(nstd::bitset<Style> newStyle) {
+			this->CustomStyle = static_cast<FakeStyle>(newStyle.value());
+		}
+	
 	protected:
 		Response 
 		virtual onControlColour(ControlColourEventArgs args) override
