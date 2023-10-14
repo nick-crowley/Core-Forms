@@ -45,7 +45,7 @@ namespace core::forms
 	struct SetWindowFontEventArgs {
 		SharedFont  NewFont;
 
-		SetWindowFontEventArgs(::WPARAM w, ::LPARAM [[maybe_unused]] l)
+		SetWindowFontEventArgs(::WPARAM w, [[maybe_unused]] ::LPARAM l)
 		  : NewFont{reinterpret_cast<::HFONT>(w), weakref}
 		{
 		}

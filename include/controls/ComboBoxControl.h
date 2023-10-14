@@ -777,7 +777,7 @@ namespace core::forms
 
 	private:
 		void
-		this_OnCreated(Window& [[maybe_unused]] sender, CreateWindowEventArgs [[maybe_unused]] args) {
+		this_OnCreated([[maybe_unused]] Window& sender, [[maybe_unused]] CreateWindowEventArgs args) {
 			auto const info = this->info();
 			this->DroppedItemsList = info.DroppedItemList;
 			this->SelectedItemEdit = info.SelectedItemEdit;

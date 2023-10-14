@@ -1234,7 +1234,7 @@ namespace core::forms
 
 		//! @brief	Stringify notification this window sends to its parent
 		gsl::czstring
-		virtual notificationName(::UINT [[maybe_unused]] notification) {
+		virtual notificationName([[maybe_unused]] ::UINT notification) {
 			// Default implementation sends no notifications so there's never need to stringize them
 			return "";
 		}
@@ -1365,7 +1365,7 @@ namespace core::forms
 		}
 		
 		Response
-		virtual onOfferNotification(::UINT [[maybe_unused]] notification) {
+		virtual onOfferNotification([[maybe_unused]] ::UINT notification) {
 			// Default implementation ignores all reflected notifications
 			return Unhandled;
 		}

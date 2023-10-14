@@ -12,7 +12,7 @@ forms::OwnerDrawMenuEventArgs::ItemData::ItemData(::DRAWITEMSTRUCT& data)
 	ThrowIf(data, data.CtlType != ODT_MENU);
 }
 
-forms::OwnerDrawMenuEventArgs::OwnerDrawMenuEventArgs(::WPARAM [[maybe_unused]] id, ::LPARAM data) 
+forms::OwnerDrawMenuEventArgs::OwnerDrawMenuEventArgs([[maybe_unused]] ::WPARAM id, ::LPARAM data) 
   : OwnerDrawMenuEventArgs{*reinterpret_cast<::DRAWITEMSTRUCT*>(data)}
 {
 }
