@@ -53,7 +53,6 @@ namespace core::forms
 	class FormsExport Window : private UnmanagedWindow
 	{
 		friend class DialogTemplate;	//!< Requires @c CreationData class
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		using base = UnmanagedWindow;

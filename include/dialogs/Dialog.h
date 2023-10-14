@@ -97,11 +97,9 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			using ControlAddressCollection = std::vector<Control*>;
-			
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			ControlAddressCollection  Controls;
-			
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			template <nstd::InputRangeConvertibleTo<Control*> AnyCollection>
@@ -114,13 +112,11 @@ namespace core::forms
 			EarlyBoundControlCollection(std::initializer_list<Control*> controls)
 				: Controls(controls)
 			{}
-			
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			satisfies(EarlyBoundControlCollection,
 				IsSemiRegular
 			);
-			
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -144,7 +140,6 @@ namespace core::forms
 			to_dictionary() const {
 				return ControlDictionary{this->Controls};
 			}
-
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		};
 
@@ -176,7 +171,6 @@ namespace core::forms
 		// BUG: Dialog::DialogCreationParameter cannot be __declspec(dllexport)
 		std::optional<CreationData>
 		static /*thread_local*/ DialogCreationParameter;
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		// NB: Fields ordered for debugging convenience
@@ -191,7 +185,6 @@ namespace core::forms
 
 	public:
 		InitDialogEvent		Initialized;
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
 		Dialog(win::ResourceId resource, EarlyBoundControlCollection controls = {})
@@ -207,7 +200,6 @@ namespace core::forms
 		{
 			ControlRegistration::ensureRegistered();
 		}
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -272,7 +264,6 @@ namespace core::forms
 
 			return Window::defaultMessageHandler(hWnd, message, wParam, lParam);
 		}
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Rect
@@ -291,7 +282,6 @@ namespace core::forms
 			WindowClass const  static wc;
 			return wc;
 		}
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void 
@@ -608,7 +598,6 @@ namespace core::forms
 			// Aggregate all template customizations into a new template resource
 			return DialogTemplateWriter{}.writeTemplate(customTemplate);
 		}
-
 	};
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
