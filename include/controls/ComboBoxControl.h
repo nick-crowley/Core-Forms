@@ -621,7 +621,7 @@ namespace core::forms
 		}
 		
 		std::optional<forms::Font>
-		titleFont() const {
+		headingFont() const {
 			return this->TitleFont;
 		}
 		
@@ -694,7 +694,7 @@ namespace core::forms
 		}
 		
 		void
-		titleFont(const forms::Font& newFont) {
+		headingFont(const forms::Font& newFont) {
 			this->TitleFont = newFont;
 		}
 		

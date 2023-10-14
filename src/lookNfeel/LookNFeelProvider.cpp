@@ -166,86 +166,96 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"ComboBox #{} must be OwnerDraw", args.Ident};
+	
+	Size constexpr  static BigIcon{48,48};
+	Size constexpr  static SmallIcon{24,24};
 
-	bool const variable = ctrl.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable);
+	// Query basic item state
 	bool const selected = args.Item.State.test(OwnerDrawState::Selected);
 	bool const withinEdit = args.Item.State.test(OwnerDrawState::ComboBoxEdit);
 	auto const backColour = selected ? this->highlight() : ctrl.backColour();
 	
 	// Draw item background
-	Rect const rcItem = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
+	Rect const rcContent = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
 	args.Graphics.setBrush(backColour);
-	args.Graphics.fillRect(rcItem);
+	args.Graphics.fillRect(rcContent);
+	final_act(&) noexcept { 
+		args.Graphics.restore();
+	};
 	
 	// FIX: Manually erase background of gap beneath bottom item
 	//! @todo  Determine whether this gap only exists because measuring code has falling out-of-sync with drawing code for multi-line items with a title
 	if (ctrl.dropped() && args.Item.Index == ctrl.Items.size()-1) {
-		Rect const rcBottom = {rcItem.Left, rcItem.Top, rcItem.Right, ctrl.info().DroppedItemList.clientRect().Bottom};
+		Rect const rcBottom = {rcContent.Left, rcContent.Top, rcContent.Right, ctrl.info().DroppedItemList.clientRect().Bottom};
 		args.Graphics.fillRect(rcBottom);
 	}
 
 	// [NO-SELECTED-ITEM] Occurs in DropDownList mode
-	if (args.Item.Index == args.Empty && !ctrl.Items.selected()) {
-		args.Graphics.restore();
+	if (args.Item.Index == args.Empty && !ctrl.Items.selected()) 
 		return;
-	}
-
-	// Setup item
+	
+	// Query custom features
 	auto const item = ctrl.Items[args.Item.Index];
-	auto const detail = item.detail();
-	Rect rcDetail = rcItem;
-
-	// [ALIGNMENT] Item detail may be multi-line when using OD-variable mode; otherwise they're v-centred
-	//              When drawing occurs within the selected-item field though, they're already v-centred
-	auto const flagsDetail = variable && !withinEdit ? DrawTextFlags::Left|DrawTextFlags::WordBreak : DrawTextFlags::SimpleLeft;
-
-	// [TITLE] Draw title and calculate different rectangle for (multi-line) detail text
-	auto const title = item.heading(); 
-	auto const icon = item.icon();
 	auto const selectedTextColour = nstd::make_optional_if<AnyColour>(selected, SystemColour::HighlightText);
+	bool const useHeadings = ctrl.features().test(ComboBoxFeature::Headings);
+	bool const useIcons = ctrl.features().test(ComboBoxFeature::Icons);
+	auto const heading = item.heading(); 
+	auto const icon = item.icon();
 
-	if (title)
-	{
-		args.Graphics.setFont(title->Font.value_or(ctrl.titleFont().value_or(ctrl.font())));
-		args.Graphics.textColour(selectedTextColour.value_or(title->Colour.value_or(ctrl.textColour())), transparent);
+	// [HEADING] Draw heading and calculate different rectangle for (multi-line) detail text
+	Rect rcDetailText = rcContent;
+	if (useHeadings) {
+		Invariant(heading.has_value());
+
+		// Prefer heading font + selected-text colour; fallback to heading-default then control-default
+		args.Graphics.setFont(heading->Font.value_or(ctrl.headingFont().value_or(ctrl.font())));
+		args.Graphics.textColour(selectedTextColour.value_or(heading->Colour.value_or(ctrl.textColour())), transparent);
 		
-		// [LARGE-ICON] Draw icon on left; position both title and detail text beside it
-		if (icon)
-		{
-			GuiMeasurement const border{SystemMetric::cyFixedFrame};
-			Size const iconSize = Size{rcItem.height(), rcItem.height()} - Size{border,border} * (!withinEdit ? 2.0f : 0.0f);
-			Point const iconPosition = rcItem.topLeft() + (!withinEdit ? Point{border,border} : Point::Zero);
-			args.Graphics.drawIcon(icon->handle(), iconPosition, iconSize);
-			Rect const rcTitle = rcItem + Point{3.0f*border + iconSize.Width,0};
-			auto const titleHeight = args.Graphics.drawText(title->Text, rcTitle, DrawTextFlags::Left);
-			rcDetail = rcTitle + Point{0, titleHeight};
-		}
-		// [TITLE-ONLY] Draw title; position detail text directly below
-		else {
-			auto const titleHeight = args.Graphics.drawText(title->Text, rcItem, DrawTextFlags::Left);
-			rcDetail = rcItem + Point{0, titleHeight};
+		// [HEADING-ICON] Draw icon on left; position both heading and detail text beside it
+		Rect rcHeadingText = rcContent;
+		if (useIcons) {
+			Size const iconSize = withinEdit ? SmallIcon : BigIcon;
+			Point const iconPosition = rcContent.topLeft();
+			if (icon)  // Invariant(icon.has_value());
+				args.Graphics.drawIcon(icon->handle(), iconPosition, iconSize);
+
+			// Offset heading/detail drawing rectangles
+			auto const horzOffset = iconSize.Width + LONG{3.f*GuiMeasurement{SystemMetric::cxFixedFrame}};
+			rcHeadingText.Left += horzOffset;
+			rcDetailText.Left += horzOffset;
 		}
 
-		// Currently selected item should skip the detail if it possesses a title
-		if (withinEdit) {
-			args.Graphics.restore();
+		// Draw heading (position directly above detail)
+		auto const titleHeight = args.Graphics.drawText(heading->Text, rcHeadingText, DrawTextFlags::Left);
+		
+		// [EDIT] Skip drawing the detail
+		if (withinEdit) 
 			return;
-		}
+
+		rcDetailText += Point{0, titleHeight};
 	}
 	
-	// [SMALL-ICON] Draw on left; position detail text to right
-	if (icon && !title) {
-		Size const iconSize{rcDetail.height(), rcDetail.height()};
-		args.Graphics.drawIcon(icon->handle(), rcItem.topLeft(), iconSize);
-		rcDetail += Rect{Percentage{115,unconstrained}*iconSize.Width, 0, 0, 0};
+	// [DETAIL-ICON] Draw on left; position detail text to right
+	if (useIcons && !useHeadings) {
+		Size const iconSize = SmallIcon;
+		if (icon)	//Invariant(icon.has_value());
+			args.Graphics.drawIcon(icon->handle(), rcContent.topLeft(), iconSize);
+		rcDetailText.Left += iconSize.Width + LONG{3.f*GuiMeasurement{SystemMetric::cxFixedFrame}};
 	}
 	
-	// [TEXT] Draw using custom font/colour, if any; otherwise use ComboBox colours
+	// Prefer detail font + selected-text colour; fallback to control-default
+	auto const detail = item.detail();
 	args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
 	args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(ctrl.textColour())), transparent);
-	args.Graphics.drawText(detail.Text, rcDetail, flagsDetail);
-	
-	args.Graphics.restore();
+
+	// [DETAIL] Detail can be multi-line when drawing an OD-variable ListBox item; but they are
+	//              vertically when OD-fixed or item is being drawn within the ComboBox/Edit
+	DrawTextFlags constexpr  static MultilineFlags = DrawTextFlags::Left|DrawTextFlags::WordBreak;
+	DrawTextFlags constexpr  static SinglelineFlags = DrawTextFlags::SimpleLeft;
+	bool const odVariable = ctrl.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable);
+	auto const flags = odVariable && !withinEdit ? MultilineFlags : SinglelineFlags;
+
+	args.Graphics.drawText(detail.Text, rcDetailText, flags);
 }
 
 void
@@ -254,40 +264,67 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"ComboBox #{} must be OwnerDraw", args.Ident};
 
-	// [EDIT] Measure the 'edit font', if any, provided prior to construction
+	bool const useHeadings = ctrl.features().test(ComboBoxFeature::Headings);
+	bool const useIcons = ctrl.features().test(ComboBoxFeature::Icons);
+
+	// [EDIT] Return greater of the edit-font height or icon height
 	if (args.Item.Index == MeasureItemEventArgs::EditControl) {
-		//! @remarks WM_MEASUREITEM is received _extremely_ early in the process of ComboBox construction
+		//! @remarks WM_MEASUREITEM is received extremely early in the process of ComboBox construction
 		//!           so it's not even feasible to rely on its window font because the control hasn't yet
 		//!           received its first WM_SETFONT
 		auto const fontHeight = ctrl.editFont().height();
-		args.Height = std::abs(fontHeight) + 2*GuiMeasurement{SystemMetric::cyFixedFrame};
+		args.Height = std::abs(fontHeight) + LONG{2.f*GuiMeasurement{SystemMetric::cyFixedFrame}};
+		if (useIcons)
+			args.Height = std::max<LONG>(args.Height, useHeadings ? 48 : 24);
 		return;
 	}
 
-	// [FIXED-HEIGHT] Return user-provided height, if any, otherwise default
+	// [FIXED-HEIGHT] Return greater of the detail height, icon height, or user-requested item height.
+	//                 Font measured is 
 	if (ctrl.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawFixed)) {
 		args.Graphics.setFont(ctrl.font());
 		args.Height = args.Graphics.measureText(L"Wjgy").Height;
+		if (useIcons)
+			args.Height = std::max<LONG>(args.Height, 24);
+		args.Height = std::max<LONG>(args.Height, ctrl.Items.height());
 	}
 	// [VARIABLE-HEIGHT] Calculate per-item height
 	else {
 		auto const& item = *reinterpret_cast<ComboBoxControl::ItemData*>(args.Item.UserData);
 		args.Height = 0;
-
-		// [TITLE] Measure title using custom font, if provided; otherwise ComboBox's heading-font
-		if (auto const title = item.Heading; title)
-		{
-			args.Graphics.setFont(title->Font.value_or(ctrl.titleFont().value_or(ctrl.font())));
-			args.Height += args.Graphics.measureText(title->Text).Height;
+		
+		// [HEADING] Prefer heading font; fallback to heading-default then control-default
+		if (useHeadings) {
+			auto const heading = item.Heading; 
+			Invariant(heading.has_value());
+			args.Graphics.setFont(heading->Font.value_or(ctrl.headingFont().value_or(ctrl.font())));
+			args.Height += args.Graphics.measureText(heading->Text).Height;
 		}
-		else
-			args.Height += int(2*GuiMeasurement{SystemMetric::cyFixedFrame});
 
-		// Calculate size required for (potentially multi-line) item text. Use custom font, if one
-		//  was provided; otherwise ComboBox's text-font
+		// Prefer detail font; fallback to control-default
 		auto const detail = item.Detail;
 		args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
-		args.Height += args.Graphics.measureText(detail.Text, Size{ctrl.droppedRect().width(), args.Height}).Height;
+		
+		// Its difficult to measure the dropped rectangle width because the scrollbar is optional :/
+		Rect rcDetailText = ctrl.droppedRect() - Border{SystemMetric::cxFixedFrame, 0} - Border{0,0,0,SystemMetric::cxHScroll};
+
+		// Detail may be offset by icon
+		if (useIcons)
+			rcDetailText.Left += (useHeadings ? 48 : 24) + LONG{3.f*GuiMeasurement{SystemMetric::cxFixedFrame}};
+
+		// Measure multiline height
+		args.Height += args.Graphics.measureText(detail.Text, Size{rcDetailText.width(),1}).Height;
+		
+		// [NO-HEADING] Add small gap between items
+		if (!useHeadings) 
+			args.Height += LONG{2.f*GuiMeasurement{SystemMetric::cyFixedFrame}};
+
+		// Return greater of combined height, icon height, or user-requested height
+		if (useIcons)
+			args.Height = std::max<LONG>(args.Height, 24);
+
+		//! @bug  Cannot set user-requested height at this moment
+		//args.Height = std::max<LONG>(args.Height, item.height());
 	}
 
 	args.Graphics.restore();

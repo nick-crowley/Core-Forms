@@ -53,7 +53,7 @@ protected:
 		//  specified again after creation of the ComboBox. This can be changed at runtime but
 		//  the control will never resize to fit the new font.
 		this->WideComboBox.font(this->TitleFont);
-		this->WideComboBox.titleFont(this->TitleFont);
+		this->WideComboBox.headingFont(this->TitleFont);
 
 		// Set custom styles
 		using enum forms::ComboBoxFeature;
