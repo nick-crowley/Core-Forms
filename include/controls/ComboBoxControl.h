@@ -282,17 +282,17 @@ namespace core::forms
 				using type = Iterator<ValueType>;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
-				ComboBoxControl& Owner;
+				ComboBoxControl* Owner;
 				size_t			 Index;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
 				Iterator(ComboBoxControl& owner, unsigned initialIdx) 
-				  : Owner{owner}, 
+				  : Owner{&owner}, 
 				    Index{initialIdx}
 				{}
 
 				Iterator(ComboBoxControl& owner) noexcept
-				  : Owner{owner}, 
+				  : Owner{&owner}, 
 				    Index{(size_t)ComboBox_GetCount(owner.handle())}
 				{}
 				
@@ -313,17 +313,28 @@ namespace core::forms
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
+			public:
+				size_t
+				index() const {
+					return this->Index;
+				}
+
+				implicit
+				operator size_t() const {
+					return this->Index;
+				}
+
 			private:
 				template <nstd::AnyOf<Item,Item const> Other>
 				bool 
 				equal(const Iterator<Other>& r) const {
-					return this->Owner.handle() == r.Owner.handle()
+					return this->Owner->handle() == r.Owner->handle()
 						&& this->Index == r.Index;
 				}
 
 				ValueType
 				dereference() const { 
-					return ValueType{this->Owner, this->Index};
+					return ValueType{*this->Owner, this->Index};
 				}
 
 				ptrdiff_t
