@@ -408,19 +408,15 @@ LookNFeelProvider::draw(PictureControl& ctrl, OwnerDrawEventArgs const& args)
 		throw runtime_error{"Picture #{} must be OwnerDraw", args.Ident};
 	
 	if (auto bitmap = ctrl.image(); bitmap) {
-		if (auto* dc = ::CreateCompatibleDC(args.Graphics.handle()); !dc)
-			win::LastError{}.throwAlways("Failed to create compatible DC");
-		else {
-			DeviceContext src{SharedDeviceContext{dc, destroy}};
-			src.setBitmap(bitmap->handle());
+		DeviceContext memory = DeviceContext::create(args.Graphics.handle());
+		memory.setBitmap(bitmap->handle());
 
-			Rect rcDest = args.Item.Area;
-			if (ctrl.style<StaticStyle>().test(StaticStyle::RealSizeImage)) 
-				rcDest = Rect{args.Item.Area.topLeft(), bitmap->size()};	
-			args.Graphics.copyBitmap(src.handle(), bitmap->depth(), bitmap->rect(), rcDest);
+		Rect rcDest = args.Item.Area;
+		if (ctrl.style<StaticStyle>().test(StaticStyle::RealSizeImage)) 
+			rcDest = Rect{args.Item.Area.topLeft(), bitmap->size()};	
+		args.Graphics.copyBitmap(memory.handle(), bitmap->depth(), bitmap->rect(), rcDest);
 
-			src.restore();
-		}
+		memory.restore();
 	}
 	else if (auto icon = ctrl.icon(); icon) {
 		Rect rcDest = args.Item.Area;
