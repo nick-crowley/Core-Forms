@@ -313,7 +313,7 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 
 		// Detail may be offset by icon
 		if (useIcons)
-			rcDetailText.Left += (useHeadings ? BigIcon.Height : SmallIcon.Height) + 3*Measurement{SystemMetric::cxFixedFrame};
+			rcDetailText.Left += (useHeadings ? BigIcon : SmallIcon).Width + 3*Measurement{SystemMetric::cxFixedFrame};
 
 		// Measure multiline height
 		args.Height += args.Graphics.measureText(detail.Text, Size{rcDetailText.width(),1}).Height;
@@ -324,7 +324,7 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 
 		// Return greater of combined height or icon height
 		if (useIcons)
-			args.Height = std::max<LONG>(args.Height, SmallIcon.Height);
+			args.Height = std::max<LONG>(args.Height, (useHeadings ? BigIcon : SmallIcon).Height);
 	}
 
 	args.Graphics.restore();
