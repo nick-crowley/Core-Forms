@@ -56,7 +56,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		explicit
-		UnmanagedWindow(::HWND existingWindow) 
+		UnmanagedWindow(::HWND existingWindow) noexcept
 			: Handle{existingWindow}
 		{}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -71,7 +71,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
-		attach(::HWND wnd) {
+		attach(::HWND wnd) noexcept {
 			this->Handle = wnd;
 		}
 
@@ -83,14 +83,14 @@ namespace core::forms
 		}
 	
 		Rect
-		clientRect() const {
+		clientRect() const noexcept {
 			Rect rc;
 			::GetClientRect(this->handle(), rc);
 			return rc;
 		}
 	
 		Rect
-		clientRect(::HWND alternateCoordinateSystem) const {
+		clientRect(::HWND alternateCoordinateSystem) const noexcept {
 			Rect rc = this->clientRect();
 			auto* pointsArray = reinterpret_cast<::POINT*>(static_cast<::RECT*>(rc));
 			::MapWindowPoints(this->handle(), alternateCoordinateSystem, pointsArray, 2);
@@ -98,63 +98,63 @@ namespace core::forms
 		}
 		
 		void
-		detach() {
+		detach() noexcept {
 			this->Handle = nullptr;
 		}
 		
 		bool
-		enabled() const {
+		enabled() const noexcept {
 			return ::IsWindowEnabled(this->handle()) != FALSE;
 		}
 	
 		bool
-		exists() const {
+		exists() const noexcept {
 			return this->handle() && ::IsWindow(this->handle()) != FALSE;
 		}
 
 		template <nstd::Enumeration Style = ExWindowStyle>
 		nstd::bitset<Style>
-		exStyle() const {
+		exStyle() const noexcept {
 			return static_cast<Style>(::GetWindowLongW(this->handle(),GWL_EXSTYLE));
 		}
 	
 		uint16_t
-		ident() const {
+		ident() const noexcept {
 			return static_cast<uint16_t>(::GetDlgCtrlID(this->handle()));
 		}
 	
 		WindowInfo
-		info() const {
+		info() const noexcept {
 			::WINDOWINFO info{sizeof(info)};
 			::GetWindowInfo(this->handle(), &info);
 			return WindowInfo{info};
 		}
 
 		::HWND 
-		handle() const {
+		handle() const noexcept {
 			return this->Handle;
 		}
 		
 		::HWND
-		parent() const {
+		parent() const noexcept {
 			return ::GetParent(this->handle());
 		}
 		
 		template <unsigned MessageId>
 		::LRESULT
-		post(std::optional<::WPARAM> first = nullopt, std::optional<::LPARAM> second = nullopt) const {
+		post(std::optional<::WPARAM> first = nullopt, std::optional<::LPARAM> second = nullopt) const noexcept {
 			return ::PostMessageW(this->handle(), MessageId, first.value_or(0), second.value_or(0));
 		}
 		
 		template <unsigned MessageId>
 		::LRESULT
-		send(std::optional<::WPARAM> first = nullopt, std::optional<::LPARAM> second = nullopt) const {
+		send(std::optional<::WPARAM> first = nullopt, std::optional<::LPARAM> second = nullopt) const noexcept {
 			return ::SendMessageW(this->handle(), MessageId, first.value_or(0), second.value_or(0));
 		}
 
 		template <nstd::Enumeration Style = WindowStyle>
 		nstd::bitset<Style>
-		style() const {
+		style() const noexcept {
 			return static_cast<Style>(::GetWindowLongW(this->handle(),GWL_STYLE));
 		}
 
@@ -178,14 +178,14 @@ namespace core::forms
 		}
 		
 		Rect
-		wndRect() const {
+		wndRect() const noexcept {
 			Rect rc;
 			::GetWindowRect(this->handle(), rc);
 			return rc;
 		}
 	
 		Rect
-		wndRect(::HWND alternateCoordinateSystem) const {
+		wndRect(::HWND alternateCoordinateSystem) const noexcept {
 			Rect rc = this->wndRect();
 			::POINT* pointsArray = reinterpret_cast<POINT*>(static_cast<::RECT*>(rc));
 			::MapWindowPoints(nullptr, alternateCoordinateSystem, pointsArray, 2);
@@ -193,7 +193,7 @@ namespace core::forms
 		}
 	
 		std::optional<Region>
-		wndRgn() const {
+		wndRgn() const noexcept {
 			Region rgn;
 			if (!::GetWindowRgn(this->handle(), rgn))
 				return nullopt;
@@ -203,82 +203,82 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void 
-		destroy() {
+		destroy() noexcept {
 			if (::DestroyWindow(this->handle()))
 				this->Handle = nullptr;
 		}
 	
 		void
-		enable(bool enabled) const {
+		enable(bool enabled) const noexcept {
 			::EnableWindow(this->handle(), win::Boolean{enabled});
 		}
 	
 		void
-		font(::HFONT newFont, bool redraw = false) {
+		font(::HFONT newFont, bool redraw = false) noexcept {
 			SetWindowFont(this->handle(), newFont, win::Boolean{redraw});
 		}
 	
 		void 
-		hide() {
+		hide() noexcept {
 			::ShowWindow(this->handle(), SW_HIDE);
 		}
 		
 		void
-		invalidate(bool redraw = false) {
+		invalidate(bool redraw = false) noexcept {
 			::InvalidateRect(this->handle(), nullptr, win::Boolean{redraw});
 		}
 
 		void
-		invalidate(Rect rc, bool redraw = false) {
+		invalidate(Rect rc, bool redraw = false) noexcept {
 			::InvalidateRect(this->handle(), rc, win::Boolean{redraw});
 		}
 
 		void
-		order(::HWND after) {
+		order(::HWND after) noexcept {
 			::SetWindowPos(this->handle(), after, -1, -1, -1, -1, 
 				SWP_NOMOVE|SWP_NOSIZE|SWP_NOACTIVATE);
 		}
 
 		void 
-		show() {
+		show() noexcept {
 			::ShowWindow(this->handle(), SW_SHOW);
 		}
 		
 		void 
-		show(signed flags) {
+		show(signed flags) noexcept {
 			::ShowWindow(this->handle(), flags);
 		}
 		
 		void 
-		move(Point pt) {
+		move(Point pt) noexcept {
 			::SetWindowPos(this->handle(), nullptr, pt.X, pt.Y, -1, -1, 
 				SWP_NOSIZE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOACTIVATE);
 		}
 	
 		void 
-		reposition(Rect wnd) {
+		reposition(Rect wnd) noexcept {
 			::SetWindowPos(this->handle(), nullptr, wnd.Left, wnd.Top, wnd.width(), wnd.height(),
 				SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOACTIVATE);
 		}
 	
 		void 
-		resize(Size sz) {
+		resize(Size sz) noexcept {
 			::SetWindowPos(this->handle(), nullptr, -1, -1, sz.Width, sz.Height,
 				SWP_NOMOVE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOACTIVATE);
 		}
 	
 		void
-		text(std::wstring_view s)  {
+		text(std::wstring_view s)  noexcept {
 			::SetWindowTextW(this->handle(), s.data());
 		}
 
 		void
-		update() {
+		update() noexcept {
 			::UpdateWindow(this->handle());
 		}
 		
 		void
-		wndRgn(Region rgn) const {
+		wndRgn(Region rgn) const noexcept {
 			::SetWindowRgn(this->handle(), rgn.detach(), win::Boolean{true});
 		}
 	};

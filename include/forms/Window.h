@@ -940,7 +940,7 @@ namespace core::forms
 		}
 
 		WindowRole
-		virtual role() const {
+		virtual role() const noexcept {
 			// Documentation states MSAA considers this a reasonable value for 'undefined'
 			return WindowRole::Client;
 		}

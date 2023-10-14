@@ -272,13 +272,13 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Rect
-		mapRect(Rect rc) const {
+		mapRect(Rect rc) const noexcept {
 			::MapDialogRect(this->handle(), rc);
 			return rc;
 		}
 	
 		WindowRole
-		virtual role() const override {
+		virtual role() const noexcept override {
 			return WindowRole::Dialog;
 		}
 
@@ -332,7 +332,7 @@ namespace core::forms
 	
 	protected:
 		void 
-		endModal(uint16_t const id)
+		endModal(uint16_t const id) noexcept 
 		{
 			::EndDialog(this->handle(), id);
 		}

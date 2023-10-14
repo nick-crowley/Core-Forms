@@ -67,7 +67,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		explicit
-		WindowInfo(::WINDOWINFO const& wi)
+		WindowInfo(::WINDOWINFO const& wi) noexcept
 		  : Border{wi.cxWindowBorders, wi.cyWindowBorders},
 			Caption{static_cast<WindowCaptionState>(wi.dwWindowStatus)},
 			Client{wi.rcClient},
