@@ -297,6 +297,7 @@ namespace core::forms
 				    Index{initialIdx}
 				{}
 
+				explicit
 				Iterator(ComboBoxControl& owner) noexcept
 				  : Owner{&owner}, 
 				    Index{ComboBox_GetCount(owner.handle())}
@@ -304,6 +305,7 @@ namespace core::forms
 				
 				template <nstd::AnyOf<Item const> Other>
 					requires std::same_as<ValueType,Item>
+				implicit
 				Iterator(Iterator<Other> const& r) 
 				  : Owner{r.Owner},
 				    Index{r.Index}
