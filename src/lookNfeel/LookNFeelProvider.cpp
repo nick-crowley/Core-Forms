@@ -318,12 +318,9 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 		if (!useHeadings) 
 			args.Height += 2*Measurement{SystemMetric::cyFixedFrame};
 
-		// Return greater of combined height, icon height, or user-requested height
+		// Return greater of combined height or icon height
 		if (useIcons)
 			args.Height = std::max<LONG>(args.Height, 24);
-
-		//! @bug  Cannot set user-requested height at this moment
-		//args.Height = std::max<LONG>(args.Height, item.height());
 	}
 
 	args.Graphics.restore();
