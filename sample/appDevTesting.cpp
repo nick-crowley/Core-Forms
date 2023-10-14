@@ -55,6 +55,12 @@ protected:
 		this->WideComboBox.font(this->TitleFont);
 		this->WideComboBox.titleFont(this->TitleFont);
 
+		// Set custom styles
+		using enum forms::ComboBoxFeature;
+		this->WideComboBox.features(Headings|Icons);
+		this->NarrowComboBox.features(Icons);
+
+		// Populate with example items
 		forms::Icon const sampleIcon = forms::Icon::load(win::ProcessModule, win::ResourceId{IDI_ICON1});
 		struct ExampleData { gsl::cwzstring title; gsl::cwzstring detail; };
 		for (auto const [title,detail] : std::initializer_list<ExampleData>{

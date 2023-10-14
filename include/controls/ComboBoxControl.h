@@ -40,7 +40,19 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+namespace core::forms
+{
+	enum class ComboBoxFeature : uint32_t { 
+		None, 
+		Headings = 0x01,
+		Icons = 0x04,
+		BigIcons = 0x02,
+	};
+}
+namespace core::meta 
+{
+	metadata bool Settings<bitwise_enum, forms::ComboBoxFeature> = true;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
@@ -453,6 +465,7 @@ namespace core::forms
 			       std::wstring_view   heading, 
 			       std::optional<Icon> icon = nullopt)
 			{
+				Invariant(this->Owner.features().test(ComboBoxFeature::Headings));
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
 				this->insert(idx, RichText{text}, RichText{heading}, icon);
 			}
@@ -463,6 +476,7 @@ namespace core::forms
 			       RichText                   heading,
 			       std::optional<forms::Icon> icon = nullopt) 
 			{
+				Invariant(this->Owner.features().test(ComboBoxFeature::Headings));
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
 				auto data = std::make_unique<ItemData>(text, heading, icon);
 				
@@ -495,6 +509,7 @@ namespace core::forms
 			          std::wstring_view   heading, 
 			          std::optional<Icon> icon = nullopt) 
 			{
+				Invariant(this->Owner.features().test(ComboBoxFeature::Headings));
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
 				this->insert(static_cast<size_t>(-1), text, heading, icon);
 			}
@@ -504,6 +519,7 @@ namespace core::forms
 			          RichText                   heading,
 			          std::optional<forms::Icon> icon = nullopt) 
 			{
+				Invariant(this->Owner.features().test(ComboBoxFeature::Headings));
 				Invariant(this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
 				this->insert(static_cast<size_t>(-1), text, heading, icon);
 			}
@@ -577,6 +593,11 @@ namespace core::forms
 			return this->EditFont.value_or(this->font());
 		}
 		
+		nstd::bitset<ComboBoxFeature>
+		features() const {
+			return base::features<ComboBoxFeature>();
+		}
+	
 		bool
 		hasStrings() const {
 			return this->style<ComboBoxStyle>().test(ComboBoxStyle::HasStrings);
@@ -612,6 +633,12 @@ namespace core::forms
 			this->EditFont = newFont;
 		}
 		
+		void
+		features(nstd::bitset<ComboBoxFeature> newStyle) {
+			using enum ComboBoxFeature;
+			base::features(newStyle);
+		}
+	
 		Response 
 		virtual onCommand(CommandEventArgs args) override
 		{
