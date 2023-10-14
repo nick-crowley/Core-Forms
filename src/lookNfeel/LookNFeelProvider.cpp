@@ -262,6 +262,9 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"ComboBox #{} must be OwnerDraw", args.Ident};
+	
+	Size constexpr  static BigIcon{48,48};
+	Size constexpr  static SmallIcon{24,24};
 
 	bool const useHeadings = ctrl.features().test(ComboBoxFeature::Headings);
 	bool const useIcons = ctrl.features().test(ComboBoxFeature::Icons);
@@ -274,7 +277,7 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 		auto const fontHeight = ctrl.editFont().height();
 		args.Height = std::abs(fontHeight) + 2*Measurement{SystemMetric::cyFixedFrame};
 		if (useIcons)
-			args.Height = std::max<LONG>(args.Height, useHeadings ? 48 : 24);
+			args.Height = std::max<LONG>(args.Height, useHeadings ? BigIcon.Height : SmallIcon.Height);
 		return;
 	}
 
@@ -284,7 +287,7 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 		args.Graphics.setFont(ctrl.font());
 		args.Height = args.Graphics.measureText(L"Wjgy").Height;
 		if (useIcons)
-			args.Height = std::max<LONG>(args.Height, 24);
+			args.Height = std::max<LONG>(args.Height, SmallIcon.Height);
 		args.Height = std::max<LONG>(args.Height, ctrl.Items.height());
 	}
 	// [VARIABLE-HEIGHT] Calculate per-item height
@@ -309,7 +312,7 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 
 		// Detail may be offset by icon
 		if (useIcons)
-			rcDetailText.Left += (useHeadings ? 48 : 24) + 3*Measurement{SystemMetric::cxFixedFrame};
+			rcDetailText.Left += (useHeadings ? BigIcon.Height : SmallIcon.Height) + 3*Measurement{SystemMetric::cxFixedFrame};
 
 		// Measure multiline height
 		args.Height += args.Graphics.measureText(detail.Text, Size{rcDetailText.width(),1}).Height;
@@ -320,7 +323,7 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 
 		// Return greater of combined height or icon height
 		if (useIcons)
-			args.Height = std::max<LONG>(args.Height, 24);
+			args.Height = std::max<LONG>(args.Height, SmallIcon.Height);
 	}
 
 	args.Graphics.restore();
