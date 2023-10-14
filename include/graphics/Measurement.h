@@ -109,7 +109,7 @@ namespace core::forms
 	std::string
 	inline to_string(Measurement const& value)
 	{
-		return std::to_string(static_cast<int>(value));
+		return std::to_string(static_cast<Measurement::value_type>(value));
 	}
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
