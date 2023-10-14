@@ -699,7 +699,6 @@ namespace core::forms
 		
 		void
 		features(nstd::bitset<ComboBoxFeature> newStyle) noexcept {
-			using enum ComboBoxFeature;
 			base::features(newStyle);
 		}
 	
