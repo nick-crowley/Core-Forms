@@ -272,10 +272,14 @@ namespace core::forms
 		class ItemCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			class Iterator : public boost::iterator_facade<Iterator, Item, boost::random_access_traversal_tag>{
+			template <nstd::AnyOf<Item,Item const> ValueType>
+			class Iterator : public boost::iterator_facade<Iterator<ValueType>, ValueType, boost::random_access_traversal_tag>
+			{
+				template <nstd::AnyOf<Item,Item const>>
+				friend class Iterator;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
-				using type = Iterator;
+				using type = Iterator<ValueType>;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
 				ComboBoxControl& Owner;
@@ -291,6 +295,13 @@ namespace core::forms
 				  : Owner{owner}, 
 				    Index{(size_t)ComboBox_GetCount(owner.handle())}
 				{}
+				
+				template <nstd::AnyOf<Item const> Other>
+					requires std::same_as<ValueType,Item>
+				Iterator(Iterator<Other> const& r) 
+				  : Owner{r.Owner},
+				    Index{r.Index}
+				{}
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
 				satisfies(Iterator,
@@ -303,22 +314,22 @@ namespace core::forms
 
 				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
+				template <nstd::AnyOf<Item,Item const> Other>
 				bool 
-				equal(const type& r) const {
+				equal(const Iterator<Other>& r) const {
 					return this->Owner.handle() == r.Owner.handle()
 						&& this->Index == r.Index;
 				}
 
-				Item
+				ValueType
 				dereference() const { 
-					return Item{this->Owner, this->Index};
+					return ValueType{this->Owner, this->Index};
 				}
 
 				ptrdiff_t
 				distance_to(const type& r) const {
 					return static_cast<ptrdiff_t>(r.Index) - static_cast<ptrdiff_t>(this->Index);
 				}
-
 				// o~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
 				void 
@@ -336,6 +347,14 @@ namespace core::forms
 					++this->Index;
 				}
 			};
+			
+			using iterator = Iterator<Item>;
+			using const_iterator = Iterator<Item const>;
+			using reference = Item&;
+			using const_reference = Item const&;
+			using value_type = Item;
+			using size_type = std::size_t;
+			using difference_type = std::ptrdiff_t;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			ComboBoxControl& Owner;
@@ -350,14 +369,14 @@ namespace core::forms
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			Iterator
+			const_iterator
 			begin() const {
-				return Iterator{this->Owner, 0};
+				return const_iterator{this->Owner, 0};
 			}
 		
-			Iterator
+			const_iterator
 			end() const {
-				return Iterator{this->Owner};
+				return const_iterator{this->Owner};
 			}
 
 			std::optional<Item>
@@ -399,9 +418,18 @@ namespace core::forms
 			operator[](size_t idx) const {
 				return Item(this->Owner, idx);
 			}
-
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
+			iterator
+			begin() {
+				return iterator{this->Owner, 0};
+			}
+		
+			iterator
+			end() {
+				return iterator{this->Owner};
+			}
+
 			void
 			height(uint32_t allItems) {
 				Invariant(!this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
