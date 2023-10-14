@@ -666,7 +666,12 @@ namespace core::forms
 		hasStrings() const noexcept {
 			return this->style<ComboBoxStyle>().test(ComboBoxStyle::HasStrings);
 		}
-
+		
+		std::optional<forms::Font>
+		headingFont() const noexcept {
+			return this->TitleFont;
+		}
+		
 		ComboBoxInfo
 		info() const noexcept {
 			::COMBOBOXINFO info{sizeof ::COMBOBOXINFO}; 
@@ -683,12 +688,6 @@ namespace core::forms
 		virtual role() const noexcept override {
 			return WindowRole::ComboBox;
 		}
-		
-		std::optional<forms::Font>
-		headingFont() const noexcept {
-			return this->TitleFont;
-		}
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
@@ -702,6 +701,11 @@ namespace core::forms
 			base::features(newStyle);
 		}
 	
+		void
+		headingFont(const forms::Font& newFont) {
+			this->TitleFont = newFont;
+		}
+		
 		Response 
 		virtual onCommand(CommandEventArgs args) override
 		{
@@ -754,11 +758,6 @@ namespace core::forms
 			}
 
 			return Unhandled;
-		}
-		
-		void
-		headingFont(const forms::Font& newFont) {
-			this->TitleFont = newFont;
 		}
 		
 		ComboBoxWindowClass::const_reference
