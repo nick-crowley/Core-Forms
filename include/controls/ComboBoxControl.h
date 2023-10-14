@@ -609,7 +609,7 @@ namespace core::forms
 		
 	private:
 		std::optional<forms::Font>   EditFont;
-		std::optional<forms::Font>   TitleFont;
+		std::optional<forms::Font>   HeadingFont;
 
 		//! @bug  When 'HasStrings' and 'OwnerDraw' are both active and items are added, supplementary
 		//!       item text should be provided for screen-readers; however, the API only permits item
@@ -669,7 +669,7 @@ namespace core::forms
 		
 		std::optional<forms::Font>
 		headingFont() const noexcept {
-			return this->TitleFont;
+			return this->HeadingFont;
 		}
 		
 		ComboBoxInfo
@@ -703,7 +703,7 @@ namespace core::forms
 	
 		void
 		headingFont(const forms::Font& newFont) {
-			this->TitleFont = newFont;
+			this->HeadingFont = newFont;
 		}
 		
 		Response 
