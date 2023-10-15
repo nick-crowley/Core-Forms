@@ -26,7 +26,8 @@ private:
 	forms::ButtonControl OkBtn = IDOK;
 	forms::ComboBoxControl WideComboBox = IDC_COMBO1;
 	forms::ComboBoxControl NarrowComboBox = IDC_COMBO2;
-	forms::ListBoxControl ListBox = IDC_LIST1;
+	forms::ListBoxControl ListBox = IDC_LISTBOX;
+	forms::ListViewControl ListView = IDC_LISTVIEW;
 	forms::Font  DetailFont = forms::FontBuilder{}.withName(L"Consolas")
 	                                              .withSize(11_pt);
 	forms::Font  HeadingFont = forms::FontBuilder{}.withName(L"Consolas")
@@ -38,7 +39,7 @@ public:
 	DevTesting() 
 	  : base{
 			win::ResourceId{IDD_DEVTEST}, 
-			EarlyBoundControlCollection{&this->OkBtn, &this->NarrowComboBox, &this->WideComboBox, &this->ListBox}
+			EarlyBoundControlCollection{&this->OkBtn, &this->NarrowComboBox, &this->WideComboBox, &this->ListBox, &this->ListView}
 		}
 	{
 		// Attach listeners
@@ -104,6 +105,13 @@ protected:
 		this->NarrowComboBox.Items.select(this->NarrowComboBox.Items.cbegin());
 		this->WideComboBox.Items.select(this->WideComboBox.Items.cbegin());
 		
+		// Populate ListView
+		this->ListView.exStyle(forms::ListViewExStyle::FullRowSelect, forms::ListViewExStyle::FullRowSelect);
+		this->ListView.font(forms::StockFont::DefaultGui);
+		this->ListView.Columns.push_back(L"First column", 150);
+		this->ListView.Columns.push_back(L"Second column", 150);
+		this->ListView.Items.push_back(L"First item");
+		this->ListView.Items[0][1].text(L"First subitem");
 		
 		// Allow window to receive dropped files
 		this->acceptFiles();
