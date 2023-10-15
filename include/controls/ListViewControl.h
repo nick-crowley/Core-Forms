@@ -939,12 +939,13 @@ namespace core::forms
 		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	protected:
+	public:
 		void
 		features(nstd::bitset<ListViewFeature> newStyle) noexcept {
 			base::features(newStyle);
 		}
 	
+	protected:
 		gsl::czstring
 		virtual notificationName(::UINT notification) override {
 			return ListViewControl::identifyNotification(notification);
