@@ -36,15 +36,12 @@ ModernLookNFeel::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args)
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"Button #{} must be OwnerDraw", args.Ident};
 	
-	// Erase background
-	args.Graphics.setBrush(ctrl.backColour());
-	args.Graphics.fillRect(args.Item.Area);
-
 	// Draw background
 	auto const state = ctrl.state();
 	auto const pushed = state.test(ButtonState::Pushed);
 	auto const backcolour = !pushed ? this->button() : this->tertiary();
-	args.Graphics.fillRect(args.Item.Area, Brush{backcolour}.handle());
+	args.Graphics.setBrush(backcolour);
+	args.Graphics.fillRect(args.Item.Area);
 
 	// Draw text
 	auto const enabled = ctrl.enabled();
