@@ -235,4 +235,21 @@
 	<Type Name="core::forms::ListBoxControl::ItemCollection">
 		<DisplayString>{{ Virtual collection }}</DisplayString>
 	</Type>
+
+  <Type Name="core::forms::ListViewControl::ColumnCollection">
+    <DisplayString>{{ Virtual collection }}</DisplayString>
+  </Type>
+
+  <Type Name="core::forms::ListViewControl::ColumnCollection::Iterator&lt;*&gt;">
+    <DisplayString>{{ at Column #{Index} }}</DisplayString>
+  </Type>
+
+  <Type Name="core::forms::ListViewControl::ItemCollection">
+    <DisplayString>{{ Virtual collection }}</DisplayString>
+  </Type>
+
+  <Type Name="core::forms::ListViewControl::ItemCollection::Iterator&lt;*&gt;">
+    <DisplayString>{{ at Item #{Index} }}</DisplayString>
+  </Type>
+
 </AutoVisualizer>
