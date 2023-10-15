@@ -24,9 +24,10 @@ private:
 	forms::ListBoxControl ListBox = IDC_LIST1;
 	forms::Font  DetailFont = forms::FontBuilder{}.withName(L"Consolas")
 	                                              .withSize(11_pt);
-	forms::Font  TitleFont = forms::FontBuilder{}.withName(L"Consolas")
-	                                             .withSize(14_pt)
-	                                             .withWeight(forms::FontWeight::Bold);
+	forms::Font  HeadingFont = forms::FontBuilder{}.withName(L"Consolas")
+	                                               .withSize(12_pt)
+	                                               .withWeight(forms::FontWeight::Bold);
+	forms::Icon  SampleIcon = forms::Icon::load(win::ProcessModule, win::ResourceId{IDI_ICON1});
 
 public:
 	DevTesting() 
@@ -35,33 +36,35 @@ public:
 			EarlyBoundControlCollection{&this->OkBtn, &this->NarrowComboBox, &this->WideComboBox, &this->ListBox}
 		}
 	{
+		// Attach listeners
 		this->OkBtn.Clicked += {*this, &DevTesting::Button_Clicked};
 		
-		// A design flaw means custom fonts for currently selected ComboBox item must be
-		//  specified prior to creation of the ComboBox and, once set, cannot be changed.
-		this->WideComboBox.editFont(this->TitleFont);
+		// A design flaw means custom fonts for ComboBox itself (the currently selected item) must be
+		//  specified prior to creation and, once set, cannot be changed.
+		this->WideComboBox.editFont(this->HeadingFont);
 	}
 
 protected:
 	forms::Response 
 	virtual onInitDialog(forms::InitDialogEventArgs args) override {
-		
-		for (int idx = 1; idx <= 8; ++idx) 
-			this->ListBox.Items.push_back(std::format(L"Item #{}", idx));
+		// Populate list
+		this->ListBox.features(forms::ListBoxFeature::Icons);
+		for (int idx = 1; idx <= 8; ++idx) {
+			auto const ws = std::format(L"This is an item #{}", idx);
+			this->ListBox.Items.push_back(forms::RichText{ws, forms::Colour::DarkBlue}, this->SampleIcon);
+		}
 		
 		// Separate design flaw means custom font for currently selected ComboBox item must be
 		//  specified again after creation of the ComboBox. This can be changed at runtime but
 		//  the control will never resize to fit the new font.
-		this->WideComboBox.font(this->TitleFont);
-		this->WideComboBox.headingFont(this->TitleFont);
+		this->WideComboBox.font(this->HeadingFont);
 
 		// Set custom styles
 		using enum forms::ComboBoxFeature;
 		this->WideComboBox.features(Headings|Icons);
-		this->NarrowComboBox.features(Icons);
+		this->WideComboBox.headingFont(this->HeadingFont);
 
 		// Populate with example items
-		forms::Icon const sampleIcon = forms::Icon::load(win::ProcessModule, win::ResourceId{IDI_ICON1});
 		struct ExampleData { gsl::cwzstring title; gsl::cwzstring detail; };
 		for (auto const [title,detail] : std::initializer_list<ExampleData>{
 			{L"Rain in Spain",       L"The rain in spain falls mainly on the plane"},
@@ -71,14 +74,24 @@ protected:
 			this->WideComboBox.Items.push_back(
 				forms::RichText{detail, forms::Colour::Grey, this->DetailFont},
 				forms::RichText{title},
-				sampleIcon
+				this->SampleIcon
 			);
 		}
+		
+		// Set custom styles
+		this->NarrowComboBox.features(Icons);
 
-		this->NarrowComboBox.Items.push_back(forms::RichText{L"Rain in Spain", forms::Colour::DarkBlue, forms::StockFont::SystemFixed}, sampleIcon);
-		this->NarrowComboBox.Items.push_back(L"Quick Brown Fox");
-		this->NarrowComboBox.Items.push_back(forms::RichText{L"Very Earthly Mother", forms::Colour::Red, forms::StockFont::AnsiFixed}, sampleIcon);
+		// Populate with example items
+		this->NarrowComboBox.Items.push_back(forms::RichText{L"Rain in Spain", forms::Colour::DarkBlue, forms::StockFont::SystemFixed}, this->SampleIcon);
+		this->NarrowComboBox.Items.push_back(L"The quick brown fox jumped over the lazy dog");
+		this->NarrowComboBox.Items.push_back(forms::RichText{L"Very Earthly Mother", forms::Colour::Red, forms::StockFont::AnsiFixed}, this->SampleIcon);
+		this->NarrowComboBox.Items.push_back(forms::RichText{L"The quick brown fox jumped over the lazy dog", forms::Colour::Forest, forms::StockFont::SystemFixed}, this->SampleIcon);
 
+		// Select first item of each comboBox
+		this->NarrowComboBox.Items.select(this->NarrowComboBox.Items.cbegin());
+		this->WideComboBox.Items.select(this->WideComboBox.Items.cbegin());
+		
+		// Tell system to set the initial focus
 		return args.SetInitialFocus;
 	}
 	
