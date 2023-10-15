@@ -6,6 +6,10 @@
 #include "lookNFeel/DarkRetroLookNFeel.h"
 #include "lookNFeel/DarkModernLookNFeel.h"
 #include "Resource.h"
+#define ENABLE_VISUAL_STYLES_v6
+#ifdef ENABLE_VISUAL_STYLES_v6
+#	pragma comment(linker,R"("/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'")")
+#endif
 using namespace core;
 using namespace forms::literals;
 
