@@ -50,7 +50,42 @@ namespace core::forms
 	class DialogTemplate 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		class ItemCollection : private std::vector<DialogItemTemplate>
+		{
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			using base = std::vector<DialogItemTemplate>;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			satisfies(ItemCollection, 
+				IsRegular,
+				NotSortable
+			);
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			template <typename Self>
+			nstd::mirror_cv_ref_t<Self,DialogItemTemplate>&
+			operator[](this Self&& self, uint16_t id) {
+				auto const  matchById = [id](DialogItemTemplate const& item) { return item.Ident == id; };
+				if (auto pos = ranges::find_if(self, matchById); pos == self.end())
+					throw runtime_error{"No control with id=#{}", id};
+				else
+					return *pos;
+			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			using base::begin;
+			using base::end;
+			using base::cbegin;
+			using base::cend;
+			using base::size;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			using base::push_back;
+		};
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		std::optional<uint32_t>         HelpId;
@@ -66,7 +101,7 @@ namespace core::forms
 		std::optional<uint16_t>         Weight;
 		std::optional<uint8_t>          Italic;
 		std::optional<uint8_t>          CharSet;
-		std::vector<DialogItemTemplate> Controls;
+		ItemCollection                  Controls;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		satisfies(DialogTemplate,
