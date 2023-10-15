@@ -491,6 +491,92 @@ namespace core::forms
 			}
 		};
 		
+		//! @brief	Facade for a sub-item at a fixed index
+		class SubItem {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			ListViewControl*  Owner;
+			int32_t           ItemIndex;
+			int32_t           Index;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			SubItem(ListViewControl& owner, int32_t item, int32_t idx) noexcept
+			  : Owner{&owner},
+			    ItemIndex{item},
+			    Index{idx}
+			{}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			satisfies(SubItem, 
+				NotDefaultConstructible,
+				IsCopyable, 
+				IsMovable,
+				NotEqualityComparable,
+				NotSortable
+			);
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			Rect
+			area() const noexcept {
+				Rect r;
+				ListView_GetSubItemRect(this->Owner->handle(), this->ItemIndex, this->Index, LVIR_BOUNDS, static_cast<::RECT*>(r));
+				return r;
+			}
+			
+			int32_t
+			index() const noexcept {
+				return this->ItemIndex;
+			}
+			
+			std::wstring
+			text(size_t maxLength = 256) const {
+				if (this->Owner->ownerDraw())
+					throw runtime_error{"Not implemented"}; //return this->data<ItemData>()->SubItems[this->index()].Text;
+
+				std::wstring buffer(maxLength, '\0');
+				::LVITEMW item {
+					.mask = LVIF_TEXT,
+					.iItem = this->ItemIndex,
+					.iSubItem = this->Index,
+					.pszText = buffer.data(),
+					.cchTextMax = static_cast<int>(maxLength),
+				};
+				if (!ListView_GetItem(this->Owner->handle(), &item))
+					throw runtime_error{"ListView_GetItem(#{}) failed", this->Index};
+				else {
+					buffer.resize(item.cchTextMax);
+					return buffer;
+				}
+			}
+#ifdef CAUSES_UNRESOLVABLE_CIRCULAR_REFERENCE
+			Item
+			item() const {
+				return Item{*this->Owner,this->ItemIndex};
+			}
+#endif
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			void
+			text(std::wstring newText) {
+				if (this->Owner->ownerDraw()) 
+					throw runtime_error{"Not implemented"};  //this->item().data<ItemData>()->SubItems[this->index()].Text = newText;
+				else {
+					::LVITEMW item {
+						.mask = LVIF_TEXT,
+						.iItem = this->ItemIndex,
+						.iSubItem = this->Index,
+						.pszText = newText.data(),
+						.cchTextMax = static_cast<int>(newText.length()),		// Docs say not needed: https://learn.microsoft.com/en-us/windows/win32/api/commctrl/ns-commctrl-lvitema
+					};
+					if (!ListView_SetItem(this->Owner->handle(), &item))
+						throw runtime_error{"ListView_SetItem(#{}) failed", this->Index};
+				}
+			}
+		};
+		
 		//! @brief	Facade for a single item at a fixed index
 		class Item {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -569,6 +655,11 @@ namespace core::forms
 					return this->data<ItemData>()->userData<CustomUserData>();
 				else
 					return this->data<CustomUserData>();
+			}
+
+			SubItem
+			operator[](uint32_t idx) const noexcept {
+				return SubItem{*this->Owner, this->Index, static_cast<int32_t>(idx)};
 			}
 			
 		protected:
