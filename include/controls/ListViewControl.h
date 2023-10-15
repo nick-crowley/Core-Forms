@@ -545,7 +545,7 @@ namespace core::forms
 					.cchTextMax = static_cast<int>(maxLength),
 				};
 				if (!ListView_GetItem(this->Owner->handle(), &item))
-					throw runtime_error{"ListView_GetItem(#{}) failed", this->Index};
+					throw runtime_error{"ListView_GetSubItem(#{}, #{}) failed", this->ItemIndex, this->Index};
 				else {
 					buffer.resize(item.cchTextMax);
 					return buffer;
@@ -572,7 +572,7 @@ namespace core::forms
 						.cchTextMax = static_cast<int>(newText.length()),		// Docs say not needed: https://learn.microsoft.com/en-us/windows/win32/api/commctrl/ns-commctrl-lvitema
 					};
 					if (!ListView_SetItem(this->Owner->handle(), &item))
-						throw runtime_error{"ListView_SetItem(#{}) failed", this->Index};
+						throw runtime_error{"ListView_SetSubItem(#{}, #{}) failed", this->ItemIndex, this->Index};
 				}
 			}
 		};
