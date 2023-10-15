@@ -50,6 +50,14 @@ public:
 	}
 
 protected:
+	forms::Response
+	virtual onDropFiles(forms::DropFilesEventArgs args) override {
+		for (auto& file : args.AbsolutePaths) 
+			clog << Important{"Dropped file: {}", file.string()};
+		
+		return 0;
+	}
+
 	forms::Response 
 	virtual onInitDialog(forms::InitDialogEventArgs args) override {
 		// Populate list
@@ -96,6 +104,10 @@ protected:
 		this->NarrowComboBox.Items.select(this->NarrowComboBox.Items.cbegin());
 		this->WideComboBox.Items.select(this->WideComboBox.Items.cbegin());
 		
+		
+		// Allow window to receive dropped files
+		this->acceptFiles();
+
 		// Tell system to set the initial focus
 		return args.SetInitialFocus;
 	}
