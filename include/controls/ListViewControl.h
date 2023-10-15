@@ -917,6 +917,11 @@ namespace core::forms
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		nstd::bitset<ListViewExStyle>
+		exStyle() const noexcept {
+			return static_cast<ListViewExStyle>(ListView_GetExtendedListViewStyle(this->handle()));
+		}
+
 		nstd::bitset<ListViewFeature>
 		features() const noexcept {
 			return base::features<ListViewFeature>();
@@ -940,6 +945,11 @@ namespace core::forms
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		void
+		exStyle(nstd::bitset<ListViewExStyle> bits, std::optional<nstd::bitset<ListViewExStyle>> mask = nullopt) noexcept {
+			ListView_SetExtendedListViewStyleEx(this->handle(), bits.value(), mask ? mask->value() : NULL);
+		}
+	
 		void
 		features(nstd::bitset<ListViewFeature> newStyle) noexcept {
 			base::features(newStyle);
