@@ -969,6 +969,11 @@ namespace core::forms
 		using base::update;
 
 		void
+		acceptFiles() {
+			::DragAcceptFiles(this->handle(), TRUE);
+		}
+
+		void
 		backColour(AnyColour newColour) {
 			this->BackColour = newColour;
 			this->Background = nullopt;
@@ -1063,6 +1068,11 @@ namespace core::forms
 			return Unhandled;
 		}
 	
+		Response
+		virtual onDropFiles(DropFilesEventArgs args) {
+			return Unhandled;
+		}
+
 		Response 
 		virtual onEraseBackground(EraseBackgroundEventArgs args) {
 			return Unhandled;
@@ -1265,6 +1275,9 @@ namespace core::forms
 			case WM_COMMAND:
 				return this->onCommand({wParam, lParam});
 		
+			case WM_DROPFILES:
+				return this->onDropFiles({wParam, lParam});
+
 			case WM_GETOBJECT:
 				return this->onGetObject({wParam,lParam});
 			

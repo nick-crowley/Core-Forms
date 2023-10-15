@@ -37,6 +37,19 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::detail
+{
+    template <>
+    struct HandleTraits<::HDROP> {
+        ::HDROP constexpr
+        inline static empty = nullptr;
+
+        auto constexpr
+        inline static release = [](::HDROP target) {
+            ::DragFinish(target);
+        };
+    };
+}
 namespace core::forms
 {
     namespace detail 
@@ -89,6 +102,9 @@ namespace core::forms
     
     //! @brief  Shared @c ::HBRUSH released using @c ::DeleteObject()
     using SharedBrush = SmartHandle<::HBRUSH, detail::GdiObjectTraits<::HBRUSH>>;
+    
+    //! @brief  Shared @c ::HDROP released using @c ::DragFinish()
+    using SharedDrop = SmartHandle<::HDROP>;
     
     //! @brief  Shared @c ::HFONT released using @c ::DeleteObject()
     using SharedFont = SmartHandle<::HFONT, detail::GdiObjectTraits<::HFONT>>;

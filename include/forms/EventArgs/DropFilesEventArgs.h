@@ -27,27 +27,9 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
-#include "forms/EventArgs/CommandEventArgs.h"
-#include "forms/EventArgs/CreateWindowEventArgs.h"
-#include "forms/EventArgs/ControlColourEventArgs.h"
-#include "forms/EventArgs/DropFilesEventArgs.h"
-#include "forms/EventArgs/EraseBackgroundEventArgs.h"
-#include "forms/EventArgs/GetObjectEventArgs.h"
-#include "forms/EventArgs/MeasureItemEventArgs.h"
-#include "forms/EventArgs/MinMaxEventArgs.h"
-#include "forms/EventArgs/MouseEventArgs.h"
-#include "forms/EventArgs/NonClientActivateEventArgs.h"
-#include "forms/EventArgs/NonClientHitTestEventArgs.h"
-#include "forms/EventArgs/NonClientMouseEventArgs.h"
-#include "forms/EventArgs/NonClientPaintEventArgs.h"
-#include "forms/EventArgs/OwnerDrawEventArgs.h"
-#include "forms/EventArgs/OwnerDrawMenuEventArgs.h"
-#include "forms/EventArgs/PaintWindowEventArgs.h"
-#include "forms/EventArgs/ResizeWindowEventArgs.h"
-#include "forms/EventArgs/SetWindowFontEventArgs.h"
-#include "forms/EventArgs/ShowWindowEventArgs.h"
-#include "forms/EventArgs/TimerEventArgs.h"
-#include "forms/EventArgs/UserEventArgs.h"
+#include "core/ObservableEvent.h"
+#include "system/SharedHandle.h"
+#include "graphics/SizePoint.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -62,12 +44,37 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	//! @brief	Delegate for a 'standard' window event (ie. one that doesn't require a custom second parameter)
-	using WindowDelegate = Delegate<void (Window&)>;
+	class DropFilesEventArgs
+	{
+		using PathCollection = std::vector<filesystem::path>;
 
-	//! @brief	'standard' window event (ie. one without custom data)
-	using WindowEvent = ObservableEvent<WindowDelegate>;
+	public:
+		SharedDrop     Drop;
+		Point          Position;	
+		PathCollection AbsolutePaths;
 
+	public:
+		DropFilesEventArgs(::WPARAM w, ::LPARAM)
+		  : Drop{SharedDrop{reinterpret_cast<::HDROP>(w)}}
+		{
+			std::ignore = ::DragQueryPoint(*this->Drop, this->Position);
+			if (uint32_t const count = ::DragQueryFileW(*this->Drop, 0xFFFFFFFF, nullptr, NULL); !count)
+				throw runtime_error{"DragQueryFile() failed"};
+			else for (uint32_t idx = 0; idx < count; ++idx) {
+				std::wstring filePath(size_t{MAX_PATH}, '\0');
+				if (uint32_t const length = ::DragQueryFileW(*this->Drop, idx, &filePath[0], MAX_PATH); !length)
+					throw runtime_error{"DragQueryFile(idx={}) failed", idx};
+				else {
+					filePath.resize(length);
+					this->AbsolutePaths.push_back(std::move(filePath));
+				}
+			}
+		}
+	};
+	
+	using DropFilesDelegate = Delegate<void (Window&,DropFilesEventArgs)>;
+	using DropFilesEvent = ObservableEvent<DropFilesDelegate>;
+	
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
