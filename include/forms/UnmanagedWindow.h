@@ -115,7 +115,7 @@ namespace core::forms
 		template <nstd::Enumeration Style = ExWindowStyle>
 		nstd::bitset<Style>
 		exStyle() const noexcept {
-			return static_cast<Style>(::GetWindowLongW(this->handle(),GWL_EXSTYLE));
+			return static_cast<Style>(::GetWindowLongPtr(this->handle(),GWL_EXSTYLE));
 		}
 	
 		uint16_t
@@ -155,7 +155,7 @@ namespace core::forms
 		template <nstd::Enumeration Style = WindowStyle>
 		nstd::bitset<Style>
 		style() const noexcept {
-			return static_cast<Style>(::GetWindowLongW(this->handle(),GWL_STYLE));
+			return static_cast<Style>(::GetWindowLongPtr(this->handle(),GWL_STYLE));
 		}
 
 		std::wstring
@@ -213,6 +213,12 @@ namespace core::forms
 			::EnableWindow(this->handle(), win::Boolean{enabled});
 		}
 	
+		template <nstd::Enumeration ExStyle = ExWindowStyle>
+		void
+		exStyle(nstd::bitset<ExStyle> bits) noexcept {
+			::SetWindowLongPtr(this->handle(), GWL_EXSTYLE, bits.value());
+		}
+	
 		void
 		font(::HFONT newFont, bool redraw = false) noexcept {
 			SetWindowFont(this->handle(), newFont, win::Boolean{redraw});
@@ -266,7 +272,13 @@ namespace core::forms
 			::SetWindowPos(this->handle(), nullptr, -1, -1, sz.Width, sz.Height,
 				SWP_NOMOVE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOACTIVATE);
 		}
-	
+		
+		template <nstd::Enumeration Style = WindowStyle>
+		void
+		style(nstd::bitset<Style> bits) noexcept {
+			::SetWindowLongPtr(this->handle(), GWL_STYLE, bits.value());
+		}
+
 		void
 		text(std::wstring_view s)  noexcept {
 			::SetWindowTextW(this->handle(), s.data());
