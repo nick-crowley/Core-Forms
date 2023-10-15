@@ -4,6 +4,7 @@
 #include "graphics/ImageList.h"
 #include "graphics/Icon.h"
 #include "lookNFeel/DarkRetroLookNFeel.h"
+#include "lookNFeel/DarkModernLookNFeel.h"
 #include "Resource.h"
 using namespace core;
 using namespace forms::literals;
@@ -109,6 +110,9 @@ try
 {
 	clog.attach(std::cout);
 	startupBanner();
+	
+	// Set modern look-n-feel
+	forms::lookNFeel = forms::DarkRetroLookNFeel::Instance;
 	
 	// Display modal dialog
 	DevTesting mainDlg;
