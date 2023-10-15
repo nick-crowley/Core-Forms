@@ -409,7 +409,9 @@ namespace core::forms
 			}
 			
 			void
-			clear() noexcept {
+			clear() {
+				Invariant(this->Owner.exists());
+
 				for (signed count = this->size(), idx = count-1; idx >= 0; --idx)
 					ListView_DeleteColumn(this->Owner.handle(), idx);
 			}
@@ -417,6 +419,8 @@ namespace core::forms
 			iterator
 			insert(const_iterator pos, std::wstring_view text, std::optional<int32_t> width = nullopt) 
 			{
+				Invariant(this->Owner.handle());
+
 				size_type idx{};
 				// [NOT OWNER-DRAW] Add Column
 				if (!this->Owner.ownerDraw()) {
@@ -439,6 +443,7 @@ namespace core::forms
 
 			void
 			push_back(std::wstring_view text, std::optional<int32_t> width = nullopt) {
+				Invariant(this->Owner.handle());
 				this->insert(const_iterator{this->Owner,this->size()}, text, width);
 			}
 		};
@@ -863,7 +868,8 @@ namespace core::forms
 			}
 			
 			size_type 
-			size() const noexcept {
+			size() const {
+				Invariant(this->Owner.handle());
 				return ListView_GetItemCount(this->Owner.handle());
 			}
 			
@@ -877,7 +883,8 @@ namespace core::forms
 			}
 
 			Item
-			operator[](size_type idx) const noexcept {
+			operator[](size_type idx) const {
+				Invariant(this->Owner.handle());
 				return Item(this->Owner, idx);
 			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -893,7 +900,8 @@ namespace core::forms
 			}
 			
 			void
-			clear() noexcept {
+			clear() {
+				Invariant(this->Owner.exists());
 				ListView_DeleteAllItems(this->Owner.handle());
 			}
 			
@@ -905,6 +913,7 @@ namespace core::forms
 			iterator
 			insert(const_iterator pos, std::wstring_view text) 
 			{
+				Invariant(this->Owner.handle());
 				size_type idx{};
 				// [NOT OWNER-DRAW] Insert item
 				if (!this->Owner.ownerDraw()) {
@@ -937,6 +946,7 @@ namespace core::forms
 			       RichText                   text,
 			       std::optional<forms::Icon> icon = nullopt) 
 			{
+				Invariant(this->Owner.handle());
 				Invariant(this->Owner.ownerDraw());
 				auto data = std::make_unique<ItemData>(text, icon);
 				::LVITEMW item {
@@ -954,12 +964,14 @@ namespace core::forms
 			
 			void
 			push_back(std::wstring_view text) {
+				Invariant(this->Owner.handle());
 				this->insert(const_iterator{this->Owner,INT32_MAX}, text);
 			}
 
 			void
 			push_back(RichText                   text,
 			          std::optional<forms::Icon> icon = nullopt) {
+				Invariant(this->Owner.handle());
 				Invariant(this->Owner.ownerDraw());
 				this->insert(const_iterator{this->Owner,INT32_MAX}, text, icon);
 			}
