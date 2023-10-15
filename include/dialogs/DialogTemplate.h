@@ -102,6 +102,7 @@ namespace core::forms
 				case CommonControl::ScrollBar: ctrl.ClassName = win::ResourceId(L"Custom.SCROLLBAR"); break;
 				case CommonControl::ComboBox:  ctrl.ClassName = win::ResourceId(L"Custom.COMBOBOX");  break;
 				case CommonControl::Link:      ctrl.ClassName = win::ResourceId(L"Custom.LINK");      break;
+				case CommonControl::ListView:  ctrl.ClassName = win::ResourceId(L"Custom.LISTVIEW");  break;
 				default: throw invalid_argument{"Controls with window class {} not yet supported", win::to_string(ctrl.ClassName.as_id())};
 				}
 				

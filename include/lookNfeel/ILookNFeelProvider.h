@@ -42,6 +42,7 @@ namespace core::forms
 	class ComboBoxControl;
 	class LabelControl;
 	class ListBoxControl;
+	class ListViewControl;
 	class GroupBoxControl;
 	class PictureControl;
 	class RadioButtonControl;
@@ -96,6 +97,15 @@ namespace core::forms
 	
 		void
 		virtual measure(ListBoxControl& ctrl, MeasureItemEventArgs const& args) abstract;
+	
+		void
+		virtual draw(ListViewControl& ctrl, OwnerDrawEventArgs const& args) abstract;
+	
+		void
+		virtual erase(ListViewControl& ctrl, EraseBackgroundEventArgs const& args) abstract;
+	
+		void
+		virtual measure(ListViewControl& ctrl, MeasureItemEventArgs const& args) abstract;
 	
 		void
 		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) abstract;

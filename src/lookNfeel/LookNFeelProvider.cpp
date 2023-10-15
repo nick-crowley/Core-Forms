@@ -521,6 +521,36 @@ LookNFeelProvider::erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& a
 }
 
 void
+LookNFeelProvider::draw(ListViewControl& ctrl, OwnerDrawEventArgs const& args) 
+{
+	if (!ctrl.ownerDraw())
+		throw runtime_error{"ListView #{} must be OwnerDraw", args.Ident};
+}
+
+void
+LookNFeelProvider::measure(ListViewControl& ctrl, MeasureItemEventArgs const& args)
+{
+	if (!ctrl.ownerDraw())
+		throw runtime_error{"ListView #{} must be OwnerDraw", args.Ident};
+	
+	args.Graphics.restore();
+}
+
+void
+LookNFeelProvider::erase(ListViewControl& ctrl, EraseBackgroundEventArgs const& args) 
+{
+	// Erase background
+	Rect const rcClient = ctrl.clientRect();
+	args.Graphics.setBrush(ctrl.background());
+	args.Graphics.fillRect(rcClient);
+
+	// Draw window border
+	drawWindowBorder(args.Graphics, rcClient, ctrl.style(), ctrl.exStyle());
+
+	args.Graphics.restore();
+}
+
+void
 LookNFeelProvider::draw(PictureControl& ctrl, OwnerDrawEventArgs const& args) 
 {
 	if (!ctrl.ownerDraw())
