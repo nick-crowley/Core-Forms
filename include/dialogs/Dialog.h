@@ -431,12 +431,20 @@ namespace core::forms
 		virtual onMouseUp(MouseEventArgs args) override {
 			if (this->MouseCapture.captured()) 
 			{
+				bool const doMaximize = this->CaptionButtons.MaximizeBtn == ButtonState::Pushed;
+				bool const doMinimize = this->CaptionButtons.MinimizeBtn == ButtonState::Pushed;
+
 				NonClientComponentBounds const bounds {this->style(), this->wndRect(), Coords::Screen};
 				Region update{this->CaptionButtons.MaximizeBtn == ButtonState::Pushed ? bounds.MaximizeBtn : bounds.MinimizeBtn};
 				
 				this->MouseCapture.release();
 				this->CaptionButtons = WindowCaptionButtons{};
 				this->onNonClientPaint(NonClientPaintEventArgs{*this, update});
+
+				if (doMaximize)
+					this->maximized() ? this->restore() : this->maximize();
+				else if (doMinimize)
+					this->minimize();
 			}
 			return Unhandled;
 		}
