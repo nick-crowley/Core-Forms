@@ -111,7 +111,7 @@ Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs args)
 		args.Graphics->drawEdge(components.MaximizeBtn, pressed ? EdgeFlags::Sunken : EdgeFlags::Raised);
 		args.Graphics->textColour(activeCaption ? SystemColour::WindowText : SystemColour::GrayText);
 		auto const btnRect = components.MaximizeBtn + (pressed ? Point{1,1} : Point::Zero);
-		args.Graphics->drawText(L"▲", btnRect, DrawTextFlags::SimpleCentre);
+		args.Graphics->drawText(!wnd.maximized() ? L"▲" : L"⌂", btnRect, DrawTextFlags::SimpleCentre);
 	}
 
 	// Draw minimize button
