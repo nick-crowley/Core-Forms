@@ -135,6 +135,16 @@ namespace core::forms
 			return this->Handle;
 		}
 		
+		bool
+		maximized() const noexcept {
+			return ::IsZoomed(this->handle()) != FALSE;
+		}
+		
+		bool
+		minimized() const noexcept {
+			return ::IsIconic(this->handle()) != FALSE;
+		}
+		
 		::HWND
 		parent() const noexcept {
 			return ::GetParent(this->handle());
@@ -238,6 +248,16 @@ namespace core::forms
 		invalidate(Rect rc, bool redraw = false) noexcept {
 			::InvalidateRect(this->handle(), rc, win::Boolean{redraw});
 		}
+
+		void
+		maximize() noexcept {
+			this->post<WM_SYSCOMMAND>(SC_MAXIMIZE);
+		}
+		
+		void
+		minimize() noexcept {
+			this->post<WM_SYSCOMMAND>(SC_MINIMIZE);
+		}
 		
 		void 
 		move(Point pt) noexcept {
@@ -250,7 +270,12 @@ namespace core::forms
 			::SetWindowPos(this->handle(), after, -1, -1, -1, -1, 
 				SWP_NOMOVE|SWP_NOSIZE|SWP_NOACTIVATE);
 		}
-
+		
+		void
+		restore() noexcept {
+			this->post<WM_SYSCOMMAND>(SC_RESTORE);
+		}
+		
 		void 
 		show() noexcept {
 			::ShowWindow(this->handle(), SW_SHOW);

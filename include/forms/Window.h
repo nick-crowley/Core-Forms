@@ -899,6 +899,8 @@ namespace core::forms
 		using base::ident;
 		using base::info;
 		using base::handle;
+		using base::maximized;
+		using base::minimized;
 		using base::post;
 		using base::send;
 		using base::style;
@@ -961,10 +963,13 @@ namespace core::forms
 		using base::enable;
 		using base::hide;
 		using base::invalidate;
+		using base::maximize;
+		using base::minimize;
 		using base::move;
 		using base::order;
 		using base::reposition;
 		using base::resize;
+		using base::restore;
 		using base::show;
 		using base::update;
 
