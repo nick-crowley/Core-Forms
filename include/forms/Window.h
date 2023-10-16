@@ -961,11 +961,11 @@ namespace core::forms
 		using base::enable;
 		using base::hide;
 		using base::invalidate;
-		using base::order;
-		using base::show;
 		using base::move;
+		using base::order;
 		using base::reposition;
 		using base::resize;
+		using base::show;
 		using base::update;
 
 		void

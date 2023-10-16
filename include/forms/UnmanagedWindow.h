@@ -238,6 +238,12 @@ namespace core::forms
 		invalidate(Rect rc, bool redraw = false) noexcept {
 			::InvalidateRect(this->handle(), rc, win::Boolean{redraw});
 		}
+		
+		void 
+		move(Point pt) noexcept {
+			::SetWindowPos(this->handle(), nullptr, pt.X, pt.Y, -1, -1, 
+				SWP_NOSIZE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOACTIVATE);
+		}
 
 		void
 		order(::HWND after) noexcept {
@@ -253,12 +259,6 @@ namespace core::forms
 		void 
 		show(signed flags) noexcept {
 			::ShowWindow(this->handle(), flags);
-		}
-		
-		void 
-		move(Point pt) noexcept {
-			::SetWindowPos(this->handle(), nullptr, pt.X, pt.Y, -1, -1, 
-				SWP_NOSIZE|SWP_NOZORDER|SWP_NOOWNERZORDER|SWP_NOACTIVATE);
 		}
 	
 		void 
