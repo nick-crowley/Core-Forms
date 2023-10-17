@@ -111,9 +111,16 @@ protected:
 		this->ListView.Columns.push_back(L"First column", 150);
 		this->ListView.Columns.push_back(L"Second column", 150);
 		this->ListView.Columns.push_back(L"Third", 100);
-		this->ListView.Items.push_back(L"Item #0");
-		this->ListView.Items[0].SubItems[0].text(L"SubItem #0");
-		this->ListView.Items[0].SubItems[1].text(L"SubItem #1");
+
+		for (auto idx = 0; idx < 5; ++idx) {
+			this->ListView.Items.push_back(L"Item #" + std::to_wstring(idx));
+			this->ListView.Items[idx].SubItems[0].text(L"SubItem #0");
+			this->ListView.Items[idx].SubItems[1].text(L"SubItem #1");
+		}
+		this->ListView.Items[1].backColour(forms::Colour::Red);
+		this->ListView.Items[1].textColour(this->LookNFeel->window());
+		this->ListView.Items[3].backColour(forms::Colour::Forest);
+		this->ListView.Items[3].textColour(this->LookNFeel->window());
 		
 		// Allow window to receive dropped files
 		this->acceptFiles();

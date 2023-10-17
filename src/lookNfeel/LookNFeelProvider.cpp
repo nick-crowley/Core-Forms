@@ -528,9 +528,12 @@ LookNFeelProvider::draw(ListViewControl& ctrl, OwnerDrawEventArgs const& args)
 	
 	// Query basic item state
 	bool const selected = args.Item.State.test(OwnerDrawState::Selected);
-	auto const backColour = selected ? this->highlight() : ctrl.backColour();
 	auto const selectedTextColour = nstd::make_optional_if<AnyColour>(selected, SystemColour::HighlightText);
 	
+	// Prefer item background colour (unless selected); fallback to control-default
+	auto const item = ctrl.Items[args.Item.Index];
+	auto const backColour = selected ? this->highlight() : item.backColour().value_or(ctrl.backColour());
+
 	// Draw item background
 	Rect const rcLine = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
 	args.Graphics.setBrush(backColour);
@@ -540,7 +543,6 @@ LookNFeelProvider::draw(ListViewControl& ctrl, OwnerDrawEventArgs const& args)
 	};
 	
 	// [ITEM] Prefer item font + selected-text colour; fallback to control-default
-	auto const item = ctrl.Items[args.Item.Index];
 	auto detail = item.detail();
 	args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
 	args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(ctrl.textColour())), transparent);

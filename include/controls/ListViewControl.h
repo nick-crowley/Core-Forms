@@ -436,9 +436,10 @@ namespace core::forms
 			void*  UserData = nullptr;
 
 		public:
-			RichText            Detail;
-			std::optional<Icon> Icon;
-			RichTextCollection  SubItems;
+			RichText                  Detail;
+			std::optional<AnyColour>  BackColour;
+			std::optional<Icon>       Icon;
+			RichTextCollection        SubItems;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			explicit
@@ -812,6 +813,12 @@ namespace core::forms
 				return r;
 			}
 			
+			std::optional<AnyColour>
+			backColour() const {
+				Invariant(this->Owner->ownerDraw());
+				return this->data<ItemData>()->BackColour;
+			}
+
 			RichText
 			detail() const {
 				Invariant(this->Owner->ownerDraw());
@@ -876,6 +883,12 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			void
+			backColour(AnyColour c) {
+				Invariant(this->Owner->ownerDraw());
+				this->data<ItemData>()->BackColour = c;
+			}
+
+			void
 			text(std::wstring newText) {
 				if (this->Owner->ownerDraw()) 
 					this->data<ItemData>()->Detail.Text = newText;
@@ -891,6 +904,12 @@ namespace core::forms
 				}
 			}
 			
+			void
+			textColour(AnyColour c) {
+				Invariant(this->Owner->ownerDraw());
+				this->data<ItemData>()->Detail.Colour = c;
+			}
+
 			template <nstd::Class CustomUserData>
 			void
 			userData(CustomUserData* customUserData) {
