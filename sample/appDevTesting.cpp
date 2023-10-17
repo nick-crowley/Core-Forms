@@ -110,8 +110,10 @@ protected:
 		this->ListView.font(forms::StockFont::DefaultGui);
 		this->ListView.Columns.push_back(L"First column", 150);
 		this->ListView.Columns.push_back(L"Second column", 150);
-		this->ListView.Items.push_back(L"First item");
-		this->ListView.Items[0][1].text(L"First subitem");
+		this->ListView.Columns.push_back(L"Third", 100);
+		this->ListView.Items.push_back(L"Item #0");
+		this->ListView.Items[0].SubItems[0].text(L"SubItem #0");
+		this->ListView.Items[0].SubItems[1].text(L"SubItem #1");
 		
 		// Allow window to receive dropped files
 		this->acceptFiles();
@@ -136,7 +138,7 @@ try
 	startupBanner();
 	
 	// Set modern look-n-feel
-	forms::lookNFeel = forms::DarkRetroLookNFeel::Instance;
+	//forms::lookNFeel = forms::DarkRetroLookNFeel::Instance;
 	
 	// Display modal dialog
 	DevTesting mainDlg;

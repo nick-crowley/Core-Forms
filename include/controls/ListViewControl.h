@@ -191,9 +191,6 @@ namespace core::forms
 			
 			std::wstring
 			text() const {
-				if (this->Owner->ownerDraw())
-					return this->data<ColumnData>()->Detail.Text;
-
 				wchar_t buffer[64] {};
 				::LVCOLUMNW col { .mask = LVCF_TEXT, .pszText = &buffer[0], .cchTextMax = 64 };
 				if (!ListView_GetColumn(this->Owner->handle(), this->Index, &col))
@@ -205,11 +202,7 @@ namespace core::forms
 			template <nstd::Class UserData>
 			UserData*
 			userData() const {
-				// When owner-draw is active, the item-data slot addresses an 'ColumnData' object
-				if (!this->Owner->ownerDraw())
-					return this->data<UserData>();
-				else
-					return static_cast<UserData*>(this->data<ColumnData>()->UserData);
+				throw runtime_error{"Not implemented"};
 			}
 			
 			uint32_t
@@ -221,12 +214,7 @@ namespace core::forms
 			template <nstd::Class AnyType>
 			AnyType*
 			data() const {
-				throw runtime_error{"Headers don't provide user-data :-O"};
-				/*::LVCOLUMNW col { .mask = LVCF_USER };
-				if (!ListView_GetColumn(this->Owner->handle(), this->Index, &col))
-					throw runtime_error{"ListView_GetColumn(#{}) failed", this->Index};
-				else 
-					return reinterpret_cast<AnyType*>(col.itemData);*/
+				throw runtime_error{"Not implemented"};
 			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
@@ -238,12 +226,7 @@ namespace core::forms
 			template <typename AnyType>
 			void
 			userData(AnyType* customUserData) {
-				throw runtime_error{"Headers don't provide user-data :-O"};
-				// When owner-draw is active, the item-data slot addresses an 'ColumnData' object
-				/*if (!this->Owner->ownerDraw())
-					ListView_SetColumnData(this->Owner->handle(), this->Index, customUserData);
-				else
-					this->data<ColumnData>()->UserData = static_cast<void*>(customUserData);*/
+				throw runtime_error{"Not implemented"};
 			}
 		};
 		
@@ -422,22 +405,17 @@ namespace core::forms
 				Invariant(this->Owner.handle());
 
 				size_type idx{};
-				// [NOT OWNER-DRAW] Add Column
-				if (!this->Owner.ownerDraw()) {
-					::LVCOLUMNW col { 
-						.mask = LVCF_FMT|LVCF_TEXT|LVCF_WIDTH|LVCF_SUBITEM,
-						.fmt = LVCFMT_LEFT,
-						.cx = width.value_or(LVSCW_AUTOSIZE),
-						.pszText = const_cast<wchar_t*>(text.data()),
-						.iSubItem = pos,
-					};
-					if (idx = ListView_InsertColumn(this->Owner.handle(), pos, &col); idx == LB_ERR)
-						throw runtime_error{"ListView_InsertColumn(#{}) failed", (int32_t)pos};
-				}
-				// [OWNER-DRAW] TODO
-				else {
-					throw runtime_error{"Not implemented"};
-				}
+				
+				::LVCOLUMNW col { 
+					.mask = LVCF_FMT|LVCF_TEXT|LVCF_WIDTH|LVCF_SUBITEM,
+					.fmt = LVCFMT_LEFT,
+					.cx = width.value_or(LVSCW_AUTOSIZE),
+					.pszText = const_cast<wchar_t*>(text.data()),
+					.iSubItem = pos,
+				};
+				if (idx = ListView_InsertColumn(this->Owner.handle(), pos, &col); idx == LB_ERR)
+					throw runtime_error{"ListView_InsertColumn(#{}) failed", (int32_t)pos};
+				
 				return iterator{this->Owner, idx};
 			}
 
@@ -450,29 +428,37 @@ namespace core::forms
 	
 		//! @brief	Custom data used for each item when in owner-draw mode
 		class ItemData {
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			using RichTextCollection = std::vector<RichText>;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			void*  UserData = nullptr;
 
 		public:
 			RichText            Detail;
 			std::optional<Icon> Icon;
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			RichTextCollection  SubItems;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			explicit
-			ItemData(std::wstring_view           text, 
+			ItemData(size_t                      numSubItems,
+			         std::wstring_view           text, 
 			         std::optional<forms::Icon>  icon = nullopt) 
 			  : Detail{text}, 
-				Icon{icon}
+				Icon{icon},
+				SubItems{numSubItems}
 			{}
 			
 			explicit
-			ItemData(RichText                    text, 
+			ItemData(size_t                      numSubItems,
+			         RichText                    text, 
 			         std::optional<forms::Icon>  icon = nullopt) 
 			  : Detail{text}, 
-				Icon{icon}
+				Icon{icon},
+				SubItems{numSubItems}
 			{}
-			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			satisfies(ItemData,
 				IsSemiRegular,
 				NotEqualityComparable,
@@ -495,7 +481,7 @@ namespace core::forms
 				this->UserData = newData;
 			}
 		};
-		
+
 		//! @brief	Facade for a sub-item at a fixed index
 		class SubItem {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -503,13 +489,13 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			ListViewControl*  Owner;
-			int32_t           ItemIndex;
+			int32_t           ItemIdx;
 			int32_t           Index;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			SubItem(ListViewControl& owner, int32_t item, int32_t idx) noexcept
 			  : Owner{&owner},
-			    ItemIndex{item},
+			    ItemIdx{item},
 			    Index{idx}
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -527,61 +513,268 @@ namespace core::forms
 			Rect
 			area() const noexcept {
 				Rect r;
-				ListView_GetSubItemRect(this->Owner->handle(), this->ItemIndex, this->Index, LVIR_BOUNDS, static_cast<::RECT*>(r));
+				ListView_GetSubItemRect(this->Owner->handle(), this->ItemIdx, this->Index + 1, LVIR_BOUNDS, static_cast<::RECT*>(r));
 				return r;
 			}
 			
+			RichText
+			detail() const {
+				Invariant(this->Owner->ownerDraw());
+				return this->data<ItemData>().SubItems[this->Index];
+			}
+
 			int32_t
 			index() const noexcept {
-				return this->ItemIndex;
+				return this->ItemIdx;
 			}
 			
+			template <size_t Capacity = 256>
 			std::wstring
-			text(size_t maxLength = 256) const {
+			text() const {
 				if (this->Owner->ownerDraw())
-					throw runtime_error{"Not implemented"}; //return this->data<ItemData>()->SubItems[this->index()].Text;
+					return this->data<ItemData>().SubItems[this->Index].Text;
 
-				std::wstring buffer(maxLength, '\0');
+				std::wstring buffer(Capacity, '\0');
 				::LVITEMW item {
 					.mask = LVIF_TEXT,
-					.iItem = this->ItemIndex,
-					.iSubItem = this->Index,
+					.iItem = this->ItemIdx,
+					.iSubItem = this->Index + 1,
 					.pszText = buffer.data(),
-					.cchTextMax = static_cast<int>(maxLength),
+					.cchTextMax = static_cast<int>(Capacity),
 				};
 				if (!ListView_GetItem(this->Owner->handle(), &item))
-					throw runtime_error{"ListView_GetSubItem(#{}, #{}) failed", this->ItemIndex, this->Index};
+					throw runtime_error{"ListView_GetSubItem(#{}, #{}) failed", this->ItemIdx, this->Index + 1};
 				else {
 					buffer.resize(item.cchTextMax);
 					return buffer;
 				}
 			}
-#ifdef CAUSES_UNRESOLVABLE_CIRCULAR_REFERENCE
-			Item
-			item() const {
-				return Item{*this->Owner,this->ItemIndex};
-			}
-#endif
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			void
 			text(std::wstring newText) {
 				if (this->Owner->ownerDraw()) 
-					throw runtime_error{"Not implemented"};  //this->item().data<ItemData>()->SubItems[this->index()].Text = newText;
+					this->data<ItemData>().SubItems[this->Index].Text = newText;
 				else {
 					::LVITEMW item {
 						.mask = LVIF_TEXT,
-						.iItem = this->ItemIndex,
-						.iSubItem = this->Index,
+						.iItem = this->ItemIdx,
+						.iSubItem = this->Index + 1,
 						.pszText = newText.data(),
 						.cchTextMax = static_cast<int>(newText.length()),		// Docs say not needed: https://learn.microsoft.com/en-us/windows/win32/api/commctrl/ns-commctrl-lvitema
 					};
 					if (!ListView_SetItem(this->Owner->handle(), &item))
-						throw runtime_error{"ListView_SetSubItem(#{}, #{}) failed", this->ItemIndex, this->Index};
+						throw runtime_error{"ListView_SetSubItem(#{}, #{}) failed", this->ItemIdx, this->Index + 1};
 				}
+			}
+		
+		protected:
+			template <nstd::Class AnyData>
+			AnyData&
+			data() const {
+				::LVITEMW item {
+					.mask = LVIF_PARAM,
+					.iItem = this->ItemIdx
+				};
+				// SubItems cannot possess individual parameter data so we share the item data
+				if (!ListView_GetItem(this->Owner->handle(), &item))
+					throw runtime_error{"ListView_GetSubItemData(#{}, #{}) failed", this->ItemIdx, this->Index + 1};
+				else 
+					return *std::bit_cast<AnyData*>(item.lParam);
 			}
 		};
 		
+		class SubItemCollection {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			template <nstd::AnyOf<SubItem,SubItem const> ValueType>
+			class Iterator : public boost::iterator_facade<Iterator<ValueType>, ValueType, boost::random_access_traversal_tag, ValueType&, int32_t>
+			{
+				template <nstd::AnyOf<SubItem,SubItem const>>
+				friend class Iterator;
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			private:
+				using type = Iterator<ValueType>;
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			private:
+				ListViewControl* Owner;
+				int32_t          ItemIdx;
+				int32_t          Index;
+				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
+			public:
+				Iterator(ListViewControl& owner, int32_t item, int32_t idx) noexcept
+				  : Owner{&owner},
+				    ItemIdx{item},
+				    Index{idx}
+				{}
+
+				explicit
+				Iterator(ListViewControl& owner, int32_t item) noexcept
+				  : Owner{&owner}, 
+				    ItemIdx{item},
+				    Index{std::min<int32_t>(0,owner.Columns.size() - 1)}
+				{}
+				
+				template <nstd::AnyOf<SubItem const> Other>
+					requires std::same_as<ValueType,SubItem>
+				implicit
+				Iterator(Iterator<Other> const& r) noexcept
+				  : Owner{r.Owner},
+				    ItemIdx{r.ItemIdx},
+				    Index{r.Index}
+				{}
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			public:
+				satisfies(Iterator,
+					NotDefaultConstructible,
+					IsCopyable,
+					IsMovable,
+					NotSortable
+				);
+				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
+			public:
+				int32_t
+				index() const noexcept {
+					return this->Index;
+				}
+				
+				int32_t
+				item() const noexcept {
+					return this->ItemIdx;
+				}
+
+				implicit
+				operator int32_t() const noexcept {
+					return this->Index;
+				}
+
+			private:
+				template <nstd::AnyOf<SubItem,SubItem const> Other>
+				bool 
+				equal(const Iterator<Other>& r) const noexcept {
+					return this->Owner->handle() == r.Owner->handle()
+						&& this->ItemIdx == r.ItemIdx;
+						&& this->Index == r.Index;
+				}
+
+				ValueType
+				dereference() const noexcept { 
+					return ValueType{*this->Owner, this->ItemIdx, this->Index};
+				}
+
+				int32_t
+				distance_to(const type& r) const noexcept {
+					return r.Index - this->Index;
+				}
+				// o~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
+			private:
+				void 
+				advance(int32_t n) noexcept { 
+					this->Index += n;
+				}
+
+				void 
+				decrement() noexcept { 
+					--this->Index;
+				}
+
+				void 
+				increment() noexcept { 
+					++this->Index;
+				}
+			};
+			
+			using iterator = Iterator<SubItem>;
+			using const_iterator = Iterator<SubItem const>;
+			using reference = SubItem&;
+			using const_reference = SubItem const&;
+			using value_type = SubItem;
+			using size_type = iterator::difference_type;
+			using difference_type = iterator::difference_type;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			ListViewControl& Owner;
+			int32_t          ItemIdx;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			explicit
+			SubItemCollection(ListViewControl& ctrl, int32_t item) noexcept
+			  : Owner{ctrl},
+			    ItemIdx{item}
+			{}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			satisfies(SubItemCollection,
+				NotDefaultConstructible,
+				NotCopyable,
+				NotMovable,
+				NotSortable,
+				NotEqualityComparable
+			);
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			const_iterator
+			begin() const noexcept {
+				return const_iterator{this->Owner, this->ItemIdx, 0};
+			}
+		
+			const_iterator
+			end() const noexcept {
+				return const_iterator{this->Owner, this->ItemIdx};
+			}
+			
+			const_iterator
+			cbegin() const noexcept {
+				return const_iterator{this->Owner, this->ItemIdx, 0};
+			}
+		
+			const_iterator
+			cend() const noexcept {
+				return const_iterator{this->Owner, this->ItemIdx};
+			}
+
+			size_type 
+			size() const {
+				Invariant(this->Owner.handle());
+				return this->Owner.Columns.size() - 1;
+			}
+			
+			SubItem
+			operator[](size_type idx) const {
+				Invariant(this->Owner.handle());
+				return SubItem(this->Owner, this->ItemIdx, idx);
+			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			iterator
+			begin() noexcept {
+				return iterator{this->Owner, this->ItemIdx, 0};
+			}
+		
+			iterator
+			end() noexcept {
+				return iterator{this->Owner, this->ItemIdx};
+			}
+			
+			void
+			clear() = delete;
+			
+			iterator
+			insert(int32_t idx, std::wstring_view text) = delete;
+			
+			iterator
+			insert(int32_t idx, RichText text) = delete;
+
+			void
+			push_back(std::wstring_view text) = delete;
+
+			void
+			push_back(RichText text) = delete;
+		};
+
 		//! @brief	Facade for a single item at a fixed index
 		class Item {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -590,11 +783,15 @@ namespace core::forms
 		private:
 			ListViewControl*  Owner;
 			int32_t           Index;
+
+		public:
+			SubItemCollection SubItems;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			Item(ListViewControl& owner, int32_t idx) noexcept
 			  : Owner{&owner}, 
-			    Index{idx}
+			    Index{idx},
+				SubItems{owner,idx}
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			satisfies(Item, 
@@ -632,17 +829,18 @@ namespace core::forms
 				return this->Index;
 			}
 			
+			template <size_t Capacity = 256>
 			std::wstring
-			text(size_t maxLength = 256) const {
+			text() const {
 				if (this->Owner->ownerDraw())
 					return this->data<ItemData>()->Detail.Text;
 
-				std::wstring buffer(maxLength, '\0');
+				std::wstring buffer(Capacity, '\0');
 				::LVITEMW item {
 					.mask = LVIF_TEXT,
 					.iItem = this->Index,
 					.pszText = buffer.data(),
-					.cchTextMax = static_cast<int>(maxLength),
+					.cchTextMax = static_cast<int>(Capacity),
 				};
 				if (!ListView_GetItem(this->Owner->handle(), &item))
 					throw runtime_error{"ListView_GetItem(#{}) failed", this->Index};
@@ -662,11 +860,6 @@ namespace core::forms
 					return this->data<CustomUserData>();
 			}
 
-			SubItem
-			operator[](uint32_t idx) const noexcept {
-				return SubItem{*this->Owner, this->Index, static_cast<int32_t>(idx)};
-			}
-			
 		protected:
 			template <nstd::Class AnyData>
 			AnyData*
@@ -678,7 +871,7 @@ namespace core::forms
 				if (!ListView_GetItem(this->Owner->handle(), &item))
 					throw runtime_error{"ListView_GetItem(#{}) failed", this->Index};
 				else 
-					return reinterpret_cast<AnyData*>(item.lParam);
+					return std::bit_cast<AnyData*>(item.lParam);
 			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
@@ -852,19 +1045,11 @@ namespace core::forms
 			std::optional<Item>
 			find(std::wstring_view item) const /*noexcept*/ {
 				throw runtime_error{"Not implemented"}; 
-				/*if (size_type const idx = ListView_FindStringExact(this->Owner.handle(), 0, item.data()); idx == CB_ERR)
-					return nullopt;
-				else
-					return Item{this->Owner, idx};*/
 			}
 
 			std::optional<Item>
 			selected() const /*noexcept*/ {
 				throw runtime_error{"Not implemented"}; 
-				/*if (size_type const idx = ListView_GetCurSel(this->Owner.handle()); idx == CB_ERR)
-					return nullopt;
-				else 
-					return Item{this->Owner, idx};*/
 			}
 			
 			size_type 
@@ -876,10 +1061,6 @@ namespace core::forms
 			std::optional<Item>
 			substr(std::wstring_view substring) const /*noexcept*/ {
 				throw runtime_error{"Not implemented"}; 
-				/*if (size_type const idx = ListView_FindStringExact(this->Owner.handle(), 0, substring.data()); idx == CB_ERR)
-					return nullopt;
-				else
-					return Item{this->Owner, idx};*/
 			}
 
 			Item
@@ -907,7 +1088,7 @@ namespace core::forms
 			
 			void 
 			focus(const_iterator pos) /*noexcept*/ {
-				throw runtime_error{"Not implemented"};  //ListView_SetCaretIndex(this->Owner.handle(), pos);
+				throw runtime_error{"Not implemented"};
 			}
 
 			iterator
@@ -928,7 +1109,7 @@ namespace core::forms
 				}
 				// [OWNER-DRAW] Insert parameter data
 				else {
-					auto data = std::make_unique<ItemData>(text);
+					auto data = std::make_unique<ItemData>(this->Owner.Columns.size(), text);
 					::LVITEMW item {
 						.mask = LVIF_PARAM,
 						.iItem = (int)pos,
@@ -948,7 +1129,7 @@ namespace core::forms
 			{
 				Invariant(this->Owner.handle());
 				Invariant(this->Owner.ownerDraw());
-				auto data = std::make_unique<ItemData>(text, icon);
+				auto data = std::make_unique<ItemData>(this->Owner.Columns.size(), text, icon);
 				::LVITEMW item {
 					.mask = LVIF_PARAM,
 					.iItem = (int)pos,
@@ -978,18 +1159,18 @@ namespace core::forms
 
 			void
 			scrollTo(const_iterator pos) /*noexcept*/ {
-				throw runtime_error{"Not implemented"};  //ListView_SetTopIndex(this->Owner.handle(), pos);
+				throw runtime_error{"Not implemented"};
 				//! @see  https://learn.microsoft.com/en-us/windows/win32/api/commctrl/nf-commctrl-listview_ensurevisible
 			}
 	
 			void
 			select(Item const& item) /*noexcept*/ {
-				throw runtime_error{"Not implemented"};  //ListView_SetCurSel(this->Owner.handle(), item.index());
+				throw runtime_error{"Not implemented"};
 			}
 			
 			void
 			select(const_iterator pos) /*noexcept*/ {
-				throw runtime_error{"Not implemented"};  //ListView_SetCurSel(this->Owner.handle(), pos);
+				throw runtime_error{"Not implemented"};
 			}
 		};
 	

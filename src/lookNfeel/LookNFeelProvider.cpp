@@ -525,6 +525,35 @@ LookNFeelProvider::draw(ListViewControl& ctrl, OwnerDrawEventArgs const& args)
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"ListView #{} must be OwnerDraw", args.Ident};
+	
+	// Query basic item state
+	bool const selected = args.Item.State.test(OwnerDrawState::Selected);
+	auto const backColour = selected ? this->highlight() : ctrl.backColour();
+	auto const selectedTextColour = nstd::make_optional_if<AnyColour>(selected, SystemColour::HighlightText);
+	
+	// Draw item background
+	Rect const rcLine = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
+	args.Graphics.setBrush(backColour);
+	args.Graphics.fillRect(rcLine);
+	final_act(&) noexcept { 
+		args.Graphics.restore();
+	};
+	
+	// [ITEM] Prefer item font + selected-text colour; fallback to control-default
+	auto const item = ctrl.Items[args.Item.Index];
+	auto detail = item.detail();
+	args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
+	args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(ctrl.textColour())), transparent);
+	args.Graphics.drawText(detail.Text, item.area());
+
+	// [SUB-ITEMS] Prefer subitem font + selected-text colour; fallback to control-default
+	for (auto idx = 0, subItemCount = item.SubItems.size(); idx < subItemCount; ++idx) {
+		auto const subitem = item.SubItems[idx];
+		detail = subitem.detail();
+		args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
+		args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(ctrl.textColour())), transparent);
+		args.Graphics.drawText(detail.Text, subitem.area());
+	}
 }
 
 void

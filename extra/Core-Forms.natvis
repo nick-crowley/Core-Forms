@@ -236,20 +236,40 @@
 		<DisplayString>{{ Virtual collection }}</DisplayString>
 	</Type>
 
-  <Type Name="core::forms::ListViewControl::ColumnCollection">
-    <DisplayString>{{ Virtual collection }}</DisplayString>
-  </Type>
+	<Type Name="core::forms::ListViewControl::Column">
+		<DisplayString>{{ Column #{Index} }}</DisplayString>
+	</Type>
 
-  <Type Name="core::forms::ListViewControl::ColumnCollection::Iterator&lt;*&gt;">
-    <DisplayString>{{ at Column #{Index} }}</DisplayString>
-  </Type>
+	<Type Name="core::forms::ListViewControl::ColumnCollection">
+		<DisplayString>{{ Virtual collection }}</DisplayString>
+	</Type>
 
-  <Type Name="core::forms::ListViewControl::ItemCollection">
-    <DisplayString>{{ Virtual collection }}</DisplayString>
-  </Type>
+	<Type Name="core::forms::ListViewControl::ColumnCollection::Iterator&lt;*&gt;">
+		<DisplayString>{{ at Column #{Index} }}</DisplayString>
+	</Type>
+	
+	<Type Name="core::forms::ListViewControl::Item">
+		<DisplayString>{{ Item #{Index} }}</DisplayString>
+	</Type>
+	
+	<Type Name="core::forms::ListViewControl::ItemCollection">
+		<DisplayString>{{ Virtual collection }}</DisplayString>
+	</Type>
 
-  <Type Name="core::forms::ListViewControl::ItemCollection::Iterator&lt;*&gt;">
-    <DisplayString>{{ at Item #{Index} }}</DisplayString>
-  </Type>
+	<Type Name="core::forms::ListViewControl::ItemCollection::Iterator&lt;*&gt;">
+		<DisplayString>{{ at Item #{Index} }}</DisplayString>
+	</Type>
+
+	<Type Name="core::forms::ListViewControl::SubItem">
+		<DisplayString>{{ SubItem #{Index} of Item #{ItemIdx} }}</DisplayString>
+	</Type>
+	
+	<Type Name="core::forms::ListViewControl::SubItemCollection">
+		<DisplayString>{{ Virtual collection }}</DisplayString>
+	</Type>
+
+	<Type Name="core::forms::ListViewControl::SubItemCollection::Iterator&lt;*&gt;">
+		<DisplayString>{{ at SubItem #{Index} of Item #{ItemIdx} }}</DisplayString>
+	</Type>
 
 </AutoVisualizer>
