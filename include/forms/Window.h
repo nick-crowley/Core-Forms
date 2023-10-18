@@ -663,8 +663,12 @@ namespace core::forms
 		
 			void
 			remove(uintptr_t ident) {
-				if (!::KillTimer(this->Owner.handle(), ident))
-					win::LastError{}.throwAlways("Failed to cancel timer #{}", std::to_string(ident));
+				if (::KillTimer(this->Owner.handle(), ident))
+					return;
+				else if (win::LastError err; !err)
+					err.throwAlways("Failed to cancel timer #{}", std::to_string(ident));
+				else
+					clog << Warning{"Failed to cancel timer #{}", std::to_string(ident)};
 			}
 		};
 
