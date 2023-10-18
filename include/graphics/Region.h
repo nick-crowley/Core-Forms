@@ -264,7 +264,9 @@ namespace core::forms
 			return std::format("<Unknown format #{}>", data->rdh.iType);
 		else {
 			Rect bounds = data->rdh.rcBound;
-			return std::format("[Rectangular: Num={} Bounds={}x{}]", data->rdh.nCount, bounds.width(), bounds.height());
+			std::stringstream content;
+			content << nstd::delimit{std::span{(RECT*)data->Buffer, data->rdh.nCount}, ", "};
+			return std::format("[Rectangular: Num={} Bounds={}x{} Content={}]", data->rdh.nCount, bounds.width(), bounds.height(), content.str());
 		}
 	}
 }
