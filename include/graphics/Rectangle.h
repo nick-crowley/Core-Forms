@@ -349,4 +349,9 @@ namespace core::forms
 		return std::format("[Rect=[{}x{}],[{}x{}] Area={}x{}]", r.Left,r.Top, r.Right,r.Bottom, r.width(), r.height());
 	}
 }
+
+nstd::return_t<std::ostream&>
+inline operator<<(std::ostream& os, ::RECT const& r) {
+	return os << to_string(core::forms::Rect{r});
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
