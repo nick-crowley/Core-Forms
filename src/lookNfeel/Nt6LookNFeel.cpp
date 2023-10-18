@@ -77,7 +77,7 @@ Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs args)
 	args.beginPaint();
 
 	auto const activeCaption = args.CaptionState == WindowCaptionState::Active;
-	auto const components = NonClientComponentBounds{args.Window.style(), args.Bounds, Coords::Window};
+	auto const components = NonClientComponentBounds{args.Window.style(), args.Bounds, args.Client, Coords::Window};
 
 	// Draw frame
 	args.Graphics->setBrush(StockBrush::LightGrey);

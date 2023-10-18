@@ -17,19 +17,15 @@ forms::NonClientPaintEventArgs::beginPaint()
 	if (!dc)
 		return false;
 
-	// Retrieve window rect with origin at {0,0}
-	Rect rcWindow = this->Window.wndRect();
-	rcWindow -= rcWindow.topLeft();
+	// Retrieve window and client rect in window co-ordinates (with origin at {0,0})
+	Rect const rcWindow = this->Window.wndRect();
+	this->Bounds = rcWindow - rcWindow.topLeft();
+	this->Client = this->Window.clientRect(nullptr) - rcWindow.topLeft();
+	// Prefer pre-existing window region, if any; otherwise exclude client-area from window-rectangle
 	if (auto rgn = this->Window.wndRgn(); rgn)
 		this->Area = *rgn;
-	else {
-		// Retrieve client rect in window co-ordinates with origin at {0,0}
-		Rect rcClient = this->Window.clientRect(nullptr);
-		rcClient -= rcWindow.topLeft();
-		this->Area = rcWindow;
-		this->Area -= Region{rcClient};
-	}
-	this->Bounds = rcWindow;
+	else 
+		this->Area = Region{this->Bounds} - Region{this->Client};
 	this->Graphics = DeviceContext{SharedDeviceContext{dc}};
 	if (this->CaptionState == WindowCaptionState::Unknown)
 		this->CaptionState = this->Window.info().Caption;

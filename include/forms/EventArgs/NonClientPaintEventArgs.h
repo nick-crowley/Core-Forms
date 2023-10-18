@@ -62,8 +62,10 @@ namespace core::forms
 			  Window;		  //!< Screen co-ordinates
 
 	public:
+		//! @brief  Construct
+		//! @param  client  Client area in screen co-ordinates 
 		explicit
-		NonClientComponentBounds(nstd::bitset<WindowStyle> style, Rect wnd, Coords results) noexcept
+		NonClientComponentBounds(nstd::bitset<WindowStyle> style, Rect wnd, Rect client, Coords results) noexcept
 		  : Window{wnd}
 		{
 			ThrowIf(results, results == Coords::Client);
@@ -80,7 +82,6 @@ namespace core::forms
 		
 			// System Menu
 			this->SysMenuBtn = Rect{this->Caption.topLeft(), rcIcon};
-			--this->SysMenuBtn.Left; --this->SysMenuBtn.Top;
 
 			// Caption buttons
 			this->MaximizeBtn = Rect{this->Caption.topRight(), rcIcon, Rect::FromTopRight};
@@ -104,6 +105,7 @@ namespace core::forms
 	public:
 		Region                         Area;
 		Rect                           Bounds;
+		Rect                           Client;  // In window co-ordinates
 		std::optional<DeviceContext>   mutable Graphics;
 		std::optional<Region>          InvalidArea;
 		Window&                        Window;

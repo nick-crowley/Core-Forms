@@ -381,7 +381,7 @@ namespace core::forms
 	
 		Response
 		virtual onNonClientHitTest(NonClientHitTestEventArgs args) override {
-			if (NonClientComponentBounds const bounds{this->style(), this->wndRect(), Coords::Screen}; bounds.MaximizeBtn.contains(args.Position))
+			if (NonClientComponentBounds const bounds{this->style(), this->wndRect(), this->clientRect(nullptr), Coords::Screen}; bounds.MaximizeBtn.contains(args.Position))
 				return WindowHitTest::MaxButton;
 			else if (bounds.MinimizeBtn.contains(args.Position))
 				return WindowHitTest::MinButton;
@@ -403,7 +403,7 @@ namespace core::forms
 			//  (and its associated painting into the non-client area). 
 			if (args.Object == WindowHitTest::MinButton
 			 || args.Object == WindowHitTest::MaxButton) {
-				NonClientComponentBounds const bounds{this->style(), this->wndRect(), Coords::Screen};
+				NonClientComponentBounds const bounds{this->style(), this->wndRect(), this->clientRect(nullptr), Coords::Screen};
 				std::optional<Region> update;
 
 				if (args.Object == WindowHitTest::MinButton) {
@@ -434,7 +434,7 @@ namespace core::forms
 				bool const doMaximize = this->CaptionButtons.MaximizeBtn == ButtonState::Pushed;
 				bool const doMinimize = this->CaptionButtons.MinimizeBtn == ButtonState::Pushed;
 
-				NonClientComponentBounds const bounds {this->style(), this->wndRect(), Coords::Screen};
+				NonClientComponentBounds const bounds {this->style(), this->wndRect(), this->clientRect(nullptr), Coords::Screen};
 				Region update{this->CaptionButtons.MaximizeBtn == ButtonState::Pushed ? bounds.MaximizeBtn : bounds.MinimizeBtn};
 				
 				this->MouseCapture.release();

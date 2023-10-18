@@ -71,13 +71,12 @@ Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs args)
 	args.beginPaint();
 
 	auto const activeCaption = args.CaptionState == WindowCaptionState::Active;
-	auto const components = NonClientComponentBounds{args.Window.style(), args.Bounds, Coords::Window};
+	auto const components = NonClientComponentBounds{args.Window.style(), args.Bounds, args.Client, Coords::Window};
 
 	// Draw window frame
 	args.Graphics->setBrush(StockBrush::LightGrey);
 	args.Graphics->setPen(StockPen::Black);
-	Rect const insideFrame = args.Bounds - 2*Border{SystemMetric::cxSizeFrame,SystemMetric::cySizeFrame};
-	Region const frameEdges = args.Area - Region{insideFrame};
+	Region const frameEdges = args.Area - Region{args.Client};
 	args.Graphics->fillRegion(frameEdges);
 	args.Graphics->frameRegion(frameEdges, StockBrush::DarkGrey, Size{2,2});
 	
@@ -101,7 +100,7 @@ Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs args)
 	args.Graphics->setPen(StockObject::BlackPen);
 	args.Graphics->setBrush(SystemBrush::Window);
 	auto const sysMenuBorder = Border{Size{components.SysMenuBtn.width()/6, components.SysMenuBtn.height()/2 - 2}};
-	auto const sysMenuBtn = Rect{components.Caption.topLeft(), components.SysMenuBtn.size()} - sysMenuBorder - Point{1,0};
+	auto const sysMenuBtn = Rect{components.Caption.topLeft(), components.SysMenuBtn.size()} - sysMenuBorder;
 	args.Graphics->drawRect(sysMenuBtn);
 
 	// Draw maximize button
