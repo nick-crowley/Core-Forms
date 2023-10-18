@@ -554,7 +554,7 @@ LookNFeelProvider::draw(ListViewControl& ctrl, OwnerDrawEventArgs const& args)
 		detail = subitem.detail();
 		args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
 		args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(ctrl.textColour())), transparent);
-		args.Graphics.drawText(detail.Text, subitem.area());
+		args.Graphics.drawText(detail.Text, subitem.area(), DrawTextFlags::SimpleLeft|DrawTextFlags::WordElipsis);
 	}
 }
 
