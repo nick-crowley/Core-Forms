@@ -1296,6 +1296,15 @@ namespace core::forms
 
 			return Unhandled;
 		}
+		
+		Response
+		virtual onNotify(NotifyEventArgs args) override {
+			// Expect notifications from attached header control
+			if (args.Source.Handle == ListView_GetHeader(this->handle()))
+			return Unhandled;
+			
+			return base::onNotify(args);
+		}
 
 		Response 
 		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
