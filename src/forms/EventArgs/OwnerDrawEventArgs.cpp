@@ -19,7 +19,7 @@ forms::OwnerDrawEventArgs::OwnerDrawEventArgs([[maybe_unused]] ::WPARAM id, ::LP
 
 forms::OwnerDrawEventArgs::OwnerDrawEventArgs(::DRAWITEMSTRUCT& data) 
   : Action{static_cast<OwnerDrawAction>(data.itemAction)},
-    Ident{static_cast<uint16_t>(data.CtlID)},
+    Ident{static_cast<int16_t>(data.CtlID)},
 	Item{data},
 	Graphics{SharedDeviceContext{data.hDC, weakref}},
 	Type{static_cast<OwnerDrawControl>(data.CtlType)},
