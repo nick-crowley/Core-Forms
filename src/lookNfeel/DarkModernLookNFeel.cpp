@@ -30,5 +30,5 @@ DarkModernLookNFeel::onCreated(Window& wnd, CreateWindowEventArgs args) {
 
 	if (!wnd.parent())
 		if (!::DwmSetWindowAttribute(wnd.handle(), DWMWA_USE_IMMERSIVE_DARK_MODE, &enable, sizeof(enable)))
-			win::LastError{}.throwAlways("DwmSetWindowAttribute() failed");
+			clog << Warning{"DwmSetWindowAttribute() failed: {}", win::LastError{}.str()};
 }
