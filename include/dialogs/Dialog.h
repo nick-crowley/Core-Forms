@@ -372,6 +372,9 @@ namespace core::forms
 	
 		Response
 		virtual onNonClientActivate(NonClientActivateEventArgs args) override {
+			if (!this->LookNFeel->customCaption())
+				return Unhandled;
+
 			this->onNonClientPaint(NonClientPaintEventArgs{std::move(args)});
 			
 			//! @todo  Returning TRUE/FALSE matters 
@@ -381,6 +384,9 @@ namespace core::forms
 	
 		Response
 		virtual onNonClientHitTest(NonClientHitTestEventArgs args) override {
+			if (!this->LookNFeel->customCaption())
+				return Unhandled;
+
 			if (NonClientComponentBounds const bounds{this->style(), this->wndRect(), this->clientRect(nullptr), Coords::Screen}; bounds.MaximizeBtn.contains(args.Position))
 				return WindowHitTest::MaxButton;
 			else if (bounds.MinimizeBtn.contains(args.Position))
@@ -395,6 +401,9 @@ namespace core::forms
 
 		Response
 		virtual onNonClientMouseDown(NonClientMouseEventArgs args) override {
+			if (!this->LookNFeel->customCaption())
+				return Unhandled;
+
 			// Repeat hit-test for our custom non-client area
 			if (auto const response = this->onNonClientHitTest(NonClientHitTestEventArgs{args.Position}); response)
 				args.Object = static_cast<WindowHitTest>(*response.Value);
@@ -451,6 +460,9 @@ namespace core::forms
 
 		Response
 		virtual onNonClientPaint(NonClientPaintEventArgs args) override {
+			if (!this->LookNFeel->customCaption())
+				return Unhandled;
+
 			args.CaptionButtons = this->CaptionButtons;
 			return this->LookNFeel->draw(*this, args);
 		}

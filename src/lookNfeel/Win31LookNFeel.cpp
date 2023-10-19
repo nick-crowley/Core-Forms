@@ -22,6 +22,11 @@ Win31LookNFeel::Win31LookNFeel()
 	this->Colours.Window = Colour::White;
 }
 
+bool
+Win31LookNFeel::customCaption() const {
+	return true;
+}
+
 ILookNFeelProvider::FontDescription
 Win31LookNFeel::default() 
 {

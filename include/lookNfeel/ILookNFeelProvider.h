@@ -73,6 +73,9 @@ namespace core::forms
 		satisfies(ILookNFeelProvider,
 			IsInterface
 		);
+		
+		bool
+		virtual customCaption() const abstract;
 
 		void
 		virtual draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) abstract;

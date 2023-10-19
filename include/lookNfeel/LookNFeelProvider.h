@@ -83,6 +83,9 @@ namespace core::forms
 		makeDefault();
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		bool
+		virtual customCaption() const override;
+
 		void
 		virtual draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
@@ -127,6 +130,9 @@ namespace core::forms
 
 		void
 		virtual draw(StaticControl& ctrl, OwnerDrawEventArgs const& args) override;
+		
+		Response
+		virtual draw(Window& wnd, NonClientPaintEventArgs args) override;
 
 		void
 		virtual onCreated(Window&, CreateWindowEventArgs args) override;

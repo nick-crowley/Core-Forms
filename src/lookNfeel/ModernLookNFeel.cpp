@@ -161,10 +161,3 @@ ModernLookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 
 	args.Graphics->restore();
 }
-
-Response
-ModernLookNFeel::draw(Window& wnd, NonClientPaintEventArgs args) 
-{
-	// Use Windows default
-	return Window::Unhandled;
-}

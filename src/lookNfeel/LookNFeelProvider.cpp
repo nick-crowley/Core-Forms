@@ -73,6 +73,11 @@ LookNFeelProvider::LookNFeelProvider()
 {
 }
 
+bool
+LookNFeelProvider::customCaption() const {
+	return false;
+}
+
 Font
 LookNFeelProvider::makeDefault() {
 	return FontBuilder{}.withName(this->default().Name).withSize(this->default().Height);
@@ -631,6 +636,13 @@ LookNFeelProvider::draw(StaticControl& ctrl, OwnerDrawEventArgs const& args)
 	args.Graphics.drawText(ctrl.text(), args.Item.Area, forms::drawFlags(ctrl.align()));
 	
 	args.Graphics.restore();
+}
+
+Response
+LookNFeelProvider::draw(Window& wnd, NonClientPaintEventArgs args) 
+{
+	// Use Windows default
+	return Window::Unhandled;
 }
 
 void

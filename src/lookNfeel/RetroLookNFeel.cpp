@@ -23,11 +23,16 @@ RetroLookNFeel::RetroLookNFeel()
 	this->Colours.Window = Colour::White;
 }
 
+bool
+RetroLookNFeel::customCaption() const {
+	return true;
+}
+
 ILookNFeelProvider::FontDescription
 RetroLookNFeel::default() 
 {
 	using namespace forms::literals;
-	return FontDescription{L"FixedSys", 11_pt};
+	return FontDescription{L"FixedSys Excelsior", 11_pt};
 }
 
 //! @brief  Generates the points of an octagon

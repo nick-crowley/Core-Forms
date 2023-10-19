@@ -53,6 +53,9 @@ namespace core::forms
 	public:
 		using base::draw;
 		
+		bool
+		virtual customCaption() const override;
+
 		FontDescription
 		virtual default() override;
 		
