@@ -42,16 +42,21 @@ namespace core::forms
 	class RadioButtonControl : public ButtonControl 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		using ControlIdentRange = std::pair<uint16_t,uint16_t>;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		bool Checked = false;
+		ControlIdentRange GroupBoundaries;
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		implicit
-		RadioButtonControl(uint16_t id) : ButtonControl{id}
+		RadioButtonControl(uint16_t id, ControlIdentRange group)
+		  : ButtonControl{id}, 
+		    GroupBoundaries{group}
 		{
+			this->Clicked += {*this, &RadioButtonControl::this_Clicked};
 			this->backColour(this->LookNFeel->window());
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -86,8 +91,20 @@ namespace core::forms
 			Button_SetCheck(this->handle(), ButtonState::Checked);
 
 			if (this->ownerDraw()) {
-				this->Checked = true;
-				this->invalidate(true);
+				auto const* const dialog = this->parent();
+
+				// Invalidate this control and siblings within group
+				for (auto id = this->GroupBoundaries.first; id <= this->GroupBoundaries.second; ++id) {
+					if (id == this->ident()) {
+						this->Checked = true;
+						this->invalidate(true);
+					}
+					else {
+						auto* sibling = Window::ExistingWindows.find<RadioButtonControl>(::GetDlgItem(dialog->handle(),id));
+						sibling->Checked = false;
+						sibling->invalidate(true);
+					}
+				}
 			}
 		}
 		
@@ -103,16 +120,6 @@ namespace core::forms
 			return Unhandled;
 		}
 		
-		void
-		uncheck() noexcept {
-			Button_SetCheck(this->handle(), ButtonState::Unchecked);
-			
-			if (this->ownerDraw()) {
-				this->Checked = false;
-				this->invalidate(true);
-			}
-		}
-		
 	protected:
 		/*Response
 		virtual onOfferNotification(::UINT notification) override {
@@ -123,6 +130,15 @@ namespace core::forms
 			}
 			return Unhandled;
 		}*/
+
+		void
+		this_Clicked(Window& sender) {
+			if (!this->ownerDraw())
+				return;
+
+			if (!this->checked())
+				this->check();
+		}
 	};
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
