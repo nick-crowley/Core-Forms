@@ -69,6 +69,11 @@ namespace core::forms
 			return this->state().test(ButtonState::Checked);
 		}
 		
+		nstd::bitset<Alignment>
+		defaultAlign() const noexcept override {
+			return Alignment::Left|Alignment::VCentre;
+		}
+
 		WindowRole
 		virtual role() const noexcept override {
 			return WindowRole::RadioButton;
