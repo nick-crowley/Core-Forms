@@ -95,7 +95,17 @@ namespace core::forms
 				MakeMessageName(LVN_BEGINSCROLL),
 				MakeMessageName(LVN_ENDSCROLL),
 				MakeMessageName(LVN_LINKCLICK),
-				MakeMessageName(LVN_GETEMPTYMARKUP)
+				MakeMessageName(LVN_GETEMPTYMARKUP),
+				MakeMessageName(NM_CLICK),
+				MakeMessageName(NM_CUSTOMDRAW),
+				MakeMessageName(NM_DBLCLK),
+				MakeMessageName(NM_HOVER),
+				MakeMessageName(NM_KILLFOCUS),
+				MakeMessageName(NM_RCLICK),
+				MakeMessageName(NM_RDBLCLK),
+				MakeMessageName(NM_RELEASEDCAPTURE),
+				MakeMessageName(NM_RETURN),
+				MakeMessageName(NM_SETFOCUS)
 	#undef MakeMessageName
 				})
 			{}
@@ -1224,7 +1234,7 @@ namespace core::forms
 		gsl::czstring
 		static identifyNotification(::UINT notification) {
 			ListViewNotificationDictionary const  static names;
-			return names.at(notification);
+			return names.contains(notification) ? names.at(notification) : "????";
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
