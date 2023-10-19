@@ -40,71 +40,174 @@ namespace core::forms
 {
 	class LookNFeelDecorator : public ILookNFeelProvider
 	{
-		SharedLookNFeelProvider m_lookNfeel;
+		SharedLookNFeelProvider ColourImpl;
+		SharedLookNFeelProvider LogicImpl;
 
 	public:
-		LookNFeelDecorator(SharedLookNFeelProvider wrapped) : m_lookNfeel{wrapped}
+		LookNFeelDecorator(SharedLookNFeelProvider colours, SharedLookNFeelProvider logic) 
+		  : ColourImpl{colours},
+		    LogicImpl{logic}
 		{}
 
 	public:
+		bool 
+		virtual customCaption() const override {
+			return this->LogicImpl->customCaption();
+		}
+
 		void
 		virtual draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) override {
-			return this->m_lookNfeel->draw(ctrl, args);
+			this->LogicImpl->draw(ctrl, args);
 		}
-	
+
 		void
 		virtual draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) override {
-			return this->m_lookNfeel->draw(ctrl, args);
+			this->LogicImpl->draw(ctrl, args);
 		}
-	
+
 		void
-		virtual draw(LabelControl& ctrl, OwnerDrawEventArgs const& args) override {
-			return this->m_lookNfeel->draw(ctrl, args);
+		virtual draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args) override {
+			this->LogicImpl->draw(ctrl, args);
 		}
-	
+
 		void
-		virtual draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args) override {
-			return this->m_lookNfeel->draw(ctrl, args);
+		virtual measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& args) override {
+			this->LogicImpl->measure(ctrl, args);
 		}
-	
-		void
-		virtual erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& args) override {
-			return this->m_lookNfeel->erase(ctrl, args);
-		}
-	
+		
 		void
 		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) override {
-			return this->m_lookNfeel->draw(ctrl, args);
+			this->LogicImpl->draw(ctrl, args);
 		}
 	
+		void
+		virtual erase(GroupBoxControl& ctrl, EraseBackgroundEventArgs const& args) override {
+			this->LogicImpl->erase(ctrl, args);
+		}
+
+		void
+		virtual draw(LabelControl& ctrl, OwnerDrawEventArgs const& args) override {
+			this->LogicImpl->draw(ctrl, args);
+		}
+
+		void
+		virtual draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args) override {
+			this->LogicImpl->draw(ctrl, args);
+		}
+
+		void
+		virtual erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& args) override {
+			this->LogicImpl->erase(ctrl, args);
+		}
+
+		void
+		virtual measure(ListBoxControl& ctrl, MeasureItemEventArgs const& args) override {
+			this->LogicImpl->measure(ctrl, args);
+		}
+
+		void
+		virtual draw(ListViewControl& ctrl, OwnerDrawEventArgs const& args) override {
+			this->LogicImpl->draw(ctrl, args);
+		}
+
+		void
+		virtual erase(ListViewControl& ctrl, EraseBackgroundEventArgs const& args) override {
+			this->LogicImpl->erase(ctrl, args);
+		}
+
+		void
+		virtual measure(ListViewControl& ctrl, MeasureItemEventArgs const& args) override {
+			this->LogicImpl->measure(ctrl, args);
+		}
+
 		void
 		virtual draw(PictureControl& ctrl, OwnerDrawEventArgs const& args) override {
-			return this->m_lookNfeel->draw(ctrl, args);
+			this->LogicImpl->draw(ctrl, args);
 		}
-	
+
 		void
 		virtual draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args) override {
-			return this->m_lookNfeel->draw(ctrl, args);
+			this->LogicImpl->draw(ctrl, args);
 		}
 
 		void
 		virtual draw(StaticControl& ctrl, OwnerDrawEventArgs const& args) override {
-			return this->m_lookNfeel->draw(ctrl, args);
-		}
-
-		void
-		virtual draw(Dialog& dlg, PaintWindowEventArgs const& args) override {
-			return this->m_lookNfeel->draw(dlg, args);
-		}
-	
-		void
-		virtual draw(Window& wnd, NonClientPaintEventArgs const& args) override {
-			return this->m_lookNfeel->draw(wnd, args);
+			this->LogicImpl->draw(ctrl, args);
 		}
 		
 		void
-		virtual initialize(Dialog& dlg, InitDialogEventArgs const& args) override {
-			return this->m_lookNfeel->initialize(dlg, args);
+		virtual draw(Dialog& dlg, PaintWindowEventArgs const& args) override {
+			this->LogicImpl->draw(dlg, args);
+		}
+	
+		Response 
+		virtual draw(Window& wnd, NonClientPaintEventArgs& args) override {
+			return this->LogicImpl->draw(wnd, args);
+		}
+
+		void 
+		virtual onCreated(Window& wnd, CreateWindowEventArgs const& args) override {
+			this->LogicImpl->onCreated(wnd, args);
+		}
+
+		AnyColour 
+		virtual button() override {
+			return this->ColourImpl->button();
+		}
+
+		AnyColourPair 
+		virtual caption() override {
+			return this->ColourImpl->caption();
+		}
+
+		AnyColour 
+		virtual control() override {
+			return this->ColourImpl->control();
+		}
+		
+		FontDescription
+		virtual default() override {
+			return this->ColourImpl->default();
+		}
+
+		Font 
+		virtual heading1() override {
+			return this->ColourImpl->heading1();
+		}
+
+		Font 
+		virtual heading2() override {
+			return this->ColourImpl->heading2();
+		}
+
+		AnyColour 
+		virtual highlight() override {
+			return this->ColourImpl->highlight();
+		}
+
+		Font 
+		virtual paragraph() override {
+			return this->ColourImpl->paragraph();
+		}
+
+		AnyColour 
+		virtual primary() override {
+			return this->ColourImpl->primary();
+		}
+
+		AnyColour 
+		virtual secondary() override {
+			return this->ColourImpl->secondary();
+		}
+
+		AnyColour 
+		virtual tertiary() override {
+			return this->ColourImpl->tertiary();
+		}
+
+		AnyColour 
+		virtual window() override {
+			return this->ColourImpl->window();
 		}
 	};
 	

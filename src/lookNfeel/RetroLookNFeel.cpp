@@ -1,5 +1,6 @@
 ﻿#include "lookNfeel/RetroLookNFeel.h"
 #include "lookNfeel/Win31LookNFeel.h"
+#include "lookNfeel/LookNFeelDecorator.h"
 #include "controls/CommonControls.h"
 #include "graphics/FontBuilder.h"
 using namespace core;
@@ -147,14 +148,14 @@ RetroLookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		throw runtime_error{"GroupBox #{} must be OwnerDraw", args.Ident};
 
 	// Same as Win3.1
-	Win31LookNFeel::Instance->draw(ctrl, args);
+	Win31LookNFeel{this->shared_from_this()}.draw(ctrl, args);
 }
 
 Response
-RetroLookNFeel::draw(Window& wnd, NonClientPaintEventArgs args) 
+RetroLookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args) 
 {
 	ThrowIfNot(args, args.Graphics == nullopt);
 
 	// Same as Win3.1
-	return Win31LookNFeel::Instance->draw(wnd, args);
+	return Win31LookNFeel{this->shared_from_this()}.draw(wnd, args);
 }

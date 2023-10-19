@@ -23,6 +23,11 @@ Win31LookNFeel::Win31LookNFeel()
 	this->Colours.Window = Colour::White;
 }
 
+Win31LookNFeel::Win31LookNFeel(SharedLookNFeelProvider custom) 
+	: base{custom} 
+{
+}
+
 bool
 Win31LookNFeel::customCaption() const {
 	return true;
@@ -71,7 +76,7 @@ Win31LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 }
 
 Response
-Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs args) 
+Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args) 
 {
 	ThrowIfNot(args, args.Graphics == nullopt);
 	args.beginPaint();

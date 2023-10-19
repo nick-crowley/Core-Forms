@@ -23,7 +23,7 @@ DarkModernLookNFeel::DarkModernLookNFeel()
 #endif
 
 void
-DarkModernLookNFeel::onCreated(Window& wnd, CreateWindowEventArgs args) {
+DarkModernLookNFeel::onCreated(Window& wnd, CreateWindowEventArgs const& args) {
 	
 	BOOL constexpr
 	static enable = TRUE;

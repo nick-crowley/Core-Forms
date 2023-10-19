@@ -66,7 +66,7 @@ namespace core::forms
 		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
 	
 		Response
-		virtual draw(Window& wnd, NonClientPaintEventArgs args) override;
+		virtual draw(Window& wnd, NonClientPaintEventArgs& args) override;
 	};
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

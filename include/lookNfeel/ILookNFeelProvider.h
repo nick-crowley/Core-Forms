@@ -134,10 +134,10 @@ namespace core::forms
 		virtual draw(Dialog& dlg, PaintWindowEventArgs const& args) abstract;
 	
 		Response
-		virtual draw(Window& wnd, NonClientPaintEventArgs args) abstract;
+		virtual draw(Window& wnd, NonClientPaintEventArgs& args) abstract;
 		
 		void
-		virtual onCreated(Window&, CreateWindowEventArgs args) abstract;
+		virtual onCreated(Window&, CreateWindowEventArgs const& args) abstract;
 		
 		AnyColour
 		virtual button() abstract;

@@ -272,4 +272,59 @@
 		<DisplayString>{{ at SubItem #{Index} of Item #{ItemIdx} }}</DisplayString>
 	</Type>
 
+  <Type Name="core::forms::LookNFeelProvider">
+    <DisplayString>{{ Look-n-feel provider }}</DisplayString>
+    <Expand>
+      <Item Name="[button]">Colours.Button</Item>
+      <Item Name="[caption]">Colours.Caption</Item>
+      <Item Name="[control]">Colours.Control</Item>
+      <Item Name="[highlight]">Colours.Highlight</Item>
+      <Item Name="[primary]">Colours.Primary</Item>
+      <Item Name="[secondary]">Colours.Secondary</Item>
+      <Item Name="[tertiary]">Colours.Tertiary</Item>
+      <Item Name="[window]">Colours.Window</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="core::forms::Win31LookNFeel">
+    <DisplayString>{{ Win 3.1 Look-n-feel provider }}</DisplayString>
+    <Expand>
+      <ExpandedItem>*(core::forms::LookNFeelProvider*)this,nd</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="core::forms::Nt6LookNFeel">
+    <DisplayString>{{ NT 6 Look-n-feel provider }}</DisplayString>
+    <Expand>
+      <ExpandedItem>*(core::forms::LookNFeelProvider*)this,nd</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="core::forms::ModernLookNFeel">
+    <DisplayString>{{ Modern Look-n-feel provider }}</DisplayString>
+    <Expand>
+      <ExpandedItem>*(core::forms::LookNFeelProvider*)this,nd</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="core::forms::RetroLookNFeel">
+    <DisplayString>{{ Retro Look-n-feel provider }}</DisplayString>
+    <Expand>
+      <ExpandedItem>*(core::forms::LookNFeelProvider*)this,nd</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="core::forms::DarkRetroLookNFeel">
+    <DisplayString>{{ Retro Look-n-feel provider (dark-mode) }}</DisplayString>
+    <Expand>
+      <ExpandedItem>*(core::forms::LookNFeelProvider*)this,nd</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <Type Name="core::forms::DarkModernLookNFeel">
+    <DisplayString>{{ Modern Look-n-feel provider (dark-mode) }}</DisplayString>
+    <Expand>
+      <ExpandedItem>*(core::forms::LookNFeelProvider*)this,nd</ExpandedItem>
+    </Expand>
+  </Type>
 </AutoVisualizer>

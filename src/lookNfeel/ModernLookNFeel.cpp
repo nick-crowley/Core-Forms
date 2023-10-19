@@ -1,5 +1,6 @@
 ﻿#include "lookNfeel/ModernLookNFeel.h"
 #include "lookNfeel/Nt6LookNFeel.h"
+#include "lookNfeel/LookNFeelDecorator.h"
 #include "controls/CommonControls.h"
 #include "graphics/FontBuilder.h"
 using namespace core;
@@ -149,7 +150,7 @@ ModernLookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		throw runtime_error{"GroupBox #{} must be OwnerDraw", args.Ident};
 
 	// Same as NT6
-	Nt6LookNFeel::Instance->draw(ctrl, args);
+	Nt6LookNFeel{this->shared_from_this()}.draw(ctrl, args);
 }
 
 void

@@ -50,6 +50,8 @@ namespace core::forms
 	public:
 		Win31LookNFeel();
 
+		Win31LookNFeel(SharedLookNFeelProvider custom);
+
 	public:
 		using base::draw;
 		
@@ -66,7 +68,7 @@ namespace core::forms
 		virtual draw(Dialog& dlg, PaintWindowEventArgs const& args) override;
 	
 		Response
-		virtual draw(Window& wnd, NonClientPaintEventArgs args) override;
+		virtual draw(Window& wnd, NonClientPaintEventArgs& args) override;
 	};
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

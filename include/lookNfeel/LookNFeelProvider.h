@@ -49,7 +49,8 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class FormsExport LookNFeelProvider : public ILookNFeelProvider
+	class FormsExport LookNFeelProvider : public ILookNFeelProvider, 
+	                                      public std::enable_shared_from_this<ILookNFeelProvider>
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
@@ -71,9 +72,13 @@ namespace core::forms
 			AnyColour  Tertiary;
 			AnyColour  Window;
 		} Colours;
+
+		std::optional<SharedLookNFeelProvider> CustomImpl;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
 		LookNFeelProvider();
+
+		LookNFeelProvider(SharedLookNFeelProvider custom);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -133,10 +138,10 @@ namespace core::forms
 		virtual draw(StaticControl& ctrl, OwnerDrawEventArgs const& args) override;
 		
 		Response
-		virtual draw(Window& wnd, NonClientPaintEventArgs args) override;
+		virtual draw(Window& wnd, NonClientPaintEventArgs& args) override;
 
 		void
-		virtual onCreated(Window&, CreateWindowEventArgs args) override;
+		virtual onCreated(Window&, CreateWindowEventArgs const& args) override;
 		
 		AnyColour
 		virtual button() override;

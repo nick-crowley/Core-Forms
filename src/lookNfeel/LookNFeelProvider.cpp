@@ -74,8 +74,17 @@ LookNFeelProvider::LookNFeelProvider()
 {
 }
 
+LookNFeelProvider::LookNFeelProvider(SharedLookNFeelProvider impl) 
+	: LookNFeelProvider{}
+{
+	this->CustomImpl = impl;
+}
+
 bool
 LookNFeelProvider::customCaption() const {
+	if (CustomImpl)
+		return (*CustomImpl)->customCaption();
+
 	return false;
 }
 
@@ -640,68 +649,101 @@ LookNFeelProvider::draw(StaticControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 Response
-LookNFeelProvider::draw(Window& wnd, NonClientPaintEventArgs args) 
+LookNFeelProvider::draw(Window& wnd, NonClientPaintEventArgs& args) 
 {
 	// Use Windows default
 	return Window::Unhandled;
 }
 
 void
-LookNFeelProvider::onCreated(Window&, CreateWindowEventArgs args) {
+LookNFeelProvider::onCreated(Window&, CreateWindowEventArgs const& args) {
 	// nothing
 }
 
 AnyColour
 LookNFeelProvider::button() {
+	if (CustomImpl)
+		return (*CustomImpl)->button();
+
 	return this->Colours.Button;
 }
 
 LookNFeelProvider::AnyColourPair
 LookNFeelProvider::caption() {
+	if (CustomImpl)
+		return (*CustomImpl)->caption();
+
 	return this->Colours.Caption;
 }
 
 AnyColour
 LookNFeelProvider::control() {
+	if (CustomImpl)
+		return (*CustomImpl)->control();
+
 	return this->Colours.Control;
 }
 
 Font
 LookNFeelProvider::heading1() {
+	if (CustomImpl)
+		return (*CustomImpl)->heading1();
+
 	return this->Fonts.Heading1;
 }
 
 Font
 LookNFeelProvider::heading2() {
+	if (CustomImpl)
+		return (*CustomImpl)->heading2();
+
 	return this->Fonts.Heading2;
 }
 
 AnyColour
 LookNFeelProvider::highlight() {
+	if (CustomImpl)
+		return (*CustomImpl)->highlight();
+
 	return this->Colours.Highlight;
 }
 
 Font
 LookNFeelProvider::paragraph() {
+	if (CustomImpl)
+		return (*CustomImpl)->paragraph();
+
 	return this->Fonts.Paragraph;
 }
 
 AnyColour
 LookNFeelProvider::primary() {
+	if (CustomImpl)
+		return (*CustomImpl)->primary();
+
 	return this->Colours.Primary;
 }
 
 AnyColour
 LookNFeelProvider::secondary() {
+	if (CustomImpl)
+		return (*CustomImpl)->secondary();
+
 	return this->Colours.Secondary;
 }
 
 AnyColour
 LookNFeelProvider::tertiary() {
+	if (CustomImpl)
+		return (*CustomImpl)->tertiary();
+
 	return this->Colours.Tertiary;
 }
 
 AnyColour
 LookNFeelProvider::window() {
+	if (CustomImpl)
+		return (*CustomImpl)->window();
+
 	return this->Colours.Window;
 }

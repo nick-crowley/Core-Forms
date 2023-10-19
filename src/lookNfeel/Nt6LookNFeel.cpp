@@ -22,6 +22,11 @@ Nt6LookNFeel::Nt6LookNFeel()
 	this->Colours.Window = SystemColour::Dialog;
 }
 
+Nt6LookNFeel::Nt6LookNFeel(SharedLookNFeelProvider custom)
+	: base{custom}
+{
+}
+
 ILookNFeelProvider::FontDescription
 Nt6LookNFeel::default() 
 {
@@ -71,7 +76,7 @@ Nt6LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 }
 
 Response
-Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs args) 
+Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args) 
 {
 	ThrowIfNot(args, args.Graphics == nullopt);
 	args.beginPaint();
