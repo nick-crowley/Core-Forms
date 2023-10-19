@@ -892,6 +892,9 @@ namespace core::forms
 		
 		Warning
 		static unrecognisedNotificationLogEntry(CommandEventArgs args);
+		
+		Warning
+		static unrecognisedNotificationLogEntry(NotifyEventArgs args);
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -1154,6 +1157,17 @@ namespace core::forms
 
 			return Unhandled;
 		}
+		
+		Response
+		virtual onNotify(NotifyEventArgs args) {
+			// Reflect notification back to originator control
+			if (Window* sender = Window::ExistingWindows.find(args.Source.Handle); sender)
+				return sender->offerNotification(args);
+
+			// [DEBUG] Notification from child window we didn't create
+			clog << Window::unrecognisedNotificationLogEntry(args);
+			return Unhandled;
+		}
 
 		Response 
 		virtual onOwnerDraw(OwnerDrawEventArgs args) {
@@ -1308,6 +1322,9 @@ namespace core::forms
 			case WM_LBUTTONUP:
 				return this->onMouseUp({MouseMessage::ButtonUp,MouseButton::Left,wParam,lParam});
 			
+			case WM_NOTIFY: 
+				return this->onNotify({wParam,lParam});
+			
 			case WM_ERASEBKGND:
 				return this->onEraseBackground({wParam,lParam});
 				
@@ -1377,7 +1394,7 @@ namespace core::forms
 			}
 		} 
 		
-		//! @brief	Reflect notification back to sender
+		//! @brief	Reflect WM_COMMAND notification back to sender
 		Response
 		offerNotification(::UINT notification) {
 			auto const _ = this->Debug.setTemporaryState(
@@ -1386,8 +1403,23 @@ namespace core::forms
 			return this->onOfferNotification(notification);
 		}
 		
+		//! @brief	Reflect WM_NOTIFY notification back to sender
+		Response
+		offerNotification(NotifyEventArgs args) {
+			auto const _ = this->Debug.setTemporaryState(
+				{ProcessingState::NotificationProcessing, this->notificationName(args.Code)}
+			);
+			return this->onOfferNotification(args);
+		}
+		
 		Response
 		virtual onOfferNotification([[maybe_unused]] ::UINT notification) {
+			// Default implementation ignores all reflected notifications
+			return Unhandled;
+		}
+		
+		Response
+		virtual onOfferNotification([[maybe_unused]] NotifyEventArgs args) {
 			// Default implementation ignores all reflected notifications
 			return Unhandled;
 		}

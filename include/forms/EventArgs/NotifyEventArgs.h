@@ -27,35 +27,11 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
-#include "forms/EventArgs/CommandEventArgs.h"
-#include "forms/EventArgs/CreateWindowEventArgs.h"
-#include "forms/EventArgs/ControlColourEventArgs.h"
-#include "forms/EventArgs/DropFilesEventArgs.h"
-#include "forms/EventArgs/EraseBackgroundEventArgs.h"
-#include "forms/EventArgs/GetObjectEventArgs.h"
-#include "forms/EventArgs/MeasureItemEventArgs.h"
-#include "forms/EventArgs/MinMaxEventArgs.h"
-#include "forms/EventArgs/MouseEventArgs.h"
-#include "forms/EventArgs/NonClientActivateEventArgs.h"
-#include "forms/EventArgs/NonClientHitTestEventArgs.h"
-#include "forms/EventArgs/NonClientMouseEventArgs.h"
-#include "forms/EventArgs/NonClientPaintEventArgs.h"
-#include "forms/EventArgs/NotifyEventArgs.h"
-#include "forms/EventArgs/OwnerDrawEventArgs.h"
-#include "forms/EventArgs/OwnerDrawMenuEventArgs.h"
-#include "forms/EventArgs/PaintWindowEventArgs.h"
-#include "forms/EventArgs/ResizeWindowEventArgs.h"
-#include "forms/EventArgs/SetWindowFontEventArgs.h"
-#include "forms/EventArgs/ShowWindowEventArgs.h"
-#include "forms/EventArgs/TimerEventArgs.h"
-#include "forms/EventArgs/UserEventArgs.h"
+#include "core/ObservableEvent.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::forms
-{
-	class FormsExport Window;
-}
+
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -63,11 +39,33 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	//! @brief	Delegate for a 'standard' window event (ie. one that doesn't require a custom second parameter)
-	using WindowDelegate = Delegate<void (Window&)>;
+	struct NotifyEventArgs {
+		static_assert(sizeof(LPARAM) == sizeof(HWND));
 
-	//! @brief	'standard' window event (ie. one without custom data)
-	using WindowEvent = ObservableEvent<WindowDelegate>;
+		struct SourceIdent {
+			uint16_t   Ident;
+			::HWND     Handle;
+		};
+
+	public:
+		::NMHDR*     Header;
+		SourceIdent  Source; 
+		uint16_t     Code;
+		
+		NotifyEventArgs(::WPARAM, ::LPARAM l)
+		  : Header{reinterpret_cast<::NMHDR*>(l)},
+		    Source{static_cast<uint16_t>(this->Header->idFrom), this->Header->hwndFrom},
+		    Code{static_cast<uint16_t>(this->Header->code)}
+		{	
+		}
+
+		satisfies(NotifyEventArgs, 
+			IsSemiRegular
+		);
+	};
+	
+	using NotifyDelegate = meta::undefined_t;	//!< Unused for WM_NOTIFY
+	using NotifyEvent = meta::undefined_t;		//!< Unused for WM_NOTIFY
 
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

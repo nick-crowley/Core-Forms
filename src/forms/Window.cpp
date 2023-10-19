@@ -69,3 +69,19 @@ Window::unrecognisedNotificationLogEntry(CommandEventArgs args)
 	return Warning{"forms::Window::onCommand() received {} from unmanaged {} id={} (handle={:#08x})", 
 		messageName, core::to_string(controlType), args.Ident, (uintptr_t)args.Notification->Handle};
 }
+
+Warning
+Window::unrecognisedNotificationLogEntry(NotifyEventArgs args)
+{	
+	CommonControl const controlType = forms::identifyControl(WindowClass::nameFromHandle(args.Source.Handle));
+	std::string messageName{};
+	
+	switch (controlType){
+	case CommonControl::Button:   messageName = ButtonControl::identifyNotification(args.Code);   break;
+	case CommonControl::ListView: messageName = ListViewControl::identifyNotification(args.Code); break;
+	default:                      messageName = to_hexString<4>(args.Code);                       break;
+	}
+	
+	return Warning{"forms::Window::onNotify() received {} from unmanaged {} id={} (handle={:#08x})", 
+		messageName, core::to_string(controlType), args.Source.Ident, (uintptr_t)args.Source.Handle};
+}
