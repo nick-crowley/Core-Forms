@@ -142,17 +142,22 @@ LookNFeelProvider::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	args.Graphics.fillRect(args.Item.Area);
 	
 	// Draw check
+	auto const alignment = ctrl.align();
 	auto const checked = ctrl.checked();
 	Rect const content = args.Item.Area;
-	Rect const tick {content.topLeft(), Size{SystemMetric::cxSmallIcon,SystemMetric::cySmallIcon}};
-	args.Graphics.drawControl(tick, DFC_BUTTON, DFCS_BUTTONCHECK|(checked?DFCS_CHECKED:0));
+	scoped {
+		Rect tick {content.topLeft(), Size{SystemMetric::cxSmallIcon,SystemMetric::cySmallIcon}};
+		if (alignment.test(Alignment::VCentre))
+			tick.translate(Point{0, (content.height() - tick.height()) / 2});
+		args.Graphics.drawControl(tick, DFC_BUTTON, DFCS_BUTTONCHECK|(checked?DFCS_CHECKED:0));
+	}
 	
 	// Draw text
 	auto const enabled = ctrl.enabled();
 	Rect const areaText = content - Border{SystemMetric::cxSmallIcon,0,0,0} - Border{SystemMetric::cxEdge,0,0,0};
 	args.Graphics.setFont(ctrl.font());
 	args.Graphics.textColour(enabled ? ctrl.textColour() : SystemColour::GrayText, ctrl.backColour());
-	args.Graphics.drawText(ctrl.text(), areaText, forms::drawFlags(ctrl.align()));
+	args.Graphics.drawText(ctrl.text(), areaText, forms::drawFlags(alignment));
 	
 	// Draw focus rectangle
 	auto const focused = ctrl.state().test(ButtonState::Focus);
