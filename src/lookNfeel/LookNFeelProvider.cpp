@@ -551,11 +551,20 @@ LookNFeelProvider::draw(ListViewControl& ctrl, OwnerDrawEventArgs const& args)
 		args.Graphics.restore();
 	};
 	
+	// [ICON]
+	Rect rcLabel = item.area();
+	if (ctrl.features().test(ListViewFeature::Icons)) {
+		if (std::optional<Icon> icon = item.icon(); icon.has_value()) 
+			args.Graphics.drawIcon(icon->handle(), rcLabel.topLeft(), Size{24,24});
+
+		rcLabel.Left += 24 + 3*Measurement{SystemMetric::cxEdge};
+	}
+
 	// [ITEM] Prefer item font + selected-text colour; fallback to control-default
-	auto detail = item.detail();
+	RichText detail = item.detail();
 	args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
 	args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(ctrl.textColour())), transparent);
-	args.Graphics.drawText(detail.Text, item.area());
+	args.Graphics.drawText(detail.Text, rcLabel);
 
 	// [SUB-ITEMS] Prefer subitem font + selected-text colour; fallback to control-default
 	for (auto idx = 0, subItemCount = item.SubItems.size(); idx < subItemCount; ++idx) {
@@ -572,6 +581,12 @@ LookNFeelProvider::measure(ListViewControl& ctrl, MeasureItemEventArgs const& ar
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"ListView #{} must be OwnerDraw", args.Ident};
+
+	args.Graphics.setFont(ctrl.font());
+	args.Height = args.Graphics.measureText(L"Ajy").Height;
+
+	if (ctrl.features().test(ListViewFeature::Icons))
+		args.Height = std::max<uint32_t>(args.Height, 24);
 	
 	args.Graphics.restore();
 }
