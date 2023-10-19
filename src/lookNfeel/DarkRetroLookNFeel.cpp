@@ -8,6 +8,7 @@ DarkRetroLookNFeel::Instance = std::make_shared<DarkRetroLookNFeel>();
 DarkRetroLookNFeel::DarkRetroLookNFeel()
 {
 	this->Colours.Button = SystemColour::ButtonDkShadow;
+    this->Colours.Caption = {Colour::DarkBlue, SystemColour::ButtonDkShadow};
 	this->Colours.Control = Colour::Black;
     this->Colours.Primary = Colour::White;
     this->Colours.Highlight = SystemColour::GrayText;

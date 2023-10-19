@@ -64,6 +64,7 @@ LookNFeelProvider::LookNFeelProvider()
   },
   Colours{
     .Button{SystemColour::ButtonFace},
+	.Caption{SystemColour::ActiveCaption, SystemColour::InactiveCaption},
 	.Highlight{SystemColour::Highlight},
     .Primary{SystemColour::WindowText},
     .Secondary{SystemColour::GrayText},
@@ -653,6 +654,11 @@ LookNFeelProvider::onCreated(Window&, CreateWindowEventArgs args) {
 AnyColour
 LookNFeelProvider::button() {
 	return this->Colours.Button;
+}
+
+LookNFeelProvider::AnyColourPair
+LookNFeelProvider::caption() {
+	return this->Colours.Caption;
 }
 
 AnyColour

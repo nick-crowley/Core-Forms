@@ -14,6 +14,7 @@ Win31LookNFeel::Win31LookNFeel()
 	this->Fonts.Heading2 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(12_pt);
 	this->Fonts.Heading1 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(14_pt);
 	this->Colours.Button = SystemColour::ButtonFace;
+    this->Colours.Caption = {SystemColour::Highlight, SystemColour::ButtonDkShadow};
 	this->Colours.Control = Colour::White;
     this->Colours.Primary = Colour::Black;
     this->Colours.Highlight = SystemColour::Highlight;
@@ -86,7 +87,7 @@ Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs args)
 	args.Graphics->frameRegion(frameEdges, StockBrush::DarkGrey, Size{2,2});
 	
 	// Draw caption background
-	args.Graphics->setBrush(activeCaption ? SystemColour::Highlight : SystemColour::ButtonDkShadow);
+	args.Graphics->setBrush(activeCaption ? this->caption().Active : this->caption().Inactive);
 	//if (args.InvalidArea)
 	//	args.Graphics->fillRegion(*args.InvalidArea);
 	//else

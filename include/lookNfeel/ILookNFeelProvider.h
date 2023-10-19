@@ -70,6 +70,11 @@ namespace core::forms
 			PointSize     Height;
 		};
 
+		struct AnyColourPair
+		{
+			AnyColour  Active, Inactive;
+		};
+
 		satisfies(ILookNFeelProvider,
 			IsInterface
 		);
@@ -136,6 +141,9 @@ namespace core::forms
 		
 		AnyColour
 		virtual button() abstract;
+		
+		AnyColourPair
+		virtual caption() abstract;
 		
 		AnyColour
 		virtual control() abstract;
