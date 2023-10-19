@@ -51,7 +51,9 @@ namespace core::forms
 	public:
 		implicit
 		RadioButtonControl(uint16_t id) : ButtonControl{id}
-		{}
+		{
+			this->backColour(this->LookNFeel->window());
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
