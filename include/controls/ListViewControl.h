@@ -30,6 +30,7 @@
 #include "controls/ListBoxItemData.h"
 #include "controls/ListViewStyle.h"
 #include "controls/ListViewExStyle.h"
+#include "controls/ListViewEventArgs.h"
 #include "forms/WindowClass.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -1199,6 +1200,7 @@ namespace core::forms
 	public:
 		ColumnCollection Columns;
 		ItemCollection   Items;
+		ItemChangedEvent ItemChanged;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		implicit
@@ -1274,6 +1276,12 @@ namespace core::forms
 		}
 		
 		Response 
+		virtual onItemChanged(ItemChangedEventArgs args) {
+			this->ItemChanged.raise(*this,args);
+			return 0;
+		}
+		
+		Response 
 		virtual onMeasureItem(MeasureItemEventArgs args) override {
 			if (args.Ident == this->ident()) {
 				this->LookNFeel->measure(*this, args);
@@ -1303,6 +1311,15 @@ namespace core::forms
 			return Unhandled;
 		}*/
 		
+		Response
+		virtual onOfferNotification(NotifyEventArgs args) {
+			switch (args.Code) {
+			case LVN_ITEMCHANGED:
+				return this->onItemChanged(ItemChangedEventArgs{args});
+			}
+			return Unhandled;
+		}
+
 		::LRESULT 
 		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
 			return this->subclassedWndProc(message, wParam, lParam);
