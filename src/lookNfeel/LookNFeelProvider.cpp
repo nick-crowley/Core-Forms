@@ -5,37 +5,23 @@ using namespace core;
 using namespace forms;
 
 DrawTextFlags
-forms::calculateFlags(nstd::bitset<ButtonStyle> style) noexcept
+forms::drawFlags(nstd::bitset<Alignment> align) noexcept
 {
-	nstd::bitset<DrawTextFlags> textAlign = style.test(ButtonStyle::Left)  ? DrawTextFlags::Left
-	                                      : style.test(ButtonStyle::Right) ? DrawTextFlags::Right
-	                                      :                                  DrawTextFlags::Centre;
+	nstd::bitset<DrawTextFlags> flags = align.test(Alignment::Left)   ? DrawTextFlags::Left
+	                                  : align.test(Alignment::Right)  ? DrawTextFlags::Right
+	                                  : align.test(Alignment::Centre) ? DrawTextFlags::Centre
+	                                                                  : DrawTextFlags::None;
 	
-	textAlign |= style.test(ButtonStyle::Top)     ? DrawTextFlags::Top
-	           : style.test(ButtonStyle::Bottom)  ? DrawTextFlags::Bottom
-	           :                                    DrawTextFlags::VCentre|DrawTextFlags::SingleLine;
+	flags |= align.test(Alignment::Top)     ? DrawTextFlags::Top
+	       : align.test(Alignment::Bottom)  ? DrawTextFlags::Bottom
+	       : align.test(Alignment::VCentre) ? DrawTextFlags::VCentre|DrawTextFlags::SingleLine
+	       :                                  DrawTextFlags::None;
 
-	return textAlign;
-}
-
-DrawTextFlags
-forms::calculateFlags(nstd::bitset<StaticStyle> style) noexcept
-{
-	auto const typeBits = style & StaticStyle::TypeMask;
-	nstd::bitset<DrawTextFlags> textAlign = typeBits == StaticStyle::Right  ? DrawTextFlags::Right
-	                                      : typeBits == StaticStyle::Centre ? DrawTextFlags::Centre
-	                                      :                                   DrawTextFlags::Left;
-
-	if (style.test(StaticStyle::CentreImage))
-		textAlign |= DrawTextFlags::VCentre|DrawTextFlags::SingleLine;
-	else
-		textAlign |= DrawTextFlags::WordBreak;
-	
-	return textAlign;
+	return flags;
 }
 
 EdgeFlags
-forms::calculateFlags(nstd::bitset<ExWindowStyle> style) noexcept
+forms::edgeFlags(nstd::bitset<ExWindowStyle> style) noexcept
 {
 	if (style.test(ExWindowStyle::ClientEdge))
 		return EdgeFlags::SunkenOuter;
@@ -62,7 +48,7 @@ forms::drawWindowBorder(DeviceContext& graphics, Rect const& client, nstd::bitse
 	auto constexpr edgeStyles = ExWindowStyle::StaticEdge|ExWindowStyle::ClientEdge|ExWindowStyle::DlgModalFrame;
 
 	if (exStyle.test(edgeStyles)) 
-		graphics.drawEdge(client, calculateFlags(exStyle), BorderFlags::Rect);
+		graphics.drawEdge(client, forms::edgeFlags(exStyle), BorderFlags::Rect);
 
 	else if (style.test(WindowStyle::Border)) {
 		graphics.setPen(StockPen::Black);
@@ -120,7 +106,7 @@ LookNFeelProvider::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args)
 	Rect const content = args.Item.Area - Border{SystemMetric::cxFixedFrame} + (pushed ? Point{1,1} : Point::Zero);
 	args.Graphics.setFont(ctrl.font());
 	args.Graphics.textColour(enabled ? ctrl.textColour() : SystemColour::GrayText, ctrl.backColour());
-	args.Graphics.drawText(ctrl.text(), content, calculateFlags(ctrl.style<ButtonStyle>()));
+	args.Graphics.drawText(ctrl.text(), content, forms::drawFlags(ctrl.align()));
 
 	// Draw focus rectangle
 	auto const focused = state.test(ButtonState::Focus);
@@ -151,7 +137,7 @@ LookNFeelProvider::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	Rect const areaText = content - Border{SystemMetric::cxSmallIcon,0,0,0} - Border{SystemMetric::cxEdge,0,0,0};
 	args.Graphics.setFont(ctrl.font());
 	args.Graphics.textColour(enabled ? ctrl.textColour() : SystemColour::GrayText, ctrl.backColour());
-	args.Graphics.drawText(ctrl.text(), areaText, calculateFlags(ctrl.style<ButtonStyle>()));
+	args.Graphics.drawText(ctrl.text(), areaText, forms::drawFlags(ctrl.align()));
 	
 	// Draw focus rectangle
 	auto const focused = ctrl.state().test(ButtonState::Focus);
@@ -355,10 +341,9 @@ LookNFeelProvider::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args)
 	args.Graphics.fillRect(args.Item.Area);
 
 	// Draw text
-	auto const style = (ctrl.style<StaticStyle>() & ~StaticStyle::TypeMask) | ctrl.align();
 	args.Graphics.setFont(ctrl.font());
 	args.Graphics.textColour(ctrl.textColour(), ctrl.backColour());
-	args.Graphics.drawText(ctrl.text(), args.Item.Area, calculateFlags(style));
+	args.Graphics.drawText(ctrl.text(), args.Item.Area, forms::drawFlags(ctrl.align()));
 
 	args.Graphics.restore();
 }
@@ -627,7 +612,7 @@ LookNFeelProvider::draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args
 	Rect const areaText = content - Border{30,0,0,0};
 	args.Graphics.setFont(ctrl.font());
 	args.Graphics.textColour(enabled ? ctrl.textColour() : SystemColour::GrayText, ctrl.backColour());
-	args.Graphics.drawText(ctrl.text(), areaText, calculateFlags(ctrl.style<ButtonStyle>()));
+	args.Graphics.drawText(ctrl.text(), areaText, forms::drawFlags(ctrl.align()));
 
 	// Draw focus rectangle
 	if (focused)
@@ -639,8 +624,11 @@ LookNFeelProvider::draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args
 void
 LookNFeelProvider::draw(StaticControl& ctrl, OwnerDrawEventArgs const& args)
 {
+	if (!ctrl.ownerDraw())
+		throw runtime_error{"Static #{} must be OwnerDraw", args.Ident};
+
 	args.Graphics.setBrush(ctrl.backColour());
-	args.Graphics.drawText(ctrl.text(), args.Item.Area, calculateFlags(ctrl.style<StaticStyle>()));
+	args.Graphics.drawText(ctrl.text(), args.Item.Area, forms::drawFlags(ctrl.align()));
 	
 	args.Graphics.restore();
 }

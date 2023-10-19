@@ -101,6 +101,25 @@ namespace core::forms
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		nstd::bitset<Alignment>
+		virtual align() const noexcept {
+			using enum StaticStyle;
+			
+			nstd::bitset<Alignment> result{Alignment::Default};
+			auto const curStyle = this->style<StaticStyle>();
+			switch (curStyle & TypeMask) {
+			case Left:    result = Alignment::Left;    break;
+			case Right:   result = Alignment::Right;   break;
+			case Centre:  result = Alignment::Centre;  break;
+			default:      result = (this->defaultAlign() & Alignment::Horizontal); break;
+			}
+			switch (curStyle & ~TypeMask) {
+			case CentreImage: result |= Alignment::VCentre; break;
+			default:          result |= ((Alignment)this->defaultAlign() & Alignment::Vertical); break;
+			}
+			return result;
+		}
+
 		bool
 		virtual ownerDraw() const noexcept override {
 			return (this->style<StaticStyle>() & StaticStyle::TypeMask).test(StaticStyle::OwnerDraw);

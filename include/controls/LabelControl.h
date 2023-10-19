@@ -43,11 +43,10 @@ namespace core::forms
 	class LabelControl : public StaticControl 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		enum HorizontalAlign { Left, Centre, Right };
+		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		HorizontalAlign TextAlignment = Left;
+		Alignment OwnerDrawAlignment = Alignment::Left;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		implicit
@@ -59,15 +58,15 @@ namespace core::forms
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		HorizontalAlign
-		align() const {
-			return this->TextAlignment;
+		nstd::bitset<Alignment>
+		virtual align() const noexcept override {
+			return this->OwnerDrawAlignment;
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
-		align(HorizontalAlign horz) {
-			this->TextAlignment = horz;
+		align(nstd::bitset<Alignment> ownerDrawAlign) noexcept {
+			this->OwnerDrawAlignment = ownerDrawAlign;
 		}
 
 		Response 
@@ -81,11 +80,6 @@ namespace core::forms
 		}
 	};
 }	// namespace core::forms
-namespace core::meta
-{
-	metadata bool Settings<bitwise_enum, forms::LabelControl::HorizontalAlign> = true;
-	metadata bool Settings<compatible_enum, forms::StaticStyle, forms::LabelControl::HorizontalAlign> = true;
-}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

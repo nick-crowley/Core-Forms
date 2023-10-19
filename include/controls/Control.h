@@ -41,10 +41,23 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms 
 {
+	enum class Alignment { 
+		Default, 
+		Left = nstd::bit<0>,
+		Centre = nstd::bit<1>,
+		Right = nstd::bit<2>,
+		Top = nstd::bit<3>,
+		Bottom = nstd::bit<4>,
+		VCentre = nstd::bit<5>,
+		Horizontal = Left|Centre|Right,
+		Vertical = Top|Bottom|VCentre,
+	};
+
 	enum class Side { None, Left = 1, Top = 2, Right = 4, Bottom = 8 };	
 }
 namespace core::meta
 {
+	metadata bool Settings<bitwise_enum, forms::Alignment> = true;
 	metadata bool Settings<bitwise_enum, forms::Side> = true;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -87,6 +100,11 @@ namespace core::forms
 			return this->Anchors;
 		}
 		
+		nstd::bitset<Alignment>
+		virtual defaultAlign() const noexcept {
+			return Alignment::Left|Alignment::Top;
+		}
+
 		template <nstd::Enumeration Style>
 			requires std::same_as<std::underlying_type_t<Style>, std::underlying_type_t<FakeStyle>>
 		nstd::bitset<Style>

@@ -119,10 +119,10 @@ RetroLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	
 	// Draw text
 	auto const enabled = ctrl.enabled();
-	Rect const areaText = content - Border{smallIcon.Width,0,0,0} - Border{SystemMetric::cxEdge,0,0,0};
+	Rect const areaText = content + Rect{toggle[1].Right - content.Left + 3*Measurement{SystemMetric::cxEdge},0,0,0};
 	args.Graphics.setFont(ctrl.font());
 	args.Graphics.textColour(enabled ? ctrl.textColour() : this->tertiary(), ctrl.backColour());
-	args.Graphics.drawText(ctrl.text(), areaText, calculateFlags(ctrl.style<ButtonStyle>()));
+	args.Graphics.drawText(ctrl.text(), areaText, forms::drawFlags(ctrl.align()));
 	
 	// Draw focus rectangle
 	if (auto const focused = ctrl.state().test(ButtonState::Focus); focused) {

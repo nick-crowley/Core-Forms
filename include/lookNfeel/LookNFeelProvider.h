@@ -168,13 +168,10 @@ namespace core::forms
 namespace core::forms
 {
 	DrawTextFlags
-	calculateFlags(nstd::bitset<ButtonStyle> style) noexcept;
-
-	DrawTextFlags
-	calculateFlags(nstd::bitset<StaticStyle> style) noexcept;
+	drawFlags(nstd::bitset<Alignment> align) noexcept;
 
 	EdgeFlags
-	calculateFlags(nstd::bitset<ExWindowStyle> style) noexcept;
+	edgeFlags(nstd::bitset<ExWindowStyle> style) noexcept;
 
 	Size
 	measureEdge(nstd::bitset<ExWindowStyle> style) noexcept;
