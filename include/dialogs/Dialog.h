@@ -379,7 +379,7 @@ namespace core::forms
 			
 			//! @todo  Returning TRUE/FALSE matters 
 			//! @see  https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-ncactivate#remarks
-			return 0;  
+			return TRUE;  
 		}
 	
 		Response
