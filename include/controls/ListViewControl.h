@@ -239,6 +239,8 @@ namespace core::forms
 			{
 				template <nstd::AnyOf<Column,Column const>>
 				friend class Iterator;
+
+				friend class boost::iterator_core_access;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
 				using type = Iterator<ValueType>;
@@ -594,6 +596,8 @@ namespace core::forms
 			{
 				template <nstd::AnyOf<SubItem,SubItem const>>
 				friend class Iterator;
+
+				friend class boost::iterator_core_access;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
 				using type = Iterator<ValueType>;
@@ -930,6 +934,8 @@ namespace core::forms
 			{
 				template <nstd::AnyOf<Item,Item const>>
 				friend class Iterator;
+
+				friend class boost::iterator_core_access;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
 				using type = Iterator<ValueType>;
