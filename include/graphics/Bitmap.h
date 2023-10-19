@@ -100,31 +100,33 @@ namespace core::forms
 				SharedBitmap{::CreateCompatibleBitmap(compatible, dimensions.Width, dimensions.Height)}
 			};
 		}
-
+		
 		Bitmap
-		static load(std::wstring_view path) 
+		static load(std::wstring_view path, Size dimensions, ColourDepth depth) 
 		{
 			ThrowIfEmpty(path);
 
 			if (auto const bitmap = (::HBITMAP)::LoadImageW(nullptr, path.data(), 
 														    IMAGE_BITMAP, 
-														    0, 0, 
-														    LR_LOADFROMFILE); !bitmap)
-				win::LastError{}.throwAlways("LoadImage({}) failed", to_utf8(path));
+														    dimensions.Width, dimensions.Height, 
+														    LR_LOADFROMFILE); !bitmap) {
+				win::LastError err;
+				err.throwAlways("LoadImage({}) failed", to_utf8(path));
+			}
 			else 
-				return Bitmap{SharedBitmap{bitmap}};
+				return Bitmap{SharedBitmap{bitmap}, dimensions, depth};
 		}
 		
 		Bitmap
-		static load(win::Module source, win::ResourceId name) 
+		static load(win::Module source, win::ResourceId name, Size dimensions, ColourDepth depth) 
 		{
 			if (auto const bitmap = (::HBITMAP)::LoadImageW(source.handle(), name, 
 														    IMAGE_BITMAP, 
-														    0, 0, 
+														    dimensions.Width, dimensions.Height, 
 														    NULL); !bitmap)
-				win::LastError{}.throwAlways("LoadImage({:#06x}, {}) failed", (void*)source.handle(), to_string(name));
+				win::LastError{}.throwAlways("LoadImage({}) failed", to_string(name));
 			else 
-				return Bitmap{SharedBitmap{bitmap}};
+				return Bitmap{SharedBitmap{bitmap}, dimensions, depth};
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
