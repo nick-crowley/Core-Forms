@@ -649,6 +649,7 @@ namespace core::forms
 	public:
 		SelectedIndexCollection		SelectedItems;
 		ItemCollection				Items;
+		WindowEvent                 SelectionChanged;
 		
 	private:
 		std::optional<forms::Font>   HeadingFont;
@@ -785,15 +786,15 @@ namespace core::forms
 			return ListBoxControl::identifyNotification(notification);
 		}
 
-		/*Response
+		Response
 		virtual onOfferNotification(::UINT notification) override {
 			switch (notification) {
-			case BN_CLICKED:
-				this->Clicked.raise();
+			case LBN_SELCHANGE:
+				this->SelectionChanged.raise(*this);
 				return 0;
 			}
 			return Unhandled;
-		}*/
+		}
 		
 		::LRESULT 
 		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
