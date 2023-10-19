@@ -37,7 +37,7 @@ ILookNFeelProvider::FontDescription
 Win31LookNFeel::default() 
 {
 	using namespace forms::literals;
-	return FontDescription{L"FixedSys", 11_pt};
+	return FontDescription{L"FixedSys Excelsior", 12_pt};
 }
 
 void
