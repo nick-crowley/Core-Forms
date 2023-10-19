@@ -389,6 +389,10 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		args.Graphics.restore();
 	};
 	
+	// [NO-ITEMS] Return early
+	if (args.Item.Index == args.Empty) 
+		return;
+	
 	// Query custom features
 	auto const item = ctrl.Items[args.Item.Index];
 	auto const selectedTextColour = nstd::make_optional_if<AnyColour>(selected, SystemColour::HighlightText);
