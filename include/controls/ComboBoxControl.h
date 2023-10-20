@@ -557,6 +557,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		ItemCollection   Items;
+		WindowEvent      SelectionChanged;
 
 	protected:
 		forms::UnmanagedWindow  DroppedItemsList;
@@ -728,16 +729,15 @@ namespace core::forms
 			return ComboBoxControl::identifyNotification(notification);
 		}
 
-		/*Response
+		Response
 		virtual onOfferNotification(::UINT notification) override {
 			switch (notification) {
-			case CBN_SELENDOK:
-				if (auto selectedItem = this->Items.selected(); selectedItem)
-					this->Items.select(*selectedItem);
+			case CBN_SELENDOK :
+				this->SelectionChanged.raise(*this);
 				return 0;
 			}
 			return Unhandled;
-		}*/
+		}
 
 		::LRESULT 
 		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
