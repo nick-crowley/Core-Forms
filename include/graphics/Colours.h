@@ -193,5 +193,11 @@ namespace core::forms
             return *rgb;
 		return static_cast<Colour>(::GetSysColor(win::DWord{std::get<SystemColour>(c)}));
 	}
+
+    template <std::integral Red, std::integral Green, std::integral Blue>
+    Colour
+	inline to_colour(Red r, Green g, Blue b) {
+        return static_cast<Colour>(RGB(r,g,b));
+    }
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
