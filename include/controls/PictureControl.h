@@ -50,6 +50,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		std::optional<Picture> Image;
+		Percentage             Opacity{100};
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -78,6 +79,11 @@ namespace core::forms
 			else
 				return *bitmap;
 		}
+
+		Percentage
+		opacity() const noexcept {
+			return this->Opacity;
+		}
 		
 		WindowRole
 		virtual role() const noexcept override {
@@ -96,6 +102,11 @@ namespace core::forms
 			this->Image = bmp;
 		}
 	
+		void
+		opacity(Percentage px) noexcept {
+			this->Opacity = px;
+		}
+		
 		Response 
 		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
 			if (args.Ident == this->ident()) {

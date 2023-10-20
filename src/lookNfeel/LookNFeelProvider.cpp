@@ -621,7 +621,7 @@ LookNFeelProvider::draw(PictureControl& ctrl, OwnerDrawEventArgs const& args)
 
 		// Optionally stretch the image into the client area
 		Rect const rcDest = !DontResize ? args.Item.Area : Rect{args.Item.Area.topLeft(), bitmap->size()};
-		args.Graphics.copyBitmap(memory.handle(), bitmap->depth(), bitmap->rect(), rcDest);
+		args.Graphics.copyBitmap(memory.handle(), bitmap->depth(), bitmap->rect(), rcDest, ctrl.opacity());
 
 		memory.restore();
 	}
