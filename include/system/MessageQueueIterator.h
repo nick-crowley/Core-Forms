@@ -48,22 +48,16 @@ namespace core::forms
 	private:
 		using type = MessageQueueIterator;
 		using base = boost::iterator_facade<MessageQueueIterator, const Message, boost::forward_traversal_tag>;
-	
-	public:
-		MessageQueueIterator const
-		static FormsExport npos;
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		Message Current;
 		::HWND  Window;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	private:
+	public:
 		MessageQueueIterator() noexcept {
 			this->Current.message = WM_QUIT;
 		}
 
-	 public:
 		explicit
 		MessageQueueIterator(::HWND wnd) noexcept 
 		  : Window(wnd)
@@ -95,7 +89,7 @@ namespace core::forms
 		void 
 		increment() { 
 			if (::GetMessage(&this->Current, this->Window, 0, 0) == -1) {
-				win::LastError{}.throwAlways("Message pump failed");
+				win::LastError{}.throwAlways("GetMessage() failed");
 			}
 		}
 	};
