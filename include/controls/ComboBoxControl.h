@@ -592,7 +592,7 @@ namespace core::forms
 		gsl::czstring
 		static identifyNotification(::UINT notification) {
 			ComboBoxNotificationDictionary const  static names;
-			return names.at(notification);
+			return names.contains(notification) ? names.at(notification) : "????";
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:

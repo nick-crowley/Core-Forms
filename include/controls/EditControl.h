@@ -110,7 +110,7 @@ namespace core::forms
 		gsl::czstring
 		static identifyNotification(::UINT notification) {
 			EditNotificationDictionary const  static names;
-			return names.at(notification);
+			return names.contains(notification) ? names.at(notification) : "????";
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o

@@ -67,7 +67,10 @@ namespace core::forms
 				MakeMessageName(BN_UNPUSHED),
 				MakeMessageName(BN_DBLCLK),
 				MakeMessageName(BN_SETFOCUS),
-				MakeMessageName(BN_KILLFOCUS)
+				MakeMessageName(BN_KILLFOCUS),
+				MakeMessageName(BCN_DROPDOWN),
+				MakeMessageName(BCN_HOTITEMCHANGE),
+				MakeMessageName(NM_CUSTOMDRAW)
 	#undef MakeMessageName
 				})
 			{}
@@ -111,7 +114,7 @@ namespace core::forms
 		gsl::czstring
 		static identifyNotification(::UINT notification) {
 			ButtonNotificationDictionary const  static names;
-			return names.at(notification);
+			return names.contains(notification) ? names.at(notification) : "????";
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o

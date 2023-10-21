@@ -28,8 +28,9 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
 #include "controls/Control.h"
-#include "controls/ListBoxItemData.h"
-#include "controls/ListBoxStyle.h"
+//#include "controls/HeaderItemData.h"
+#include "controls/HeaderStyle.h"
+#include "controls/RichText.h"
 #include "forms/WindowClass.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -40,54 +41,69 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	enum class ListBoxFeature : uint32_t { 
+	enum class HeaderFeature : uint32_t { 
 		None, 
-		Headings = 0x01,
+		/*Headings = 0x01,
 		Icons = 0x04,
-		BigIcons = 0x02,
+		BigIcons = 0x02,*/
 	};
 }
 namespace core::meta 
 {
-	metadata bool Settings<bitwise_enum, forms::ListBoxFeature> = true;
+	metadata bool Settings<bitwise_enum, forms::HeaderFeature> = true;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	//! @brief	ComboBox supporting item text, item headings, custom fonts, and icons
-	class ListBoxControl : public Control 
+	//! @brief	Columns control with no extra features
+	class HeaderControl : public Control 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		using base = Control;
 
 	protected:
-		class ListBoxNotificationDictionary : public forms::MessageDictionary {
+		class HeaderNotificationDictionary : public forms::MessageDictionary {
 			using base = forms::MessageDictionary;
 		public:
-			ListBoxNotificationDictionary() : base({
+			HeaderNotificationDictionary() : base({
 	#define MakeMessageName(msg)  { msg, #msg }
-				MakeMessageName(LBN_ERRSPACE),
-				MakeMessageName(LBN_SELCHANGE),
-				MakeMessageName(LBN_DBLCLK),
-				MakeMessageName(LBN_SELCANCEL),
-				MakeMessageName(LBN_SETFOCUS),
-				MakeMessageName(LBN_KILLFOCUS)
+				MakeMessageName(HDN_BEGINDRAG),
+				MakeMessageName(HDN_BEGINFILTEREDIT),
+				MakeMessageName(HDN_BEGINTRACK),
+				MakeMessageName(HDN_DIVIDERDBLCLICK),
+				MakeMessageName(HDN_DROPDOWN),
+				MakeMessageName(HDN_ENDDRAG),
+				MakeMessageName(HDN_ENDFILTEREDIT),
+				MakeMessageName(HDN_FILTERBTNCLICK),
+				MakeMessageName(HDN_FILTERCHANGE),
+				MakeMessageName(HDN_GETDISPINFO),
+				MakeMessageName(HDN_ITEMCHANGED),
+				MakeMessageName(HDN_ITEMCHANGING),
+				MakeMessageName(HDN_ITEMCLICK),
+				MakeMessageName(HDN_ITEMDBLCLICK),
+				MakeMessageName(HDN_ITEMKEYDOWN),
+				MakeMessageName(HDN_ITEMSTATEICONCLICK),
+				MakeMessageName(HDN_OVERFLOWCLICK),
+				MakeMessageName(HDN_TRACK),
+				MakeMessageName(NM_CUSTOMDRAW),
+				MakeMessageName(NM_RCLICK),
+				MakeMessageName(NM_RELEASEDCAPTURE),
 	#undef MakeMessageName
 				})
 			{}
 		};
 
-		class ListBoxWindowClass : public forms::WindowClass {
+		class HeaderWindowClass : public forms::WindowClass {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			using const_reference = ListBoxWindowClass const&;
+			using const_reference = HeaderWindowClass const&;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			::WNDPROC	OriginalWndProc;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			ListBoxWindowClass() : forms::WindowClass{win::ResourceId{WC_LISTBOX}}  {
-				this->Name = win::ResourceId{L"Custom.LISTBOX"};
+			HeaderWindowClass() : forms::WindowClass{win::ResourceId{WC_HEADER}}  {
+				this->Name = win::ResourceId{L"Custom.HEADER"};
 				this->OriginalWndProc = std::exchange(this->WndProc, Window::defaultMessageHandler);
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();
@@ -96,19 +112,44 @@ namespace core::forms
 		};
 		
 		//! @brief	Custom item data used for each element when in owner-draw mode
-		using ItemData = ListBoxItemData;
-		
+		struct ItemData {
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			RichText                Detail;
+			std::optional<Icon>     Icon;
+			void*                   UserData = nullptr;
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			explicit
+			ItemData(std::wstring_view           text, 
+			         std::optional<forms::Icon>  icon = nullopt)
+			  : Detail{text}, 
+				Icon{icon}
+			{}
+			
+			explicit
+			ItemData(RichText                    text, 
+			         std::optional<forms::Icon>  icon = nullopt) 
+			  : Detail{text}, 
+				Icon{icon}
+			{}
+			// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+			satisfies(ItemData,
+				IsSemiRegular,
+				NotEqualityComparable,
+				NotSortable
+			);
+		};
+
 		//! @brief	Facade for a single item at a fixed index
 		class Item {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
-			ListBoxControl*  Owner;
+			HeaderControl*  Owner;
 			int32_t          Index;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			Item(ListBoxControl& owner, int32_t idx) noexcept
+			Item(HeaderControl& owner, int32_t idx) noexcept
 			  : Owner{&owner}, 
 			    Index{idx}
 			{}
@@ -127,7 +168,7 @@ namespace core::forms
 			Rect
 			area() const noexcept {
 				Rect r;
-				ListBox_GetItemRect(this->Owner->handle(), this->Index, static_cast<::RECT*>(r));
+				Header_GetItemRect(this->Owner->handle(), this->Index, static_cast<::RECT*>(r));
 				return r;
 			}
 			
@@ -156,19 +197,19 @@ namespace core::forms
 
 			uint32_t
 			height() const {
-				Invariant(this->Owner->style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawVariable));
-				return static_cast<uint32_t>(ListBox_GetItemHeight(this->Owner->handle(), this->Index));
+				Invariant(this->Owner->style<HeaderStyle>().test(HeaderStyle::OwnerDrawVariable));
+				return static_cast<uint32_t>(Header_GetItemHeight(this->Owner->handle(), this->Index));
 			}
 			
 			std::wstring
 			text() const {
 				if (this->Owner->ownerDraw())
 					return this->data<ItemData>()->Detail.Text;
-				else if (auto const length = ListBox_GetTextLen(this->Owner->handle(), this->Index); !length)
+				else if (auto const length = Header_GetTextLen(this->Owner->handle(), this->Index); !length)
 					return {};
 				else {
 					std::wstring content(static_cast<size_t>(length), L'\0');
-					ListBox_GetText(this->Owner->handle(), this->Index, &content[0]);
+					Header_GetText(this->Owner->handle(), this->Index, &content[0]);
 					return content;
 				}
 			}
@@ -187,8 +228,8 @@ namespace core::forms
 			template <typename AnyType>
 			AnyType*
 			data() const {
-				if (::LRESULT itemData = ListBox_GetItemData(this->Owner->handle(), this->Index); !itemData)
-					throw runtime_error{"Missing ListBox data for item {}", this->Index};
+				if (::LRESULT itemData = Header_GetItemData(this->Owner->handle(), this->Index); !itemData)
+					throw runtime_error{"Missing Header data for item {}", this->Index};
 				else 
 					return reinterpret_cast<AnyType*>(itemData);
 			}
@@ -196,8 +237,8 @@ namespace core::forms
 		public:
 			void
 			height(uint32_t individualItem) {
-				Invariant(this->Owner->style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawVariable));
-				ListBox_SetItemHeight(this->Owner->handle(), this->Index, individualItem);
+				Invariant(this->Owner->style<HeaderStyle>().test(HeaderStyle::OwnerDrawVariable));
+				Header_SetItemHeight(this->Owner->handle(), this->Index, individualItem);
 			}
 
 			template <typename AnyType>
@@ -205,7 +246,7 @@ namespace core::forms
 			userData(AnyType* customUserData) {
 				// When owner-draw is active, the item-data slot addresses an 'ItemData' object
 				if (!this->Owner->ownerDraw())
-					ListBox_SetItemData(this->Owner->handle(), this->Index, customUserData);
+					Header_SetItemData(this->Owner->handle(), this->Index, customUserData);
 				else
 					this->data<ItemData>()->UserData = static_cast<void*>(customUserData);
 			}
@@ -219,26 +260,24 @@ namespace core::forms
 			{
 				template <nstd::AnyOf<Item,Item const>>
 				friend class Iterator;
-
-				friend class boost::iterator_core_access;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
 				using type = Iterator<ValueType>;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 			private:
-				ListBoxControl* Owner;
+				HeaderControl* Owner;
 				int32_t         Index;
 				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
 			public:
-				Iterator(ListBoxControl& owner, int32_t initialIdx) noexcept
+				Iterator(HeaderControl& owner, int32_t initialIdx) noexcept
 				  : Owner{&owner}, 
 				    Index{initialIdx}
 				{}
 
 				explicit
-				Iterator(ListBoxControl& owner) noexcept
+				Iterator(HeaderControl& owner) noexcept
 				  : Owner{&owner}, 
-				    Index{ListBox_GetCount(owner.handle())}
+				    Index{Header_GetCount(owner.handle())}
 				{}
 				
 				template <nstd::AnyOf<Item const> Other>
@@ -314,11 +353,11 @@ namespace core::forms
 			using difference_type = iterator::difference_type;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
-			ListBoxControl& Owner;
+			HeaderControl& Owner;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			explicit
-			ItemCollection(ListBoxControl& ctrl) noexcept
+			ItemCollection(HeaderControl& ctrl) noexcept
 			  : Owner{ctrl}
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -355,7 +394,7 @@ namespace core::forms
 
 			std::optional<Item>
 			find(std::wstring_view item) const noexcept {
-				if (size_type const idx = ListBox_FindStringExact(this->Owner.handle(), 0, item.data()); idx == CB_ERR)
+				if (size_type const idx = Header_FindStringExact(this->Owner.handle(), 0, item.data()); idx == CB_ERR)
 					return nullopt;
 				else
 					return Item{this->Owner, idx};
@@ -363,13 +402,13 @@ namespace core::forms
 		
 			uint32_t
 			height() const {
-				Invariant(!this->Owner.style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawVariable));
+				Invariant(!this->Owner.style<HeaderStyle>().test(HeaderStyle::OwnerDrawVariable));
 				return static_cast<uint32_t>(this->Owner.send<LB_GETITEMHEIGHT>(0));
 			}
 
 			std::optional<Item>
 			selected() const noexcept {
-				if (size_type const idx = ListBox_GetCurSel(this->Owner.handle()); idx == CB_ERR)
+				if (size_type const idx = Header_GetCurSel(this->Owner.handle()); idx == CB_ERR)
 					return nullopt;
 				else 
 					return Item{this->Owner, idx};
@@ -377,12 +416,12 @@ namespace core::forms
 			
 			size_type 
 			size() const noexcept {
-				return ListBox_GetCount(this->Owner.handle());
+				return Header_GetCount(this->Owner.handle());
 			}
 			
 			std::optional<Item>
 			substr(std::wstring_view substring) const noexcept {
-				if (size_type const idx = ListBox_FindStringExact(this->Owner.handle(), 0, substring.data()); idx == CB_ERR)
+				if (size_type const idx = Header_FindStringExact(this->Owner.handle(), 0, substring.data()); idx == CB_ERR)
 					return nullopt;
 				else
 					return Item{this->Owner, idx};
@@ -406,18 +445,18 @@ namespace core::forms
 			
 			void
 			clear() noexcept {
-				ListBox_ResetContent(this->Owner.handle());
+				Header_ResetContent(this->Owner.handle());
 			}
 			
 			void 
 			focus(const_iterator pos) noexcept {
-				ListBox_SetCaretIndex(this->Owner.handle(), pos);
+				Header_SetCaretIndex(this->Owner.handle(), pos);
 			}
 	
 			void
 			height(uint32_t allItems) {
-				Invariant(!this->Owner.style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawVariable));
-				ListBox_SetItemHeight(this->Owner.handle(), 0, allItems);
+				Invariant(!this->Owner.style<HeaderStyle>().test(HeaderStyle::OwnerDrawVariable));
+				Header_SetItemHeight(this->Owner.handle(), 0, allItems);
 			}
 			
 			iterator
@@ -426,7 +465,7 @@ namespace core::forms
 				size_type idx{};
 				// [NOT OWNER-DRAW] Store (or duplicate) a simple string (according to its 'HasStrings' style)
 				if (!this->Owner.ownerDraw()) 
-					idx = ListBox_InsertString(this->Owner.handle(), pos, text.data());
+					idx = Header_InsertString(this->Owner.handle(), pos, text.data());
 
 				else {
 					auto data = std::make_unique<ItemData>(text);
@@ -434,13 +473,13 @@ namespace core::forms
 					// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 					if (this->Owner.hasStrings()) {
 						this->Owner.ExposingOwnerDrawItemsBugfix = {data->Detail, data->Heading};
-						idx = ListBox_InsertString(this->Owner.handle(), pos, data->Detail.Text.c_str());
-						ListBox_SetItemData(this->Owner.handle(), idx, data.release());
+						idx = Header_InsertString(this->Owner.handle(), pos, data->Detail.Text.c_str());
+						Header_SetItemData(this->Owner.handle(), idx, data.release());
 						this->Owner.ExposingOwnerDrawItemsBugfix = nullopt;
 					}
 					// [NO-STRING] Only store our owner-draw data
 					else
-						idx = ListBox_InsertItemData(this->Owner.handle(), pos, data.release());
+						idx = Header_InsertItemData(this->Owner.handle(), pos, data.release());
 				}
 				return iterator{this->Owner, idx};
 			}
@@ -457,13 +496,13 @@ namespace core::forms
 				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 				if (this->Owner.hasStrings()) {
 					this->Owner.ExposingOwnerDrawItemsBugfix = {data->Detail, data->Heading};
-					idx = ListBox_InsertString(this->Owner.handle(), pos, data->Detail.Text.c_str());
-					ListBox_SetItemData(this->Owner.handle(), idx, data.release());
+					idx = Header_InsertString(this->Owner.handle(), pos, data->Detail.Text.c_str());
+					Header_SetItemData(this->Owner.handle(), idx, data.release());
 					this->Owner.ExposingOwnerDrawItemsBugfix = nullopt;
 				}
 				// [NO-STRING] Only store our owner-draw data
 				else
-					idx = ListBox_InsertItemData(this->Owner.handle(), pos, data.release());
+					idx = Header_InsertItemData(this->Owner.handle(), pos, data.release());
 
 				return iterator{this->Owner, idx};
 			}
@@ -474,8 +513,8 @@ namespace core::forms
 			       std::wstring_view   heading, 
 			       std::optional<Icon> icon = nullopt)
 			{
-				Invariant(this->Owner.features().test(ListBoxFeature::Headings));
-				Invariant(this->Owner.style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawVariable));
+				Invariant(this->Owner.features().test(HeaderFeature::Headings));
+				Invariant(this->Owner.style<HeaderStyle>().test(HeaderStyle::OwnerDrawVariable));
 				return this->insert(pos, RichText{text}, RichText{heading}, icon);
 			}
 			
@@ -485,21 +524,21 @@ namespace core::forms
 			       RichText                   heading,
 			       std::optional<forms::Icon> icon = nullopt) 
 			{
-				Invariant(this->Owner.features().test(ListBoxFeature::Headings));
-				Invariant(this->Owner.style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawVariable));
+				Invariant(this->Owner.features().test(HeaderFeature::Headings));
+				Invariant(this->Owner.style<HeaderStyle>().test(HeaderStyle::OwnerDrawVariable));
 				auto data = std::make_unique<ItemData>(text, heading, icon);
 				size_type idx{};
 				
 				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 				if (this->Owner.hasStrings()) {
 					this->Owner.ExposingOwnerDrawItemsBugfix = {data->Detail, data->Heading};
-					idx = ListBox_InsertString(this->Owner.handle(), pos, data->Heading->Text.c_str());
-					ListBox_SetItemData(this->Owner.handle(), idx, data.release());
+					idx = Header_InsertString(this->Owner.handle(), pos, data->Heading->Text.c_str());
+					Header_SetItemData(this->Owner.handle(), idx, data.release());
 					this->Owner.ExposingOwnerDrawItemsBugfix = nullopt;
 				}
 				// [NO-STRING] Only store our owner-draw data
 				else
-					idx = ListBox_InsertItemData(this->Owner.handle(), pos, data.release());
+					idx = Header_InsertItemData(this->Owner.handle(), pos, data.release());
 				
 				return iterator{this->Owner, idx};
 			}
@@ -521,8 +560,8 @@ namespace core::forms
 			          std::wstring_view   heading, 
 			          std::optional<Icon> icon = nullopt) 
 			{
-				Invariant(this->Owner.features().test(ListBoxFeature::Headings));
-				Invariant(this->Owner.style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawVariable));
+				Invariant(this->Owner.features().test(HeaderFeature::Headings));
+				Invariant(this->Owner.style<HeaderStyle>().test(HeaderStyle::OwnerDrawVariable));
 				this->insert(const_iterator{this->Owner,-1}, text, heading, icon);
 			}
 			
@@ -531,145 +570,68 @@ namespace core::forms
 			          RichText                   heading,
 			          std::optional<forms::Icon> icon = nullopt) 
 			{
-				Invariant(this->Owner.features().test(ListBoxFeature::Headings));
-				Invariant(this->Owner.style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawVariable));
+				Invariant(this->Owner.features().test(HeaderFeature::Headings));
+				Invariant(this->Owner.style<HeaderStyle>().test(HeaderStyle::OwnerDrawVariable));
 				this->insert(const_iterator{this->Owner,-1}, text, heading, icon);
 			}
 			
 			void
 			scrollTo(const_iterator pos) noexcept {
-				ListBox_SetTopIndex(this->Owner.handle(), pos);
+				Header_SetTopIndex(this->Owner.handle(), pos);
 			}
 	
 			void
 			select(Item const& item) noexcept {
-				ListBox_SetCurSel(this->Owner.handle(), item.index());
+				Header_SetCurSel(this->Owner.handle(), item.index());
 			}
 			
 			void
 			select(const_iterator pos) noexcept {
-				ListBox_SetCurSel(this->Owner.handle(), pos);
+				Header_SetCurSel(this->Owner.handle(), pos);
 			}
 		};
 	
-		class SelectedIndexCollection
-		{
-		public:		
-			class SelectedIndexIterator : public boost::iterator_facade<SelectedIndexIterator, size_t, boost::forward_traversal_tag>{
-				friend class boost::iterator_core_access;
-			private:
-				using type = SelectedIndexIterator;
-
-				signed const 
-				static npos = -1;
-
-			private:
-				ListBoxControl&		ListBox;
-				signed				Index;
-				std::vector<signed>	Indicies;
-
-			public:
-				SelectedIndexIterator(ListBoxControl& listbox, unsigned initialIdx) 
-				  : ListBox(listbox), 
-					Index(static_cast<signed>(initialIdx)), 
-					Indicies(ListBox_GetSelCount(listbox.handle()), 0)
-				{
-					if (!this->Indicies.empty())
-						ListBox_GetSelItems(listbox.handle(), this->Indicies.size(), this->Indicies.data());
-					else
-						this->Index = npos;
-				}
-
-				SelectedIndexIterator(ListBoxControl& listbox) noexcept
-				  : ListBox(listbox), Index(npos)
-				{}
-			
-				satisfies(SelectedIndexIterator,
-					NotDefaultConstructible,
-					IsCopyable,
-					IsMovable,
-					NotSortable
-				);
-
-			private:
-				bool 
-				equal(const type& r) const noexcept {
-					return this->ListBox.handle() == r.ListBox.handle()
-						&& this->Index == r.Index;
-				}
-
-				size_t
-				dereference() const noexcept {
-					return this->Indicies[this->Index]; 
-				}
-
-				void 
-				increment() noexcept {
-					if (++this->Index == this->Indicies.size()) {
-						this->Index = npos;
-					}
-				}
-			};
-	
-		private:
-			ListBoxControl&		ListBox;
-		public:
-		
-		public:
-			SelectedIndexCollection(ListBoxControl& listbox) noexcept 
-			  : ListBox(listbox)
-			{}
-
-		public:
-			SelectedIndexIterator
-			begin() const {
-				return SelectedIndexIterator(this->ListBox, 0);
-			}
-
-			SelectedIndexIterator
-			end() const {
-				return SelectedIndexIterator(this->ListBox);
-			}
-
-			size_t
-			size() const noexcept {
-				return (size_t)ListBox_GetSelCount(this->ListBox.handle());
-			}
-		};
-		
 	public:
-		//! @brief	Temporary data passed to WM_MEASUREITEM handler to fix design flaw
-		struct TemporaryMeasureItemData {
-			RichText                Detail; 
-			std::optional<RichText> Heading;
-		};
-
-		using WindowClass = ListBoxWindowClass;
+		using WindowClass = HeaderWindowClass;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		SelectedIndexCollection		SelectedItems;
 		ItemCollection				Items;
-		WindowEvent                 SelectionChanged;
 		
 	private:
 		std::optional<forms::Font>   HeadingFont;
-
-		//! @bug  When 'HasStrings' and 'OwnerDraw' are both active and items are added, supplementary
-		//!       item text should be provided for screen-readers; however, the API only permits item
-		//!       data to be added retrospectively, so text must added first. This triggers a design
-		//!       flaw whereby WM_MEASUREITEM is sent prior to item data being added. This fix is the 
-		//!       suggested workaround.
-		//! @see https://learn.microsoft.com/en-us/windows/win32/winauto/exposing-owner-drawn-combo-box-items
-		std::optional<TemporaryMeasureItemData>  ExposingOwnerDrawItemsBugfix; 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		implicit
-		ListBoxControl(uint16_t id) 
+		HeaderControl(uint16_t id) 
 		  : Control{id}, 
-		    SelectedItems(*this), 
 		    Items(*this)
 		{
+			this->Created += {*this, &HeaderControl::this_Created};
 			this->backColour(this->LookNFeel->control());
+		}
+
+		void
+		this_Created(Window& sender, CreateWindowEventArgs args) {
+			this->reposition();
+		}
+
+		//! @brief  Move and size itself according to its parent
+		void
+		reposition() {
+			Rect client = this->parent()->clientRect();
+			::WINDOWPOS newPos {};
+			::HDLAYOUT data {client, &newPos};
+			if (!this->send<HDM_LAYOUT>(nullopt, std::bit_cast<::LPARAM>(&data)))
+				win::LastError().throwAlways("HDM_LAYOUT failed");
+			
+			// Set the size, position, and visibility of the header control. 
+			if (!::SetWindowPos(this->handle(), 
+				newPos.hwndInsertAfter, 
+				newPos.x, newPos.y, 
+				newPos.cx, newPos.cy, 
+				newPos.flags | SWP_SHOWWINDOW
+			))
+				win::LastError().throwAlways("SetWindowPos() failed");
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -678,31 +640,21 @@ namespace core::forms
 	public:
 		gsl::czstring
 		static identifyNotification(::UINT notification) {
-			ListBoxNotificationDictionary const  static names;
+			HeaderNotificationDictionary const  static names;
 			return names.contains(notification) ? names.at(notification) : "????";
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		size_t 
-		caret() const noexcept {
-			return (size_t)ListBox_GetCaretIndex(this->handle());
-		}
-	
-		size_t 
-		first() const noexcept {
-			return (size_t)ListBox_GetTopIndex(this->handle());
-		}
-		
-		nstd::bitset<ListBoxFeature>
+		nstd::bitset<HeaderFeature>
 		features() const noexcept {
-			return base::features<ListBoxFeature>();
+			return base::features<HeaderFeature>();
 		}
 	
-		bool
+		/*bool
 		hasStrings() const noexcept {
-			return this->style<ListBoxStyle>().test(ListBoxStyle::HasStrings);
-		}
+			return this->style<HeaderStyle>().test(HeaderStyle::HasStrings);
+		}*/
 		
 		std::optional<forms::Font>
 		headingFont() const noexcept {
@@ -711,7 +663,7 @@ namespace core::forms
 		
 		bool
 		virtual ownerDraw() const noexcept override {
-			return this->style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawFixed|ListBoxStyle::OwnerDrawVariable);
+			return this->style<HeaderStyle>().test(HeaderStyle::OwnerDrawFixed|HeaderStyle::OwnerDrawVariable);
 		}
 		
 		WindowRole
@@ -722,7 +674,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
-		features(nstd::bitset<ListBoxFeature> newStyle) noexcept {
+		features(nstd::bitset<HeaderFeature> newStyle) noexcept {
 			base::features(newStyle);
 		}
 	
@@ -774,27 +726,27 @@ namespace core::forms
 			return Unhandled;
 		}
 
-		ListBoxWindowClass::const_reference
+		HeaderWindowClass::const_reference
 		virtual wndcls() const override {
-			ListBoxWindowClass const  static wc;
+			HeaderWindowClass const  static wc;
 			return wc;
 		}
 
 	protected:
 		gsl::czstring
 		virtual notificationName(::UINT notification) override {
-			return ListBoxControl::identifyNotification(notification);
+			return HeaderControl::identifyNotification(notification);
 		}
 
-		Response
+		/*Response
 		virtual onOfferNotification(::UINT notification) override {
 			switch (notification) {
-			case LBN_SELCHANGE:
-				this->SelectionChanged.raise(*this);
+			case BN_CLICKED:
+				this->Clicked.raise();
 				return 0;
 			}
 			return Unhandled;
-		}
+		}*/
 		
 		::LRESULT 
 		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
