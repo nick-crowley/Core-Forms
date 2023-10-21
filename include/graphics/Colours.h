@@ -80,6 +80,17 @@ namespace core::forms
         Invalid = CLR_INVALID,            //!< Sentinel value for invalid colour
     };
   
+    
+	enum class ColourDepth
+	{
+		bpp1 = 1,
+		bpp4 = 4,
+		bpp8 = 8,
+		bpp16 = 16,
+		bpp24 = 24,
+		bpp32 = 32,
+	};
+
     //! \enum SystemColour - Defines system colours
     enum class SystemColour
     {
@@ -198,6 +209,17 @@ namespace core::forms
     Colour
 	inline to_colour(Red r, Green g, Blue b) {
         return static_cast<Colour>(RGB(r,g,b));
+    }
+
+    inline namespace literals
+    {
+        inline namespace colour_depth_literals
+        {
+	        ColourDepth consteval
+	        operator""_bpp(uint64_t n) noexcept {
+		        return static_cast<ColourDepth>(n);
+	        }
+        }
     }
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
