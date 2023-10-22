@@ -179,7 +179,7 @@ namespace core::forms
 		copyBitmap(::HDC source, ColourDepth depth, Rect const& src, Rect const& dest, Percentage opacity = Percentage::Max) const
 		{
 			::BLENDFUNCTION const blend{
-				AC_SRC_OVER, win::Reserved<BYTE>, opacity*255ui8, 0ui8
+				AC_SRC_OVER, win::Reserved<BYTE>, opacity*255ui8, (::BYTE)(depth == 32_bpp ? AC_SRC_ALPHA : 0ui8)
 			};
 		
 			if (!::AlphaBlend(this->handle(), 
