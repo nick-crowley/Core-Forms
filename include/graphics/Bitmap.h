@@ -142,41 +142,36 @@ namespace core::forms
 			               || imageHeader.biSize == sizeof(::BITMAPV4HEADER)
 			               || imageHeader.biSize == sizeof(::BITMAPV5HEADER));
 			
-			// Setup a memory stream capable of holding ::BITMAPINFO
+			// Setup a memory stream for manipulating the pixel-data
 			size_t const pixelDataLength = fileHeader.bfSize - fileHeader.bfOffBits;
 			size_t const pixelSize = imageHeader.biBitCount / 8;
 			size_t const numPixels = pixelDataLength / pixelSize;
-			std::vector<std::byte> bitmapInfo{sizeof(::BITMAPINFOHEADER) + pixelDataLength};
-			filesystem::MemoryStream outputStream{std::span{bitmapInfo}};
+			std::vector<std::byte> pixelData{pixelDataLength};
+			filesystem::MemoryStream outputStream{std::span{pixelData}};
 			filesystem::BinaryWriter output{outputStream};
 			
-			// Copy the file-header then the pixel data
-			output.write<::BITMAPINFOHEADER>(imageHeader);
+			// [32-bit] Copy the pixel data; pre-multiply alpha
 			inputStream.seek(filesystem::Origin::Begin, fileHeader.bfOffBits);
-			if (imageHeader.biBitCount == 32)
-				output.write<::RGBQUAD>(input.read<::RGBQUAD>(numPixels));
-			else
+			if (imageHeader.biBitCount == 32) {
+				for (auto idx = 0; idx < numPixels; ++idx) {
+					auto rgb = input.read<::RGBQUAD>();
+					rgb.rgbRed = rgb.rgbRed*rgb.rgbReserved / 0xff;
+					rgb.rgbBlue = rgb.rgbBlue*rgb.rgbReserved / 0xff;
+					rgb.rgbGreen = rgb.rgbGreen*rgb.rgbReserved / 0xff;
+					output.write(rgb);
+				}
+			}
+			// [24-bit] Just copy the pixel data
+			else 
 				output.write<::RGBTRIPLE>(input.read<::RGBTRIPLE>(numPixels));
 
-			//! @todo  Investigating using ::CreateBitmap() instead to create device-dependent bitmap?
-			//! @see  https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createbitmap
-			
-			// Create device-independent bitmap
-			std::byte* dibBits{};
-			if (SharedBitmap handle{::CreateDIBSection(
-				::GetDC(nullptr), /*DeviceContext::ScreenDC.handle()*/
-				reinterpret_cast<::BITMAPINFO*>(bitmapInfo.data()),
-				DIB_RGB_COLORS,
-				std::out_ptr(dibBits),
-				win::Unused<::HANDLE>,
-				win::Unused<::DWORD>
-			)}; !handle) 
-				win::LastError{}.throwAlways("CreateDIBSection() failed");
-			else {
-				ColourDepth const depth = static_cast<ColourDepth>(imageHeader.biBitCount);
-				Size const dimensions{std::abs(imageHeader.biWidth), std::abs(imageHeader.biHeight)};
+			// Create device-dependent bitmap
+			auto const depth = static_cast<ColourDepth>(imageHeader.biBitCount);
+			Size const dimensions{std::abs(imageHeader.biWidth), std::abs(imageHeader.biHeight)};
+			if (SharedBitmap handle{::CreateBitmap(dimensions.Width, dimensions.Height, 1, std::to_underlying(depth), pixelData.data())}; !handle)
+				win::LastError{}.throwAlways("CreateBitmap() failed");
+			else
 				return Bitmap{handle, dimensions, depth};
-			}
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
