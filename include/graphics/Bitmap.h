@@ -29,8 +29,12 @@
 #include "library/core.Forms.h"
 #include "graphics/Colours.h"
 #include "graphics/Rectangle.h"
+#include "filesystem/MemoryStream.h"
+#include "filesystem/BinaryReader.h"
+#include "filesystem/BinaryWriter.h"
 #include "system/SharedHandle.h"
 #include "win/Module.h"
+#include "win/ApiHelpers.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -117,6 +121,62 @@ namespace core::forms
 				win::LastError{}.throwAlways("LoadImage({}) failed", to_string(name));
 			else 
 				return Bitmap{SharedBitmap{bitmap}, dimensions, depth};
+		}
+
+		Bitmap
+		static load(std::span<std::byte const> bytes) {
+			::WORD constexpr  static MagicNumber = MAKEWORD('B','M');
+
+			// Read file header
+			filesystem::MemoryStream inputStream{bytes};
+			filesystem::BinaryReader input{inputStream};
+			::BITMAPFILEHEADER const fileHeader = input.read<::BITMAPFILEHEADER>();
+			ThrowIfNot(bytes, fileHeader.bfType == MagicNumber);
+			ThrowIfNot(bytes, fileHeader.bfSize == bytes.size());
+
+			// Read uncompressed 24/32-bit image header
+			::BITMAPINFOHEADER const imageHeader = input.read<::BITMAPINFOHEADER>();
+			ThrowIf(bytes, imageHeader.biBitCount < 24);
+			//ThrowIfNot(bytes, imageHeader.biCompression == BI_RGB);
+			ThrowIfNot(bytes, imageHeader.biSize == sizeof(::BITMAPINFOHEADER)
+			               || imageHeader.biSize == sizeof(::BITMAPV4HEADER)
+			               || imageHeader.biSize == sizeof(::BITMAPV5HEADER));
+			
+			// Setup a memory stream capable of holding ::BITMAPINFO
+			size_t const pixelDataLength = fileHeader.bfSize - fileHeader.bfOffBits;
+			size_t const pixelSize = imageHeader.biBitCount / 8;
+			size_t const numPixels = pixelDataLength / pixelSize;
+			std::vector<std::byte> bitmapInfo{sizeof(::BITMAPINFOHEADER) + pixelDataLength};
+			filesystem::MemoryStream outputStream{std::span{bitmapInfo}};
+			filesystem::BinaryWriter output{outputStream};
+			
+			// Copy the file-header then the pixel data
+			output.write<::BITMAPINFOHEADER>(imageHeader);
+			inputStream.seek(filesystem::Origin::Begin, fileHeader.bfOffBits);
+			if (imageHeader.biBitCount == 32)
+				output.write<::RGBQUAD>(input.read<::RGBQUAD>(numPixels));
+			else
+				output.write<::RGBTRIPLE>(input.read<::RGBTRIPLE>(numPixels));
+
+			//! @todo  Investigating using ::CreateBitmap() instead to create device-dependent bitmap?
+			//! @see  https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createbitmap
+			
+			// Create device-independent bitmap
+			std::byte* dibBits{};
+			if (SharedBitmap handle{::CreateDIBSection(
+				::GetDC(nullptr), /*DeviceContext::ScreenDC.handle()*/
+				reinterpret_cast<::BITMAPINFO*>(bitmapInfo.data()),
+				DIB_RGB_COLORS,
+				std::out_ptr(dibBits),
+				win::Unused<::HANDLE>,
+				win::Unused<::DWORD>
+			)}; !handle) 
+				win::LastError{}.throwAlways("CreateDIBSection() failed");
+			else {
+				ColourDepth const depth = static_cast<ColourDepth>(imageHeader.biBitCount);
+				Size const dimensions{std::abs(imageHeader.biWidth), std::abs(imageHeader.biHeight)};
+				return Bitmap{handle, dimensions, depth};
+			}
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
