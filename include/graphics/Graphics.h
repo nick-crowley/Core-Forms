@@ -132,14 +132,14 @@ namespace core::forms
 		void
 		beginPath() {
 			if (!::BeginPath(this->handle()))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("BeginPath() failed");
 		}
 		
 		//! @brief  End path definition and select it
 		void
 		endPath() {
 			if (!::EndPath(this->handle()))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("EndPath() failed");
 		}
 		
 		void
@@ -150,7 +150,7 @@ namespace core::forms
 						  source,
 						  0, 0, 
 						  win::DWord{op}))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("BitBlt() failed");
 		}
 	
 		void
@@ -161,7 +161,7 @@ namespace core::forms
 						  source,
 						  src.Left, src.Top, 
 						  win::DWord{op}))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("BitBlt() failed");
 		}
 	
 		void
@@ -172,7 +172,7 @@ namespace core::forms
 							  source,
 							  src.Left, src.Top, src.width(), src.height(),
 							  win::DWord{op}))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("StretchBlt() failed");
 		}
 	
 		void
@@ -187,14 +187,14 @@ namespace core::forms
 							  source,
 							  src.Left, src.Top, src.width(), src.height(),
 							  blend))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("AlphaBlend() failed");
 		}
 		
 		//! @brief  Draws a partial ellipse
 		void
 		drawArc(Rect const& ellipse, Point const& from, Point const& to) {
 			if (!::Arc(this->handle(), ellipse.Left, ellipse.Top, ellipse.Right, ellipse.Bottom, from.X, from.Y, to.X, to.Y))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("Arc() failed");
 		}
 
 		//! @brief	Draws component of built-in control
@@ -203,7 +203,7 @@ namespace core::forms
 		{
 			// Draw control state
 			if (!::DrawFrameControl(this->handle(), const_cast<Rect&>(rc), ctrl, state))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("DrawFrameControl() failed");
 		}
 
 		//! @brief	Draws one or more edges of rectangle
@@ -211,14 +211,14 @@ namespace core::forms
 		drawEdge(Rect const& rc, EdgeFlags edge, BorderFlags flags = BorderFlags::Rect) const
 		{
 			if (!::DrawEdge(this->handle(), const_cast<Rect&>(rc), win::DWord{edge}, win::DWord{flags}))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("DrawEdge() failed");
 		}
 	
 		//! @brief  Draws a complete ellipse
 		void
 		drawEllipse(Rect const& ellipse) {
 			if (!::Ellipse(this->handle(), ellipse.Left, ellipse.Top, ellipse.Right, ellipse.Bottom))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("Ellipse() failed");
 		}
 		
 		//!	@brief	Fills a focus rectangle 
@@ -226,7 +226,7 @@ namespace core::forms
 		drawFocus(Rect const& rc) const
 		{
 			if (!::DrawFocusRect(this->handle(), rc))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("DrawFocusRect() failed");
 		}
 
 		//! @brief	Outlines a rectangle using a custom brush
@@ -235,7 +235,7 @@ namespace core::forms
 		{
 			// Draw frame rectangle with custom brush
 			if (!::FrameRect(this->handle(), rc, *brush))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("FrameRect() failed");
 		}
 	
 		//!	@brief	Draw an icon at a position
@@ -249,7 +249,7 @@ namespace core::forms
 							  sz.Width, sz.Height, 
 							  0, nullptr, 
 							  DI_IMAGE | DI_MASK))
-				win::LastError{}.throwAlways("Unable to draw icon");
+				win::LastError{}.throwAlways("DrawIconEx() failed");
 		}
 
 		//!	@brief	Draw an icon into a rectangle
@@ -263,14 +263,14 @@ namespace core::forms
 							  rc.width(), rc.height(), 
 							  0, nullptr, 
 							  DI_IMAGE | DI_MASK))
-				win::LastError{}.throwAlways("Unable to draw icon");
+				win::LastError{}.throwAlways("DrawIconEx() failed");
 		}
 	
 		//! @brief  Draws line from current position to @p to
 		void
 		drawLine(Point const& to) {
 			if (!::LineTo(this->handle(), to.X, to.Y))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("LineTo() failed");
 		}
 		
 		//! @brief  Draws series of connected line-segments from specified @p points
@@ -286,7 +286,7 @@ namespace core::forms
 		drawRect(Rect const& rc) const
 		{
 			if (!::Rectangle(this->handle(), rc.Left, rc.Top, rc.Right, rc.Bottom))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("Rectangle() failed");
 		}
 		
 		//! @brief	Draws a filled rectangle with rounded corners using the current brush and pen
@@ -294,7 +294,7 @@ namespace core::forms
 		drawRoundRect(Rect const& rc, Size const corners) const
 		{
 			if (!::RoundRect(this->handle(), rc.Left, rc.Top, rc.Right, rc.Bottom, corners.Width, corners.Height))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("RoundRect() failed");
 		}
 		
 		//! @brief  Draws any shape from specified @p points
@@ -315,7 +315,7 @@ namespace core::forms
 											 txt.data(), win::DWord{txt.size()}, 
 											 const_cast<Rect&>(rc), 
 											 flags.value()); !height)
-				win::LastError{}.throwAlways("Unable to draw text");
+				win::LastError{}.throwAlways("DrawText() failed");
 			else
 				return height;
 		}
@@ -324,14 +324,14 @@ namespace core::forms
 		void
 		fillPath() {
 			if (!::FillPath(this->handle()))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("FillPath() failed");
 		}
 		
 		//! @brief  Outline and fill current path using current pen and brush
 		void
 		fillPathAndOutline() {
 			if (!::StrokeAndFillPath(this->handle()))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("StrokeAndFillPath() failed");
 		}
 
 		//!	@brief	Fills a rectangle interior with the current brush
@@ -361,7 +361,7 @@ namespace core::forms
 		fillRect(Rect const& rc, ::HBRUSH brush) const
 		{
 			if (!::FillRect(this->handle(), rc, brush))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("FillRect() failed");
 		}
 	
 		//!	@brief	Fills a region interior with current brush
@@ -369,7 +369,7 @@ namespace core::forms
 		fillRegion(Region const& rgn) const
 		{
 			if (!::PaintRgn(this->handle(), const_cast<Region&>(rgn)))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("PaintRgn() failed");
 		}
 	
 		//!	@brief	Fills a region interior with a sytem-coloured brush
@@ -377,7 +377,7 @@ namespace core::forms
 		fillRegion(Region const& rgn, SystemColour col) const
 		{
 			if (!::FillRgn(this->handle(), const_cast<Region&>(rgn), *SystemBrush::get(col).handle()))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("FillRgn() failed");
 		}
 	
 		//!	@brief	Fills a region interior with a custom brush
@@ -385,7 +385,7 @@ namespace core::forms
 		fillRegion(Region const& rgn, SharedBrush const& brush) const
 		{
 			if (!::FillRgn(this->handle(), const_cast<Region&>(rgn), *brush))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("FillRgn() failed");
 		}
 	
 		//!	@brief	Outlines a region with a system-coloured brush
@@ -399,7 +399,7 @@ namespace core::forms
 		frameRegion(Region const& rgn, SharedBrush const& brush, Size const thickness) const
 		{
 			if (!::FrameRgn(this->handle(), const_cast<Region&>(rgn), *brush, thickness.Width, thickness.Height))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("FrameRgn() failed");
 		}
 		
 		//!	@brief	Outlines a region with a custom brush
@@ -414,7 +414,7 @@ namespace core::forms
 		moveTo(Point const& to) {
 			::POINT prev{};
 			if (!::MoveToEx(this->handle(), to.X, to.Y, &prev))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("MoveToEx() failed");
 			return prev;
 		}
 
@@ -425,7 +425,7 @@ namespace core::forms
 		{
 			// Query logical pixel height & convert
 			if (auto const logPixels = ::GetDeviceCaps(this->handle(), LOGPIXELSY); !logPixels)
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("GetDeviceCaps() failed");
 			else
 				return -static_cast<int32_t>(static_cast<int32_t>(points) * logPixels / 72ll); 
 		}
@@ -438,7 +438,7 @@ namespace core::forms
 
 			// Measure text
 			if (!::GetTextExtentPoint32W(this->handle(), txt.data(), win::DWord{txt.size()}, sz))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("GetTextExtentPoint32() failed");
 
 			return sz;
 		}
@@ -451,7 +451,7 @@ namespace core::forms
 			Rect rc{Point::Zero, initial};
 			// Measure text
 			if (!::DrawTextW(this->handle(), txt.data(), win::DWord{txt.size()}, rc, win::DWord{flags}))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("DrawText() failed");
 
 			return rc.size();
 		}
@@ -460,7 +460,7 @@ namespace core::forms
 		void
 		outlinePath() {
 			if (!::StrokePath(this->handle()))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("StrokePath() failed");
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -469,7 +469,7 @@ namespace core::forms
 		exclude(Rect const& rc)
 		{
 			if (!::ExcludeClipRect(this->handle(), rc.Left, rc.Top, rc.Right, rc.Bottom))
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("ExcludeClipRect() failed");
 		}
 
 		//!	@brief	Restores the state upon creation
@@ -498,7 +498,7 @@ namespace core::forms
 		setBitmap(::HBITMAP newBitmap)
 		{
 			if (auto prev = reinterpret_cast<::HBITMAP>(::SelectObject(this->handle(), newBitmap)); !prev) 
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("SelectObject() failed");
 			else if (!this->Modified->PrevBitmap) 
 				this->Modified->PrevBitmap = prev;
 		}
@@ -517,7 +517,7 @@ namespace core::forms
 		setBrush(::HBRUSH newBrush)
 		{
 			if (auto prev = reinterpret_cast<::HBRUSH>(::SelectObject(this->handle(), newBrush)); !prev) 
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("SelectObject() failed");
 			else if (!this->Modified->PrevBrush) 
 				this->Modified->PrevBrush = prev;
 		}
@@ -541,7 +541,7 @@ namespace core::forms
 		setBrush(Colour col) {
 			this->setBrush(StockObject::InternalBrush);
 			if (auto const prev = (Colour)::SetDCBrushColor(this->handle(), static_cast<::COLORREF>(col)); prev == Colour::Invalid)
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("SetDCBrushColor() failed");
 		}
 		
 		void
@@ -563,7 +563,7 @@ namespace core::forms
 		setFont(::HFONT newFont)
 		{
 			if (auto prev = reinterpret_cast<::HFONT>(::SelectObject(this->handle(), newFont)); !prev) 
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("SelectObject() failed");
 			else if (!this->Modified->PrevFont) 
 				this->Modified->PrevFont = prev;
 		}
@@ -587,7 +587,7 @@ namespace core::forms
 		setPen(::HPEN newPen)
 		{
 			if (auto prev = reinterpret_cast<::HPEN>(::SelectObject(this->handle(), newPen)); !prev) 
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("SelectObject() failed");
 			else if (!this->Modified->PrevPen) 
 				this->Modified->PrevPen = prev;
 		}
@@ -606,7 +606,7 @@ namespace core::forms
 		setPen(Colour newcolour) {
 			this->setPen(StockObject::InternalPen);
 			if (auto const prev = (Colour)::SetDCPenColor(this->handle(), static_cast<::COLORREF>(newcolour)); prev == Colour::Invalid)
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("SetDCPenColor() failed");
 		}
 		
 		void
@@ -632,7 +632,7 @@ namespace core::forms
 		{
 			auto const prev = static_cast<Colour>(::SetBkColor(this->handle(), win::DWord{newcolour}));
 			if (prev == Colour::Invalid)
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("SetBkColor() failed");
 			else if (!this->Modified->PrevBackColour) 
 				this->Modified->PrevBackColour = prev;
 
@@ -680,7 +680,7 @@ namespace core::forms
 		{
 			auto const prev = static_cast<DrawingMode>(::SetBkMode(this->handle(), win::DWord{mode}));
 			if (prev == DrawingMode::Invalid)
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("SetBkMode() failed");
 			else if (!this->Modified->PrevDrawingMode) 
 				this->Modified->PrevDrawingMode = prev;
 		}
@@ -691,7 +691,7 @@ namespace core::forms
 		{
 			auto const prev = static_cast<Colour>(::SetTextColor(this->handle(), win::DWord{col})); 
 			if (prev == Colour::Invalid)
-				win::LastError{}.throwAlways();
+				win::LastError{}.throwAlways("SetTextColor() failed");
 			else if (!this->Modified->PrevTextColour) 
 				this->Modified->PrevTextColour = prev;
 		}

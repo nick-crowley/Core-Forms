@@ -70,8 +70,8 @@ namespace core::forms
 		  : Handle{std::move(ThrowIfEmpty(bmp))},
 			Depth{ColourDepth::bpp1}
 		{
-			if (::BITMAP info{}; !::GetObject(*bmp, sizeof(info), &info))
-				win::LastError{}.throwAlways();
+			if (::BITMAP info{}; !::GetObjectW(*bmp, sizeof(info), &info))
+				win::LastError{}.throwAlways("GetObject() failed");
 			else {
 				this->Dimensions = {info.bmWidth,info.bmHeight};
 				this->Depth = static_cast<ColourDepth>(info.bmBitsPixel);
