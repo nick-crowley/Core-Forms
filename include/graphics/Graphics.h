@@ -462,6 +462,25 @@ namespace core::forms
 			if (!::StrokePath(this->handle()))
 				win::LastError{}.throwAlways("StrokePath() failed");
 		}
+
+		//!	@brief	Shade a rectangle horizontally using two colours
+		void
+		shadeRect(Rect const& rc, Colour left, Colour right) const {
+			auto constexpr getRed16   = [](Colour c) { return static_cast<COLOR16>((std::to_underlying(c) << 8) & 0xffFF); };
+			auto constexpr getGreen16 = [](Colour c) { return static_cast<COLOR16>((std::to_underlying(c) << 0) & 0xff00); };
+			auto constexpr getBlue16  = [](Colour c) { return static_cast<COLOR16>((std::to_underlying(c) >> 8) & 0xff00); };
+
+			::TRIVERTEX points[] {
+				{rc.Left,  rc.Bottom, getRed16(left) , getGreen16(left) , getBlue16(left) , win::Unused<COLOR16> },
+				{rc.Left,  rc.Top,    getRed16(left) , getGreen16(left) , getBlue16(left) , win::Unused<COLOR16> },
+				{rc.Right, rc.Top,    getRed16(right), getGreen16(right), getBlue16(right), win::Unused<COLOR16> },
+				{rc.Right, rc.Bottom, getRed16(right), getGreen16(right), getBlue16(right), win::Unused<COLOR16> }
+			};
+			::GRADIENT_RECT indexes[] { 1, 3 };
+			if (!::GradientFill(this->handle(), points, 4, indexes, 1, GRADIENT_FILL_RECT_H))
+				win::LastError{}.throwAlways("GradientFill() failed");
+		}
+	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		//!	@brief	Add rectangle to clip region
