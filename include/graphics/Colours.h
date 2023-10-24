@@ -194,6 +194,26 @@ namespace core
 namespace core::forms
 {
 	using AnyColour = std::variant<Colour,SystemColour,meta::transparent_t>;
+    
+    char unsigned constexpr
+    inline getRed(Colour c) noexcept {
+        return static_cast<char unsigned>((std::to_underlying(c) >> 0) & 0xff);
+    }
+
+    char unsigned constexpr
+    inline getGreen(Colour c) noexcept {
+        return static_cast<char unsigned>((std::to_underlying(c) >> 8) & 0xff);
+    }
+    
+    char unsigned constexpr
+    inline getBlue(Colour c) noexcept {
+        return static_cast<char unsigned>((std::to_underlying(c) >> 16) & 0xff);
+    }
+    
+    char unsigned constexpr
+    inline getAlpha(Colour c) noexcept {
+        return static_cast<char unsigned>((std::to_underlying(c) >> 24) & 0xff);
+    }
 
 	Colour
 	inline to_colour(AnyColour c) 
