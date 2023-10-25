@@ -55,6 +55,15 @@ namespace core::forms
 			Colour{colour}, 
 			Font{font}
 		{}
+		
+		explicit
+		RichText(
+			std::string_view           text, 
+			CodePage                   encoding,
+			std::optional<AnyColour>   colour = nullopt, 
+			std::optional<forms::Font> font = nullopt
+		) : RichText{widen(text,encoding), colour, font}
+		{}
 		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		satisfies(RichText,
 			IsSemiRegular,
