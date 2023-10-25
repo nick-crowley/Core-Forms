@@ -157,7 +157,7 @@ set(PROJECT_STATIC_MACRO "CORE_FORMS_STATIC")
 #       /_______  /|__| (____  /__| |__|\___  > |_______ \__||___  /         #
 #               \/           \/             \/          \/       \/          #
 ##############################################################################
-message("StaticLib: Generating project from ./src with ./include")
+message("libCoreForms: Generating static library project")
 
 # Project: libCoreForms
 add_library(libCoreForms STATIC 
@@ -215,7 +215,7 @@ target_compile_options(libCoreForms
 #  /_______  / ____|___|  (____  /__|_|  /__|\___  >  |_______ \__||___  /  #
 #          \/\/         \/     \/      \/        \/           \/       \/   #
 #############################################################################
-message("DynamicLib: Generating project from ./src with ./include")
+message("dllCoreForms: Generating dynamic library project")
 
 # Project: dllCoreForms
 add_library(dllCoreForms SHARED 
@@ -275,6 +275,7 @@ target_compile_options(dllCoreForms
 #   |______  /(____  /____  >__|\___  >  \___  / \____/|__|  |__|_|  /  #
 #          \/      \/     \/        \/       \/                    \/   #
 #########################################################################
+message("appBasicForm: Generating minimal form sample")
 
 # Project: appBasicForm
 add_executable(appBasicForm
@@ -330,6 +331,7 @@ add_dependencies(appBasicForm
 #   \______  /\____/|___|  /__|  |__|   \____/|____/____  >	 #
 #          \/            \/                             \/ 	 #
 ##############################################################
+message("appControls: Generating common controls sample")
 
 # Project: appControls
 add_executable(appControls
@@ -385,6 +387,7 @@ add_dependencies(appControls
 # /_______  /\___  >\_/     |____| \___  >____  > |__| |__|___|  /\___  /  #
 #         \/     \/                    \/     \/               \//_____/   #
 ############################################################################
+message("appDevTesting: Generating dev-testing sample")
 
 # Project: appDevTesting
 add_executable(appDevTesting
@@ -439,6 +442,8 @@ add_dependencies(appDevTesting
 #        \____|__  /\____/\____ |\___  >__|  |___|  / |______/ |___|       #
 #                \/            \/    \/           \/                       #
 ############################################################################
+message("appModern: Generating modern user interface sample")
+
 # Project: appModern
 add_executable(appModern
 	"${PROJECT_SAMPLE_FOLDER}appModern.cpp"
@@ -492,7 +497,7 @@ add_dependencies(appModern
 #  \______  /\____/ \____/\___  /|____/\___  >   |____| \___  >____  > |__|   #
 #         \/             /_____/           \/               \/     \/         #
 ###############################################################################
-message("dllGoogleTest: Generating project from ./3rdparty/googletest and ./3rdparty/googlemock folders")
+message("dllGoogleTest: Generating GoogleTest project")
 
 # Project: dllGoogleTest
 add_library(dllGoogleTest SHARED 
@@ -537,7 +542,7 @@ target_compile_options(dllGoogleTest
 # |______/|___|  /__||__|     |____| \___  >____  > |__| /____  >  #
 #              \/                        \/     \/            \/   #
 ####################################################################
-message("exeFormsTests: Generating project from ./test and ./mock with ./src and ./include folders")
+message("exeFormsTests: Generating unit-test project")
 
 # Test files
 file(GLOB_RECURSE PROJECT_UNIT_TEST_FILES
