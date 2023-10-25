@@ -58,7 +58,14 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+namespace core::forms
+{
+	//! @brief  Distinguishes colours used by the current look-n-feel
+	enum class ColourScheme : uint32_t { Default, Dark, Light };
+	
+	//! @brief  Supported looks-n-feels
+	enum class VisualStyle : uint32_t { Modern, Retro, Vintage };
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
@@ -186,5 +193,9 @@ namespace core::forms {
 	//! @brief  Look'n'feel used when creating windows
 	SharedLookNFeelProvider 
 	extern FormsExport lookNFeel;
+
+	//! @brief  Change the default look-n-feel used when creating new windows
+	void
+	setLookNFeel(VisualStyle style, ColourScheme scheme) noexcept;
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
