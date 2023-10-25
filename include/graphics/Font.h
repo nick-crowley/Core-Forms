@@ -102,11 +102,14 @@ namespace core::forms
 		return static_cast<PointSize>(-std::to_underlying(pt));
 	}
 
-	namespace literals
+	inline namespace literals
 	{
-		PointSize consteval
-		operator""_pt(uint64_t n) noexcept {
-			return static_cast<PointSize>(n);
+		inline namespace font_size_literals
+		{
+			PointSize consteval
+			operator""_pt(uint64_t n) noexcept {
+				return static_cast<PointSize>(n);
+			}
 		}
 	}
 }
