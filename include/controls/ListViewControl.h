@@ -1221,6 +1221,9 @@ namespace core::forms
 		ColumnCollection Columns;
 		ItemCollection   Items;
 		ItemChangedEvent ItemChanged;
+
+	private:
+		forms::UnmanagedWindow  Header;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		implicit
@@ -1229,6 +1232,7 @@ namespace core::forms
 			Columns{*this},
 			Items{*this}
 		{
+			this->Created += {*this, &ListViewControl::this_onCreated};
 			this->backColour(this->LookNFeel->control());
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -1313,8 +1317,9 @@ namespace core::forms
 		
 		Response
 		virtual onNotify(NotifyEventArgs args) override {
-			// Expect notifications from attached header control
-			if (args.Source.Handle == ListView_GetHeader(this->handle()))
+			// Expect notifications from attached header control and avoid logging them to prevent
+			//  spamming of application log-files.
+			if (args.Source.Handle == this->Header.handle())
 				return Unhandled;
 			
 			return base::onNotify(args);
@@ -1352,6 +1357,11 @@ namespace core::forms
 		::LRESULT 
 		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
 			return this->subclassedWndProc(message, wParam, lParam);
+		}
+
+	private:
+		void this_onCreated(Window& sender, CreateWindowEventArgs args) {
+			this->Header.attach(ListView_GetHeader(this->handle()));
 		}
 	};
 }	// namespace core::forms
