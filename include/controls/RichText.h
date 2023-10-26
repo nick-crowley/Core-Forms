@@ -43,7 +43,7 @@ namespace core::forms
 	struct RichText {
 		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		std::wstring               Text;
-		std::optional<AnyColour>   Colour = SystemColour::WindowText;
+		std::optional<AnyColour>   Colour;
 		std::optional<forms::Font> Font;
 		// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		explicit
