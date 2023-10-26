@@ -561,18 +561,18 @@ LookNFeelProvider::draw(ListViewControl& ctrl, OwnerDrawEventArgs const& args)
 	}
 
 	// [ITEM] Prefer item font + selected-text colour; fallback to control-default
-	RichText detail = item.detail();
+	RichText const detail = item.detail();
 	args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
 	args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(ctrl.textColour())), transparent);
 	args.Graphics.drawText(detail.Text, rcLabel);
 
-	// [SUB-ITEMS] Prefer subitem font + selected-text colour; fallback to control-default
+	// [SUB-ITEMS] Prefer subitem font + selected-text colour; item font/colour; fallback to control-default
 	for (auto idx = 0, subItemCount = item.SubItems.size(); idx < subItemCount; ++idx) {
 		auto const subitem = item.SubItems[idx];
-		detail = subitem.detail();
-		args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
-		args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(ctrl.textColour())), transparent);
-		args.Graphics.drawText(detail.Text, subitem.area(), DrawTextFlags::SimpleLeft|DrawTextFlags::WordElipsis);
+		RichText const subDetail = subitem.detail();
+		args.Graphics.setFont(subDetail.Font.value_or(detail.Font.value_or(ctrl.font())));
+		args.Graphics.textColour(selectedTextColour.value_or(subDetail.Colour.value_or(detail.Colour.value_or(ctrl.textColour()))), transparent);
+		args.Graphics.drawText(subDetail.Text, subitem.area(), DrawTextFlags::SimpleLeft|DrawTextFlags::WordElipsis);
 	}
 }
 
