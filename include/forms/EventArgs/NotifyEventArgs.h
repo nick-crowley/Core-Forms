@@ -31,7 +31,10 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+namespace core::forms
+{
+	class FormsExport Window;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -39,29 +42,32 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	struct NotifyEventArgs {
-		static_assert(sizeof(LPARAM) == sizeof(HWND));
-
+	class NotifyEventArgs {
+	public:
 		struct SourceIdent {
 			uint16_t   Ident;
 			::HWND     Handle;
 		};
 
-	public:
+	private:
 		::NMHDR*     Header;
+		
+	public:
 		SourceIdent  Source; 
 		uint16_t     Code;
+		Window*      Window;
 		
-		NotifyEventArgs(::WPARAM, ::LPARAM l)
-		  : Header{reinterpret_cast<::NMHDR*>(l)},
-		    Source{static_cast<uint16_t>(this->Header->idFrom), this->Header->hwndFrom},
-		    Code{static_cast<uint16_t>(this->Header->code)}
-		{	
-		}
-
+		NotifyEventArgs(::WPARAM, ::LPARAM l);
+		
 		satisfies(NotifyEventArgs, 
 			IsSemiRegular
 		);
+		
+		template <nstd::Class CustomData>
+		CustomData*
+		header() const noexcept {
+			return reinterpret_cast<CustomData*>(this->Header);
+		}
 	};
 	
 	using NotifyDelegate = meta::undefined_t;	//!< Unused for WM_NOTIFY

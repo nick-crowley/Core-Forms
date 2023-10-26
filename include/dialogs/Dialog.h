@@ -212,38 +212,42 @@ namespace core::forms
 		::INT_PTR 
 		static CALLBACK defaultDialogHandler(::HWND hDlg, ::UINT message, ::WPARAM wParam, ::LPARAM lParam)
 		{
-			WndProcLoggingSentry log_entry(message);
+			WndProcLoggingSentry logEntry(message);
 			try {
 				Response response;
 				
 				// Search for the C++ object managing this handle
-				if (Dialog* dlg = Window::ExistingWindows.find<Dialog>(hDlg); dlg) 
+				if (Dialog* dlg = Window::ExistingWindows.find<Dialog>(hDlg); !dlg) 
+					// [UNMANAGED] Shouldn't be possible to receive messages for dialog prior to WM_NCCREATE saving its handle
+					throw runtime_error{"No associated dialog object"};
+				else
 				{
 					// Offer the message to the C++ object managing this handle
 					response = dlg->offerMessage(message, wParam, lParam);
-					
+					Invariant(response.Status != Response::Invalid);
+
 					// Raise equivalent event, if any, after processing completed
 					dlg->raiseMessageEvent(message, wParam, lParam);
-				}
-				// [UNMANAGED] Shouldn't be possible to receive messages for dialog prior to WM_NCCREATE saving its handle
-				else 
-					throw runtime_error{"No associated dialog object"};
 
-				Invariant(response.Status != Response::Invalid);
-			
-				// [HANDLED] Return the result provided
-				if (response.Status == Response::Handled) 
-				{
-					log_entry.setResult(Response::Handled, *response.Value);
-					return *response.Value;
+					// [HANDLED] Return the result provided
+					if (response.Status == Response::Handled) 
+					{
+						logEntry.setResult(Response::Handled, *response.Value);
+						if (message != WM_NOTIFY) 
+							return *response.Value;
+
+						// [WM_NOTIFY] Return result differently when running in a dialog procedure
+						dlg->setMessageResult(response);
+						return TRUE;
+					}
 				}
 				
 				// [UNHANDLED/ERROR] Inform ::DefWindowProc() we didn't handle this message
-				log_entry.setResult(Response::Unhandled, FALSE);
+				logEntry.setResult(Response::Unhandled, FALSE);
 				return FALSE;
 			} 
 			catch (const std::exception& e) {
-				log_entry.setException(e);
+				logEntry.setException(e);
 				clog << Failure{"Exception processing {}: {}", Window::MessageDatabase[message].Name, e.what()};
 				return (INT_PTR)FALSE;
 			}
@@ -623,6 +627,11 @@ namespace core::forms
 			
 			// Aggregate all template customizations into a new template resource
 			return DialogTemplateWriter{}.writeTemplate(customTemplate);
+		}
+
+		void
+		setMessageResult(Response const& r) {
+			::SetWindowLongPtr(this->handle(), DWLP_MSGRESULT, *r.Value);
 		}
 	};
 }	// namespace core::forms

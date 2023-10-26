@@ -114,26 +114,25 @@ namespace core::forms
 			data() const noexcept {
 				return reinterpret_cast<CustomData*>(this->UserData);
 			}
-
-			template <nstd::Class CustomData>
-			void
-			data(CustomData* d) noexcept {
-				this->UserData = reinterpret_cast<uintptr_t>(d);
-			}
 		};
 
 	private:
-		::NMCUSTOMDRAW*      Data;
+		::NMCUSTOMDRAW*   Header;
 
 	public:
 		DeviceContext                    mutable Graphics;
 		ItemData                         Item;
-		nstd::bitset<CustomDrawResult>   Result = CustomDrawResult::DoDefault;
 		nstd::bitset<CustomDrawStage>    Stage;
 		forms::Window*                   Window;
 
 		explicit
-		CustomDrawEventArgs(NotifyEventArgs args);
+		CustomDrawEventArgs(NotifyEventArgs args) 
+		  : Header{args.header<::NMCUSTOMDRAW>()},
+		    Item{*this->Header},
+		    Graphics{SharedDeviceContext{this->Header->hdc, weakref}},
+		    Stage{static_cast<CustomDrawStage>(this->Header->dwDrawStage)},
+		    Window{args.Window}
+		{}
 	};
 	
 	using CustomDrawDelegate = Delegate<void (Window&,CustomDrawEventArgs)>;

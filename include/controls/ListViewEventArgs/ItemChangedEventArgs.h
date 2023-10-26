@@ -74,7 +74,7 @@ namespace core::forms
 		using base = NotifyEventArgs;
 
 	private:
-		::NMLISTVIEW*      Data;
+		::NMLISTVIEW*      Header;
 
 	public:
 		int32_t            Item;
@@ -88,14 +88,14 @@ namespace core::forms
 		explicit
 		ItemChangedEventArgs(NotifyEventArgs args) 
 		  : base{args},
-			Data{reinterpret_cast<::NMLISTVIEW*>(args.Header)},
-			Item{this->Data->iItem},
-			SubItem{this->Data->iSubItem},
-			OldState{static_cast<ListViewItemState>(this->Data->uOldState)},
-			NewState{static_cast<ListViewItemState>(this->Data->uNewState)},
-			Changed{static_cast<ListViewItemFlag>(this->Data->uChanged)},
-			Position{this->Data->ptAction},
-			UserData{std::bit_cast<void*>(this->Data->lParam)}
+			Header{args.header<::NMLISTVIEW>()},
+			Item{this->Header->iItem},
+			SubItem{this->Header->iSubItem},
+			OldState{static_cast<ListViewItemState>(this->Header->uOldState)},
+			NewState{static_cast<ListViewItemState>(this->Header->uNewState)},
+			Changed{static_cast<ListViewItemFlag>(this->Header->uChanged)},
+			Position{this->Header->ptAction},
+			UserData{std::bit_cast<void*>(this->Header->lParam)}
 		{
 		}
 	};

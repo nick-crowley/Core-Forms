@@ -1081,6 +1081,14 @@ namespace core::forms
 		}
 	
 		Response
+		virtual onCustomDraw(CustomDrawEventArgs args) {
+			if (args.Window && args.Window != this)
+				return args.Window->onCustomDraw(args);
+
+			return Unhandled;
+		}
+		
+		Response
 		virtual onDropFiles(DropFilesEventArgs args) {
 			return Unhandled;
 		}
@@ -1161,8 +1169,8 @@ namespace core::forms
 		Response
 		virtual onNotify(NotifyEventArgs args) {
 			// Reflect notification back to originator control
-			if (Window* sender = Window::ExistingWindows.find(args.Source.Handle); sender)
-				return sender->offerNotification(args);
+			if (args.Window)
+				return args.Window->offerNotification(args);
 
 			// [DEBUG] Notification from child window we didn't create
 			clog << Window::unrecognisedNotificationLogEntry(args);
@@ -1420,7 +1428,10 @@ namespace core::forms
 		
 		Response
 		virtual onOfferNotification([[maybe_unused]] NotifyEventArgs args) {
-			// Default implementation ignores all reflected notifications
+			switch (args.Code) {
+			case NM_CUSTOMDRAW:
+				return this->onCustomDraw(CustomDrawEventArgs{args});
+			}
 			return Unhandled;
 		}
 		
