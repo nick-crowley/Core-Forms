@@ -242,6 +242,7 @@ namespace core::forms
 			}
 		};
 		
+		//! @brief  Collection facade representing existing columns
 		class ColumnCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
@@ -599,6 +600,7 @@ namespace core::forms
 			}
 		};
 		
+		//! @brief  Collection facade representing a fixed number of sub-items for each individual item
 		class SubItemCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
@@ -937,6 +939,7 @@ namespace core::forms
 			}
 		};
 		
+		//! @brief  Collection facade representing existing items
 		class ItemCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
