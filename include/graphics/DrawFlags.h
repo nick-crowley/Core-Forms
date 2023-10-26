@@ -165,6 +165,7 @@ namespace core::forms
         Unknown = NULL,           //!< Unspecified
         Button = ODT_BUTTON,      //!< Button control
         ComboBox = ODT_COMBOBOX,  //!< ComboBox control
+        Header = ODT_HEADER,      //!< Header control
         ListBox = ODT_LISTBOX,    //!< ListBox control
         ListView = ODT_LISTVIEW,  //!< ListView control
         Menu = ODT_MENU,          //!< Window Menu 
