@@ -30,6 +30,7 @@
 #include "forms/EventArgs/CommandEventArgs.h"
 #include "forms/EventArgs/CreateWindowEventArgs.h"
 #include "forms/EventArgs/ControlColourEventArgs.h"
+#include "forms/EventArgs/CustomDrawEventArgs.h"
 #include "forms/EventArgs/DropFilesEventArgs.h"
 #include "forms/EventArgs/EraseBackgroundEventArgs.h"
 #include "forms/EventArgs/GetObjectEventArgs.h"
