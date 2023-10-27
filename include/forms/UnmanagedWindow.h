@@ -28,6 +28,8 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
 #include "graphics/Graphics.h"
+#include "forms/AccessibilityFlags.h"
+#include "forms/ScrollBarInfo.h"
 #include "forms/WindowClass.h"
 #include "forms/WindowInfo.h"
 #include "forms/WindowStyle.h"
@@ -156,6 +158,14 @@ namespace core::forms
 			return ::PostMessageW(this->handle(), MessageId, first.value_or(0), second.value_or(0));
 		}
 		
+		ScrollBarInfo
+		scrollBar(ObjectId bar) const noexcept {
+			ThrowIfNot(bar, bar == ObjectId::Client || bar == ObjectId::HScroll || bar == ObjectId::VScroll);
+			::SCROLLBARINFO info{sizeof(info)};
+			::GetScrollBarInfo(this->handle(), std::to_underlying(bar), &info);
+			return ScrollBarInfo{info};
+		}
+
 		template <unsigned MessageId>
 		::LRESULT
 		send(std::optional<::WPARAM> first = nullopt, std::optional<::LPARAM> second = nullopt) const noexcept {

@@ -909,6 +909,7 @@ namespace core::forms
 		using base::maximized;
 		using base::minimized;
 		using base::post;
+		using base::scrollBar;
 		using base::send;
 		using base::style;
 		using base::text;
