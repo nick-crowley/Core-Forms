@@ -53,7 +53,7 @@ namespace core::forms
 	class Menu
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	protected:
+	public:
 		//! @brief	Custom item data used for each element when in owner-draw mode
 		struct ItemData {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -81,7 +81,8 @@ namespace core::forms
 				NotSortable
 			);
 		};
-		
+
+	protected:
 		//! @brief  Distinguishes item ID type from similar index type
 		enum class ItemId : uint16_t {};
 
@@ -381,7 +382,7 @@ namespace core::forms
 			satisfies(ItemCollection,
 				NotDefaultConstructible,
 				NotCopyable,
-				NotMovable,
+				IsMovable noexcept,
 				NotSortable,
 				NotEqualityComparable
 			);

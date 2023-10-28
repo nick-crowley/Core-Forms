@@ -28,6 +28,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
 #include "core/ObservableEvent.h"
+#include "forms/Menu.h"
 #include "graphics/Graphics.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -43,43 +44,49 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class FormsExport MeasureItemEventArgs 
+	class FormsExport MeasureMenuEventArgs
 	{
 	public:
-		enum ItemIndex : int32_t { EditControl = -1 };
-
-		struct ItemData {
+		struct ItemData 
+		{	
+			uint32_t&     Height;
+			uint16_t      Ident;
+			uintptr_t     UserData;
+			uint32_t&     Width;
+			
 			ItemData(::MEASUREITEMSTRUCT& data)
-			  : UserData{data.itemData},
-				Index{static_cast<ItemIndex>(data.itemID)}
+			  : Height{data.itemHeight},
+				Ident{static_cast<uint16_t>(data.itemID)},
+				UserData{data.itemData},
+				Width{data.itemWidth}
 			{
-				ThrowIf(data, data.CtlType == ODT_MENU);
+				ThrowIf(data, data.CtlType != ODT_MENU);
 			}
 
-			uintptr_t     UserData;
-			ItemIndex     Index;
+			template <nstd::Class CustomData>
+			CustomData*
+			data() const noexcept {
+				return reinterpret_cast<CustomData*>(this->UserData);
+			}
 		};
 
 	public:
 		uint16_t          Ident;		//!< Control Identifier
 		ItemData          Item;	
 		DeviceContext     mutable Graphics;
-		uint32_t&         Height;
-		OwnerDrawControl  Source;
-		uint32_t&         Width;
-		Window*           Window;
+		forms::Menu       Menu;
 
 	public:
-		MeasureItemEventArgs(forms::Window& wnd, ::WPARAM w, ::LPARAM l)
-		  : MeasureItemEventArgs{wnd, *reinterpret_cast<::MEASUREITEMSTRUCT*>(l)}
+		MeasureMenuEventArgs(forms::Window& wnd, ::WPARAM w, ::LPARAM l)
+		  : MeasureMenuEventArgs{wnd, *reinterpret_cast<::MEASUREITEMSTRUCT*>(l)}
 		{}
 
 	private:
-		MeasureItemEventArgs(forms::Window& wnd, ::MEASUREITEMSTRUCT& data);
+		MeasureMenuEventArgs(forms::Window& wnd, ::MEASUREITEMSTRUCT& data);
 	};
 
-	using MeasureItemDelegate = Delegate<void (Window&,MeasureItemEventArgs )>;
-	using MeasureItemEvent = ObservableEvent<MeasureItemDelegate>;
+	using MeasureMenuItemDelegate = Delegate<void (Window&,MeasureMenuEventArgs)>;
+	using MeasureMenuItemEvent = ObservableEvent<MeasureMenuItemDelegate>;
 
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

@@ -7,9 +7,9 @@ MeasureItemEventArgs::MeasureItemEventArgs(forms::Window& wnd, ::MEASUREITEMSTRU
   : Ident{static_cast<uint16_t>(data.CtlID)},
 	Item{data},
 	Graphics{wnd.clientDC()},
-	Type{static_cast<OwnerDrawControl>(data.CtlType)},
-	Width{data.itemWidth},
 	Height{data.itemHeight},
+	Source{static_cast<OwnerDrawControl>(data.CtlType)},
+	Width{data.itemWidth},
 	Window{&wnd}
 {
 }

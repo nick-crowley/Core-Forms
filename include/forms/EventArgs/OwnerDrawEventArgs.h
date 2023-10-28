@@ -74,7 +74,7 @@ namespace core::forms
 		int16_t                       Ident;
 		ItemData                      Item;
 		DeviceContext                 mutable Graphics;
-		OwnerDrawControl              Type;
+		OwnerDrawControl              Source;
 		Window*                       Window;
 
 	public:

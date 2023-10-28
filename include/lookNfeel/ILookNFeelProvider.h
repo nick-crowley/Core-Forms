@@ -37,6 +37,7 @@ namespace core::forms
 {
 	class Window;
 	class Dialog;
+	class Menu;
 	class ButtonControl;
 	class CheckBoxControl;
 	class ComboBoxControl;
@@ -51,7 +52,9 @@ namespace core::forms
 	class EraseBackgroundEventArgs;
 	class InitDialogEventArgs;
 	class MeasureItemEventArgs;
+	class MeasureMenuEventArgs;
 	class OwnerDrawEventArgs;
+	class OwnerDrawMenuEventArgs;
 	class PaintWindowEventArgs;
 	class NonClientPaintEventArgs;
 }
@@ -143,6 +146,12 @@ namespace core::forms
 		Response
 		virtual draw(Window& wnd, NonClientPaintEventArgs& args) abstract;
 		
+		void
+		virtual draw(Window& wnd, OwnerDrawMenuEventArgs& args) abstract;
+		
+		void
+		virtual measure(Window& wnd, MeasureMenuEventArgs& args) abstract;
+
 		void
 		virtual onCreated(Window&, CreateWindowEventArgs const& args) abstract;
 		

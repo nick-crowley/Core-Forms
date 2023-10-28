@@ -22,7 +22,7 @@ forms::OwnerDrawEventArgs::OwnerDrawEventArgs(::DRAWITEMSTRUCT& data)
     Ident{static_cast<int16_t>(data.CtlID)},
 	Item{data},
 	Graphics{SharedDeviceContext{data.hDC, weakref}},
-	Type{static_cast<OwnerDrawControl>(data.CtlType)},
+	Source{static_cast<OwnerDrawControl>(data.CtlType)},
 	Window{Window::ExistingWindows.find(data.hwndItem)}
 {
 }

@@ -141,6 +141,12 @@ namespace core::forms
 		virtual draw(Window& wnd, NonClientPaintEventArgs& args) override;
 
 		void
+		virtual draw(Window& wnd, OwnerDrawMenuEventArgs& args) override;
+		
+		void
+		virtual measure(Window& wnd, MeasureMenuEventArgs& args) override;
+
+		void
 		virtual onCreated(Window&, CreateWindowEventArgs const& args) override;
 		
 		AnyColour

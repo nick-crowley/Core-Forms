@@ -1,11 +1,10 @@
 #include "forms/EventArgs/OwnerDrawMenuEventArgs.h"
-#include "forms/Window.h"
 using namespace core;
 using namespace forms;
 
 forms::OwnerDrawMenuEventArgs::ItemData::ItemData(::DRAWITEMSTRUCT& data) 
   : Area{data.rcItem},
-	Ident{win::ResourceId{static_cast<uint16_t>(data.itemID)}},
+	Ident{static_cast<uint16_t>(data.itemID)},
     State{static_cast<OwnerDrawState>(data.itemState)},
     UserData{data.itemData}
 {
@@ -20,7 +19,7 @@ forms::OwnerDrawMenuEventArgs::OwnerDrawMenuEventArgs([[maybe_unused]] ::WPARAM 
 forms::OwnerDrawMenuEventArgs::OwnerDrawMenuEventArgs(::DRAWITEMSTRUCT& data)
   : Action{static_cast<OwnerDrawAction>(data.itemAction)},
 	Item{data},
-	Menu{reinterpret_cast<::HMENU>(data.hwndItem)},
-	Graphics{SharedDeviceContext{data.hDC, weakref}}
+	Graphics{SharedDeviceContext{data.hDC, weakref}},
+	Menu{forms::SharedMenu{reinterpret_cast<::HMENU>(data.hwndItem), weakref}}
 {
 }

@@ -680,6 +680,44 @@ LookNFeelProvider::draw(Window& wnd, NonClientPaintEventArgs& args)
 }
 
 void
+LookNFeelProvider::draw(Window& wnd, OwnerDrawMenuEventArgs& args)
+{
+	auto const isSelected = args.Item.State.test(OwnerDrawState::Selected);
+	auto const backColour = isSelected ? this->highlight() : wnd.backColour();
+
+	// Background
+	args.Graphics.setBrush(backColour);
+	args.Graphics.fillRect(args.Item.Area);
+
+	// Prefer item font/colour; fallback to window font/colour
+	auto const item = args.Menu.Items[args.Item.Ident];
+	auto const detail = item.detail();
+	args.Graphics.setFont(detail.Font.value_or(wnd.font()));
+	args.Graphics.textColour(detail.Colour.value_or(wnd.textColour()));
+	args.Graphics.drawText(item.text(), args.Item.Area + Rect{24+3*Measurement{SystemMetric::cxEdge},0,0,0});
+
+	args.Graphics.restore();
+}
+
+void
+LookNFeelProvider::measure(Window& wnd, MeasureMenuEventArgs& args)
+{
+	Invariant(args.Item.data<Menu::ItemData>() != nullptr);
+	auto const& detail = args.Item.data<Menu::ItemData>()->Detail;
+	
+	// Prefer item font; fallback to window font
+	args.Graphics.setFont(detail.Font.value_or(wnd.font()));
+	auto const size = args.Graphics.measureText(detail.Text);
+
+	// Account for icon gutter and add significant gap on right-hand side
+	Size constexpr SmallIcons{24,24};
+	args.Item.Height = std::max<uint32_t>(SmallIcons.Height, size.Height);
+	args.Item.Width = 5*Measurement{SystemMetric::cxEdge} + SmallIcons.Width + 2*size.Width;
+
+	args.Graphics.restore();
+}
+
+void
 LookNFeelProvider::onCreated(Window&, CreateWindowEventArgs const& args) {
 	// nothing
 }

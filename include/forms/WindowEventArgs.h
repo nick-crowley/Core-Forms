@@ -35,6 +35,7 @@
 #include "forms/EventArgs/EraseBackgroundEventArgs.h"
 #include "forms/EventArgs/GetObjectEventArgs.h"
 #include "forms/EventArgs/MeasureItemEventArgs.h"
+#include "forms/EventArgs/MeasureMenuEventArgs.h"
 #include "forms/EventArgs/MinMaxEventArgs.h"
 #include "forms/EventArgs/MouseEventArgs.h"
 #include "forms/EventArgs/NonClientActivateEventArgs.h"

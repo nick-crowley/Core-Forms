@@ -1189,7 +1189,8 @@ namespace core::forms
 	
 		Response 
 		virtual onOwnerDrawMenu(OwnerDrawMenuEventArgs args) {
-			return Unhandled;
+			this->LookNFeel->draw(*this, args);
+			return 0;
 		}
 
 		Response 

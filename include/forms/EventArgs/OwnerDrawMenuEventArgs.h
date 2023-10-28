@@ -28,14 +28,12 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
 #include "core/ObservableEvent.h"
+#include "forms/Menu.h"
 #include "graphics/Graphics.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::forms
-{
-	class FormsExport Window;
-}
+
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -50,7 +48,7 @@ namespace core::forms
 			ItemData(::DRAWITEMSTRUCT& data);
 
 			Rect                         Area;
-			win::ResourceId              Ident;
+			uint16_t                     Ident;
 			nstd::bitset<OwnerDrawState> State;
 			uintptr_t                    UserData;
 		};
@@ -58,8 +56,8 @@ namespace core::forms
 	public:
 		nstd::bitset<OwnerDrawAction> Action;
 		ItemData                      Item;
-		::HMENU                       Menu;
 		DeviceContext                 mutable Graphics;
+		forms::Menu                   Menu;
 
 	public:
 		OwnerDrawMenuEventArgs(::WPARAM w, ::LPARAM l);
