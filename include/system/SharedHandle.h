@@ -49,6 +49,17 @@ namespace core::detail
             ::DragFinish(target);
         };
     };
+    
+    template <>
+    struct HandleTraits<::HMENU> {
+        ::HMENU constexpr
+        inline static empty = nullptr;
+
+        auto constexpr
+        inline static release = [](::HMENU menu) {
+            ::DestroyMenu(menu);
+        };
+    };
 }
 namespace core::forms
 {
@@ -114,6 +125,9 @@ namespace core::forms
     
     //! @brief  Shared @c ::HICON released using @c ::DeleteObject()
     using SharedIcon = SmartHandle<::HICON, detail::GdiObjectTraits<::HICON>>;
+    
+    //! @brief  Shared @c ::HMENU released using @c ::DestroyMenu()
+    using SharedMenu = SmartHandle<::HMENU>;
     
     //! @brief  Shared @c ::HPEN released using @c ::DeleteObject()
     using SharedPen = SmartHandle<::HPEN, detail::GdiObjectTraits<::HPEN>>;
