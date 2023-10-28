@@ -29,6 +29,7 @@
 #include "library/core.Forms.h"
 #include "graphics/Graphics.h"
 #include "forms/AccessibilityFlags.h"
+#include "forms/Menu.h"
 #include "forms/ScrollBarInfo.h"
 #include "forms/WindowClass.h"
 #include "forms/WindowInfo.h"
@@ -146,6 +147,12 @@ namespace core::forms
 			return ::IsIconic(this->handle()) != FALSE;
 		}
 		
+		std::optional<Menu>
+		menu() const {
+			::HMENU const m = ::GetMenu(this->handle());
+			return nstd::make_optional_if<Menu>(m != nullptr, SharedMenu{m, weakref});
+		}
+
 		::HWND
 		parent() const noexcept {
 			return ::GetParent(this->handle());
