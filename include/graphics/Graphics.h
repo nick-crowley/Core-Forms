@@ -42,7 +42,6 @@
 #include "graphics/StockPen.h"
 #include "graphics/SystemBrush.h"
 #include "system/SharedHandle.h"
-#include "win/ApiHelpers.h"
 #pragma comment (lib, "Gdi32.lib")
 #pragma comment (lib, "UxTheme.lib")
 #pragma comment (lib, "Msimg32.lib")
