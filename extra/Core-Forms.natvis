@@ -327,4 +327,19 @@
       <ExpandedItem>*(core::forms::LookNFeelProvider*)this,nd</ExpandedItem>
     </Expand>
   </Type>
+
+  <Type Name="tagMEASUREITEMSTRUCT">
+    <AlternativeType Name="MEASUREITEMSTRUCT"/>
+    <DisplayString Condition="itemID &gt; 1000000">{{ Measure {(core::forms::OwnerDrawControl)CtlType,en} id=#{CtlID} height={itemHeight} }}</DisplayString>
+    <DisplayString>{{ Measure {(core::forms::OwnerDrawControl)CtlType,en} id=#{CtlID} item=#{itemID} height={itemHeight} }}</DisplayString>
+    <Expand HideRawView="true">
+      <Item Name="[ctrl]">CtlID</Item>
+      <Item Name="[item]">itemID</Item>
+      <Item Name="[kind]">(core::forms::OwnerDrawControl)CtlType,en</Item>
+      <Item Name="[height]">itemHeight</Item>
+      <Item Name="[width]">itemWidth</Item>
+      <Item Name="[param]">(void*)itemData</Item>
+    </Expand>
+  </Type>
+
 </AutoVisualizer>
