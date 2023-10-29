@@ -281,6 +281,11 @@ namespace core::forms
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
+			Column
+			back() const noexcept {
+				return Column{this->Owner, this->size() - 1};
+			}
+
 			const_iterator
 			begin() const noexcept {
 				return this->make_iterator<const_iterator>(0);
@@ -299,6 +304,11 @@ namespace core::forms
 			const_iterator
 			cend() const noexcept {
 				return this->make_iterator<const_iterator>(this->size());
+			}
+
+			Column
+			front() const noexcept {
+				return Column{this->Owner, 0};
 			}
 
 			size_type 
@@ -580,6 +590,11 @@ namespace core::forms
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
+			SubItem
+			back() const noexcept {
+				return SubItem{this->Owner, this->ItemIdx, this->size() - 1};
+			}
+
 			const_iterator
 			begin() const noexcept {
 				return this->make_iterator<const_iterator>(0);
@@ -598,6 +613,11 @@ namespace core::forms
 			const_iterator
 			cend() const noexcept {
 				return this->make_iterator<const_iterator>(this->size());
+			}
+			
+			SubItem
+			front() const noexcept {
+				return SubItem{this->Owner, this->ItemIdx, 0};
 			}
 
 			size_type 
@@ -834,6 +854,11 @@ namespace core::forms
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
+			Item
+			back() const noexcept {
+				return Item{this->Owner, this->size() - 1};
+			}
+
 			const_iterator
 			begin() const noexcept {
 				return this->make_iterator<const_iterator>(0);
@@ -857,6 +882,11 @@ namespace core::forms
 			std::optional<Item>
 			find(std::wstring_view item) const /*noexcept*/ {
 				throw runtime_error{"Not implemented"}; 
+			}
+			
+			Item
+			front() const noexcept {
+				return Item{this->Owner, 0};
 			}
 
 			std::optional<Item>

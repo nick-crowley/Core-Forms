@@ -307,6 +307,11 @@ namespace core::forms
 				return Item{this->Owner, idx};
 			}
 
+			Item
+			back() const noexcept {
+				return Item{this->Owner, this->size() - 1};
+			}
+
 			const_iterator
 			begin() const noexcept {
 				return this->cbegin();
@@ -325,6 +330,11 @@ namespace core::forms
 			const_iterator
 			cend() const noexcept {
 				return make_iterator<const_iterator>(this->size());
+			}
+			
+			Item
+			front() const noexcept {
+				return Item{this->Owner, 0};
 			}
 
 			size_type 

@@ -253,6 +253,11 @@ namespace core::forms
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
+			Item
+			back() const noexcept {
+				return Item{this->Owner, this->size() - 1};
+			}
+
 			const_iterator
 			begin() const noexcept {
 				return this->make_iterator<const_iterator>(0);
@@ -281,6 +286,11 @@ namespace core::forms
 					return Item{this->Owner, idx};
 			}
 		
+			Item
+			front() const noexcept {
+				return Item{this->Owner, 0};
+			}
+
 			uint32_t
 			height() const {
 				Invariant(!this->Owner.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable));
