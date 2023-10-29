@@ -90,7 +90,7 @@ namespace core::forms
 		//! @brief	Facade for a single item identified either by zero-based index or unique identifier
 		class Item {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			using IdentVariant = std::variant<ItemId, uint32_t>;
+			using IdentVariant = std::variant<ItemId, int32_t>;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			Menu*        Owner;
@@ -102,7 +102,7 @@ namespace core::forms
 			    Ident{id}
 			{}
 			
-			Item(Menu& owner, uint32_t idx) noexcept
+			Item(Menu& owner, int32_t idx) noexcept
 			  : Owner{&owner}, 
 			    Ident{idx}
 			{}
@@ -118,8 +118,8 @@ namespace core::forms
 		private:
 			std::string
 			static to_string(IdentVariant v) {
-				if (std::holds_alternative<uint32_t>(v))
-					return std::format("#{}", std::get<uint32_t>(v));
+				if (std::holds_alternative<int32_t>(v))
+					return std::format("#{}", std::get<int32_t>(v));
 				return std::format("id={}", std::to_underlying(std::get<ItemId>(v)));
 			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -152,10 +152,10 @@ namespace core::forms
 					return std::to_underlying(std::get<ItemId>(this->Ident));
 			}
 
-			uint32_t
+			int32_t
 			index() const {
-				Invariant(std::holds_alternative<uint32_t>(this->Ident));
-				return std::get<uint32_t>(this->Ident);
+				Invariant(std::holds_alternative<int32_t>(this->Ident));
+				return std::get<int32_t>(this->Ident);
 			}
 			
 			bool
@@ -303,7 +303,7 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			Item
-			at(uint32_t idx) const noexcept {
+			at(size_type idx) const noexcept {
 				return Item{this->Owner, idx};
 			}
 
@@ -354,7 +354,7 @@ namespace core::forms
 				return AnyIterator{
 					CountingIterator{&this->Owner, idx},
 					[this](int32_t n) { 
-						return Item{this->Owner, static_cast<uint32_t>(n)}; 
+						return Item{this->Owner, n}; 
 					}
 				};
 			}
