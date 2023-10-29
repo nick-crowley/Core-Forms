@@ -44,13 +44,20 @@ namespace core::forms
 	class FormsExport OwnerDrawMenuEventArgs 
 	{
 	public:
-		struct ItemData {
-			ItemData(::DRAWITEMSTRUCT& data);
-
+		struct ItemData 
+		{
 			Rect                         Area;
 			uint16_t                     Ident;
 			nstd::bitset<OwnerDrawState> State;
 			uintptr_t                    UserData;
+			
+			ItemData(::DRAWITEMSTRUCT& data);
+
+			template <nstd::Class CustomData>
+			CustomData*
+			data() const noexcept {
+				return reinterpret_cast<CustomData*>(this->UserData);
+			}
 		};
 
 	public:
