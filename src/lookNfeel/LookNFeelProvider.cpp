@@ -281,9 +281,9 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 		//!           so it's not even feasible to rely on its window font because the control hasn't yet
 		//!           received its first WM_SETFONT
 		auto const fontHeight = ctrl.editFont().height();
-		args.Height = std::abs(fontHeight) + 2*Measurement{SystemMetric::cyFixedFrame};
+		args.Item.Height = std::abs(fontHeight) + 2*Measurement{SystemMetric::cyFixedFrame};
 		if (useIcons)
-			args.Height = std::max<LONG>(args.Height, useHeadings ? BigIcon.Height : SmallIcon.Height);
+			args.Item.Height = std::max<LONG>(args.Item.Height, useHeadings ? BigIcon.Height : SmallIcon.Height);
 		return;
 	}
 
@@ -291,23 +291,23 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 	//                 Font measured is 
 	if (ctrl.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawFixed)) {
 		args.Graphics.setFont(ctrl.font());
-		args.Height = args.Graphics.measureText(L"Wjgy").Height;
+		args.Item.Height = args.Graphics.measureText(L"Wjgy").Height;
 		if (useIcons)
-			args.Height = std::max<LONG>(args.Height, SmallIcon.Height);
-		args.Height = std::max<LONG>(args.Height, ctrl.Items.height());
+			args.Item.Height = std::max<LONG>(args.Item.Height, SmallIcon.Height);
+		args.Item.Height = std::max<LONG>(args.Item.Height, ctrl.Items.height());
 	}
 	// [VARIABLE-HEIGHT] Calculate per-item height
 	else {
 		Invariant(args.Item.UserData != NULL);
 		auto const& item = *reinterpret_cast<ComboBoxControl::TemporaryMeasureItemData*>(args.Item.UserData);
-		args.Height = 0;
+		args.Item.Height = 0;
 		
 		// [HEADING] Prefer heading font; fallback to heading-default then control-default
 		if (useHeadings) {
 			auto const heading = item.Heading; 
 			Invariant(heading.has_value());
 			args.Graphics.setFont(heading->Font.value_or(ctrl.headingFont().value_or(ctrl.font())));
-			args.Height += args.Graphics.measureText(heading->Text).Height;
+			args.Item.Height += args.Graphics.measureText(heading->Text).Height;
 		}
 
 		// Prefer detail font; fallback to control-default
@@ -322,15 +322,15 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 			rcDetailText.Left += (useHeadings ? BigIcon : SmallIcon).Width + 3*Measurement{SystemMetric::cxFixedFrame};
 
 		// Measure multiline height
-		args.Height += args.Graphics.measureText(detail.Text, Size{rcDetailText.width(),1}).Height;
+		args.Item.Height += args.Graphics.measureText(detail.Text, Size{rcDetailText.width(),1}).Height;
 		
 		// [NO-HEADING] Add small gap between items
 		if (!useHeadings) 
-			args.Height += 2*Measurement{SystemMetric::cyFixedFrame};
+			args.Item.Height += 2*Measurement{SystemMetric::cyFixedFrame};
 
 		// Return greater of combined height or icon height
 		if (useIcons)
-			args.Height = std::max<LONG>(args.Height, (useHeadings ? BigIcon : SmallIcon).Height);
+			args.Item.Height = std::max<LONG>(args.Item.Height, (useHeadings ? BigIcon : SmallIcon).Height);
 	}
 
 	args.Graphics.restore();
@@ -470,23 +470,23 @@ LookNFeelProvider::measure(ListBoxControl& ctrl, MeasureItemEventArgs const& arg
 	//                 Font measured is 
 	if (ctrl.style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawFixed)) {
 		args.Graphics.setFont(ctrl.font());
-		args.Height = args.Graphics.measureText(L"Wjgy").Height;
+		args.Item.Height = args.Graphics.measureText(L"Wjgy").Height;
 		if (useIcons)
-			args.Height = std::max<LONG>(args.Height, (useBigIcons ? BigIcon : SmallIcon).Height);
-		args.Height = std::max<LONG>(args.Height, ctrl.Items.height());
+			args.Item.Height = std::max<LONG>(args.Item.Height, (useBigIcons ? BigIcon : SmallIcon).Height);
+		args.Item.Height = std::max<LONG>(args.Item.Height, ctrl.Items.height());
 	}
 	// [VARIABLE-HEIGHT] Calculate per-item height
 	else {
 		Invariant(args.Item.UserData != NULL);
 		auto const& item = *reinterpret_cast<ListBoxControl::TemporaryMeasureItemData*>(args.Item.UserData);
-		args.Height = 0;
+		args.Item.Height = 0;
 		
 		// [HEADING] Prefer heading font; fallback to heading-default then control-default
 		if (useHeadings) {
 			auto const heading = item.Heading; 
 			Invariant(heading.has_value());
 			args.Graphics.setFont(heading->Font.value_or(ctrl.headingFont().value_or(ctrl.font())));
-			args.Height += args.Graphics.measureText(heading->Text).Height;
+			args.Item.Height += args.Graphics.measureText(heading->Text).Height;
 		}
 
 		// Prefer detail font; fallback to control-default
@@ -501,15 +501,15 @@ LookNFeelProvider::measure(ListBoxControl& ctrl, MeasureItemEventArgs const& arg
 			rcDetailText.Left += (useHeadings || useBigIcons ? BigIcon : SmallIcon).Width + 3*Measurement{SystemMetric::cxFixedFrame};
 
 		// Measure multiline height
-		args.Height += args.Graphics.measureText(detail.Text, Size{rcDetailText.width(),1}).Height;
+		args.Item.Height += args.Graphics.measureText(detail.Text, Size{rcDetailText.width(),1}).Height;
 		
 		// [NO-HEADING] Add small gap between items
 		if (!useHeadings) 
-			args.Height += 2*Measurement{SystemMetric::cyFixedFrame};
+			args.Item.Height += 2*Measurement{SystemMetric::cyFixedFrame};
 
 		// Return greater of combined height or icon height
 		if (useIcons)
-			args.Height = std::max<LONG>(args.Height, (useBigIcons ? BigIcon : SmallIcon).Height);
+			args.Item.Height = std::max<LONG>(args.Item.Height, (useBigIcons ? BigIcon : SmallIcon).Height);
 	}
 
 	args.Graphics.restore();
@@ -583,10 +583,10 @@ LookNFeelProvider::measure(ListViewControl& ctrl, MeasureItemEventArgs const& ar
 		throw runtime_error{"ListView #{} must be OwnerDraw", args.Ident};
 
 	args.Graphics.setFont(ctrl.font());
-	args.Height = args.Graphics.measureText(L"Ajy").Height;
+	args.Item.Height = args.Graphics.measureText(L"Ajy").Height;
 
 	if (ctrl.features().test(ListViewFeature::Icons))
-		args.Height = std::max<uint32_t>(args.Height, 24);
+		args.Item.Height = std::max<uint32_t>(args.Item.Height, 24);
 	
 	args.Graphics.restore();
 }

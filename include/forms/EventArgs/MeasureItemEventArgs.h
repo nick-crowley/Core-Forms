@@ -51,22 +51,24 @@ namespace core::forms
 		struct ItemData {
 			ItemData(::MEASUREITEMSTRUCT& data)
 			  : UserData{data.itemData},
-				Index{static_cast<ItemIndex>(data.itemID)}
+				Height{data.itemHeight},
+				Index{static_cast<ItemIndex>(data.itemID)},
+				Width{data.itemWidth}
 			{
 				ThrowIf(data, data.CtlType == ODT_MENU);
 			}
 
 			uintptr_t     UserData;
+			uint32_t&     Height;
 			ItemIndex     Index;
+			uint32_t&     Width;
 		};
 
 	public:
 		uint16_t          Ident;		//!< Control Identifier
 		ItemData          Item;	
 		DeviceContext     mutable Graphics;
-		uint32_t&         Height;
 		OwnerDrawControl  Source;
-		uint32_t&         Width;
 		Window*           Window;
 
 	public:
