@@ -568,6 +568,12 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			void
+			font(forms::Font const& f) {
+				Invariant(this->Owner->ownerDraw());
+				this->data<ItemData>().SubItems[this->Index].Font = f;
+			}
+
+			void
 			text(std::wstring newText) {
 				if (this->Owner->ownerDraw()) 
 					this->data<ItemData>().SubItems[this->Index].Text = newText;
@@ -584,6 +590,12 @@ namespace core::forms
 				}
 			}
 		
+			void
+			textColour(AnyColour c) {
+				Invariant(this->Owner->ownerDraw());
+				this->data<ItemData>().SubItems[this->Index].Colour = c;
+			}
+
 		protected:
 			template <nstd::Class AnyData>
 			AnyData&
