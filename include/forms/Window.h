@@ -1169,6 +1169,12 @@ namespace core::forms
 		}
 		
 		Response
+		virtual onMeasureMenuItem(MeasureMenuEventArgs args) {
+			this->LookNFeel->measure(*this, args);
+			return 0;
+		}
+		
+		Response
 		virtual onNotify(NotifyEventArgs args) {
 			// Reflect notification back to originator control
 			if (args.Window)
@@ -1355,6 +1361,9 @@ namespace core::forms
 							  : this->onOwnerDrawMenu({wParam,lParam});
 				
 			case WM_MEASUREITEM:
+				if (reinterpret_cast<::MEASUREITEMSTRUCT*>(lParam)->CtlType == ODT_MENU)
+					return this->onMeasureMenuItem({*this,wParam,lParam});
+				
 				return this->onMeasureItem({*this,wParam,lParam});
 
 			case WM_SETFONT:
