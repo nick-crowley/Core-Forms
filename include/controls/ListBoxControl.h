@@ -28,6 +28,7 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
 #include "controls/Control.h"
+#include "controls/CountingIterator.h"
 #include "controls/ListBoxItemData.h"
 #include "controls/ListBoxStyle.h"
 #include "forms/WindowClass.h"
@@ -214,104 +215,17 @@ namespace core::forms
 		class ItemCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			template <nstd::AnyOf<Item,Item const> ValueType>
-			class Iterator : public boost::iterator_facade<Iterator<ValueType>, ValueType, boost::random_access_traversal_tag, ValueType&, int32_t>
-			{
-				template <nstd::AnyOf<Item,Item const>>
-				friend class Iterator;
-
-				friend class boost::iterator_core_access;
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			private:
-				using type = Iterator<ValueType>;
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			private:
-				ListBoxControl* Owner;
-				int32_t         Index;
-				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				Iterator(ListBoxControl& owner, int32_t initialIdx) noexcept
-				  : Owner{&owner}, 
-				    Index{initialIdx}
-				{}
-
-				explicit
-				Iterator(ListBoxControl& owner) noexcept
-				  : Owner{&owner}, 
-				    Index{ListBox_GetCount(owner.handle())}
-				{}
-				
-				template <nstd::AnyOf<Item const> Other>
-					requires std::same_as<ValueType,Item>
-				implicit
-				Iterator(Iterator<Other> const& r) noexcept
-				  : Owner{r.Owner},
-				    Index{r.Index}
-				{}
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				satisfies(Iterator,
-					NotDefaultConstructible,
-					IsCopyable,
-					IsMovable,
-					NotSortable
-				);
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
-				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				int32_t
-				index() const noexcept {
-					return this->Index;
-				}
-
-				implicit
-				operator int32_t() const noexcept {
-					return this->Index;
-				}
-
-			private:
-				template <nstd::AnyOf<Item,Item const> Other>
-				bool 
-				equal(const Iterator<Other>& r) const noexcept {
-					return this->Owner->handle() == r.Owner->handle()
-						&& this->Index == r.Index;
-				}
-
-				ValueType
-				dereference() const noexcept { 
-					return ValueType{*this->Owner, this->Index};
-				}
-
-				int32_t
-				distance_to(const type& r) const noexcept {
-					return r.Index - this->Index;
-				}
-				// o~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
-			private:
-				void 
-				advance(int32_t n) noexcept { 
-					this->Index += n;
-				}
-
-				void 
-				decrement() noexcept { 
-					--this->Index;
-				}
-
-				void 
-				increment() noexcept { 
-					++this->Index;
-				}
-			};
-			
-			using iterator = Iterator<Item>;
-			using const_iterator = Iterator<Item const>;
+			using iterator = boost::transform_iterator<std::function<Item(int32_t)>, CountingIterator>;
+			using const_iterator = boost::transform_iterator<std::function<Item const(int32_t)>, CountingIterator>;
 			using reference = Item&;
 			using const_reference = Item const&;
 			using value_type = Item;
 			using size_type = iterator::difference_type;
 			using difference_type = iterator::difference_type;
+			
+			//! @bug  In C++20, @c boost::transform_iterator cannot model anything greater than input-iterator
+			static_assert(!std::bidirectional_iterator<iterator>);
+			static_assert(!std::forward_iterator<iterator>);
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			ListBoxControl& Owner;
@@ -324,8 +238,10 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			satisfies(ItemCollection,
 				NotDefaultConstructible,
-				NotCopyable,
-				NotMovable,
+				IsCopyConstructible, 
+				IsMoveConstructible,
+				NotCopyAssignable, 
+				NotMoveAssignable,
 				NotSortable,
 				NotEqualityComparable
 			);
@@ -335,22 +251,22 @@ namespace core::forms
 		public:
 			const_iterator
 			begin() const noexcept {
-				return const_iterator{this->Owner, 0};
+				return this->make_iterator<const_iterator>(0);
 			}
 		
 			const_iterator
 			end() const noexcept {
-				return const_iterator{this->Owner};
+				return this->make_iterator<const_iterator>(this->size());
 			}
 			
 			const_iterator
 			cbegin() const noexcept {
-				return const_iterator{this->Owner, 0};
+				return this->make_iterator<const_iterator>(0);
 			}
 		
 			const_iterator
 			cend() const noexcept {
-				return const_iterator{this->Owner};
+				return this->make_iterator<const_iterator>(this->size());
 			}
 
 			std::optional<Item>
@@ -392,16 +308,28 @@ namespace core::forms
 			operator[](size_type idx) const noexcept {
 				return Item(this->Owner, idx);
 			}
+
+		private:
+			template <nstd::AnyOf<iterator,const_iterator> AnyIterator>
+			AnyIterator
+			make_iterator(int32_t idx) const {
+				return AnyIterator{
+					CountingIterator{&this->Owner, idx},
+					[this](int32_t n) { 
+						return Item{this->Owner, n}; 
+					}
+				};
+			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			iterator
 			begin() noexcept {
-				return iterator{this->Owner, 0};
+				return this->make_iterator<iterator>(0);
 			}
 		
 			iterator
 			end() noexcept {
-				return iterator{this->Owner};
+				return this->make_iterator<iterator>(this->size());
 			}
 			
 			void
@@ -411,7 +339,7 @@ namespace core::forms
 			
 			void 
 			focus(const_iterator pos) noexcept {
-				ListBox_SetCaretIndex(this->Owner.handle(), pos);
+				ListBox_SetCaretIndex(this->Owner.handle(), pos->index());
 			}
 	
 			void
@@ -426,7 +354,7 @@ namespace core::forms
 				size_type idx{};
 				// [NOT OWNER-DRAW] Store (or duplicate) a simple string (according to its 'HasStrings' style)
 				if (!this->Owner.ownerDraw()) 
-					idx = ListBox_InsertString(this->Owner.handle(), pos, text.data());
+					idx = ListBox_InsertString(this->Owner.handle(), pos->index(), text.data());
 
 				else {
 					auto data = std::make_unique<ItemData>(text);
@@ -434,15 +362,15 @@ namespace core::forms
 					// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 					if (this->Owner.hasStrings()) {
 						this->Owner.ExposingOwnerDrawItemsBugfix = {data->Detail, data->Heading};
-						idx = ListBox_InsertString(this->Owner.handle(), pos, data->Detail.Text.c_str());
+						idx = ListBox_InsertString(this->Owner.handle(), pos->index(), data->Detail.Text.c_str());
 						ListBox_SetItemData(this->Owner.handle(), idx, data.release());
 						this->Owner.ExposingOwnerDrawItemsBugfix = nullopt;
 					}
 					// [NO-STRING] Only store our owner-draw data
 					else
-						idx = ListBox_InsertItemData(this->Owner.handle(), pos, data.release());
+						idx = ListBox_InsertItemData(this->Owner.handle(), pos->index(), data.release());
 				}
-				return iterator{this->Owner, idx};
+				return this->make_iterator<iterator>(idx);
 			}
 			
 			iterator
@@ -457,15 +385,15 @@ namespace core::forms
 				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 				if (this->Owner.hasStrings()) {
 					this->Owner.ExposingOwnerDrawItemsBugfix = {data->Detail, data->Heading};
-					idx = ListBox_InsertString(this->Owner.handle(), pos, data->Detail.Text.c_str());
+					idx = ListBox_InsertString(this->Owner.handle(), pos->index(), data->Detail.Text.c_str());
 					ListBox_SetItemData(this->Owner.handle(), idx, data.release());
 					this->Owner.ExposingOwnerDrawItemsBugfix = nullopt;
 				}
 				// [NO-STRING] Only store our owner-draw data
 				else
-					idx = ListBox_InsertItemData(this->Owner.handle(), pos, data.release());
-
-				return iterator{this->Owner, idx};
+					idx = ListBox_InsertItemData(this->Owner.handle(), pos->index(), data.release());
+				
+				return this->make_iterator<iterator>(idx);
 			}
 			
 			iterator
@@ -493,27 +421,27 @@ namespace core::forms
 				// [HAS-STRINGS] Supplement item with non-visible text for screen-reader support 
 				if (this->Owner.hasStrings()) {
 					this->Owner.ExposingOwnerDrawItemsBugfix = {data->Detail, data->Heading};
-					idx = ListBox_InsertString(this->Owner.handle(), pos, data->Heading->Text.c_str());
+					idx = ListBox_InsertString(this->Owner.handle(), pos->index(), data->Heading->Text.c_str());
 					ListBox_SetItemData(this->Owner.handle(), idx, data.release());
 					this->Owner.ExposingOwnerDrawItemsBugfix = nullopt;
 				}
 				// [NO-STRING] Only store our owner-draw data
 				else
-					idx = ListBox_InsertItemData(this->Owner.handle(), pos, data.release());
+					idx = ListBox_InsertItemData(this->Owner.handle(), pos->index(), data.release());
 				
-				return iterator{this->Owner, idx};
+				return this->make_iterator<iterator>(idx);
 			}
 			
 			void
 			push_back(std::wstring_view text) {
-				this->insert(const_iterator{this->Owner,-1}, text);
+				this->insert(this->make_iterator<const_iterator>(-1), text);
 			}
 
 			void
 			push_back(RichText                   text,
 			          std::optional<forms::Icon> icon = nullopt) {
 				Invariant(this->Owner.ownerDraw());
-				this->insert(const_iterator{this->Owner,-1}, text, icon);
+				this->insert(this->make_iterator<const_iterator>(-1), text, icon);
 			}
 			
 			void
@@ -523,7 +451,7 @@ namespace core::forms
 			{
 				Invariant(this->Owner.features().test(ListBoxFeature::Headings));
 				Invariant(this->Owner.style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawVariable));
-				this->insert(const_iterator{this->Owner,-1}, text, heading, icon);
+				this->insert(this->make_iterator<const_iterator>(-1), text, heading, icon);
 			}
 			
 			void
@@ -533,12 +461,12 @@ namespace core::forms
 			{
 				Invariant(this->Owner.features().test(ListBoxFeature::Headings));
 				Invariant(this->Owner.style<ListBoxStyle>().test(ListBoxStyle::OwnerDrawVariable));
-				this->insert(const_iterator{this->Owner,-1}, text, heading, icon);
+				this->insert(this->make_iterator<const_iterator>(-1), text, heading, icon);
 			}
 			
 			void
 			scrollTo(const_iterator pos) noexcept {
-				ListBox_SetTopIndex(this->Owner.handle(), pos);
+				ListBox_SetTopIndex(this->Owner.handle(), pos->index());
 			}
 	
 			void
@@ -548,7 +476,7 @@ namespace core::forms
 			
 			void
 			select(const_iterator pos) noexcept {
-				ListBox_SetCurSel(this->Owner.handle(), pos);
+				ListBox_SetCurSel(this->Owner.handle(), pos->index());
 			}
 		};
 	
@@ -586,8 +514,10 @@ namespace core::forms
 			
 				satisfies(SelectedIndexIterator,
 					NotDefaultConstructible,
-					IsCopyable,
-					IsMovable,
+					IsCopyConstructible, 
+					IsMoveConstructible,
+					NotCopyAssignable, 
+					NotMoveAssignable,
 					NotSortable
 				);
 

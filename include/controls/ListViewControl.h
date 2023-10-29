@@ -27,6 +27,7 @@
 #pragma once
 #include "library/core.Forms.h"
 #include "controls/Control.h"
+#include "controls/CountingIterator.h"
 #include "controls/ListBoxItemData.h"
 #include "controls/ListViewStyle.h"
 #include "controls/ListViewExStyle.h"
@@ -246,104 +247,17 @@ namespace core::forms
 		class ColumnCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			template <nstd::AnyOf<Column,Column const> ValueType>
-			class Iterator : public boost::iterator_facade<Iterator<ValueType>, ValueType, boost::random_access_traversal_tag, ValueType&, int32_t>
-			{
-				template <nstd::AnyOf<Column,Column const>>
-				friend class Iterator;
-
-				friend class boost::iterator_core_access;
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			private:
-				using type = Iterator<ValueType>;
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			private:
-				ListViewControl* Owner;
-				int32_t          Index;
-				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				Iterator(ListViewControl& owner, int32_t initialIdx) noexcept
-				  : Owner{&owner}, 
-				    Index{initialIdx}
-				{}
-
-				explicit
-				Iterator(ListViewControl& owner) noexcept
-				  : Owner{&owner}, 
-				    Index{owner.Columns.size()}
-				{}
-				
-				template <nstd::AnyOf<Column const> Other>
-					requires std::same_as<ValueType,Column>
-				implicit
-				Iterator(Iterator<Other> const& r) noexcept
-				  : Owner{r.Owner},
-				    Index{r.Index}
-				{}
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				satisfies(Iterator,
-					NotDefaultConstructible,
-					IsCopyable,
-					IsMovable,
-					NotSortable
-				);
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
-				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				int32_t
-				index() const noexcept {
-					return this->Index;
-				}
-
-				implicit
-				operator int32_t() const noexcept {
-					return this->Index;
-				}
-
-			private:
-				template <nstd::AnyOf<Column,Column const> Other>
-				bool 
-				equal(const Iterator<Other>& r) const noexcept {
-					return this->Owner->handle() == r.Owner->handle()
-						&& this->Index == r.Index;
-				}
-
-				ValueType
-				dereference() const noexcept { 
-					return ValueType{*this->Owner, this->Index};
-				}
-
-				int32_t
-				distance_to(const type& r) const noexcept {
-					return r.Index - this->Index;
-				}
-				// o~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
-			private:
-				void 
-				advance(int32_t n) noexcept { 
-					this->Index += n;
-				}
-
-				void 
-				decrement() noexcept { 
-					--this->Index;
-				}
-
-				void 
-				increment() noexcept { 
-					++this->Index;
-				}
-			};
-			
-			using iterator = Iterator<Column>;
-			using const_iterator = Iterator<Column const>;
+			using iterator = boost::transform_iterator<std::function<Column(int32_t)>, CountingIterator>;
+			using const_iterator = boost::transform_iterator<std::function<Column const(int32_t)>, CountingIterator>;
 			using reference = Column&;
 			using const_reference = Column const&;
 			using value_type = Column;
 			using size_type = iterator::difference_type;
 			using difference_type = iterator::difference_type;
+			
+			//! @bug  In C++20, @c boost::transform_iterator cannot model anything greater than input-iterator
+			static_assert(!std::bidirectional_iterator<iterator>);
+			static_assert(!std::forward_iterator<iterator>);
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			ListViewControl& Owner;
@@ -356,8 +270,10 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			satisfies(ColumnCollection,
 				NotDefaultConstructible,
-				NotCopyable,
-				NotMovable,
+				IsCopyConstructible, 
+				IsMoveConstructible,
+				NotCopyAssignable, 
+				NotMoveAssignable,
 				NotSortable,
 				NotEqualityComparable
 			);
@@ -367,22 +283,22 @@ namespace core::forms
 		public:
 			const_iterator
 			begin() const noexcept {
-				return const_iterator{this->Owner, 0};
+				return this->make_iterator<const_iterator>(0);
 			}
 		
 			const_iterator
 			end() const noexcept {
-				return const_iterator{this->Owner};
+				return this->make_iterator<const_iterator>(this->size());
 			}
 			
 			const_iterator
 			cbegin() const noexcept {
-				return const_iterator{this->Owner, 0};
+				return this->make_iterator<const_iterator>(0);
 			}
 		
 			const_iterator
 			cend() const noexcept {
-				return const_iterator{this->Owner};
+				return this->make_iterator<const_iterator>(this->size());
 			}
 
 			size_type 
@@ -394,16 +310,28 @@ namespace core::forms
 			operator[](size_type idx) const noexcept {
 				return Column(this->Owner, idx);
 			}
+
+		private:
+			template <nstd::AnyOf<iterator,const_iterator> AnyIterator>
+			AnyIterator
+			make_iterator(int32_t idx) const {
+				return AnyIterator{
+					CountingIterator{&this->Owner, idx},
+					[this](int32_t n) { 
+						return Column{this->Owner, n}; 
+					}
+				};
+			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			iterator
 			begin() noexcept {
-				return iterator{this->Owner, 0};
+				return this->make_iterator<iterator>(0);
 			}
 		
 			iterator
 			end() noexcept {
-				return iterator{this->Owner};
+				return this->make_iterator<iterator>(this->size());
 			}
 			
 			void
@@ -426,18 +354,18 @@ namespace core::forms
 					.fmt = LVCFMT_LEFT,
 					.cx = width.value_or(LVSCW_AUTOSIZE),
 					.pszText = const_cast<wchar_t*>(text.data()),
-					.iSubItem = pos,
+					.iSubItem = pos->index(),
 				};
-				if (idx = ListView_InsertColumn(this->Owner.handle(), pos, &col); idx == LB_ERR)
-					throw runtime_error{"ListView_InsertColumn(#{}) failed", (int32_t)pos};
+				if (idx = ListView_InsertColumn(this->Owner.handle(), pos->index(), &col); idx == LB_ERR)
+					throw runtime_error{"ListView_InsertColumn(#{}) failed", pos->index()};
 				
-				return iterator{this->Owner, idx};
+				return this->make_iterator<iterator>(pos->index());
 			}
 
 			void
 			push_back(std::wstring_view text, std::optional<int32_t> width = nullopt) {
 				Invariant(this->Owner.handle());
-				this->insert(const_iterator{this->Owner,this->size()}, text, width);
+				this->insert(this->cend(), text, width);
 			}
 		};
 	
@@ -616,114 +544,17 @@ namespace core::forms
 		class SubItemCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			template <nstd::AnyOf<SubItem,SubItem const> ValueType>
-			class Iterator : public boost::iterator_facade<Iterator<ValueType>, ValueType, boost::random_access_traversal_tag, ValueType&, int32_t>
-			{
-				template <nstd::AnyOf<SubItem,SubItem const>>
-				friend class Iterator;
-
-				friend class boost::iterator_core_access;
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			private:
-				using type = Iterator<ValueType>;
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			private:
-				ListViewControl* Owner;
-				int32_t          ItemIdx;
-				int32_t          Index;
-				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				Iterator(ListViewControl& owner, int32_t item, int32_t idx) noexcept
-				  : Owner{&owner},
-				    ItemIdx{item},
-				    Index{idx}
-				{}
-
-				explicit
-				Iterator(ListViewControl& owner, int32_t item) noexcept
-				  : Owner{&owner}, 
-				    ItemIdx{item},
-				    Index{std::min<int32_t>(0,owner.Columns.size() - 1)}
-				{}
-				
-				template <nstd::AnyOf<SubItem const> Other>
-					requires std::same_as<ValueType,SubItem>
-				implicit
-				Iterator(Iterator<Other> const& r) noexcept
-				  : Owner{r.Owner},
-				    ItemIdx{r.ItemIdx},
-				    Index{r.Index}
-				{}
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				satisfies(Iterator,
-					NotDefaultConstructible,
-					IsCopyable,
-					IsMovable,
-					NotSortable
-				);
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
-				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				int32_t
-				index() const noexcept {
-					return this->Index;
-				}
-				
-				int32_t
-				item() const noexcept {
-					return this->ItemIdx;
-				}
-
-				implicit
-				operator int32_t() const noexcept {
-					return this->Index;
-				}
-
-			private:
-				template <nstd::AnyOf<SubItem,SubItem const> Other>
-				bool 
-				equal(const Iterator<Other>& r) const noexcept {
-					return this->Owner->handle() == r.Owner->handle()
-						&& this->ItemIdx == r.ItemIdx;
-						&& this->Index == r.Index;
-				}
-
-				ValueType
-				dereference() const noexcept { 
-					return ValueType{*this->Owner, this->ItemIdx, this->Index};
-				}
-
-				int32_t
-				distance_to(const type& r) const noexcept {
-					return r.Index - this->Index;
-				}
-				// o~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
-			private:
-				void 
-				advance(int32_t n) noexcept { 
-					this->Index += n;
-				}
-
-				void 
-				decrement() noexcept { 
-					--this->Index;
-				}
-
-				void 
-				increment() noexcept { 
-					++this->Index;
-				}
-			};
-			
-			using iterator = Iterator<SubItem>;
-			using const_iterator = Iterator<SubItem const>;
+			using iterator = boost::transform_iterator<std::function<SubItem(int32_t)>, CountingIterator>;
+			using const_iterator = boost::transform_iterator<std::function<SubItem const(int32_t)>, CountingIterator>;
 			using reference = SubItem&;
 			using const_reference = SubItem const&;
 			using value_type = SubItem;
 			using size_type = iterator::difference_type;
 			using difference_type = iterator::difference_type;
+			
+			//! @bug  In C++20, @c boost::transform_iterator cannot model anything greater than input-iterator
+			static_assert(!std::bidirectional_iterator<iterator>);
+			static_assert(!std::forward_iterator<iterator>);
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			ListViewControl& Owner;
@@ -738,8 +569,10 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			satisfies(SubItemCollection,
 				NotDefaultConstructible,
-				NotCopyable,
-				NotMovable,
+				IsCopyConstructible, 
+				IsMoveConstructible,
+				NotCopyAssignable, 
+				NotMoveAssignable,
 				NotSortable,
 				NotEqualityComparable
 			);
@@ -749,22 +582,22 @@ namespace core::forms
 		public:
 			const_iterator
 			begin() const noexcept {
-				return const_iterator{this->Owner, this->ItemIdx, 0};
+				return this->make_iterator<const_iterator>(0);
 			}
 		
 			const_iterator
 			end() const noexcept {
-				return const_iterator{this->Owner, this->ItemIdx};
+				return this->make_iterator<const_iterator>(this->size());
 			}
 			
 			const_iterator
 			cbegin() const noexcept {
-				return const_iterator{this->Owner, this->ItemIdx, 0};
+				return this->make_iterator<const_iterator>(0);
 			}
 		
 			const_iterator
 			cend() const noexcept {
-				return const_iterator{this->Owner, this->ItemIdx};
+				return this->make_iterator<const_iterator>(this->size());
 			}
 
 			size_type 
@@ -778,16 +611,28 @@ namespace core::forms
 				Invariant(this->Owner.handle());
 				return SubItem(this->Owner, this->ItemIdx, idx);
 			}
+
+		private:
+			template <nstd::AnyOf<iterator,const_iterator> AnyIterator>
+			AnyIterator
+			make_iterator(int32_t idx) const {
+				return AnyIterator{
+					CountingIterator{&this->Owner, idx},
+					[this](int32_t n) { 
+						return SubItem{this->Owner, this->ItemIdx, n}; 
+					}
+				};
+			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			iterator
 			begin() noexcept {
-				return iterator{this->Owner, this->ItemIdx, 0};
+				return this->make_iterator<iterator>(0);
 			}
 		
 			iterator
 			end() noexcept {
-				return iterator{this->Owner, this->ItemIdx};
+				return this->make_iterator<iterator>(this->size());
 			}
 			
 			void
@@ -955,104 +800,17 @@ namespace core::forms
 		class ItemCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			template <nstd::AnyOf<Item,Item const> ValueType>
-			class Iterator : public boost::iterator_facade<Iterator<ValueType>, ValueType, boost::random_access_traversal_tag, ValueType&, int32_t>
-			{
-				template <nstd::AnyOf<Item,Item const>>
-				friend class Iterator;
-
-				friend class boost::iterator_core_access;
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			private:
-				using type = Iterator<ValueType>;
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			private:
-				ListViewControl* Owner;
-				int32_t         Index;
-				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				Iterator(ListViewControl& owner, int32_t initialIdx) noexcept
-				  : Owner{&owner}, 
-				    Index{initialIdx}
-				{}
-
-				explicit
-				Iterator(ListViewControl& owner) noexcept
-				  : Owner{&owner}, 
-				    Index{owner.Items.size()}
-				{}
-				
-				template <nstd::AnyOf<Item const> Other>
-					requires std::same_as<ValueType,Item>
-				implicit
-				Iterator(Iterator<Other> const& r) noexcept
-				  : Owner{r.Owner},
-				    Index{r.Index}
-				{}
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				satisfies(Iterator,
-					NotDefaultConstructible,
-					IsCopyable,
-					IsMovable,
-					NotSortable
-				);
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
-				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				int32_t
-				index() const noexcept {
-					return this->Index;
-				}
-
-				implicit
-				operator int32_t() const noexcept {
-					return this->Index;
-				}
-
-			private:
-				template <nstd::AnyOf<Item,Item const> Other>
-				bool 
-				equal(const Iterator<Other>& r) const noexcept {
-					return this->Owner->handle() == r.Owner->handle()
-						&& this->Index == r.Index;
-				}
-
-				ValueType
-				dereference() const noexcept { 
-					return ValueType{*this->Owner, this->Index};
-				}
-
-				int32_t
-				distance_to(const type& r) const noexcept {
-					return r.Index - this->Index;
-				}
-				// o~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
-			private:
-				void 
-				advance(int32_t n) noexcept { 
-					this->Index += n;
-				}
-
-				void 
-				decrement() noexcept { 
-					--this->Index;
-				}
-
-				void 
-				increment() noexcept { 
-					++this->Index;
-				}
-			};
-			
-			using iterator = Iterator<Item>;
-			using const_iterator = Iterator<Item const>;
+			using iterator = boost::transform_iterator<std::function<Item(int32_t)>, CountingIterator>;
+			using const_iterator = boost::transform_iterator<std::function<Item const(int32_t)>, CountingIterator>;
 			using reference = Item&;
 			using const_reference = Item const&;
 			using value_type = Item;
 			using size_type = iterator::difference_type;
 			using difference_type = iterator::difference_type;
+			
+			//! @bug  In C++20, @c boost::transform_iterator cannot model anything greater than input-iterator
+			static_assert(!std::bidirectional_iterator<iterator>);
+			static_assert(!std::forward_iterator<iterator>);
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			ListViewControl& Owner;
@@ -1065,8 +823,10 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			satisfies(ItemCollection,
 				NotDefaultConstructible,
-				NotCopyable,
-				NotMovable,
+				IsCopyConstructible, 
+				IsMoveConstructible,
+				NotCopyAssignable, 
+				NotMoveAssignable,
 				NotSortable,
 				NotEqualityComparable
 			);
@@ -1076,22 +836,22 @@ namespace core::forms
 		public:
 			const_iterator
 			begin() const noexcept {
-				return const_iterator{this->Owner, 0};
+				return this->make_iterator<const_iterator>(0);
 			}
 		
 			const_iterator
 			end() const noexcept {
-				return const_iterator{this->Owner};
+				return this->make_iterator<const_iterator>(this->size());
 			}
 			
 			const_iterator
 			cbegin() const noexcept {
-				return const_iterator{this->Owner, 0};
+				return this->make_iterator<const_iterator>(0);
 			}
 		
 			const_iterator
 			cend() const noexcept {
-				return const_iterator{this->Owner};
+				return this->make_iterator<const_iterator>(this->size());
 			}
 
 			std::optional<Item>
@@ -1120,16 +880,28 @@ namespace core::forms
 				Invariant(this->Owner.handle());
 				return Item(this->Owner, idx);
 			}
+
+		private:
+			template <nstd::AnyOf<iterator,const_iterator> AnyIterator>
+			AnyIterator
+			make_iterator(int32_t idx) const {
+				return AnyIterator{
+					CountingIterator{&this->Owner, idx},
+					[this](int32_t n) { 
+						return Item{this->Owner, n}; 
+					}
+				};
+			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			iterator
 			begin() noexcept {
-				return iterator{this->Owner, 0};
+				return this->make_iterator<iterator>(0);
 			}
 		
 			iterator
 			end() noexcept {
-				return iterator{this->Owner};
+				return this->make_iterator<iterator>(this->size());
 			}
 			
 			void
@@ -1152,26 +924,26 @@ namespace core::forms
 				if (!this->Owner.ownerDraw()) {
 					::LVITEMW item {
 						.mask = LVIF_TEXT,
-						.iItem = (int)pos,
+						.iItem = pos->index(),
 						.pszText = const_cast<wchar_t*>(text.data()),
 						.cchTextMax = static_cast<int>(text.length()),		// Docs say not needed: https://learn.microsoft.com/en-us/windows/win32/api/commctrl/ns-commctrl-lvitema
 					};
 					if (idx = ListView_InsertItem(this->Owner.handle(), &item); idx == LB_ERR)
-						throw runtime_error{"ListView_InsertItem(#{}) failed", (int)pos};
+						throw runtime_error{"ListView_InsertItem(#{}) failed", pos->index()};
 				}
 				// [OWNER-DRAW] Insert parameter data
 				else {
 					auto data = std::make_unique<ItemData>(this->Owner.Columns.size(), text);
 					::LVITEMW item {
 						.mask = LVIF_PARAM,
-						.iItem = (int)pos,
+						.iItem = pos->index(),
 						.lParam = std::bit_cast<::LPARAM>(data.get()),
 					};
 					if (idx = ListView_InsertItem(this->Owner.handle(), &item); idx == LB_ERR)
-						throw runtime_error{"ListView_InsertItem(#{}) failed", (int)pos};
+						throw runtime_error{"ListView_InsertItem(#{}) failed", pos->index()};
 					data.release();
 				}
-				return iterator{this->Owner, idx};
+				return this->make_iterator<iterator>(idx);
 			}
 			
 			iterator
@@ -1184,21 +956,21 @@ namespace core::forms
 				auto data = std::make_unique<ItemData>(this->Owner.Columns.size(), text, icon);
 				::LVITEMW item {
 					.mask = LVIF_PARAM,
-					.iItem = (int)pos,
+					.iItem = pos->index(),
 					.lParam = std::bit_cast<::LPARAM>(data.get()),
 				};
 				if (size_type idx = ListView_InsertItem(this->Owner.handle(), &item); idx == LB_ERR)
-					throw runtime_error{"ListView_InsertItem(#{}) failed", (int)pos};
+					throw runtime_error{"ListView_InsertItem(#{}) failed", pos->index()};
 				else {
 					data.release();
-					return iterator{this->Owner, idx};
+					return this->make_iterator<iterator>(idx);
 				}
 			}
 			
 			void
 			push_back(std::wstring_view text) {
 				Invariant(this->Owner.handle());
-				this->insert(const_iterator{this->Owner,INT32_MAX}, text);
+				this->insert(this->make_iterator<const_iterator>(INT32_MAX), text);
 			}
 
 			void
@@ -1206,7 +978,7 @@ namespace core::forms
 			          std::optional<forms::Icon> icon = nullopt) {
 				Invariant(this->Owner.handle());
 				Invariant(this->Owner.ownerDraw());
-				this->insert(const_iterator{this->Owner,INT32_MAX}, text, icon);
+				this->insert(this->make_iterator<const_iterator>(INT32_MAX), text, icon);
 			}
 
 			void
@@ -1301,7 +1073,7 @@ namespace core::forms
 		virtual notificationName(::UINT notification) override {
 			return ListViewControl::identifyNotification(notification);
 		}
-		
+
 		Response 
 		virtual onEraseBackground(EraseBackgroundEventArgs args) override {
 			if (!this->ownerDraw())

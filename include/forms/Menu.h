@@ -27,6 +27,7 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
+#include "controls/CountingIterator.h"
 #include "controls/RichText.h"
 #include "graphics/Icon.h"
 #include "system/SharedHandle.h"
@@ -271,99 +272,8 @@ namespace core::forms
 		class ItemCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			template <nstd::AnyOf<Item,Item const> ValueType>
-			class Iterator : public boost::iterator_facade<Iterator<ValueType>, ValueType, boost::random_access_traversal_tag, ValueType&, int32_t>
-			{
-				template <nstd::AnyOf<Item,Item const>>
-				friend class Iterator;
-
-				friend class boost::iterator_core_access;
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			private:
-				using type = Iterator<ValueType>;
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			private:
-				Menu*     Owner;
-				int32_t   Index;
-				// o~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				Iterator(Menu& owner, int32_t initialIdx) noexcept
-				  : Owner{&owner}, 
-				    Index{initialIdx}
-				{}
-
-				explicit
-				Iterator(Menu& owner) noexcept
-				  : Owner{&owner}, 
-				    Index{owner.Items.size()}
-				{}
-				
-				template <nstd::AnyOf<Item const> Other>
-					requires std::same_as<ValueType,Item>
-				implicit
-				Iterator(Iterator<Other> const& r) noexcept
-				  : Owner{r.Owner},
-				    Index{r.Index}
-				{}
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				satisfies(Iterator,
-					NotDefaultConstructible,
-					IsCopyable,
-					IsMovable,
-					NotSortable
-				);
-				// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
-				// o~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
-			public:
-				int32_t
-				index() const noexcept {
-					return this->Index;
-				}
-
-				implicit
-				operator int32_t() const noexcept {
-					return this->Index;
-				}
-
-			private:
-				template <nstd::AnyOf<Item,Item const> Other>
-				bool 
-				equal(const Iterator<Other>& r) const noexcept {
-					return this->Owner->handle() == r.Owner->handle()
-						&& this->Index == r.Index;
-				}
-
-				ValueType
-				dereference() const noexcept { 
-					return ValueType{*this->Owner, this->Index};
-				}
-
-				int32_t
-				distance_to(const type& r) const noexcept {
-					return r.Index - this->Index;
-				}
-				// o~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~o
-			private:
-				void 
-				advance(int32_t n) noexcept { 
-					this->Index += n;
-				}
-
-				void 
-				decrement() noexcept { 
-					--this->Index;
-				}
-
-				void 
-				increment() noexcept { 
-					++this->Index;
-				}
-			};
-			
-			using iterator = Iterator<Item>;
-			using const_iterator = Iterator<Item const>;
+			using iterator = boost::transform_iterator<std::function<Item(int32_t)>, CountingIterator>;
+			using const_iterator = boost::transform_iterator<std::function<Item const(int32_t)>, CountingIterator>;
 			using reference = Item&;
 			using const_reference = Item const&;
 			using value_type = Item;
@@ -381,8 +291,10 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			satisfies(ItemCollection,
 				NotDefaultConstructible,
-				NotCopyable,
-				IsMovable noexcept,
+				IsCopyConstructible noexcept, 
+				IsMoveConstructible noexcept,
+				NotCopyAssignable, 
+				NotMoveAssignable,
 				NotSortable,
 				NotEqualityComparable
 			);
@@ -397,22 +309,22 @@ namespace core::forms
 
 			const_iterator
 			begin() const noexcept {
-				return const_iterator{this->Owner, 0};
+				return this->cbegin();
 			}
 		
 			const_iterator
 			end() const noexcept {
-				return const_iterator{this->Owner};
+				return this->cend();
 			}
 			
 			const_iterator
 			cbegin() const noexcept {
-				return const_iterator{this->Owner, 0};
+				return this->make_iterator<const_iterator>(0);
 			}
 		
 			const_iterator
 			cend() const noexcept {
-				return const_iterator{this->Owner};
+				return make_iterator<const_iterator>(this->size());
 			}
 
 			size_type 
@@ -424,23 +336,35 @@ namespace core::forms
 			operator[](uint16_t id) const noexcept {
 				return Item{this->Owner, static_cast<ItemId>(id)};
 			}
+
+		private:
+			template <nstd::AnyOf<iterator,const_iterator> AnyIterator>
+			AnyIterator
+			make_iterator(int32_t idx) const {
+				return AnyIterator{
+					CountingIterator{&this->Owner, idx},
+					[this](int32_t n) { 
+						return Item{this->Owner, static_cast<uint32_t>(n)}; 
+					}
+				};
+			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			iterator
 			begin() noexcept {
-				return iterator{this->Owner, 0};
+				return make_iterator<iterator>(0);
 			}
 		
 			iterator
 			end() noexcept {
-				return iterator{this->Owner};
+				return make_iterator<iterator>(this->size());
 			}
 	
 			iterator
 			insert(const_iterator pos, std::wstring_view text) 
 			{
-				Item{this->Owner, static_cast<uint32_t>(pos)}.text(text);
-				return iterator{this->Owner, pos.index()};
+				Item{this->Owner, pos->index()}.text(text);
+				return this->make_iterator<iterator>(pos->index());
 			}
 			
 			iterator
@@ -452,10 +376,10 @@ namespace core::forms
 				auto data = std::make_unique<ItemData>(text, icon);
 				::MENUITEMINFO info{sizeof(info), MIIM_DATA};
 				info.dwItemData = reinterpret_cast<uintptr_t>(data.get());
-				if (!::SetMenuItemInfoW(*this->Owner.handle(), pos, TRUE, &info))
-					win::LastError{}.throwAlways("SetMenuItemData(#{}, '{}') failed", pos.index(), cnarrow(text.Text));
+				if (!::SetMenuItemInfoW(*this->Owner.handle(), pos->index(), TRUE, &info))
+					win::LastError{}.throwAlways("SetMenuItemData(#{}, '{}') failed", pos->index(), cnarrow(text.Text));
 				data.release();
-				return iterator{this->Owner, pos.index()};
+				return this->make_iterator<iterator>(pos->index());
 			}
 			
 			void
@@ -484,8 +408,10 @@ namespace core::forms
 		{}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		satisfies(Menu,
-			IsCopyable noexcept,
-			IsMovable noexcept,
+			IsCopyConstructible noexcept, 
+			IsMoveConstructible noexcept,
+			NotCopyAssignable, 
+			NotMoveAssignable,
 			NotEqualityComparable,
 			NotSortable
 		);
