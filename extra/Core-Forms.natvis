@@ -35,7 +35,18 @@
 		<DisplayString>{Handle}</DisplayString>
 	</Type>
 
-	<Type Name="core::forms::Rect">
+  <Type Name="core::forms::Menu::Item">
+    <Intrinsic Name="index" Expression="(int)Ident._Which"/>
+    <DisplayString Condition="index() == 0" Optional="true">Item #{Ident._Head}</DisplayString>
+    <DisplayString Condition="index() == 1" Optional="true">Item id={Ident._Tail._Head}</DisplayString>
+    <DisplayString>&lt;Cannot determine&gt;</DisplayString>
+  </Type>
+
+  <Type Name="core::forms::Menu::ItemCollection">
+    <DisplayString>{{ Virtual collection }}</DisplayString>
+  </Type>
+
+  <Type Name="core::forms::Rect">
 		<DisplayString>{{ {Left},{Top} [{Right-Left}x{Bottom-Top}] }}</DisplayString>
 	</Type>
 
