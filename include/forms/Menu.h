@@ -392,6 +392,12 @@ namespace core::forms
 			          std::optional<forms::Icon> icon = nullopt) {
 				this->insert(this->cend(), text, icon);
 			}
+
+			void
+			setOwnerDraw(bool newState) {
+				for (auto item : *this)
+					item.ownerDraw(newState);
+			}
 		};
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
