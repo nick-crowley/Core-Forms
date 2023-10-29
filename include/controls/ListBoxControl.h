@@ -611,9 +611,17 @@ namespace core::forms
 		{
 			this->backColour(this->LookNFeel->control());
 		}
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		satisfies(ListBoxControl,
+			NotCopyable,
+			NotMoveAssignable,
+			NotEqualityComparable,
+			NotSortable
+		);
 
+		ListBoxControl(ListBoxControl&& r) noexcept
+		  : ListBoxControl{r.ident()}
+		{}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		gsl::czstring

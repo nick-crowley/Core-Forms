@@ -777,7 +777,8 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		satisfies(Window,
 			NotCopyable,
-			NotMovable,
+			IsMoveConstructible noexcept,
+			NotMoveAssignable,
 			NotEqualityComparable,
 			NotSortable,
 			IsPolymorphic

@@ -192,7 +192,7 @@ namespace core::forms
 				else 
 					return static_cast<MenuItemState>(info.fState);
 			}
-			
+
 			std::optional<Menu>
 			submenu() const {
 				Invariant(this->hasIndex());
@@ -424,7 +424,7 @@ namespace core::forms
 					if (auto submenu = item.submenu(); submenu) 
 						for (Item subitem : submenu->Items) 
 							subitem.ownerDraw(newState);
-			}
+				}
 			}
 		};
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -442,13 +442,15 @@ namespace core::forms
 		{}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		satisfies(Menu,
-			IsCopyConstructible noexcept, 
-			IsMoveConstructible noexcept,
-			NotCopyAssignable, 
+			NotCopyable,
 			NotMoveAssignable,
 			NotEqualityComparable,
 			NotSortable
 		);
+
+		Menu(Menu&& r) noexcept
+		  : Menu{std::move(r.Handle)}
+		{}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o

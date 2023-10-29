@@ -524,7 +524,16 @@ namespace core::forms
 			this->backColour(this->LookNFeel->window());
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		satisfies(ComboBoxControl,
+			NotCopyable,
+			NotMoveAssignable,
+			NotEqualityComparable,
+			NotSortable
+		);
 
+		ComboBoxControl(ComboBoxControl&& r) noexcept
+		  : ComboBoxControl{r.ident()}
+		{}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		gsl::czstring
