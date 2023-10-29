@@ -193,6 +193,15 @@ namespace core::forms
 					return static_cast<MenuItemState>(info.fState);
 			}
 			
+			std::optional<Menu>
+			submenu() const {
+				Invariant(this->hasIndex());
+				if (::HMENU const sm = ::GetSubMenu(*this->Owner->handle(), this->index()); !sm)
+					return nullopt;
+				else
+					return Menu{SharedMenu{sm, weakref}};
+			}
+			
 			std::wstring
 			text() const {
 				if (this->ownerDraw())
@@ -231,6 +240,11 @@ namespace core::forms
 			uint16_t
 			ident() const {
 				return std::holds_alternative<ItemId>(this->Ident) ? this->id() : win::Word{this->index()};
+			}
+
+			bool
+			hasIndex() const {
+				return std::holds_alternative<int32_t>(this->Ident);
 			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
@@ -404,9 +418,13 @@ namespace core::forms
 			}
 
 			void
-			setOwnerDraw(bool newState) {
-				for (auto item : *this)
+			ownerDraw(bool newState) {
+				for (Item item : *this) {
 					item.ownerDraw(newState);
+					if (auto submenu = item.submenu(); submenu) 
+						for (Item subitem : submenu->Items) 
+							subitem.ownerDraw(newState);
+			}
 			}
 		};
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
