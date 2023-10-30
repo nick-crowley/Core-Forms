@@ -683,7 +683,8 @@ void
 LookNFeelProvider::draw(Window& wnd, OwnerDrawMenuEventArgs& args)
 {
 	Invariant(args.Item.data<Menu::ItemData>() != nullptr);
-	auto const& detail = args.Item.data<Menu::ItemData>()->Detail;
+	auto const& item = *args.Item.data<Menu::ItemData>();
+	auto const& detail = item.Detail;
 	auto const isSelected = args.Item.State.test(OwnerDrawState::Selected);
 	auto const isSeparator = detail.Text.empty();
 	auto const backColour = isSelected && !isSeparator ? this->highlight() : wnd.backColour();
@@ -701,8 +702,15 @@ LookNFeelProvider::draw(Window& wnd, OwnerDrawMenuEventArgs& args)
 	else {
 		args.Graphics.setFont(detail.Font.value_or(wnd.font()));
 		args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(wnd.textColour())));
-		Size constexpr SmallIcons{24,24};
-		args.Graphics.drawText(detail.Text, args.Item.Area + Rect{SmallIcons.Width + 3*Measurement{SystemMetric::cxEdge},0,0,0});
+		
+		// [TOP-LEVEL]
+		if (item.IsTopLevel)
+			args.Graphics.drawText(detail.Text, args.Item.Area, DrawTextFlags::SimpleCentre);
+		else {
+			Size constexpr SmallIcons{24,24};
+			Rect const GutterOffset{SmallIcons.Width + 3*Measurement{SystemMetric::cxEdge},0,0,0};
+			args.Graphics.drawText(detail.Text, args.Item.Area + GutterOffset, DrawTextFlags::SimpleLeft);
+		}
 	}
 
 	args.Graphics.restore();
@@ -712,10 +720,12 @@ void
 LookNFeelProvider::measure(Window& wnd, MeasureMenuEventArgs& args)
 {
 	Invariant(args.Item.data<Menu::ItemData>() != nullptr);
-	auto const& detail = args.Item.data<Menu::ItemData>()->Detail;
+	auto const& item = *args.Item.data<Menu::ItemData>();
+	auto const& detail = item.Detail;
+	auto const isSeparator = detail.Text.empty();
 	
 	// Use fixed-height for separator items
-	if (detail.Text.empty()) {
+	if (isSeparator) {
 		Size constexpr Separator{win::Unused<LONG>, 8};
 		args.Item.Height = Separator.Height;
 	}
@@ -724,10 +734,17 @@ LookNFeelProvider::measure(Window& wnd, MeasureMenuEventArgs& args)
 		args.Graphics.setFont(detail.Font.value_or(wnd.font()));
 		auto const size = args.Graphics.measureText(detail.Text);
 
-		// Account for icon gutter and add significant gap on right-hand side
-		Size constexpr SmallIcons{24,24};
-		args.Item.Height = std::max<uint32_t>(SmallIcons.Height, size.Height);
-		args.Item.Width = 5*Measurement{SystemMetric::cxEdge} + SmallIcons.Width + 2*size.Width;
+		// [TOP-LEVEL]
+		if (item.IsTopLevel) {
+			args.Item.Height = std::max<uint32_t>(args.Item.Height, size.Height);
+			args.Item.Width = 4*Measurement{SystemMetric::cxEdge} + size.Width;
+		}
+		else {
+			// Account for icon gutter and add significant gap on right-hand side
+			Size constexpr SmallIcons{24,24};
+			args.Item.Height = std::max<uint32_t>(SmallIcons.Height, size.Height);
+			args.Item.Width = 6*Measurement{SystemMetric::cxEdge} + SmallIcons.Width + 2*size.Width;
+		}
 	}
 
 	args.Graphics.restore();

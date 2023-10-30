@@ -64,6 +64,7 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			RichText                Detail;
 			std::optional<Icon>     Icon;
+			bool                    IsTopLevel = false;
 			void*                   UserData = nullptr;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			explicit
@@ -246,11 +247,12 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			void
-			ownerDraw(bool newState) {
+			ownerDraw(bool newState, bool topLevel) {
 				if (bool const oldState = this->ownerDraw(); oldState == newState)
 					return;
 				else if (newState) {
 					auto data = std::make_unique<ItemData>(this->text());
+					data->IsTopLevel = topLevel;
 					::MENUITEMINFO info{sizeof(info), MIIM_DATA|MIIM_FTYPE};
 					info.dwItemData = reinterpret_cast<uintptr_t>(data.get());
 					info.fType = MFT_OWNERDRAW;
@@ -434,10 +436,10 @@ namespace core::forms
 			void
 			ownerDraw(bool newState) {
 				for (Item item : *this) {
-					item.ownerDraw(newState);
+					item.ownerDraw(newState, true);
 					if (auto submenu = item.submenu(); submenu) 
 						for (Item subitem : submenu->Items) 
-							subitem.ownerDraw(newState);
+							subitem.ownerDraw(newState, false);
 				}
 			}
 		};
