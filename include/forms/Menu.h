@@ -171,6 +171,15 @@ namespace core::forms
 					return (info.fType & MFT_OWNERDRAW) != 0;
 			}
 
+			bool
+			separator() const {
+				::MENUITEMINFO info{sizeof(info), MIIM_FTYPE};
+				if (!::GetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
+					win::LastError{}.throwAlways("GetMenuItemType(#{}) failed", to_string(this->Ident));
+				else 
+					return (info.fType & MFT_SEPARATOR) != 0;
+			}
+
 			nstd::bitset<MenuItemState>
 			state() const {
 				::MENUITEMINFO info{sizeof(info), MIIM_STATE};
