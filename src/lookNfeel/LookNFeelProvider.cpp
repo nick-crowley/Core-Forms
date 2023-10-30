@@ -682,19 +682,28 @@ LookNFeelProvider::draw(Window& wnd, NonClientPaintEventArgs& args)
 void
 LookNFeelProvider::draw(Window& wnd, OwnerDrawMenuEventArgs& args)
 {
+	Invariant(args.Item.data<Menu::ItemData>() != nullptr);
+	auto const& detail = args.Item.data<Menu::ItemData>()->Detail;
 	auto const isSelected = args.Item.State.test(OwnerDrawState::Selected);
-	auto const backColour = isSelected ? this->highlight() : wnd.backColour();
+	auto const isSeparator = detail.Text.empty();
+	auto const backColour = isSelected && !isSeparator ? this->highlight() : wnd.backColour();
+	auto const selectedTextColour = nstd::make_optional_if<AnyColour>(isSelected, wnd.backColour());
 
 	// Background
 	args.Graphics.setBrush(backColour);
 	args.Graphics.fillRect(args.Item.Area);
 
 	// Prefer item font/colour; fallback to window font/colour
-	auto const item = args.Menu.Items[args.Item.Ident];
-	auto const detail = item.detail();
-	args.Graphics.setFont(detail.Font.value_or(wnd.font()));
-	args.Graphics.textColour(detail.Colour.value_or(wnd.textColour()));
-	args.Graphics.drawText(item.text(), args.Item.Area + Rect{24+3*Measurement{SystemMetric::cxEdge},0,0,0});
+	if (isSeparator) {
+		Size constexpr HugeBorder{16,win::Unused<LONG>};
+		args.Graphics.drawEdge(args.Item.Area - Border{HugeBorder.Width, 0, HugeBorder.Width, args.Item.Area.height() / 2}, EdgeFlags::Sunken, BorderFlags::Bottom);
+	}
+	else {
+		args.Graphics.setFont(detail.Font.value_or(wnd.font()));
+		args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(wnd.textColour())));
+		Size constexpr SmallIcons{24,24};
+		args.Graphics.drawText(detail.Text, args.Item.Area + Rect{SmallIcons.Width + 3*Measurement{SystemMetric::cxEdge},0,0,0});
+	}
 
 	args.Graphics.restore();
 }
@@ -705,14 +714,21 @@ LookNFeelProvider::measure(Window& wnd, MeasureMenuEventArgs& args)
 	Invariant(args.Item.data<Menu::ItemData>() != nullptr);
 	auto const& detail = args.Item.data<Menu::ItemData>()->Detail;
 	
-	// Prefer item font; fallback to window font
-	args.Graphics.setFont(detail.Font.value_or(wnd.font()));
-	auto const size = args.Graphics.measureText(detail.Text);
+	// Use fixed-height for separator items
+	if (detail.Text.empty()) {
+		Size constexpr Separator{win::Unused<LONG>, 8};
+		args.Item.Height = Separator.Height;
+	}
+	else {
+		// Prefer item font; fallback to window font
+		args.Graphics.setFont(detail.Font.value_or(wnd.font()));
+		auto const size = args.Graphics.measureText(detail.Text);
 
-	// Account for icon gutter and add significant gap on right-hand side
-	Size constexpr SmallIcons{24,24};
-	args.Item.Height = std::max<uint32_t>(SmallIcons.Height, size.Height);
-	args.Item.Width = 5*Measurement{SystemMetric::cxEdge} + SmallIcons.Width + 2*size.Width;
+		// Account for icon gutter and add significant gap on right-hand side
+		Size constexpr SmallIcons{24,24};
+		args.Item.Height = std::max<uint32_t>(SmallIcons.Height, size.Height);
+		args.Item.Width = 5*Measurement{SystemMetric::cxEdge} + SmallIcons.Width + 2*size.Width;
+	}
 
 	args.Graphics.restore();
 }

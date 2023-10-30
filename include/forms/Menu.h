@@ -130,9 +130,10 @@ namespace core::forms
 		public:
 			Rect
 			area() const {
+				Invariant(this->hasIndex());
 				Rect r;
 				if (!::GetMenuItemRect(win::Unused<::HWND>, *this->Owner->handle(), this->index(), static_cast<::RECT*>(r)))
-					win::LastError{}.throwAlways("GetMenuItemRect(#{}) failed", to_string(this->Ident));
+					win::LastError{}.throwAlways("GetMenuItemRect({}) failed", to_string(this->Ident));
 				return r;
 			}
 			
