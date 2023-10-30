@@ -171,23 +171,6 @@ namespace core::forms
 					return (info.fType & MFT_OWNERDRAW) != 0;
 			}
 
-			void
-			ownerDraw(bool newState) {
-				if (bool const oldState = this->ownerDraw(); oldState == newState)
-					return;
-				else if (newState) {
-					auto data = std::make_unique<ItemData>(this->text());
-					::MENUITEMINFO info{sizeof(info), MIIM_DATA|MIIM_FTYPE};
-					info.dwItemData = reinterpret_cast<uintptr_t>(data.get());
-					info.fType = MFT_OWNERDRAW;
-					if (!::SetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
-						win::LastError{}.throwAlways("SetMenuItemType(#{}) failed", to_string(this->Ident));
-					data.release();
-				}
-				else
-					ThrowInvalidArg(newState, "Disabling owner-draw not implemented");
-			}
-
 			nstd::bitset<MenuItemState>
 			state() const {
 				::MENUITEMINFO info{sizeof(info), MIIM_STATE};
@@ -252,6 +235,23 @@ namespace core::forms
 			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
+			void
+			ownerDraw(bool newState) {
+				if (bool const oldState = this->ownerDraw(); oldState == newState)
+					return;
+				else if (newState) {
+					auto data = std::make_unique<ItemData>(this->text());
+					::MENUITEMINFO info{sizeof(info), MIIM_DATA|MIIM_FTYPE};
+					info.dwItemData = reinterpret_cast<uintptr_t>(data.get());
+					info.fType = MFT_OWNERDRAW;
+					if (!::SetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
+						win::LastError{}.throwAlways("SetMenuItemType(#{}) failed", to_string(this->Ident));
+					data.release();
+				}
+				else
+					ThrowInvalidArg(newState, "Disabling owner-draw not implemented");
+			}
+			
 			void
 			state(MenuItemState newState) {
 				::MENUITEMINFO info{sizeof(info), MIIM_STATE};
