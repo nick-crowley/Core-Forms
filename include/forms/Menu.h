@@ -48,6 +48,10 @@ namespace core::forms
 		Highlighted = MFS_HILITE,     //!< Highlights the menu item.
 	};
 }
+namespace core::meta 
+{
+	metadata bool Settings<bitwise_enum, forms::MenuItemState> = true;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms 
 {
@@ -184,7 +188,7 @@ namespace core::forms
 					ThrowInvalidArg(newState, "Disabling owner-draw not implemented");
 			}
 
-			MenuItemState
+			nstd::bitset<MenuItemState>
 			state() const {
 				::MENUITEMINFO info{sizeof(info), MIIM_STATE};
 				if (!::GetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
