@@ -141,6 +141,23 @@ namespace core::forms
 				win::LastError{}.throwAlways("EndPath() failed");
 		}
 		
+		//! @brief	Calculates rectangle required to display text on either single or multiple lines
+		//! @details  If text spans multiple lines then width remains fixed and height is enlarged/shrunk appropriately.
+		//!           If text spans only a single line then width is enlarged/shrunk appropriately.
+		//! @return Height of the text (in logical units) if successful; otherwise 0
+		int32_t 
+		calcRect(std::wstring_view txt, Rect& rc, nstd::bitset<DrawTextFlags> flags) const
+		{
+			ThrowIf(flags, flags.test(DrawTextFlags::ModifyString));
+			if (int32_t height = ::DrawTextW(this->handle(), 
+											 txt.data(), win::DWord{txt.size()}, 
+											 rc, 
+											 (flags|DrawTextFlags::CalcRect).value()); !height)
+				win::LastError{}.throwAlways("DrawText() failed");
+			else
+				return height;
+		}
+
 		void
 		copyBitmap(::HDC source, Rect const& dest, RasterOp op = RasterOp::SrcCopy) const
 		{
@@ -303,12 +320,13 @@ namespace core::forms
 			if (!::Polygon(this->handle(), *ranges::begin(points), win::DWord{ranges::size(points)}))
 				win::LastError{}.throwAlways("Polygon() failed");
 		}
-
+		
 		//! @brief	Writes text into a rectangle
 		//! @return Height of the text in logical units if successful; otherwise 0
 		int32_t 
 		drawText(std::wstring_view txt, Rect const& rc, nstd::bitset<DrawTextFlags> flags = DrawTextFlags::SimpleLeft) const
 		{
+			ThrowIf(flags, flags.test(DrawTextFlags::CalcRect));
 			ThrowIf(flags, flags.test(DrawTextFlags::ModifyString));
 			if (int32_t height = ::DrawTextW(this->handle(), 
 											 txt.data(), win::DWord{txt.size()}, 

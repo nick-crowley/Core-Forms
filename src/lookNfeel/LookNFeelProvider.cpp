@@ -427,14 +427,16 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 
 		// Draw heading and offset detail below
 		auto const titleHeight = args.Graphics.drawText(heading->Text, rcHeadingText, DrawTextFlags::Left);
-		rcDetailText += Point{0, titleHeight};
+		rcDetailText.Top += titleHeight;
 	}
 	
 	// [DETAIL-ICON] Draw on left; position detail text to right
 	if (useIcons && !useHeadings) {
 		Size const iconSize = (useBigIcons ? BigIcon : SmallIcon);
-		if (icon)
-			args.Graphics.drawIcon(icon->handle(), rcContent.topLeft(), iconSize);
+		if (icon) {
+			Point const iconOffset{win::Unused<::LONG>, (rcContent.height() - iconSize.Height) / 2};
+			args.Graphics.drawIcon(icon->handle(), rcContent.topLeft() + iconOffset, iconSize);
+		}
 		rcDetailText.Left += iconSize.Width + 3*Measurement{SystemMetric::cxFixedFrame};
 	}
 	
@@ -443,14 +445,15 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
 	args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(ctrl.textColour())), transparent);
 
-	// [DETAIL] Detail can be multi-line when drawing an OD-variable ListBox item; but they are
-	//              vertically centred when OD-fixed
-	DrawTextFlags constexpr  static MultilineFlags = DrawTextFlags::Left|DrawTextFlags::WordBreak;
-	DrawTextFlags constexpr  static SinglelineFlags = DrawTextFlags::SimpleLeft;
-	bool const odVariable = ctrl.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable);
-	auto const flags = odVariable ? MultilineFlags : SinglelineFlags;
-
-	args.Graphics.drawText(detail.Text, rcDetailText, flags);
+	// [DETAIL] Detail can be multi-line when drawing an OD-variable ListBox item; but they are vertically centred when OD-fixed
+	if (bool const variableHeight = ctrl.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable); !variableHeight)
+		args.Graphics.drawText(detail.Text, rcDetailText, DrawTextFlags::SimpleLeft);
+	else {
+		Rect required = rcDetailText;
+		args.Graphics.calcRect(detail.Text, required, DrawTextFlags::Left|DrawTextFlags::WordBreak);
+		rcDetailText.Top += (rcDetailText.height() - required.height()) / 2;
+		args.Graphics.drawText(detail.Text, rcDetailText, DrawTextFlags::Left|DrawTextFlags::WordBreak);
+	}
 }
 
 void
