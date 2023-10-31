@@ -543,16 +543,29 @@ namespace core::forms
 					Rect const origPosition = this->mapRect(original->Area);
 					Rect newPosition = ctrl->wndRect(*this);
 					
+					// [CENTRE] Reposition so horizontally centred; maintain original size (ie. horizontal translation)
+					if (anchors.test(Side::Centre))
+					{
+						newPosition.Right = (newDimensions.Width + origPosition.width()) / 2;
+						newPosition.Left = newPosition.Right - origPosition.width();
+					}
 					// [RIGHT] Maintain original distance to dialog's right-edge  (ie. horizontal stretch)
-					if (anchors.test(Side::Right))
+					else if (anchors.test(Side::Right))
 					{
 						newPosition.Right = newDimensions.Width - (origDimensions.Width - origPosition.Right);
 						// [¬LEFT] Move right to maintain original size
 						if (!anchors.test(Side::Left))
 							newPosition.Left = newPosition.Right - origPosition.width();
 					}
+
+					// [VCENTRE] Reposition so horizontally centred; maintain original size (ie. horizontal translation)
+					if (anchors.test(Side::VCentre))
+					{
+						newPosition.Bottom = (newDimensions.Height + origPosition.height()) / 2;
+						newPosition.Top = newPosition.Bottom - origPosition.height();
+					}
 					// [BOTTOM] Maintain original distance to dialog's bottom-edge  (ie. vertical stretch)
-					if (anchors.test(Side::Bottom))
+					else if (anchors.test(Side::Bottom))
 					{
 						newPosition.Bottom = newDimensions.Height - (origDimensions.Height - origPosition.Bottom);
 						// [¬TOP] Move down to maintain original size

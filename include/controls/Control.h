@@ -53,7 +53,15 @@ namespace core::forms
 		Vertical = Top|Bottom|VCentre,
 	};
 
-	enum class Side { None, Left = 1, Top = 2, Right = 4, Bottom = 8 };	
+	enum class Side { 
+		None, 
+		Left    = nstd::bit<0>,
+		Top     = nstd::bit<1>,
+		Right   = nstd::bit<2>,
+		Bottom  = nstd::bit<3>,
+		Centre  = nstd::bit<4>,
+		VCentre = nstd::bit<5>,
+	};
 }
 namespace core::meta
 {
@@ -132,6 +140,9 @@ namespace core::forms
 	public:
 		void
 		anchors(nstd::bitset<Side> newAnchors) noexcept {
+			using enum Side;
+			ThrowIf(newAnchors, newAnchors.test(Centre) && newAnchors.test(Left|Right));
+			ThrowIf(newAnchors, newAnchors.test(VCentre) && newAnchors.test(Top|Bottom));
 			this->Anchors = newAnchors;
 		}
 		
