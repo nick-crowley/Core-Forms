@@ -182,16 +182,16 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	auto const backColour = selected ? this->highlight() : ctrl.backColour();
 	
 	// Draw item background
-	Rect const rcContent = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
+	Rect const rcBackground = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
 	args.Graphics.setBrush(backColour);
-	args.Graphics.fillRect(rcContent);
+	args.Graphics.fillRect(rcBackground);
 	final_act(&) noexcept { 
 		args.Graphics.restore();
 	};
 	
 	//! @fix  Manually erase background of gap beneath bottom item
 	if (ctrl.dropped() && args.Item.Index == ctrl.Items.size()-1) {
-		Rect const rcBottom = {rcContent.Left, rcContent.Top, rcContent.Right, ctrl.info().DroppedItemList.clientRect().Bottom};
+		Rect const rcBottom = {rcBackground.Left, rcBackground.Top, rcBackground.Right, ctrl.info().DroppedItemList.clientRect().Bottom};
 		args.Graphics.fillRect(rcBottom);
 	}
 
@@ -206,61 +206,85 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	bool const useIcons = ctrl.features().test(ComboBoxFeature::Icons);
 	auto const heading = item.heading(); 
 	auto const icon = item.icon();
+	auto const detail = item.detail();
+	Rect const rcContent = rcBackground - Border{2*Measurement{SystemMetric::cxEdge}, win::Unused<::LONG>};
 
 	// [HEADING] Draw heading and calculate different rectangle for (multi-line) detail text
 	Rect rcDetailText = rcContent;
 	if (useHeadings) {
 		Invariant(heading.has_value());
-
-		// Prefer heading font + selected-text colour; fallback to heading-default then control-default
-		args.Graphics.setFont(heading->Font.value_or(ctrl.headingFont().value_or(ctrl.font())));
-		args.Graphics.textColour(selectedTextColour.value_or(heading->Colour.value_or(ctrl.textColour())), transparent);
 		
 		// [HEADING-ICON] Draw icon on left; position both heading and detail text beside it
 		Rect rcHeadingText = rcContent;
 		if (useIcons) {
 			Size const iconSize = withinEdit ? SmallIcon : BigIcon;
 			Point const iconPosition = rcContent.topLeft();
-			if (icon)
-				args.Graphics.drawIcon(icon->handle(), iconPosition, iconSize);
+			if (icon) {
+				Point const iconOffset{win::Unused<::LONG>, (rcContent.height() - iconSize.Height) / 2};
+				args.Graphics.drawIcon(icon->handle(), iconPosition + iconOffset, iconSize);
+			}
 
 			// Offset heading/detail drawing rectangles
 			LONG const horzOffset = iconSize.Width + 3*Measurement{SystemMetric::cxFixedFrame};
 			rcHeadingText.Left += horzOffset;
 			rcDetailText.Left += horzOffset;
 		}
-
-		// Draw heading (position directly above detail)
-		auto const titleHeight = args.Graphics.drawText(heading->Text, rcHeadingText, DrawTextFlags::Left);
 		
-		// [EDIT] Skip drawing the detail
-		if (withinEdit) 
+		// [EDIT] Draw edit contents using heading style. Forget the detail
+		if (withinEdit) {
+			// Prefer heading font + selected-text colour; fallback to heading-default then control-default
+			args.Graphics.setFont(heading->Font.value_or(ctrl.headingFont().value_or(ctrl.font())));
+			args.Graphics.textColour(selectedTextColour.value_or(heading->Colour.value_or(ctrl.textColour())), transparent);
+			
+			// [HEADING] Draw heading and abort
+			args.Graphics.drawText(heading->Text, rcHeadingText, DrawTextFlags::Left);
 			return;
+		}
 
-		rcDetailText += Point{0, titleHeight};
+		// Pre-calculate the detail size in order to calculate the heading offset
+		Rect detailRequired = rcDetailText;
+		args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
+		args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(ctrl.textColour())), transparent);
+		args.Graphics.calcRect(detail.Text, detailRequired, DrawTextFlags::Left|DrawTextFlags::WordBreak);
+
+		// Prefer heading font + selected-text colour; fallback to heading-default then control-default
+		args.Graphics.setFont(heading->Font.value_or(ctrl.headingFont().value_or(ctrl.font())));
+		args.Graphics.textColour(selectedTextColour.value_or(heading->Colour.value_or(ctrl.textColour())), transparent);
+
+		// Calculate the heading offset
+		Rect headingRequired = rcDetailText;
+		args.Graphics.calcRect(heading->Text, headingRequired, DrawTextFlags::Left);
+		Size const headingOffset{win::Unused<LONG>, (rcContent.height() - headingRequired.height() - detailRequired.height()) / 2};
+		rcHeadingText.Top += headingOffset.Height;
+		
+		// [HEADING] Draw heading (position directly above detail)
+		auto const titleHeight = args.Graphics.drawText(heading->Text, rcHeadingText, DrawTextFlags::Left);
+		rcDetailText.Top += headingOffset.Height + titleHeight;
 	}
 	
 	// [DETAIL-ICON] Draw on left; position detail text to right
 	if (useIcons && !useHeadings) {
 		Size const iconSize = SmallIcon;
-		if (icon)
-			args.Graphics.drawIcon(icon->handle(), rcContent.topLeft(), iconSize);
+		if (icon) {
+			Point const iconOffset{win::Unused<::LONG>, (rcContent.height() - iconSize.Height) / 2};
+			args.Graphics.drawIcon(icon->handle(), rcContent.topLeft() + iconOffset, iconSize);
+		}
 		rcDetailText.Left += iconSize.Width + 3*Measurement{SystemMetric::cxFixedFrame};
 	}
 	
 	// Prefer detail font + selected-text colour; fallback to control-default
-	auto const detail = item.detail();
 	args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
 	args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(ctrl.textColour())), transparent);
 
-	// [DETAIL] Detail can be multi-line when drawing an OD-variable ListBox item; but they are
-	//              vertically centred when OD-fixed (or item is being drawn within the ComboBox/Edit)
-	DrawTextFlags constexpr  static MultilineFlags = DrawTextFlags::Left|DrawTextFlags::WordBreak;
-	DrawTextFlags constexpr  static SinglelineFlags = DrawTextFlags::SimpleLeft;
-	bool const odVariable = ctrl.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable);
-	auto const flags = odVariable && !withinEdit ? MultilineFlags : SinglelineFlags;
-
-	args.Graphics.drawText(detail.Text, rcDetailText, flags);
+	// [DETAIL] Detail can be multi-line when drawing an OD-variable ListBox item; but they are vertically centred when OD-fixed
+	if (bool const variableHeight = ctrl.style<ComboBoxStyle>().test(ComboBoxStyle::OwnerDrawVariable); !variableHeight)
+		args.Graphics.drawText(detail.Text, rcDetailText, DrawTextFlags::SimpleLeft);
+	else {
+		Rect required = rcDetailText;
+		args.Graphics.calcRect(detail.Text, required, DrawTextFlags::Left|DrawTextFlags::WordBreak);
+		rcDetailText.Top += (rcDetailText.height() - required.height()) / 2;
+		args.Graphics.drawText(detail.Text, rcDetailText, DrawTextFlags::Left|DrawTextFlags::WordBreak);
+	}
 }
 
 void
