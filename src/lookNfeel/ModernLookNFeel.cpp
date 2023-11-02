@@ -16,12 +16,18 @@ ModernLookNFeel::ModernLookNFeel()
 	this->Fonts.Heading2 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(18_pt);
 	this->Fonts.Heading1 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(24_pt);
 	this->Colours.Button = SystemColour::ButtonFace;
+	this->Colours.Caption = {SystemColour::ActiveCaption, SystemColour::InactiveCaption};
 	this->Colours.Control = Colour::White;
     this->Colours.Highlight = SystemColour::Highlight;
     this->Colours.Primary = Colour::Black;
     this->Colours.Secondary = SystemColour::ButtonFace;
     this->Colours.Tertiary = SystemColour::ButtonShadow;
 	this->Colours.Window = Colour::White;
+}
+
+bool
+ModernLookNFeel::customCaption() const {
+	return true;
 }
 
 ILookNFeelProvider::FontDescription
@@ -161,4 +167,65 @@ ModernLookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 	args.Graphics->fillRect(*args.Area);
 
 	args.Graphics->restore();
+}
+
+Response
+ModernLookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args) 
+{
+	ThrowIfNot(args, args.Graphics == nullopt);
+	args.beginPaint();
+
+	auto const activeCaption = args.CaptionState == WindowCaptionState::Active;
+	auto const components = NonClientComponentBounds{args.Window.style(), args.Bounds, args.Client, Coords::Window};
+	auto const captionColour = activeCaption ? this->caption().Active : this->caption().Inactive;
+	AnyColour const buttonColours[2] { this->secondary(), captionColour };
+
+	// Draw window frame
+	args.Graphics->setBrush(captionColour);
+	args.Graphics->setPen(StockPen::Black);
+	args.Graphics->fillRegion(args.Area - Region{args.Client});
+	args.Graphics->frameRegion(args.Area, Brush{!activeCaption ? this->caption().Active : this->caption().Inactive}, Size{1,1});
+	
+	// Draw caption background
+	args.Graphics->setBrush(activeCaption ? this->caption().Active : this->caption().Inactive);
+	args.Graphics->fillRect(components.Caption);
+	
+	// Draw caption text
+	args.Graphics->setFont(StockObject::SystemFixedFont);
+	args.Graphics->textColour(SystemColour::HighlightText, transparent);
+	args.Graphics->drawText(wnd.text(), components.Title, DrawTextFlags::SimpleLeft);
+
+	//! @todo  Draw application icon in caption
+	
+	// Draw maximize button
+	if (wnd.style().test(WindowStyle::MaximizeBox)) {
+		bool const isPressed = args.CaptionButtons.MaximizeBtn == ButtonState::Pushed;
+		auto const pressedOffset = isPressed ? Point{1,1} : Point::Zero;
+		args.Graphics->setBrush(buttonColours[isPressed]);
+		args.Graphics->fillRect(components.MaximizeBtn);
+		args.Graphics->textColour(SystemColour::WindowText, transparent);
+		args.Graphics->drawText(L"□", components.MaximizeBtn + pressedOffset, DrawTextFlags::SimpleCentre);
+	}
+
+	// Draw minimize button
+	if (wnd.style().test(WindowStyle::MinimizeBox)) {
+		bool const isPressed = args.CaptionButtons.MinimizeBtn == ButtonState::Pushed;
+		auto const pressedOffset = isPressed ? Point{1,1} : Point::Zero;
+		args.Graphics->setBrush(buttonColours[isPressed]);
+		args.Graphics->fillRect(components.MinimizeBtn);
+		args.Graphics->textColour(SystemColour::WindowText, transparent);
+		args.Graphics->drawText(L"▬", components.MinimizeBtn + pressedOffset, DrawTextFlags::SimpleCentre);
+	}
+
+	//! @todo  Draw close button in caption
+	
+	// Draw window menu bar background
+	if (components.Caption.Bottom < args.Client.Top) {
+		args.Graphics->setBrush(wnd.backColour());
+		args.Graphics->fillRect(Rect{args.Client.Left, components.Caption.Bottom, args.Client.Right, args.Client.Top});
+	}
+
+	args.Graphics->restore();
+	args.endPaint();
+	return 0;
 }

@@ -53,6 +53,9 @@ namespace core::forms
 	public:
 		using base::draw;
 		
+		bool
+		virtual customCaption() const override;
+
 		FontDescription
 		virtual default() override;
 		
@@ -67,6 +70,9 @@ namespace core::forms
 	
 		void
 		virtual draw(Dialog& dlg, PaintWindowEventArgs const& args) override;
+		
+		Response
+		virtual draw(Window& wnd, NonClientPaintEventArgs& args) override;
 	};
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
