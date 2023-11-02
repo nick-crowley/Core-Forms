@@ -335,7 +335,7 @@ namespace core::forms
 		}
 	};
 
-	Rect const
+	Rect constexpr
 	inline Rect::Empty{0,0,0,0};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

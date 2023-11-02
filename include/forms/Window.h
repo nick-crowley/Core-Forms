@@ -725,16 +725,15 @@ namespace core::forms
 	public:
 		//! @brief	Sentinel: the message was not handled
 		Response const
-		inline static Unhandled { Response::Unhandled };
+		static Unhandled;
 
 		//! @brief	Sentinel: error processing message
 		Response const
-		inline static Error { Response::Error };
+		static Error;
 		
 		//! @brief	All window messages and their return values
 		MessageDictionary const
-		inline static MessageDatabase;
-
+		static MessageDatabase;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Representation o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
 		//! @brief	Window beneath the cursor, if any
@@ -1570,6 +1569,16 @@ namespace core::forms
 				this->Font = forms::Font{args.NewFont};
 		}
 	};
+	
+	Response constexpr
+	inline Window::Unhandled { Response::Unhandled };
+
+	Response constexpr
+	inline Window::Error { Response::Error };
+		
+	Window::MessageDictionary constexpr
+	inline Window::MessageDatabase;
+
 } // namespace core::forms
 
 namespace core::meta
@@ -1580,4 +1589,10 @@ namespace core::meta
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::forms::testing
+{
+	//! @test  Sanity-check that MSVC has genuinely initialized @c constexpr static field
+	static_assert(Window::MessageDatabase[0].Name == "WM_NULL"sv);
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

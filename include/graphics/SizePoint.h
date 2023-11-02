@@ -154,7 +154,7 @@ namespace core::forms
 		}
 	};
 
-	Point const
+	Point constexpr
 	inline Point::Zero{0,0};
 
 
@@ -269,7 +269,7 @@ namespace core::forms
 		}
 	};
 
-	Size const
+	Size constexpr
 	inline Size::Zero{0,0};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
