@@ -914,6 +914,7 @@ namespace core::forms
 		using base::scrollBar;
 		using base::send;
 		using base::style;
+		using base::systemMenu;
 		using base::text;
 		using base::wndcls;
 		using base::wndRect;

@@ -183,6 +183,12 @@ namespace core::forms
 		style() const noexcept {
 			return static_cast<Style>(::GetWindowLongPtr(this->handle(),GWL_STYLE));
 		}
+		
+		std::optional<Menu>
+		systemMenu() const {
+			::HMENU const m = ::GetSystemMenu(this->handle(), FALSE);
+			return nstd::make_optional_if<Menu>(m != nullptr, SharedMenu{m, weakref});
+		}
 
 		std::wstring
 		text() const {
