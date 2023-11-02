@@ -227,7 +227,7 @@ ModernLookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 	// Draw window menu bar background
 	if (components.Caption.Bottom < args.Client.Top) {
 		args.Graphics->setBrush(wnd.backColour());
-		args.Graphics->fillRect(Rect{args.Client.Left, components.Caption.Bottom, args.Client.Right, args.Client.Top});
+		args.Graphics->fillRect(components.MenuBar);
 	}
 
 	args.Graphics->restore();
@@ -246,6 +246,7 @@ ModernLookNFeel::nonclient(Coords results, nstd::bitset<WindowStyle> style, Rect
 	// Extend height of caption by 50%
 	Rect::value_type const CaptionExtension = bounds.Caption.height() / 2;
 	bounds.Caption.Bottom += CaptionExtension;
+	bounds.MenuBar.translate({0, CaptionExtension});
 
 	return bounds;
 }

@@ -137,7 +137,7 @@ Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 	// Draw window menu bar background
 	if (components.Caption.Bottom < args.Client.Top) {
 		args.Graphics->setBrush(wnd.backColour());
-		args.Graphics->fillRect(Rect{args.Client.Left, components.Caption.Bottom, args.Client.Right, args.Client.Top});
+		args.Graphics->fillRect(components.MenuBar);
 	}
 
 	args.Graphics->restore();

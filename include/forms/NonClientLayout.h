@@ -50,6 +50,7 @@ namespace core::forms
 	public:
 		Rect  Caption,        //!< Window co-ordinates
 		      Title,          //!< Window co-ordinates
+		      MenuBar,        //!< Window co-ordinates
 		      SysMenuBtn,     //!< Window co-ordinates
 		      CloseBtn,       //!< Window co-ordinates
 		      MinimizeBtn,    //!< Window co-ordinates

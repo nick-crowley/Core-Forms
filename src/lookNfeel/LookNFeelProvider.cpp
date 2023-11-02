@@ -807,6 +807,9 @@ LookNFeelProvider::nonclient(Coords results, nstd::bitset<WindowStyle> style, Re
 	bounds.Title.Left = bounds.SysMenuBtn.Right + (2 * Frame.Width);
 	bounds.Title.Right = bounds.MinimizeBtn.Left - (2 * Frame.Width);
 
+	// MenuBar
+	bounds.MenuBar = Rect{bounds.Caption.Left, bounds.Caption.Bottom, bounds.Caption.Right, client.Top};
+
 	// [SCREEN] Translate all generated co-ordinates
 	if (results == Coords::Screen) {
 		bounds.Caption += wnd.topLeft();

@@ -402,6 +402,8 @@ namespace core::forms
 				return WindowHitTest::SysMenu;
 			else if (bounds.Caption.contains(args.Position))
 				return WindowHitTest::Caption;
+			else if (bounds.MenuBar.contains(args.Position))
+				return WindowHitTest::Menu;
 
 			return Unhandled;
 		}
