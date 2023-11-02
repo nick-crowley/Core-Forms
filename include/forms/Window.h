@@ -970,6 +970,7 @@ namespace core::forms
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		using base::close;
 		using base::destroy;
 		using base::enable;
 		using base::hide;

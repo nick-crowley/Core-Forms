@@ -234,6 +234,11 @@ namespace core::forms
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		void
+		close() noexcept {
+			::CloseWindow(this->handle());
+		}
+
 		void 
 		destroy() noexcept {
 			if (::DestroyWindow(this->handle()))
