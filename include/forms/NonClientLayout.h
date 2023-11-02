@@ -26,8 +26,8 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "lookNfeel/LookNFeelProvider.h"
-#include "graphics/Graphics.h"
+#include "library/core.Forms.h"
+#include "graphics/Rectangle.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -38,41 +38,32 @@
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
-{
-	class FormsExport Win31LookNFeel : public LookNFeelProvider
-	{
-		using base = LookNFeelProvider;
-
-	public:
-		std::shared_ptr<ILookNFeelProvider> const
-		static Instance;
-
-	public:
-		Win31LookNFeel();
-
-		Win31LookNFeel(SharedLookNFeelProvider custom);
-
-	public:
-		using base::draw;
-		
-		bool
-		virtual customCaption() const override;
-
-		FontDescription
-		virtual default() override;
-
-		void
-		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
-	
-		void
-		virtual draw(Dialog& dlg, PaintWindowEventArgs const& args) override;
-	
-		Response
-		virtual draw(Window& wnd, NonClientPaintEventArgs& args) override;
-		
-		NonClientLayout
-		virtual nonclient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const override;
+{	
+	enum class Coords {
+		Screen, 
+		Window, 
+		Client,
 	};
+
+	class NonClientLayout
+	{
+	public:
+		Rect  Caption,        //!< Window co-ordinates
+		      Title,          //!< Window co-ordinates
+		      SysMenuBtn,     //!< Window co-ordinates
+		      CloseBtn,       //!< Window co-ordinates
+		      MinimizeBtn,    //!< Window co-ordinates
+		      MaximizeBtn,    //!< Window co-ordinates
+		      Window;         //!< Screen co-ordinates
+
+	public:
+		explicit
+		NonClientLayout(Rect wnd) noexcept
+		  : Window{wnd}
+		{
+		}
+	};
+
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

@@ -44,63 +44,7 @@ namespace core::forms
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
-{	
-	enum class Coords {
-		Screen, 
-		Window, 
-		Client,
-	};
-
-	class NonClientComponentBounds
-	{
-	public:
-		Rect  Caption,		  //!< Window co-ordinates
-			  Title,		  //!< Window co-ordinates
-			  SysMenuBtn,	  //!< Window co-ordinates
-			  MinimizeBtn,	  //!< Window co-ordinates
-			  MaximizeBtn,	  //!< Window co-ordinates
-			  Window;		  //!< Screen co-ordinates
-
-	public:
-		//! @brief  Construct
-		//! @param  client  Client area in screen co-ordinates 
-		explicit
-		NonClientComponentBounds(nstd::bitset<WindowStyle> style, Rect wnd, Rect client, Coords results) noexcept
-		  : Window{wnd}
-		{
-			ThrowIf(results, results == Coords::Client);
-
-			// Caption
-			this->Caption = Rect{0, 0, wnd.width(), SystemMetric::cyCaption};
-			this->Caption.inflate(-Size{SystemMetric::cxSizeFrame, 0} * 2);
-			this->Caption.translate(Point{0, SystemMetric::cySizeFrame} * 2);
-
-			// Caption text
-			Size const rcIcon {this->Caption.height(), this->Caption.height()};
-			this->Title = this->Caption;
-			this->Title.Left += rcIcon.Width + (LONG)Measurement{SystemMetric::cxSizeFrame}*2;
-		
-			// System Menu
-			this->SysMenuBtn = Rect{this->Caption.topLeft(), rcIcon};
-
-			// Caption buttons
-			this->MaximizeBtn = Rect{this->Caption.topRight(), rcIcon, Rect::FromTopRight};
-			if (!style.test(WindowStyle::MaximizeBox)) 
-				this->MinimizeBtn = std::exchange(this->MaximizeBtn, Rect::Empty);
-			else
-				this->MinimizeBtn = this->MaximizeBtn - Point{rcIcon.Width,0};
-
-			if (results == Coords::Screen) {
-				this->Caption += wnd.topLeft();
-				this->Title += wnd.topLeft();
-				this->SysMenuBtn += wnd.topLeft();
-				this->MaximizeBtn += wnd.topLeft();
-				this->MinimizeBtn += wnd.topLeft();
-			}
-		}
-	};
-
-
+{
 	class FormsExport NonClientPaintEventArgs {
 	public:
 		Region                         Area;

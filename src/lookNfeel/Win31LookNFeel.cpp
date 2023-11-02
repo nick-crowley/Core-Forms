@@ -82,7 +82,7 @@ Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 	args.beginPaint();
 
 	auto const activeCaption = args.CaptionState == WindowCaptionState::Active;
-	auto const components = NonClientComponentBounds{args.Window.style(), args.Bounds, args.Client, Coords::Window};
+	auto const components = this->nonclient(Coords::Window, args.Window.style(), args.Bounds, args.Client);
 
 	// Draw window frame
 	args.Graphics->setBrush(StockBrush::LightGrey);
@@ -143,4 +143,20 @@ Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 	args.Graphics->restore();
 	args.endPaint();
 	return 0;
+}
+
+NonClientLayout
+Win31LookNFeel::nonclient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const 
+{
+	ThrowIf(results, results == Coords::Client);
+
+	// Base non-client area upon the default
+	NonClientLayout bounds = base::nonclient(results, style, wnd, client);
+
+	// Shift Minimize/Maximize buttons right by 1 button
+	bounds.MinimizeBtn = bounds.MaximizeBtn;
+	bounds.MaximizeBtn = bounds.CloseBtn;
+	bounds.CloseBtn = Rect::Empty;
+
+	return bounds;
 }

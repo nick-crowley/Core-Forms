@@ -82,7 +82,7 @@ Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 	args.beginPaint();
 
 	auto const activeCaption = args.CaptionState == WindowCaptionState::Active;
-	auto const components = NonClientComponentBounds{args.Window.style(), args.Bounds, args.Client, Coords::Window};
+	auto const components = this->nonclient(Coords::Window, args.Window.style(), args.Bounds, args.Client);
 
 	// Draw frame
 	args.Graphics->setBrush(StockBrush::LightGrey);
@@ -128,4 +128,21 @@ Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 	args.Graphics->restore();
 	args.endPaint();
 	return 0;
+}
+
+NonClientLayout
+Nt6LookNFeel::nonclient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const 
+{
+	ThrowIf(results, results == Coords::Client);
+
+	// Base non-client area upon the default
+	NonClientLayout bounds = base::nonclient(results, style, wnd, client);
+	
+	// Use smaller buttons than other styles
+	bounds.CloseBtn.inflate(-2);
+	bounds.SysMenuBtn.inflate(-2);
+	bounds.MaximizeBtn.inflate(-2);
+	bounds.MinimizeBtn.inflate(-2);
+
+	return bounds;
 }

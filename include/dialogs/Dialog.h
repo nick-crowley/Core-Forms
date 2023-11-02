@@ -391,10 +391,13 @@ namespace core::forms
 			if (!this->LookNFeel->customCaption())
 				return Unhandled;
 
-			if (NonClientComponentBounds const bounds{this->style(), this->wndRect(), this->clientRect(nullptr), Coords::Screen}; bounds.MaximizeBtn.contains(args.Position))
+			auto const bounds = this->LookNFeel->nonclient(Coords::Screen, this->style(), this->wndRect(), this->clientRect(nullptr));
+			if (bounds.MaximizeBtn.contains(args.Position))
 				return WindowHitTest::MaxButton;
 			else if (bounds.MinimizeBtn.contains(args.Position))
 				return WindowHitTest::MinButton;
+			else if (bounds.CloseBtn.contains(args.Position))
+				return WindowHitTest::CloseButton;
 			else if (bounds.SysMenuBtn.contains(args.Position))
 				return WindowHitTest::SysMenu;
 			else if (bounds.Caption.contains(args.Position))
@@ -415,17 +418,30 @@ namespace core::forms
 			// Intercept presses of the minimize and maximize buttons to prevent default-behaviour
 			//  (and its associated painting into the non-client area). 
 			if (args.Object == WindowHitTest::MinButton
-			 || args.Object == WindowHitTest::MaxButton) {
-				NonClientComponentBounds const bounds{this->style(), this->wndRect(), this->clientRect(nullptr), Coords::Screen};
+			 || args.Object == WindowHitTest::MaxButton
+			 || args.Object == WindowHitTest::CloseButton
+			) {
+				auto const style = this->style();
+				auto const bounds = this->LookNFeel->nonclient(Coords::Screen, style, this->wndRect(), this->clientRect(nullptr));
 				std::optional<Region> update;
 
 				if (args.Object == WindowHitTest::MinButton) {
+					if (!style.test(WindowStyle::MinimizeBox))
+						return 0;
+
 					update = Region{bounds.MinimizeBtn};
 					this->CaptionButtons.MinimizeBtn = ButtonState::Pushed;
 				}
-				else {
+				else if (args.Object == WindowHitTest::MaxButton) {
+					if (!style.test(WindowStyle::MaximizeBox))
+						return 0;
+
 					update = Region{bounds.MaximizeBtn};
 					this->CaptionButtons.MaximizeBtn = ButtonState::Pushed;
+				}
+				else {
+					update = Region{bounds.CloseBtn};
+					this->CaptionButtons.CloseBtn = ButtonState::Pushed;
 				}
 
 				this->MouseCapture.capture();
@@ -446,15 +462,19 @@ namespace core::forms
 			{
 				bool const doMaximize = this->CaptionButtons.MaximizeBtn == ButtonState::Pushed;
 				bool const doMinimize = this->CaptionButtons.MinimizeBtn == ButtonState::Pushed;
+				bool const doClose = this->CaptionButtons.CloseBtn == ButtonState::Pushed;
 
-				NonClientComponentBounds const bounds {this->style(), this->wndRect(), this->clientRect(nullptr), Coords::Screen};
-				Region update{this->CaptionButtons.MaximizeBtn == ButtonState::Pushed ? bounds.MaximizeBtn : bounds.MinimizeBtn};
-				
+				auto const bounds = this->LookNFeel->nonclient(Coords::Screen, this->style(), this->wndRect(), this->clientRect(nullptr));
+				Region update{this->CaptionButtons.MaximizeBtn == ButtonState::Pushed ? bounds.MaximizeBtn
+				            : this->CaptionButtons.MinimizeBtn == ButtonState::Pushed ? bounds.MinimizeBtn
+				                                                                      : bounds.CloseBtn};
 				this->MouseCapture.release();
 				this->CaptionButtons = WindowCaptionButtons{};
 				this->onNonClientPaint(NonClientPaintEventArgs{*this, update});
 
-				if (doMaximize)
+				if (doClose)
+					this->destroy();
+				else if (doMaximize)
 					this->maximized() ? this->restore() : this->maximize();
 				else if (doMinimize)
 					this->minimize();

@@ -777,6 +777,49 @@ LookNFeelProvider::measure(Window& wnd, MeasureMenuEventArgs& args)
 	args.Graphics.restore();
 }
 
+NonClientLayout
+LookNFeelProvider::nonclient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const 
+{
+	ThrowIf(results, results == Coords::Client);
+	NonClientLayout bounds{wnd};
+
+	// Caption
+	Size const Frame{SystemMetric::cxSizeFrame, SystemMetric::cySizeFrame};
+	bounds.Caption = Rect{Point::Zero, Size{wnd.width(), Measurement{SystemMetric::cyCaption}}} 
+	               - Border{2 * Frame.Width, 0}
+	               + Point{0, 2 * Frame.Height};
+	
+	// System-menu button
+	Size const rcIcon {bounds.Caption.height(), bounds.Caption.height()};
+	bounds.SysMenuBtn = Rect{bounds.Caption.topLeft(), rcIcon};
+
+	// Close/Maximize/minimize buttons
+	using enum WindowStyle;
+	Rect const rightButtonCoords{bounds.Caption.topRight(), rcIcon, Rect::FromTopRight};
+	Rect const middleButtonCoords = rightButtonCoords - Point{rcIcon.Width,0};
+	Rect const leftButtonCoords = middleButtonCoords - Point{rcIcon.Width,0};
+	bounds.CloseBtn = rightButtonCoords;
+	bounds.MaximizeBtn = middleButtonCoords;
+	bounds.MinimizeBtn = leftButtonCoords;
+	
+	// Title
+	bounds.Title = bounds.Caption;
+	bounds.Title.Left = bounds.SysMenuBtn.Right + (2 * Frame.Width);
+	bounds.Title.Right = bounds.MinimizeBtn.Left - (2 * Frame.Width);
+
+	// [SCREEN] Translate all generated co-ordinates
+	if (results == Coords::Screen) {
+		bounds.Caption += wnd.topLeft();
+		bounds.Title += wnd.topLeft();
+		bounds.CloseBtn += wnd.topLeft();
+		bounds.SysMenuBtn += wnd.topLeft();
+		bounds.MaximizeBtn += wnd.topLeft();
+		bounds.MinimizeBtn += wnd.topLeft();
+	}
+
+	return bounds;
+}
+
 void
 LookNFeelProvider::onCreated(Window&, CreateWindowEventArgs const& args) {
 	// nothing

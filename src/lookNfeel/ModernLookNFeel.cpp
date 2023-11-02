@@ -176,9 +176,9 @@ ModernLookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 	args.beginPaint();
 
 	auto const activeCaption = args.CaptionState == WindowCaptionState::Active;
-	auto const components = NonClientComponentBounds{args.Window.style(), args.Bounds, args.Client, Coords::Window};
+	auto const components = this->nonclient(Coords::Window, args.Window.style(), args.Bounds, args.Client);
 	auto const captionColour = activeCaption ? this->caption().Active : this->caption().Inactive;
-	AnyColour const buttonColours[2] { this->secondary(), captionColour };
+	AnyColour const buttonColours[2] { captionColour, this->secondary() };
 
 	// Draw window frame
 	args.Graphics->setBrush(captionColour);
@@ -192,7 +192,7 @@ ModernLookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 	
 	// Draw caption text
 	args.Graphics->setFont(StockObject::SystemFixedFont);
-	args.Graphics->textColour(SystemColour::HighlightText, transparent);
+	args.Graphics->textColour(this->primary(), transparent);
 	args.Graphics->drawText(wnd.text(), components.Title, DrawTextFlags::SimpleLeft);
 
 	//! @todo  Draw application icon in caption
@@ -203,7 +203,6 @@ ModernLookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 		auto const pressedOffset = isPressed ? Point{1,1} : Point::Zero;
 		args.Graphics->setBrush(buttonColours[isPressed]);
 		args.Graphics->fillRect(components.MaximizeBtn);
-		args.Graphics->textColour(SystemColour::WindowText, transparent);
 		args.Graphics->drawText(L"□", components.MaximizeBtn + pressedOffset, DrawTextFlags::SimpleCentre);
 	}
 
@@ -213,12 +212,18 @@ ModernLookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 		auto const pressedOffset = isPressed ? Point{1,1} : Point::Zero;
 		args.Graphics->setBrush(buttonColours[isPressed]);
 		args.Graphics->fillRect(components.MinimizeBtn);
-		args.Graphics->textColour(SystemColour::WindowText, transparent);
 		args.Graphics->drawText(L"▬", components.MinimizeBtn + pressedOffset, DrawTextFlags::SimpleCentre);
 	}
-
-	//! @todo  Draw close button in caption
 	
+	// Draw close button
+	if (wnd.style().test(WindowStyle::SysMenu)) {
+		bool const isPressed = args.CaptionButtons.CloseBtn == ButtonState::Pushed;
+		auto const pressedOffset = isPressed ? Point{1,1} : Point::Zero;
+		args.Graphics->setBrush(buttonColours[isPressed]);
+		args.Graphics->fillRect(components.CloseBtn);
+		args.Graphics->drawText(L"X", components.CloseBtn + pressedOffset, DrawTextFlags::SimpleCentre);
+	}
+
 	// Draw window menu bar background
 	if (components.Caption.Bottom < args.Client.Top) {
 		args.Graphics->setBrush(wnd.backColour());
@@ -228,4 +233,19 @@ ModernLookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 	args.Graphics->restore();
 	args.endPaint();
 	return 0;
+}
+
+NonClientLayout
+ModernLookNFeel::nonclient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const 
+{
+	ThrowIf(results, results == Coords::Client);
+	
+	// Base non-client area upon the default
+	NonClientLayout bounds = base::nonclient(results, style, wnd, client);
+	
+	// Extend height of caption by 50%
+	Rect::value_type const CaptionExtension = bounds.Caption.height() / 2;
+	bounds.Caption.Bottom += CaptionExtension;
+
+	return bounds;
 }

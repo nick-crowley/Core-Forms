@@ -29,6 +29,8 @@
 #include "library/core.Forms.h"
 #include "graphics/Colours.h"
 #include "graphics/Font.h"
+#include "forms/WindowStyle.h"
+#include "forms/NonClientLayout.h"
 #include "forms/Response.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -151,6 +153,11 @@ namespace core::forms
 		
 		void
 		virtual measure(Window& wnd, MeasureMenuEventArgs& args) abstract;
+		
+		//! @brief  Retrieve non-client area component bounds
+		//! @param  client  Client area (in screen co-ordinates)
+		NonClientLayout
+		virtual nonclient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const abstract;
 
 		void
 		virtual onCreated(Window&, CreateWindowEventArgs const& args) abstract;

@@ -145,6 +145,9 @@ namespace core::forms
 		
 		void
 		virtual measure(Window& wnd, MeasureMenuEventArgs& args) override;
+		
+		NonClientLayout
+		virtual nonclient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const override;
 
 		void
 		virtual onCreated(Window&, CreateWindowEventArgs const& args) override;

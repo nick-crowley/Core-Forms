@@ -49,7 +49,7 @@ namespace core::forms
 		BottomRight		= HTBOTTOMRIGHT,	//!< In the lower-right corner of a border of a resizable window (the user can click the mouse to resize the window diagonally).
 		Caption			= HTCAPTION,		//!< In a title bar.
 		Client			= HTCLIENT,			//!< In a client area.
-		Close			= HTCLOSE,			//!< In a Close button.
+		CloseButton		= HTCLOSE,			//!< In a Close button.
 		Error			= HTERROR,			//!< On the screen background or on a dividing line between windows (same as HTNOWHERE, except that the DefWindowProc function produces a system beep to indicate an error).
 		Help			= HTHELP,			//!< In a Help button.
 		HScroll			= HTHSCROLL,		//!< In a horizontal scroll bar.
