@@ -387,6 +387,15 @@ namespace core::forms
 		}
 	
 		Response
+		virtual onNonClientCalculate(NonClientCalculateEventArgs args) {
+			if (!this->LookNFeel->customCaption())
+				return Unhandled;
+
+			args.ClientArea = this->LookNFeel->clientRect(*this, args.ProposedWindow);
+			return 0;
+		}
+
+		Response
 		virtual onNonClientHitTest(NonClientHitTestEventArgs args) override {
 			if (!this->LookNFeel->customCaption())
 				return Unhandled;

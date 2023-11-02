@@ -53,6 +53,9 @@ namespace core::forms
 	public:
 		using base::draw;
 		
+		Rect
+		virtual clientRect(Window& wnd, Rect bounds) const override;
+
 		bool
 		virtual customCaption() const override;
 

@@ -27,31 +27,8 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
-#include "forms/EventArgs/CommandEventArgs.h"
-#include "forms/EventArgs/CreateWindowEventArgs.h"
-#include "forms/EventArgs/ControlColourEventArgs.h"
-#include "forms/EventArgs/CustomDrawEventArgs.h"
-#include "forms/EventArgs/DropFilesEventArgs.h"
-#include "forms/EventArgs/EraseBackgroundEventArgs.h"
-#include "forms/EventArgs/GetObjectEventArgs.h"
-#include "forms/EventArgs/MeasureItemEventArgs.h"
-#include "forms/EventArgs/MeasureMenuEventArgs.h"
-#include "forms/EventArgs/MinMaxEventArgs.h"
-#include "forms/EventArgs/MouseEventArgs.h"
-#include "forms/EventArgs/NonClientActivateEventArgs.h"
-#include "forms/EventArgs/NonClientCalculateEventArgs.h"
-#include "forms/EventArgs/NonClientHitTestEventArgs.h"
-#include "forms/EventArgs/NonClientMouseEventArgs.h"
-#include "forms/EventArgs/NonClientPaintEventArgs.h"
-#include "forms/EventArgs/NotifyEventArgs.h"
-#include "forms/EventArgs/OwnerDrawEventArgs.h"
-#include "forms/EventArgs/OwnerDrawMenuEventArgs.h"
-#include "forms/EventArgs/PaintWindowEventArgs.h"
-#include "forms/EventArgs/ResizeWindowEventArgs.h"
-#include "forms/EventArgs/SetWindowFontEventArgs.h"
-#include "forms/EventArgs/ShowWindowEventArgs.h"
-#include "forms/EventArgs/TimerEventArgs.h"
-#include "forms/EventArgs/UserEventArgs.h"
+#include "core/ObservableEvent.h"
+#include "graphics/SizePoint.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -66,13 +43,39 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	//! @brief	Delegate for a 'standard' window event (ie. one that doesn't require a custom second parameter)
-	using WindowDelegate = Delegate<void (Window&)>;
+	class NonClientCalculateEventArgs {
+	public:
+		enum ClientAlign : uintptr_t {
+			AlignTop     = WVR_ALIGNTOP,      //!< Specifies that the client area of the window is to be preserved and aligned with the top of the new position of the window.
+			AlignRight   = WVR_ALIGNRIGHT,    //!< Specifies that the client area of the window is to be preserved and aligned with the right side of the new position of the window.
+			AlignLeft    = WVR_ALIGNLEFT,     //!< Specifies that the client area of the window is to be preserved and aligned with the left side of the new position of the window.
+			AlignBottom  = WVR_ALIGNBOTTOM,   //!< Specifies that the client area of the window is to be preserved and aligned with the bottom of the new position of the window.
+			AlignDefault = AlignLeft|AlignTop,
+			HRedraw      = WVR_HREDRAW,       //!< Used in combination with any other values, except WVR_VALIDRECTS, causes the window to be completely redrawn if the client rectangle changes size horizontally.
+			VRedraw      = WVR_VREDRAW,       //!< Used in combination with any other values, except WVR_VALIDRECTS, causes the window to be completely redrawn if the client rectangle changes size vertically.
+			Redraw       = WVR_REDRAW,        //!< This value causes the entire window to be redrawn.
+		};
 
-	//! @brief	'standard' window event (ie. one without custom data)
-	using WindowEvent = ObservableEvent<WindowDelegate>;
+	public:
+		Rect  ProposedWindow;      //!< Screen co-ordinates
+		Rect& ClientArea;          //!< Screen co-ordinates
 
-}	// namespace core::forms
+	public:
+		NonClientCalculateEventArgs(::WPARAM, ::LPARAM l)
+		  : ProposedWindow{*reinterpret_cast<::RECT*>(l)},
+			ClientArea{*reinterpret_cast<Rect*>(l)}
+		{}
+	};
+
+	using NonClientCalculateDelegate = Delegate<void (Window&,NonClientCalculateEventArgs)>;
+	using NonClientCalculateEvent = ObservableEvent<NonClientCalculateDelegate>;
+
+}
+namespace core::meta 
+{
+	//! @brief	@c core::forms::NonClientCalculateEventArgs::ClientAlign is a bitflag
+	metadata bool Settings<bitwise_enum, forms::NonClientCalculateEventArgs::ClientAlign> = true;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

@@ -1252,6 +1252,11 @@ namespace core::forms
 		}
 	
 		Response
+		virtual onNonClientCalculate(NonClientCalculateEventArgs args) {
+			return Unhandled;
+		}
+
+		Response
 		virtual onNonClientHitTest(NonClientHitTestEventArgs args) {
 			return Unhandled;
 		}
@@ -1390,6 +1395,9 @@ namespace core::forms
 			case WM_NCDESTROY: 
 				return this->onNonClientDestroy();
 		
+			case WM_NCCALCSIZE: 
+				return this->onNonClientCalculate({wParam,lParam});
+			
 			case WM_NCHITTEST: 
 				return this->onNonClientHitTest({wParam,lParam});
 			

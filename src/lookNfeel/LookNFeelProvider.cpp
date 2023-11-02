@@ -80,6 +80,16 @@ LookNFeelProvider::LookNFeelProvider(SharedLookNFeelProvider impl)
 	this->CustomImpl = impl;
 }
 
+Rect
+LookNFeelProvider::clientRect(Window& wnd, Rect bounds) const
+{	
+	Size const Frame{SystemMetric::cxSizeFrame, SystemMetric::cySizeFrame};
+	Rect client = bounds - Border{2 * Frame} - Border{0, Measurement{SystemMetric::cyCaption}, 0, 0};
+	if (wnd.menu().has_value())
+		client.Top += Measurement{SystemMetric::cyMenu};
+	return client;
+}
+
 bool
 LookNFeelProvider::customCaption() const {
 	if (CustomImpl)

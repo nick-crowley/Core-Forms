@@ -25,6 +25,16 @@ ModernLookNFeel::ModernLookNFeel()
 	this->Colours.Window = Colour::White;
 }
 
+Rect
+ModernLookNFeel::clientRect(Window& wnd, Rect bounds) const
+{	
+	Size const Frame{SystemMetric::cxSizeFrame, SystemMetric::cySizeFrame};
+	Rect client = bounds - Border{2 * Frame} - Border{0, 1.5f * Measurement{SystemMetric::cyCaption}, 0, 0};
+	if (wnd.menu().has_value())
+		client.Top += Measurement{SystemMetric::cyMenu};
+	return client;
+}
+
 bool
 ModernLookNFeel::customCaption() const {
 	return true;

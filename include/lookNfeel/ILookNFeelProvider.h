@@ -91,6 +91,9 @@ namespace core::forms
 			IsInterface
 		);
 		
+		Rect
+		virtual clientRect(Window& wnd, Rect bounds) const abstract;
+
 		bool
 		virtual customCaption() const abstract;
 

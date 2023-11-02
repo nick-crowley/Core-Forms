@@ -89,6 +89,9 @@ namespace core::forms
 		makeDefault();
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		Rect
+		virtual clientRect(Window& wnd, Rect bounds) const override;
+
 		bool
 		virtual customCaption() const override;
 
