@@ -430,9 +430,9 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	// Query custom features
 	auto const item = ctrl.Items[args.Item.Index];
 	auto const selectedTextColour = nstd::make_optional_if<AnyColour>(selected, SystemColour::HighlightText);
-	bool const useHeadings = ctrl.features().test(ComboBoxFeature::Headings);
+	bool const useHeadings = ctrl.features().test(ListBoxFeature::Headings);
 	bool const useBigIcons = ctrl.features().test(ListBoxFeature::BigIcons);
-	bool const useIcons = useBigIcons || ctrl.features().test(ComboBoxFeature::Icons);
+	bool const useIcons = useBigIcons || ctrl.features().test(ListBoxFeature::Icons);
 	auto const heading = item.heading(); 
 	auto const icon = item.icon();
 
