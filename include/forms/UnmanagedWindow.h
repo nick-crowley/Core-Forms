@@ -84,6 +84,12 @@ namespace core::forms
 			};
 		}
 	
+		Point
+		clientPoint(Point screenCoords) const noexcept {
+			::ScreenToClient(this->handle(), screenCoords);
+			return screenCoords;
+		}
+			
 		Rect
 		clientRect() const noexcept {
 			Rect rc;
@@ -164,6 +170,12 @@ namespace core::forms
 			return ::PostMessageW(this->handle(), MessageId, first.value_or(0), second.value_or(0));
 		}
 		
+		Point
+		screenPoint(Point clientCoords) const noexcept {
+			::ClientToScreen(this->handle(), clientCoords);
+			return clientCoords;
+		}
+
 		ScrollBarInfo
 		scrollBar(ObjectId bar) const noexcept {
 			ThrowIfNot(bar, bar == ObjectId::Client || bar == ObjectId::HScroll || bar == ObjectId::VScroll);

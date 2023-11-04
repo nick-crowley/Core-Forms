@@ -899,6 +899,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		using base::clientDC;
+		using base::clientPoint;
 		using base::clientRect;
 		using base::enabled;
 		using base::exists;
@@ -910,6 +911,7 @@ namespace core::forms
 		using base::maximized;
 		using base::minimized;
 		using base::post;
+		using base::screenPoint;
 		using base::scrollBar;
 		using base::send;
 		using base::style;
