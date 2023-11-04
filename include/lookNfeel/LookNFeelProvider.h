@@ -141,7 +141,7 @@ namespace core::forms
 		virtual draw(StaticControl& ctrl, OwnerDrawEventArgs const& args) override;
 		
 		Response
-		virtual draw(Window& wnd, NonClientPaintEventArgs& args) override;
+		virtual draw(Dialog& dlg, NonClientPaintEventArgs& args) override;
 
 		void
 		virtual draw(Window& wnd, OwnerDrawMenuEventArgs& args) override;
@@ -150,7 +150,7 @@ namespace core::forms
 		virtual measure(Window& wnd, MeasureMenuEventArgs& args) override;
 		
 		NonClientLayout
-		virtual nonclient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const override;
+		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const override;
 
 		void
 		virtual onCreated(Window&, CreateWindowEventArgs const& args) override;

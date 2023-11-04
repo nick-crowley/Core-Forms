@@ -92,6 +92,146 @@ namespace core::forms
 			}
 		};
 		
+		//! @brief  Window caption button
+		class NonClientButton
+		{
+			MouseCaptureState          Mouse;
+			Window&                    Owner;
+			nstd::bitset<ButtonState>  State = ButtonState::None;
+
+		public:
+			WindowEvent   Clicked;
+
+		public:
+			NonClientButton(Window& owner)
+			  : Mouse{owner},
+			    Owner{owner}
+			{}
+
+		public:
+			bool
+			captured() const {
+				return this->Mouse.captured();
+			}
+
+			nstd::bitset<ButtonState>
+			state() const {
+				return this->State;
+			}
+
+		public:
+			void 
+			onMouseDown(Rect const& wndRect) 
+			{
+				this->State = ButtonState::Pushed;
+				this->Mouse.capture();
+				this->Owner.onNonClientPaint(NonClientPaintEventArgs{this->Owner,Region{wndRect}});
+			}
+
+			void 
+			onMouseUp(Rect const& wndRect) {
+				bool const changed = (this->State != ButtonState::None);
+				this->State = ButtonState::None;
+				
+				if (this->Mouse.captured())
+					this->Mouse.release();
+
+				if (changed) {
+					this->Owner.onNonClientPaint(NonClientPaintEventArgs{this->Owner,Region{wndRect}});
+					this->Clicked.raise(this->Owner);
+				}
+			}
+
+			void 
+			onMouseMove(Rect const& wndRect) {
+				//! @todo  Update window caption button appearance on mouse-hover
+				//! @todo  Extend forms::ButtonState enum to support mouse-hover
+			}
+		};
+
+		//! @brief  Provides event-handling logic and maintains state for caption buttons
+		class WindowCaption 
+		{
+			friend class Dialog;
+
+		public:
+			NonClientButton  CloseBtn;
+			NonClientButton  MaximizeBtn;
+			NonClientButton  MinimizeBtn;
+
+		public:
+			WindowCaption(Window& owner)
+			  : CloseBtn{owner},
+			    MinimizeBtn{owner},
+			    MaximizeBtn{owner}
+			{
+			}
+
+		private:
+			Response
+			onMouseUp(Dialog& owner, MouseEventArgs args) 
+			{
+				// Perform hit-test against the non-client area
+				auto const bounds = owner.nonClient();
+				auto const object = bounds.hitTest(owner.screenPoint(args.Position));
+				auto const style = owner.style();
+				
+				// Delegate mouse-event to appropriate caption button
+				if (this->MaximizeBtn.captured() || (object == WindowHitTest::MaxButton && style.test(WindowStyle::MaximizeBox)))
+					this->MaximizeBtn.onMouseUp(bounds.MaximizeBtn);
+				else if (this->MinimizeBtn.captured() || (object == WindowHitTest::MinButton && style.test(WindowStyle::MinimizeBox)))
+					this->MinimizeBtn.onMouseUp(bounds.MinimizeBtn);
+				else if (this->CloseBtn.captured() || (object == WindowHitTest::CloseButton && style.test(WindowStyle::SysMenu)))
+					this->CloseBtn.onMouseUp(bounds.CloseBtn);
+				else
+					return Unhandled;
+
+				return 0;
+			}
+			
+			Response
+			onNonClientMouseDown(Dialog& owner, NonClientMouseEventArgs args) 
+			{
+				// Repeat hit-test for our custom non-client area
+				auto const bounds = owner.nonClient();
+				auto const object = bounds.hitTest(args.Position);
+				auto const style = owner.style(); 
+
+				// Delegate mouse-event to appropriate caption button
+				if (object == WindowHitTest::MaxButton && style.test(WindowStyle::MaximizeBox))
+					this->MaximizeBtn.onMouseDown(bounds.MaximizeBtn);
+				else if (object == WindowHitTest::MinButton && style.test(WindowStyle::MinimizeBox))
+					this->MinimizeBtn.onMouseDown(bounds.MinimizeBtn);
+				else if (object == WindowHitTest::CloseButton && style.test(WindowStyle::SysMenu))
+					this->CloseBtn.onMouseDown(bounds.CloseBtn);
+				else
+					return Unhandled;
+
+				return 0;
+			}
+
+			Response
+			onNonClientMouseMove(Dialog& owner, NonClientMouseEventArgs args) 
+			{
+				// Repeat hit-test for our custom non-client area
+				auto const bounds = owner.nonClient();
+				auto const object = bounds.hitTest(args.Position);
+				auto const style = owner.style();
+
+				// Delegate mouse-event to appropriate caption button
+				if (object == WindowHitTest::MaxButton && style.test(WindowStyle::MaximizeBox))
+					this->MaximizeBtn.onMouseMove(bounds.MaximizeBtn);
+				else if (object == WindowHitTest::MinButton && style.test(WindowStyle::MinimizeBox))
+					this->MinimizeBtn.onMouseMove(bounds.MinimizeBtn);
+				else if (object == WindowHitTest::CloseButton && style.test(WindowStyle::SysMenu))
+					this->CloseBtn.onMouseMove(bounds.CloseBtn);
+				else
+					return Unhandled;
+
+				return 0;
+			}
+		};
+
 	protected:
 		//! @brief	Temporary storage for controls of _derived_ classes 
 		//! 
@@ -185,8 +325,7 @@ namespace core::forms
 		DialogTemplate const            Template;
 		EarlyBoundControlCollection const EarlyBoundControls;
 		ControlDictionary               BoundControls;
-		WindowCaptionButtons            CaptionButtons;
-		MouseCaptureState               MouseCapture;
+		WindowCaption                   Caption;
 
 	public:
 		InitDialogEvent		Initialized;
@@ -201,8 +340,12 @@ namespace core::forms
 		  : DialogId{resource},
 		    Template{DialogTemplateReader{source.loadResource(resource, RT_DIALOG)}.readTemplate()},
 			EarlyBoundControls{controls},
-			MouseCapture{*this}
+			Caption{*this}
 		{
+			this->Caption.CloseBtn.Clicked += {*this, &Dialog::CloseBtn_Clicked};
+			this->Caption.MaximizeBtn.Clicked += {*this, &Dialog::MaximizeBtn_Clicked};
+			this->Caption.MinimizeBtn.Clicked += {*this, &Dialog::MinimizeBtn_Clicked};
+
 			ControlRegistration::ensureRegistered();
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -275,12 +418,23 @@ namespace core::forms
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		WindowCaption const&
+		caption() const {
+			return this->Caption;
+		}
+
 		Rect
 		mapRect(Rect rc) const noexcept {
 			::MapDialogRect(this->handle(), rc);
 			return rc;
 		}
 	
+		NonClientLayout 
+		nonClient() const noexcept
+		{
+			return this->LookNFeel->nonClient(Coords::Screen, this->style(), this->wndRect(), this->clientRect(HWND_DESKTOP));
+		}
+
 		WindowRole
 		virtual role() const noexcept override {
 			return WindowRole::Dialog;
@@ -375,131 +529,83 @@ namespace core::forms
 		}
 	
 		Response
-		virtual onNonClientActivate(NonClientActivateEventArgs args) override {
-			if (!this->LookNFeel->customCaption())
-				return Unhandled;
+		virtual onMouseUp(MouseEventArgs args) override
+		{
+			// Delegate to custom non-client area, if any
+			if (this->LookNFeel->customCaption())
+				if (auto const r = this->Caption.onMouseUp(*this, args); r)
+					return r;
 
-			this->onNonClientPaint(NonClientPaintEventArgs{std::move(args)});
-			
-			//! @todo  Returning TRUE/FALSE matters 
-			//! @see  https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-ncactivate#remarks
-			return TRUE;  
+			return Unhandled;
+		}
+		
+		Response
+		virtual onNonClientActivate(NonClientActivateEventArgs args) override 
+		{
+			// Repaint custom non-client area, if any
+			if (this->LookNFeel->customCaption()) {
+				this->onNonClientPaint(NonClientPaintEventArgs{std::move(args)});
+				return args.AllowActivation;
+			}
+
+			return Unhandled;
 		}
 	
 		Response
-		virtual onNonClientCalculate(NonClientCalculateEventArgs args) {
-			if (!this->LookNFeel->customCaption())
-				return Unhandled;
-
-			args.ClientArea = this->LookNFeel->clientRect(*this, args.ProposedWindow);
-			return 0;
-		}
-
-		Response
-		virtual onNonClientHitTest(NonClientHitTestEventArgs args) override {
-			if (!this->LookNFeel->customCaption())
-				return Unhandled;
-
-			auto const bounds = this->LookNFeel->nonclient(Coords::Screen, this->style(), this->wndRect(), this->clientRect(nullptr));
-			if (bounds.MaximizeBtn.contains(args.Position))
-				return WindowHitTest::MaxButton;
-			else if (bounds.MinimizeBtn.contains(args.Position))
-				return WindowHitTest::MinButton;
-			else if (bounds.CloseBtn.contains(args.Position))
-				return WindowHitTest::CloseButton;
-			else if (bounds.SysMenuBtn.contains(args.Position))
-				return WindowHitTest::SysMenu;
-			else if (bounds.Caption.contains(args.Position))
-				return WindowHitTest::Caption;
-			else if (bounds.MenuBar.contains(args.Position))
-				return WindowHitTest::Menu;
+		virtual onNonClientCalculate(NonClientCalculateEventArgs args) 
+		{
+			// Calculate client area from custom non-client area, if any
+			if (this->LookNFeel->customCaption()) {
+				args.ClientArea = this->LookNFeel->clientRect(*this, args.ProposedWindow);
+				return 0;
+			}
 
 			return Unhandled;
 		}
 
 		Response
-		virtual onNonClientMouseDown(NonClientMouseEventArgs args) override {
-			if (!this->LookNFeel->customCaption())
-				return Unhandled;
-
-			// Repeat hit-test for our custom non-client area
-			if (auto const response = this->onNonClientHitTest(NonClientHitTestEventArgs{args.Position}); response)
-				args.Object = static_cast<WindowHitTest>(*response.Value);
-
-			// Intercept presses of the minimize and maximize buttons to prevent default-behaviour
-			//  (and its associated painting into the non-client area). 
-			if (args.Object == WindowHitTest::MinButton
-			 || args.Object == WindowHitTest::MaxButton
-			 || args.Object == WindowHitTest::CloseButton
-			) {
-				auto const style = this->style();
-				auto const bounds = this->LookNFeel->nonclient(Coords::Screen, style, this->wndRect(), this->clientRect(nullptr));
-				std::optional<Region> update;
-
-				if (args.Object == WindowHitTest::MinButton) {
-					if (!style.test(WindowStyle::MinimizeBox))
-						return 0;
-
-					update = Region{bounds.MinimizeBtn};
-					this->CaptionButtons.MinimizeBtn = ButtonState::Pushed;
-				}
-				else if (args.Object == WindowHitTest::MaxButton) {
-					if (!style.test(WindowStyle::MaximizeBox))
-						return 0;
-
-					update = Region{bounds.MaximizeBtn};
-					this->CaptionButtons.MaximizeBtn = ButtonState::Pushed;
-				}
-				else {
-					update = Region{bounds.CloseBtn};
-					this->CaptionButtons.CloseBtn = ButtonState::Pushed;
-				}
-
-				this->MouseCapture.capture();
-				this->onNonClientPaint(NonClientPaintEventArgs{*this,*update});
-				return 0;
-			}
+		virtual onNonClientHitTest(NonClientHitTestEventArgs args) override 
+		{
+			// Perform hit-test against custom non-client area, if any
+			if (this->LookNFeel->customCaption())
+				return this->nonClient().hitTest(args.Position);
 			
-			// Allow remaining presses to retain existingfunctionality
+			return Unhandled;
+		}
+		
+		Response
+		virtual onNonClientMouseDown(NonClientMouseEventArgs args) override 
+		{
+			// Delegate to custom non-client area, if any
+			if (this->LookNFeel->customCaption())
+				if (auto const r = this->Caption.onNonClientMouseDown(*this, args); r)
+					return r;
+
+			// Allow remaining presses to retain existing functionality
 			// * Moving the window by pressing the title-bar
 			// * Display the system context-menu by double-pressing its button
 			// * Resizing the window by dragging the frame
 			return Unhandled;
 		}
-	
+		
 		Response
-		virtual onMouseUp(MouseEventArgs args) override {
-			if (this->MouseCapture.captured()) 
-			{
-				bool const doMaximize = this->CaptionButtons.MaximizeBtn == ButtonState::Pushed;
-				bool const doMinimize = this->CaptionButtons.MinimizeBtn == ButtonState::Pushed;
-				bool const doClose = this->CaptionButtons.CloseBtn == ButtonState::Pushed;
+		virtual onNonClientMouseMove(NonClientMouseEventArgs args) 
+		{	
+			// Delegate to custom non-client area, if any
+			if (this->LookNFeel->customCaption())
+				if (auto const r = this->Caption.onNonClientMouseMove(*this, args); r)
+					return r;
 
-				auto const bounds = this->LookNFeel->nonclient(Coords::Screen, this->style(), this->wndRect(), this->clientRect(nullptr));
-				Region update{this->CaptionButtons.MaximizeBtn == ButtonState::Pushed ? bounds.MaximizeBtn
-				            : this->CaptionButtons.MinimizeBtn == ButtonState::Pushed ? bounds.MinimizeBtn
-				                                                                      : bounds.CloseBtn};
-				this->MouseCapture.release();
-				this->CaptionButtons = WindowCaptionButtons{};
-				this->onNonClientPaint(NonClientPaintEventArgs{*this, update});
-
-				if (doClose)
-					this->destroy();
-				else if (doMaximize)
-					this->maximized() ? this->restore() : this->maximize();
-				else if (doMinimize)
-					this->minimize();
-			}
 			return Unhandled;
 		}
-
+	
 		Response
-		virtual onNonClientPaint(NonClientPaintEventArgs args) override {
-			if (!this->LookNFeel->customCaption())
-				return Unhandled;
+		virtual onNonClientPaint(NonClientPaintEventArgs args) override 
+		{
+			if (this->LookNFeel->customCaption())
+				return this->LookNFeel->draw(*this, args);
 
-			args.CaptionButtons = this->CaptionButtons;
-			return this->LookNFeel->draw(*this, args);
+			return Unhandled;
 		}
 
 		Response
@@ -672,10 +778,33 @@ namespace core::forms
 			// Aggregate all template customizations into a new template resource
 			return DialogTemplateWriter{}.writeTemplate(customTemplate);
 		}
-
+		
 		void
 		setMessageResult(Response const& r) {
 			::SetWindowLongPtr(this->handle(), DWLP_MSGRESULT, *r.Value);
+		}
+		
+	private:
+		void 
+		CloseBtn_Clicked(Window& self) 
+		{
+			this->destroy();
+		}
+
+		void 
+		MaximizeBtn_Clicked(Window& self) 
+		{
+			if (this->maximized())
+				this->restore();
+			else
+				this->maximize();
+		}
+
+		void 
+		MinimizeBtn_Clicked(Window& self) 
+		{
+			if (!this->minimized())
+				this->minimize();
 		}
 	};
 }	// namespace core::forms

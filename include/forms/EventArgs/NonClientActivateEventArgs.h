@@ -49,6 +49,13 @@ namespace core::forms
 		inline static DontRepaint = static_cast<::WPARAM>(-1);
 
 	public:
+		BOOL constexpr
+		inline static AllowActivation = TRUE;
+
+		BOOL constexpr
+		inline static DenyActivation = FALSE;
+
+	public:
 		std::optional<Region>  InvalidArea;
 		WindowCaptionState     CaptionState;
 		Window&                Window;

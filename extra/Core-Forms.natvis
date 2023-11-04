@@ -162,11 +162,11 @@
 		<DisplayString>{{ not-captured }}</DisplayString>
 	</Type>
 
-	<Type Name="core::forms::WindowCaptionButtons">
-		<DisplayString>{{ 3 buttons }}</DisplayString>
-	</Type>
+  <Type Name="core::forms::Dialog::NonClientButton">
+    <DisplayString>{{ {State}  Mouse={Mouse} }}</DisplayString>
+  </Type>
 
-	<Type Name="core::forms::Dialog">
+  <Type Name="core::forms::Dialog">
 		<Intrinsic Name="numDialogListeners" Expression="Initialized.size()" />
 		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
 		<DisplayString Condition="!Handle">{{ Dialog id={DialogId} &lt;Not a window&gt; }}</DisplayString>

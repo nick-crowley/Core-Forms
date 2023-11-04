@@ -27,8 +27,6 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
-#include "forms/WindowHitTest.h"
-#include "graphics/Rectangle.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -36,57 +34,37 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
-// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
-{	
-	enum class Coords {
-		Screen, 
-		Window, 
-		Client,
-	};
-
-	class NonClientLayout
+{
+	enum class WindowHitTest
 	{
-	public:
-		Rect  Caption,        //!< Window co-ordinates
-		      Title,          //!< Window co-ordinates
-		      MenuBar,        //!< Window co-ordinates
-		      SysMenuBtn,     //!< Window co-ordinates
-		      CloseBtn,       //!< Window co-ordinates
-		      MinimizeBtn,    //!< Window co-ordinates
-		      MaximizeBtn,    //!< Window co-ordinates
-		      Client,         //!< 
-		      Window;         //!< Screen co-ordinates
-
-	public:
-		explicit
-		NonClientLayout(Rect wnd) noexcept
-		  : Window{wnd}
-		{
-		}
-
-		WindowHitTest 
-		hitTest(Point pt) const noexcept
-		{
-			if (this->MaximizeBtn.contains(pt))
-				return WindowHitTest::MaxButton;
-			else if (this->MinimizeBtn.contains(pt))
-				return WindowHitTest::MinButton;
-			else if (this->CloseBtn.contains(pt))
-				return WindowHitTest::CloseButton;
-			else if (this->SysMenuBtn.contains(pt))
-				return WindowHitTest::SysMenu;
-			else if (this->Caption.contains(pt))
-				return WindowHitTest::Caption;
-			else if (this->MenuBar.contains(pt))
-				return WindowHitTest::Menu;
-
-			return WindowHitTest::Nowhere;
-		}
+		Border			= HTBORDER,			//!< In the border of a window that does not have a sizing border.
+		Bottom			= HTBOTTOM,			//!< In the lower-horizontal border of a resizable window (the user can click the mouse to resize the window vertically).
+		BottomLeft		= HTBOTTOMLEFT,		//!< In the lower-left corner of a border of a resizable window (the user can click the mouse to resize the window diagonally).
+		BottomRight		= HTBOTTOMRIGHT,	//!< In the lower-right corner of a border of a resizable window (the user can click the mouse to resize the window diagonally).
+		Caption			= HTCAPTION,		//!< In a title bar.
+		Client			= HTCLIENT,			//!< In a client area.
+		CloseButton		= HTCLOSE,			//!< In a Close button.
+		Error			= HTERROR,			//!< On the screen background or on a dividing line between windows (same as HTNOWHERE, except that the DefWindowProc function produces a system beep to indicate an error).
+		Help			= HTHELP,			//!< In a Help button.
+		HScroll			= HTHSCROLL,		//!< In a horizontal scroll bar.
+		Left			= HTLEFT,			//!< In the left border of a resizable window (the user can click the mouse to resize the window horizontally).
+		Menu			= HTMENU,			//!< In a menu.
+		MaxButton		= HTMAXBUTTON,		//!< In a Maximize button.
+		MinButton		= HTMINBUTTON,		//!< In a Minimize button.
+		Nowhere			= HTNOWHERE,		//!< On the screen background or on a dividing line between windows.
+		Right			= HTRIGHT,			//!< In the right border of a resizable window (the user can click the mouse to resize the window horizontally).
+		Size			= HTSIZE,			//!< In a size box (same as HTGROWBOX).
+		SysMenu			= HTSYSMENU,		//!< In a window menu or in a Close button in a child window.
+		Top				= HTTOP,			//!< In the upper-horizontal border of a window.
+		TopLeft			= HTTOPLEFT,		//!< In the upper-left corner of a window border.
+		TopRight		= HTTOPRIGHT,		//!< In the upper-right corner of a window border.
+		Transparent		= HTTRANSPARENT,	//!< In a window currently covered by another window in the same thread (the message will be sent to underlying windows in the same thread until one of them returns a code that is not HTTRANSPARENT).
+		VScroll			= HTVSCROLL,		//!< In the vertical scroll bar.
 	};
+}
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
-}	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

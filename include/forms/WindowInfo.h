@@ -45,13 +45,6 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {	
-	struct WindowCaptionButtons 
-	{
-		ButtonState CloseBtn = ButtonState::None,
-			        MaximizeBtn = ButtonState::None, 
-		            MinimizeBtn = ButtonState::None;
-	};
-
 	struct WindowInfo
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o

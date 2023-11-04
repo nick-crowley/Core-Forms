@@ -51,11 +51,6 @@ namespace core::forms
 		NonClientHitTestEventArgs(::WPARAM, ::LPARAM l)
 		  : Position{reinterpret_cast<::POINTS&>(l).x, reinterpret_cast<::POINTS&>(l).y}
 		{}
-
-		explicit
-		NonClientHitTestEventArgs(Point pt)
-		  : Position{pt}
-		{}
 	};
 
 	using NonClientHitTestDelegate = Delegate<void (Window&,NonClientHitTestEventArgs)>;

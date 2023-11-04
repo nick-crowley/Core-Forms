@@ -152,10 +152,10 @@ RetroLookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 Response
-RetroLookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args) 
+RetroLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args) 
 {
 	ThrowIfNot(args, args.Graphics == nullopt);
 
 	// Same as Win3.1
-	return Win31LookNFeel{this->shared_from_this()}.draw(wnd, args);
+	return Win31LookNFeel{this->shared_from_this()}.draw(dlg, args);
 }

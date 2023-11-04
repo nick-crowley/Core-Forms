@@ -76,13 +76,15 @@ Win31LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 }
 
 Response
-Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args) 
+Win31LookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args) 
 {
 	ThrowIfNot(args, args.Graphics == nullopt);
 	args.beginPaint();
 
 	auto const activeCaption = args.CaptionState == WindowCaptionState::Active;
-	auto const components = this->nonclient(Coords::Window, args.Window.style(), args.Bounds, args.Client);
+	auto const components = this->nonClient(Coords::Window, args.Window.style(), args.Bounds, args.Client);
+	auto const style = dlg.style();
+	auto const& caption = dlg.caption();
 
 	// Draw window frame
 	args.Graphics->setBrush(StockBrush::LightGrey);
@@ -102,7 +104,7 @@ Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 	args.Graphics->setFont(StockObject::SystemFixedFont);
 	args.Graphics->textColour(SystemColour::HighlightText);
 	args.Graphics->backColour(transparent);
-	args.Graphics->drawText(wnd.text(), components.Title, DrawTextFlags::SimpleCentre);
+	args.Graphics->drawText(dlg.text(), components.Title, DrawTextFlags::SimpleCentre);
 
 	// Draw SysMenu button
 	args.Graphics->setPen(StockPen::Black);
@@ -115,18 +117,18 @@ Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 	args.Graphics->drawRect(sysMenuBtn);
 
 	// Draw maximize button
-	if (wnd.style().test(WindowStyle::MaximizeBox)) {
-		bool const pressed = args.CaptionButtons.MaximizeBtn == ButtonState::Pushed;
+	if (style.test(WindowStyle::MaximizeBox)) {
+		bool const pressed = caption.MaximizeBtn.state() == ButtonState::Pushed;
 		args.Graphics->fillRect(components.MaximizeBtn, SystemColour::ButtonFace);
 		args.Graphics->drawEdge(components.MaximizeBtn, pressed ? EdgeFlags::Sunken : EdgeFlags::Raised);
 		args.Graphics->textColour(activeCaption ? SystemColour::WindowText : SystemColour::GrayText);
 		auto const btnRect = components.MaximizeBtn + (pressed ? Point{1,1} : Point::Zero);
-		args.Graphics->drawText(!wnd.maximized() ? L"▲" : L"⌂", btnRect, DrawTextFlags::SimpleCentre);
+		args.Graphics->drawText(!dlg.maximized() ? L"▲" : L"⌂", btnRect, DrawTextFlags::SimpleCentre);
 	}
 
 	// Draw minimize button
-	if (wnd.style().test(WindowStyle::MinimizeBox)) {
-		bool const pressed = args.CaptionButtons.MinimizeBtn == ButtonState::Pushed;
+	if (style.test(WindowStyle::MinimizeBox)) {
+		bool const pressed = caption.MinimizeBtn.state() == ButtonState::Pushed;
 		args.Graphics->fillRect(components.MinimizeBtn, SystemColour::ButtonFace);
 		args.Graphics->drawEdge(components.MinimizeBtn, pressed ? EdgeFlags::Sunken : EdgeFlags::Raised);
 		args.Graphics->textColour(activeCaption ? SystemColour::WindowText : SystemColour::GrayText);
@@ -136,7 +138,7 @@ Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 	
 	// Draw window menu bar background
 	if (components.Caption.Bottom < args.Client.Top) {
-		args.Graphics->setBrush(wnd.backColour());
+		args.Graphics->setBrush(dlg.backColour());
 		args.Graphics->fillRect(components.MenuBar);
 	}
 
@@ -146,12 +148,12 @@ Win31LookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 }
 
 NonClientLayout
-Win31LookNFeel::nonclient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const 
+Win31LookNFeel::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const 
 {
 	ThrowIf(results, results == Coords::Client);
 
 	// Base non-client area upon the default
-	NonClientLayout bounds = base::nonclient(results, style, wnd, client);
+	NonClientLayout bounds = base::nonClient(results, style, wnd, client);
 
 	// Shift Minimize/Maximize buttons right by 1 button
 	bounds.MinimizeBtn = bounds.MaximizeBtn;

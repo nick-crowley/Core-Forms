@@ -710,7 +710,7 @@ LookNFeelProvider::draw(StaticControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 Response
-LookNFeelProvider::draw(Window& wnd, NonClientPaintEventArgs& args) 
+LookNFeelProvider::draw(Dialog& dlg, NonClientPaintEventArgs& args) 
 {
 	// Use Windows default
 	return Window::Unhandled;
@@ -788,7 +788,7 @@ LookNFeelProvider::measure(Window& wnd, MeasureMenuEventArgs& args)
 }
 
 NonClientLayout
-LookNFeelProvider::nonclient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const 
+LookNFeelProvider::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const 
 {
 	ThrowIf(results, results == Coords::Client);
 	NonClientLayout bounds{wnd};

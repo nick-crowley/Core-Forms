@@ -180,14 +180,16 @@ ModernLookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 }
 
 Response
-ModernLookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args) 
+ModernLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args) 
 {
 	ThrowIfNot(args, args.Graphics == nullopt);
 	args.beginPaint();
 
 	auto const activeCaption = args.CaptionState == WindowCaptionState::Active;
-	auto const components = this->nonclient(Coords::Window, args.Window.style(), args.Bounds, args.Client);
+	auto const components = this->nonClient(Coords::Window, args.Window.style(), args.Bounds, args.Client);
 	auto const captionColour = activeCaption ? this->caption().Active : this->caption().Inactive;
+	auto const style = dlg.style();
+	auto const& caption = dlg.caption();
 	AnyColour const buttonColours[2] { captionColour, this->secondary() };
 
 	// Draw window frame
@@ -203,13 +205,13 @@ ModernLookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 	// Draw caption text
 	args.Graphics->setFont(StockObject::SystemFixedFont);
 	args.Graphics->textColour(this->primary(), transparent);
-	args.Graphics->drawText(wnd.text(), components.Title, DrawTextFlags::SimpleLeft);
+	args.Graphics->drawText(dlg.text(), components.Title, DrawTextFlags::SimpleLeft);
 
 	//! @todo  Draw application icon in caption
 	
 	// Draw maximize button
-	if (wnd.style().test(WindowStyle::MaximizeBox)) {
-		bool const isPressed = args.CaptionButtons.MaximizeBtn == ButtonState::Pushed;
+	if (style.test(WindowStyle::MaximizeBox)) {
+		bool const isPressed = caption.MaximizeBtn.state() == ButtonState::Pushed;
 		auto const pressedOffset = isPressed ? Point{1,1} : Point::Zero;
 		args.Graphics->setBrush(buttonColours[isPressed]);
 		args.Graphics->fillRect(components.MaximizeBtn);
@@ -217,8 +219,8 @@ ModernLookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 	}
 
 	// Draw minimize button
-	if (wnd.style().test(WindowStyle::MinimizeBox)) {
-		bool const isPressed = args.CaptionButtons.MinimizeBtn == ButtonState::Pushed;
+	if (style.test(WindowStyle::MinimizeBox)) {
+		bool const isPressed = caption.MinimizeBtn.state() == ButtonState::Pushed;
 		auto const pressedOffset = isPressed ? Point{1,1} : Point::Zero;
 		args.Graphics->setBrush(buttonColours[isPressed]);
 		args.Graphics->fillRect(components.MinimizeBtn);
@@ -226,8 +228,8 @@ ModernLookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 	}
 	
 	// Draw close button
-	if (wnd.style().test(WindowStyle::SysMenu)) {
-		bool const isPressed = args.CaptionButtons.CloseBtn == ButtonState::Pushed;
+	if (style.test(WindowStyle::SysMenu)) {
+		bool const isPressed = caption.CloseBtn.state() == ButtonState::Pushed;
 		auto const pressedOffset = isPressed ? Point{1,1} : Point::Zero;
 		args.Graphics->setBrush(buttonColours[isPressed]);
 		args.Graphics->fillRect(components.CloseBtn);
@@ -246,12 +248,12 @@ ModernLookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 }
 
 NonClientLayout
-ModernLookNFeel::nonclient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const 
+ModernLookNFeel::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const 
 {
 	ThrowIf(results, results == Coords::Client);
 	
 	// Base non-client area upon the default
-	NonClientLayout bounds = base::nonclient(results, style, wnd, client);
+	NonClientLayout bounds = base::nonClient(results, style, wnd, client);
 	
 	// Extend height of caption by 50%
 	Rect::value_type const CaptionExtension = bounds.Caption.height() / 2;

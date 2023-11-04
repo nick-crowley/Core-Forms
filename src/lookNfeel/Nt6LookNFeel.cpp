@@ -76,13 +76,15 @@ Nt6LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 }
 
 Response
-Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args) 
+Nt6LookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args) 
 {
 	ThrowIfNot(args, args.Graphics == nullopt);
 	args.beginPaint();
 
 	auto const activeCaption = args.CaptionState == WindowCaptionState::Active;
-	auto const components = this->nonclient(Coords::Window, args.Window.style(), args.Bounds, args.Client);
+	auto const components = this->nonClient(Coords::Window, args.Window.style(), args.Bounds, args.Client);
+	auto const style = dlg.style();
+	auto const& caption = dlg.caption();
 
 	// Draw frame
 	args.Graphics->setBrush(StockBrush::LightGrey);
@@ -100,9 +102,9 @@ Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 		args.Graphics->fillRect(components.Caption);
 	
 	// Draw caption text
-	args.Graphics->setFont(wnd.font());
+	args.Graphics->setFont(dlg.font());
 	args.Graphics->textColour(SystemColour::HighlightText, transparent);
-	args.Graphics->drawText(wnd.text(), components.Title, DrawTextFlags::SimpleLeft);
+	args.Graphics->drawText(dlg.text(), components.Title, DrawTextFlags::SimpleLeft);
 	
 	// Draw window icon
 	/*if (wnd.wndcls().SmallIcon)
@@ -114,14 +116,14 @@ Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 	}*/
 
 	// Draw maximize button
-	if (wnd.style().test(WindowStyle::MaximizeBox)) {
-		bool const pressed = args.CaptionButtons.MaximizeBtn == ButtonState::Pushed;
+	if (style.test(WindowStyle::MaximizeBox)) {
+		bool const pressed = caption.MaximizeBtn.state() == ButtonState::Pushed;
 		args.Graphics->drawControl(components.MaximizeBtn, DFC_CAPTION, DFCS_CAPTIONMAX|(pressed?DFCS_PUSHED:0));
 	}
 
 	// Draw minimize button
-	if (wnd.style().test(WindowStyle::MinimizeBox)) {
-		bool const pressed = args.CaptionButtons.MinimizeBtn == ButtonState::Pushed;
+	if (style.test(WindowStyle::MinimizeBox)) {
+		bool const pressed = caption.MinimizeBtn.state() == ButtonState::Pushed;
 		args.Graphics->drawControl(components.MinimizeBtn, DFC_CAPTION, DFCS_CAPTIONMIN|(pressed?DFCS_PUSHED:0));
 	}
 	
@@ -131,12 +133,12 @@ Nt6LookNFeel::draw(Window& wnd, NonClientPaintEventArgs& args)
 }
 
 NonClientLayout
-Nt6LookNFeel::nonclient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const 
+Nt6LookNFeel::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const 
 {
 	ThrowIf(results, results == Coords::Client);
 
 	// Base non-client area upon the default
-	NonClientLayout bounds = base::nonclient(results, style, wnd, client);
+	NonClientLayout bounds = base::nonClient(results, style, wnd, client);
 	
 	// Use smaller buttons than other styles
 	bounds.CloseBtn.inflate(-2);

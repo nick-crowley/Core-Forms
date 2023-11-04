@@ -141,8 +141,8 @@ namespace core::forms
 		}
 	
 		Response 
-		virtual draw(Window& wnd, NonClientPaintEventArgs& args) override {
-			return this->LogicImpl->draw(wnd, args);
+		virtual draw(Dialog& dlg, NonClientPaintEventArgs& args) override {
+			return this->LogicImpl->draw(dlg, args);
 		}
 
 		void 

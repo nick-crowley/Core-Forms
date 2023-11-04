@@ -54,7 +54,6 @@ namespace core::forms
 		std::optional<Region>          InvalidArea;
 		Window&                        Window;
 		WindowCaptionState             CaptionState;
-		WindowCaptionButtons           CaptionButtons;
 
 	public:
 		NonClientPaintEventArgs(forms::Window& window, ::WPARAM update, ::LPARAM) 
