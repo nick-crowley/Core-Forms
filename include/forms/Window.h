@@ -765,6 +765,9 @@ namespace core::forms
 		SetFontEvent            FontChanged;
 		ShowWindowEvent		    Shown;
 		ShowWindowEvent		    Hidden;
+		MouseEvent              MouseDown;
+		MouseEvent              MouseUp;
+		MouseEvent              MouseMove;
 		PaintWindowEvent	    Painted;
 		ResizeWindowEvent       Resized;
 		WindowEvent             Clicked;
@@ -1495,6 +1498,18 @@ namespace core::forms
 			
 			case WM_PAINT:
 				this->Painted.raise(*this, PaintWindowEventArgs{this});
+				return;
+			
+			case WM_LBUTTONDOWN:
+				this->MouseDown.raise(*this, MouseEventArgs{MouseMessage::ButtonDown,MouseButton::Left,wParam,lParam});
+				return;
+			
+			case WM_LBUTTONUP:
+				this->MouseUp.raise(*this, MouseEventArgs{MouseMessage::ButtonUp,MouseButton::Left,wParam,lParam});
+				return;
+			
+			case WM_MOUSEMOVE:
+				this->MouseMove.raise(*this, MouseEventArgs{MouseMessage::Move,MouseButton::None,wParam,lParam});
 				return;
 			
 			case WM_SETFONT:
