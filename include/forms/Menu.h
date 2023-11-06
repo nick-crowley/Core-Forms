@@ -268,8 +268,8 @@ namespace core::forms
 			state(MenuItemState newState) {
 				::MENUITEMINFO info{sizeof(info), MIIM_STATE};
 				info.fState = std::to_underlying(newState);
-				if (!::GetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
-					win::LastError{}.throwAlways("GetMenuItemState(#{}, {}) failed", to_string(this->Ident), core::to_string(newState));
+				if (!::SetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
+					win::LastError{}.throwAlways("SetMenuItemState(#{}, {}) failed", to_string(this->Ident), core::to_string(newState));
 			}
 			
 			void
