@@ -47,7 +47,15 @@
   </Type>
 
   <Type Name="core::forms::Rect">
-		<DisplayString>{{ {Left},{Top} [{Right-Left}x{Bottom-Top}] }}</DisplayString>
+		<DisplayString>{{{Left},{Top}}} [{Right-Left}x{Bottom-Top}]</DisplayString>
+    <Expand HideRawView="true">
+      <Item Name="[left]">Left</Item>
+      <Item Name="[top]">Top</Item>
+      <Item Name="[right]">Right</Item>
+      <Item Name="[bottom]">Bottom</Item>
+      <Item Name="[width]">Right-Left</Item>
+      <Item Name="[height]">Bottom-Top</Item>
+    </Expand>
 	</Type>
 
 	<Type Name="core::forms::Font">
