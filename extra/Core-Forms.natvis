@@ -58,7 +58,15 @@
     </Expand>
 	</Type>
 
-	<Type Name="core::forms::Font">
+  <Type Name="core::forms::Point">
+    <DisplayString>{{{X},{Y}}}</DisplayString>
+    <Expand HideRawView="true">
+      <Item Name="[X]">X</Item>
+      <Item Name="[Y]">Y</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="core::forms::Font">
 		<DisplayString>{Handle}</DisplayString>
 	</Type>
 
