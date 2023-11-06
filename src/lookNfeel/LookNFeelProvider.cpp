@@ -825,6 +825,7 @@ LookNFeelProvider::nonClient(Coords results, nstd::bitset<WindowStyle> style, Re
 		bounds.Caption += wnd.topLeft();
 		bounds.Title += wnd.topLeft();
 		bounds.CloseBtn += wnd.topLeft();
+		bounds.MenuBar += wnd.topLeft();
 		bounds.SysMenuBtn += wnd.topLeft();
 		bounds.MaximizeBtn += wnd.topLeft();
 		bounds.MinimizeBtn += wnd.topLeft();
