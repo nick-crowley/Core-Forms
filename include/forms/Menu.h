@@ -373,7 +373,8 @@ namespace core::forms
 			}
 			
 			Item
-			operator[](uint16_t id) const noexcept {
+			operator[](uint16_t id) const {
+				Invariant(id > 10); // You probably meant to call @c ItemCollection::at()
 				return Item{this->Owner, static_cast<ItemId>(id)};
 			}
 
