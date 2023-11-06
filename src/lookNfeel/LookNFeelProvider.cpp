@@ -247,7 +247,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 			args.Graphics.textColour(selectedTextColour.value_or(heading->Colour.value_or(ctrl.textColour())), transparent);
 			
 			// [HEADING] Draw heading and abort
-			args.Graphics.drawText(heading->Text, rcHeadingText, DrawTextFlags::Left);
+			args.Graphics.drawText(heading->Text, rcHeadingText, DrawTextFlags::SimpleLeft);
 			return;
 		}
 
