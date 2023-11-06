@@ -242,42 +242,51 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			using ControlAddressCollection = std::vector<Control*>;
+
+		public:
+			using const_iterator = ControlAddressCollection::const_iterator;
+			using iterator = ControlAddressCollection::iterator;
+			using value_type = ControlAddressCollection::value_type;
+			using reference = ControlAddressCollection::reference;
+			using const_reference = ControlAddressCollection::const_reference;
+			using size_type = ControlAddressCollection::size_type;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		private:
 			ControlAddressCollection  Controls;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			template <nstd::InputRangeConvertibleTo<Control*> AnyCollection>
-			explicit
+				requires (!std::same_as<std::remove_cvref_t<AnyCollection>, EarlyBoundControlCollection>)
+			explicit constexpr
 			EarlyBoundControlCollection(AnyCollection&& controls)
 				: Controls(std::from_range, std::forward<AnyCollection>(controls))
 			{}
 			
-			explicit
+			explicit constexpr
 			EarlyBoundControlCollection(std::initializer_list<Control*> controls)
 				: Controls(controls)
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			satisfies(EarlyBoundControlCollection,
-				IsSemiRegular
+				constexpr IsSemiRegular
 			);
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			ControlAddressCollection::const_iterator
-			begin() const noexcept { 
+			const_iterator constexpr
+			begin() const noexcept {
 				return this->Controls.begin(); 
 			}
 
-			ControlAddressCollection::const_iterator
-			end() const noexcept { 
+			const_iterator constexpr
+			end() const noexcept {
 				return this->Controls.end(); 
 			}
 
-			ControlAddressCollection::size_type
-			size() const noexcept { 
+			size_type constexpr
+			size() const noexcept {
 				return this->Controls.size();  
 			}
 
@@ -812,4 +821,26 @@ namespace core::forms
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
+// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-~o Test Code o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::forms::testing
+{
+	struct DialogSpy : Dialog 
+	{
+		//! @test  Verify @c Dialog::EarlyBoundControlCollection can be constructed
+		static_assert(EarlyBoundControlCollection{}.size() == 0);
+		
+		//! @test  Verify @c Dialog::EarlyBoundControlCollection::size() returns number of controls provided at construction
+		static_assert(EarlyBoundControlCollection{{nullptr, nullptr}}.size() == 2);
+
+		//! @test  Verify @c Dialog::EarlyBoundControlCollection move-constructor transfers all elements
+		static_assert(EarlyBoundControlCollection{
+			EarlyBoundControlCollection{{nullptr, nullptr}}
+		}.size() == 2);
+
+		//! @test  Verify @c Dialog::EarlyBoundControlCollection copy-constructor copies all elements
+		static_assert(EarlyBoundControlCollection{
+			(EarlyBoundControlCollection const&)EarlyBoundControlCollection{{nullptr, nullptr}}
+		}.size() == 2);
+	};
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
