@@ -37,8 +37,8 @@
 
   <Type Name="core::forms::Menu::Item">
     <Intrinsic Name="index" Expression="(int)Ident._Which"/>
-    <DisplayString Condition="index() == 0" Optional="true">Item #{Ident._Head}</DisplayString>
-    <DisplayString Condition="index() == 1" Optional="true">Item id={Ident._Tail._Head}</DisplayString>
+    <DisplayString Condition="index() == 0" Optional="true">Item cmd={Ident._Head}</DisplayString>
+    <DisplayString Condition="index() == 1" Optional="true">Item pos=#{Ident._Tail._Head}</DisplayString>
     <DisplayString>&lt;Cannot determine&gt;</DisplayString>
   </Type>
 

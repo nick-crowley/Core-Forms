@@ -124,7 +124,7 @@ namespace core::forms
 			std::string
 			static to_string(IdentVariant v) {
 				if (std::holds_alternative<int32_t>(v))
-					return std::format("#{}", std::get<int32_t>(v));
+					return std::format("idx=#{}", std::get<int32_t>(v));
 				return std::format("id={}", std::to_underlying(std::get<ItemId>(v)));
 			}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -174,7 +174,7 @@ namespace core::forms
 			ownerDraw() const {
 				::MENUITEMINFO info{sizeof(info), MIIM_FTYPE};
 				if (!::GetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
-					win::LastError{}.throwAlways("GetMenuItemType(#{}) failed", to_string(this->Ident));
+					win::LastError{}.throwAlways("GetMenuItemType({}) failed", to_string(this->Ident));
 				else 
 					return (info.fType & MFT_OWNERDRAW) != 0;
 			}
@@ -183,7 +183,7 @@ namespace core::forms
 			separator() const {
 				::MENUITEMINFO info{sizeof(info), MIIM_FTYPE};
 				if (!::GetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
-					win::LastError{}.throwAlways("GetMenuItemType(#{}) failed", to_string(this->Ident));
+					win::LastError{}.throwAlways("GetMenuItemType({}) failed", to_string(this->Ident));
 				else 
 					return (info.fType & MFT_SEPARATOR) != 0;
 			}
@@ -192,7 +192,7 @@ namespace core::forms
 			state() const {
 				::MENUITEMINFO info{sizeof(info), MIIM_STATE};
 				if (!::GetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
-					win::LastError{}.throwAlways("GetMenuItemState(#{}) failed", to_string(this->Ident));
+					win::LastError{}.throwAlways("GetMenuItemState({}) failed", to_string(this->Ident));
 				else 
 					return static_cast<MenuItemState>(info.fState);
 			}
@@ -216,7 +216,7 @@ namespace core::forms
 				info.dwTypeData = buffer;
 				info.cch = lengthof(buffer);
 				if (!::GetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info)) 
-					win::LastError{}.throwAlways("GetMenuItemString(#{}) failed", to_string(this->Ident));
+					win::LastError{}.throwAlways("GetMenuItemString({}) failed", to_string(this->Ident));
 				return buffer;
 			}
 			
@@ -236,7 +236,7 @@ namespace core::forms
 			data() const {
 				::MENUITEMINFO info{sizeof(info), MIIM_DATA};
 				if (!::GetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
-					win::LastError{}.throwAlways("GetMenuItemData(#{}) failed", to_string(this->Ident));
+					win::LastError{}.throwAlways("GetMenuItemData({}) failed", to_string(this->Ident));
 				else 
 					return reinterpret_cast<AnyType*>(info.dwItemData);
 			}
@@ -263,7 +263,7 @@ namespace core::forms
 					info.dwItemData = reinterpret_cast<uintptr_t>(data.get());
 					info.fType = MFT_OWNERDRAW;
 					if (!::SetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
-						win::LastError{}.throwAlways("SetMenuItemType(#{}) failed", to_string(this->Ident));
+						win::LastError{}.throwAlways("SetMenuItemType({}) failed", to_string(this->Ident));
 					data.release();
 				}
 				else
@@ -275,7 +275,7 @@ namespace core::forms
 				::MENUITEMINFO info{sizeof(info), MIIM_STATE};
 				info.fState = std::to_underlying(newState);
 				if (!::SetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
-					win::LastError{}.throwAlways("SetMenuItemState(#{}, {}) failed", to_string(this->Ident), core::to_string(newState));
+					win::LastError{}.throwAlways("SetMenuItemState({}, {}) failed", to_string(this->Ident), core::to_string(newState));
 			}
 			
 			void
@@ -286,7 +286,7 @@ namespace core::forms
 					::MENUITEMINFO info{sizeof(info), MIIM_STRING};
 					info.dwTypeData = const_cast<wchar_t*>(wstr.data());
 					if (!::SetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info)) 
-						win::LastError{}.throwAlways("SetMenuItemText(#{}, '{}') failed", to_string(this->Ident), cnarrow(wstr));
+						win::LastError{}.throwAlways("SetMenuItemText({}, '{}') failed", to_string(this->Ident), cnarrow(wstr));
 				}
 			}
 			
@@ -300,7 +300,7 @@ namespace core::forms
 					::MENUITEMINFO info{sizeof(info), MIIM_DATA};
 					info.dwItemData = reinterpret_cast<uintptr_t>(customUserData);
 					if (!::SetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
-						win::LastError{}.throwAlways("SetMenuItemData(#{}) failed", to_string(this->Ident));
+						win::LastError{}.throwAlways("SetMenuItemData({}) failed", to_string(this->Ident));
 				}
 			}
 		};
