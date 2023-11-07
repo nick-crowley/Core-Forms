@@ -478,6 +478,11 @@ namespace core::forms
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		bool
+		exists() const {
+			return ::IsMenu(*this->Handle);
+		}
+
 		SharedMenu
 		handle() const {
 			return this->Handle;

@@ -44,6 +44,36 @@ namespace core::forms
 	class EditControl : public Control 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		class UndocumentedMenuInitEventArgs 
+		{			
+			//! @brief  Parameter type for undocumented @c WM_UAHINITMENU message
+			//! @see    https://github.com/adzm/win32-custom-menubar-aero-theme/
+			struct UAHMENU
+			{
+				::HMENU hMenu;
+				::HDC hDC;
+				::DWORD dwFlags;
+			};
+
+		public:
+			enum UnknownFlags : uint32_t { None };
+
+		public:
+			forms::Menu  Menu;
+			UnknownFlags Flags;
+
+			UndocumentedMenuInitEventArgs(::WPARAM w, ::LPARAM l)
+			  : UndocumentedMenuInitEventArgs{*reinterpret_cast<UAHMENU*>(l)}
+			{}
+
+		private:
+			UndocumentedMenuInitEventArgs(UAHMENU& data)
+			  : Menu{forms::SharedMenu{data.hMenu, weakref}}, 
+			    Flags{data.dwFlags}
+			{}
+		};
+
 	protected:
 		class EditNotificationDictionary : public forms::MessageDictionary {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -92,6 +122,10 @@ namespace core::forms
 		using WindowClass = EditWindowClass;
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		UINT constexpr
+		static WM_UAHINITMENU = 0x0093;
+
 	public:
 		WindowEvent    TextChanged;
 		
@@ -148,9 +182,17 @@ namespace core::forms
 			}
 			return Unhandled;
 		}
-
+		
 		::LRESULT 
-		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
+		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override 
+		{
+			// Intercept an undocumented menu message to give us an opportunity to set the items of the context
+			//  menu to owner-draw mode. The documented @c WM_INITMENUPOPUP message doesn't appear to be sent
+			//  for the edit context menu.
+			if (message == WM_UAHINITMENU) 
+				if (UndocumentedMenuInitEventArgs args{wParam,lParam}; args.Menu.exists())
+					args.Menu.Items.ownerDraw(true);
+			
 			return this->subclassedWndProc(message, wParam, lParam);
 		}
 	};
