@@ -5,7 +5,6 @@ using namespace forms;
 
 MeasureMenuEventArgs::MeasureMenuEventArgs(forms::Window& wnd, ::MEASUREITEMSTRUCT& data) 
   : Item{data},
-	Menu{*ThrowIfEmpty(wnd.menu())},
 	Graphics{wnd.clientDC()}
 {
 }
