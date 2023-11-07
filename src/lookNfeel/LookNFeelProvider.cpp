@@ -748,7 +748,7 @@ LookNFeelProvider::draw(Window& wnd, OwnerDrawMenuEventArgs& args)
 		else {
 			Size constexpr SmallIcons{24,24};
 			Rect const GutterOffset{SmallIcons.Width + 3*Measurement{SystemMetric::cxEdge},0,0,0};
-			args.Graphics.drawText(detail.Text, args.Item.Area + GutterOffset, DrawTextFlags::SimpleLeft);
+			args.Graphics.drawText(detail.Text, args.Item.Area + GutterOffset, DrawTextFlags::SimpleLeft|DrawTextFlags::ExpandTabs);
 		}
 	}
 
@@ -771,18 +771,26 @@ LookNFeelProvider::measure(Window& wnd, MeasureMenuEventArgs& args)
 	else {
 		// Prefer item font; fallback to window font
 		args.Graphics.setFont(detail.Font.value_or(wnd.font()));
-		auto const size = args.Graphics.measureText(detail.Text);
+		auto size = args.Graphics.measureText(boost::replace_all_copy(detail.Text, L"\t", L"        "));
+		
+		//! @fix  This message doesn't seem to be sent for the majority of system-menu items so the measurements
+		//!       are incorrect overall. Compensate for this by falsely reporting the widest menu element when
+		//!       we detect any system-menu item is being measured
+		if (args.Item.Ident == SC_MOVE || args.Item.Ident == SC_SIZE) {
+			auto const minSize = args.Graphics.measureText(L"Close    Alt+F4");
+			size.Width = std::max(size.Width, minSize.Width);
+		}
 
-		// [TOP-LEVEL]
+		// [TOP-LEVEL] Cannot contain icons or shortcuts
 		if (item.IsTopLevel) {
 			args.Item.Height = std::max<uint32_t>(args.Item.Height, size.Height);
 			args.Item.Width = 4*Measurement{SystemMetric::cxEdge} + size.Width;
 		}
+		// [SUB-MENU] Account for both edges, icon gutter, divider gap, and text
 		else {
-			// Account for icon gutter and add significant gap on right-hand side
 			Size constexpr SmallIcons{24,24};
 			args.Item.Height = std::max<uint32_t>(SmallIcons.Height, size.Height);
-			args.Item.Width = 6*Measurement{SystemMetric::cxEdge} + SmallIcons.Width + 2*size.Width;
+			args.Item.Width = 6*Measurement{SystemMetric::cxEdge} + SmallIcons.Width + size.Width;
 		}
 	}
 
