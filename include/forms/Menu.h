@@ -441,9 +441,9 @@ namespace core::forms
 			}
 
 			void
-			ownerDraw(bool newState) {
+			ownerDraw(bool newState, bool isTopLevel = false) {
 				for (Item item : *this) {
-					item.ownerDraw(newState, true);
+					item.ownerDraw(newState, isTopLevel);
 					if (auto submenu = item.submenu(); submenu) 
 						for (Item subitem : submenu->Items) 
 							subitem.ownerDraw(newState, false);
