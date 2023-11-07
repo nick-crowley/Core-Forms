@@ -71,7 +71,6 @@ namespace core::forms
 		};
 
 	public:
-		uint16_t          Ident;		//!< Control Identifier
 		ItemData          Item;	
 		DeviceContext     mutable Graphics;
 		forms::Menu       Menu;
