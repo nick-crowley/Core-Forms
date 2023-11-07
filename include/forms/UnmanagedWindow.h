@@ -156,7 +156,7 @@ namespace core::forms
 		std::optional<Menu>
 		menu() const {
 			::HMENU const m = ::GetMenu(this->handle());
-			return nstd::make_optional_if<Menu>(m != nullptr, SharedMenu{m, weakref});
+			return nstd::make_optional_if<Menu>(::IsMenu(m), SharedMenu{m, weakref});
 		}
 
 		::HWND
