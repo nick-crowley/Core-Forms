@@ -723,8 +723,10 @@ LookNFeelProvider::draw(Window& wnd, OwnerDrawMenuEventArgs& args)
 	auto const& item = *args.Item.data<Menu::ItemData>();
 	auto const& detail = item.Detail;
 	auto const isSelected = args.Item.State.test(OwnerDrawState::Selected);
+	auto const isDisabled = args.Item.State.test(OwnerDrawState::Disabled|OwnerDrawState::Grayed);
 	auto const isSeparator = detail.Text.empty();
-	auto const backColour = isSelected && !isSeparator ? this->highlight() : wnd.backColour();
+	auto const backColour = isSelected && !isSeparator && !isDisabled ? this->highlight() : wnd.backColour();
+	auto const disabledTextColour = nstd::make_optional_if<AnyColour>(isDisabled, this->tertiary());
 	auto const selectedTextColour = nstd::make_optional_if<AnyColour>(isSelected, wnd.backColour());
 
 	// Background
@@ -738,7 +740,7 @@ LookNFeelProvider::draw(Window& wnd, OwnerDrawMenuEventArgs& args)
 	}
 	else {
 		args.Graphics.setFont(detail.Font.value_or(wnd.font()));
-		args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(wnd.textColour())));
+		args.Graphics.textColour(disabledTextColour.value_or(selectedTextColour.value_or(detail.Colour.value_or(wnd.textColour()))));
 		
 		// [TOP-LEVEL]
 		if (item.IsTopLevel)
