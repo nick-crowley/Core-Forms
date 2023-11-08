@@ -92,7 +92,6 @@ namespace core::forms
 			);
 		};
 
-	protected:
 		//! @brief  Distinguishes item ID type from similar index type
 		enum class ItemId : uint16_t {};
 
@@ -333,6 +332,7 @@ namespace core::forms
 			}
 		};
 		
+	protected:
 		class ItemCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
