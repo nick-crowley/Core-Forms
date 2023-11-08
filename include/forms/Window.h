@@ -904,6 +904,7 @@ namespace core::forms
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		using base::active;
 		using base::clientDC;
 		using base::clientPoint;
 		using base::clientRect;

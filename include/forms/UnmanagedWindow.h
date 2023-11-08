@@ -72,6 +72,11 @@ namespace core::forms
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		bool
+		active() const noexcept {
+			return this->handle() && (this->handle() == ::GetActiveWindow());
+		}
+
 		void
 		attach(::HWND wnd) noexcept {
 			this->Handle = wnd;
