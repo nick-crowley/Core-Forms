@@ -60,12 +60,16 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		//! @brief	Custom item data used for each element when in owner-draw mode
-		struct ItemData {
+		struct ItemData 
+		{
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			enum CustomItemState {None, Hover, Selected};
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			RichText                Detail;
-			std::optional<Icon>     Icon;
-			bool                    IsTopLevel = false;
-			void*                   UserData = nullptr;
+			nstd::bitset<CustomItemState>  CustomState = None;
+			RichText                       Detail;
+			std::optional<Icon>            Icon;
+			bool                           IsTopLevel = false;
+			void*                          UserData = nullptr;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			explicit
 			ItemData(std::wstring_view           text, 
@@ -149,6 +153,12 @@ namespace core::forms
 				Invariant(this->ownerDraw());
 				return this->data<ItemData>()->Detail;
 			}
+			
+			bool
+			hover() const {
+				Invariant(this->ownerDraw());
+				return this->data<ItemData>()->CustomState.test(ItemData::Hover);
+			}
 
 			std::optional<Icon>
 			icon() const {
@@ -177,6 +187,12 @@ namespace core::forms
 					win::LastError{}.throwAlways("GetMenuItemType({}) failed", to_string(this->Ident));
 				else 
 					return (info.fType & MFT_OWNERDRAW) != 0;
+			}
+			
+			bool
+			selected() const {
+				Invariant(this->ownerDraw());
+				return this->data<ItemData>()->CustomState.test(ItemData::Selected);
 			}
 
 			bool
@@ -253,6 +269,12 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			void
+			hover(bool newState) const {
+				Invariant(this->ownerDraw());
+				this->data<ItemData>()->CustomState.set(ItemData::Hover, newState);
+			}
+
+			void
 			ownerDraw(bool newState, bool topLevel) {
 				if (bool const oldState = this->ownerDraw(); oldState == newState)
 					return;
@@ -270,6 +292,12 @@ namespace core::forms
 					ThrowInvalidArg(newState, "Disabling owner-draw not implemented");
 			}
 			
+			void
+			selected(bool newState) {
+				Invariant(this->ownerDraw());
+				this->data<ItemData>()->CustomState.set(ItemData::Selected, newState);
+			}
+
 			void
 			state(MenuItemState newState) {
 				::MENUITEMINFO info{sizeof(info), MIIM_STATE};
