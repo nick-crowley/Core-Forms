@@ -268,7 +268,7 @@ namespace core::forms
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
 			void
-			hover(bool newState) const {
+			hover(bool newState) {
 				Invariant(this->ownerDraw());
 				this->data<ItemData>()->CustomState.set(ItemData::Hover, newState);
 			}
