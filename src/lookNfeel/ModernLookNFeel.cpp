@@ -236,10 +236,27 @@ ModernLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args)
 		args.Graphics->drawText(L"X", components.CloseBtn + pressedOffset, DrawTextFlags::SimpleCentre);
 	}
 
-	// Draw window menu bar background
-	if (components.Caption.Bottom < args.Client.Top) {
-		args.Graphics->setBrush(wnd.backColour());
-		args.Graphics->fillRect(components.MenuBar);
+	// Draw menu bar
+	if (auto menu = dlg.menu(); menu.has_value()) {
+		Rect const wndRect = dlg.wndRect();
+		Pen const primaryPen{this->primary(), 1};
+		Pen const backgroundPen{dlg.backColour(), 1};
+		auto const menuBar = dlg.menuBar(components.MenuBar + wndRect.topLeft());
+		Rect lastItemArea;
+		// Draw menu headings (top-level items)
+		for (auto last = menu->Items.back(); auto const item : menu->Items) {
+			auto const isSelected = item.hover(); 
+			auto const customArea = menuBar.area(item) - wndRect.topLeft();
+			args.Graphics->setPen(isSelected ? primaryPen : backgroundPen);
+			args.Graphics->setBrush(isSelected ? this->secondary() : dlg.backColour());
+			args.Graphics->drawRect(customArea);
+			args.Graphics->drawText(item.text(), customArea, DrawTextFlags::SimpleCentre);
+			if (item.index() == last.index())
+				lastItemArea = customArea;
+		}
+		// Fill remaining area between right-most item and window's right-hand edge
+		args.Graphics->setBrush(dlg.backColour());
+		args.Graphics->fillRect(components.MenuBar + Rect{lastItemArea.Right,0,0,0});
 	}
 
 	args.Graphics->restore();

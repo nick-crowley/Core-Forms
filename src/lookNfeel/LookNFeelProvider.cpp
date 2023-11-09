@@ -721,6 +721,11 @@ LookNFeelProvider::draw(Window& wnd, OwnerDrawMenuEventArgs& args)
 {
 	Invariant(args.Item.data<Menu::ItemData>() != nullptr);
 	auto const& item = *args.Item.data<Menu::ItemData>();
+	
+	// When using a custom non-client area, the menu-bar is drawn as part of the non-client paint cycle
+	if (this->customCaption() && item.IsTopLevel) 
+		return;
+
 	auto const& detail = item.Detail;
 	auto const isSelected = args.Item.State.test(OwnerDrawState::Selected);
 	auto const isDisabled = args.Item.State.test(OwnerDrawState::Disabled|OwnerDrawState::Grayed);

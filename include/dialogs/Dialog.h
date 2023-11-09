@@ -148,6 +148,82 @@ namespace core::forms
 				//! @todo  Extend forms::ButtonState enum to support mouse-hover
 			}
 		};
+		
+		//! @brief  Menu bar with a non-standard position (due to non-standard caption size)
+		class NonClientMenuBar
+		{
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			struct Item {
+				Rect        Area;
+				Menu::Item  Item;
+			};
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		private:
+			std::optional<Rect> CustomArea;
+			Dialog const&       Owner;
+			std::optional<Menu> Menu;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			explicit
+			NonClientMenuBar(Dialog const& owner, std::optional<Rect> area = nullopt)
+			  : CustomArea{area},
+			    Owner{owner},
+			    Menu{owner.menu()}
+			{
+			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+			satisfies(NonClientMenuBar,
+				NotDefaultConstructible,
+				NotCopyable,
+				NotMovable
+			);
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			Rect
+			area(Menu::Item item) const {
+				Rect const stockArea = item.area(this->Owner.handle());
+				if (!this->CustomArea)
+					return stockArea;
+				return Rect{Point{stockArea.Left, this->CustomArea->Top}, {stockArea.width(), this->CustomArea->height()}};
+			}
+
+			bool
+			exists() const {
+				return this->Menu.has_value();
+			}
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			std::tuple<std::optional<Item>, bool>
+			hoverAt(Point const& at)
+			{
+				Invariant(this->CustomArea);
+				bool anyStateChanged = false;
+				std::optional<Item> selected;
+				for (auto item : this->Menu->Items) {
+					Rect const itemArea = this->area(item);
+					bool const newState = itemArea.contains(at),
+					           prevState = item.hover();
+					item.hover(newState);
+					anyStateChanged |= (prevState != newState);
+					if (newState)
+						selected = {itemArea, item};
+				}
+				return std::make_tuple(selected, anyStateChanged);
+			}
+				
+			bool
+			resetAll()
+			{
+				bool anyStateChanged = false;
+				for (auto item : this->Menu->Items) {
+					if (auto const prevState = item.hover(); prevState) {
+						item.hover(false);
+						anyStateChanged = true;
+					}
+				}
+				return anyStateChanged;
+			}
+		};
 
 		//! @brief  Provides event-handling logic and maintains state for caption buttons
 		class WindowCaption 
@@ -169,6 +245,15 @@ namespace core::forms
 
 		private:
 			Response
+			onExitMenuLoop(Dialog& owner)
+			{
+				// Remove hover highlight from all menu items
+				NonClientMenuBar{owner}.resetAll();
+				owner.onNonClientPaint(NonClientPaintEventArgs{owner,Region{owner.nonClient().MenuBar}});
+				return Unhandled;
+			}
+
+			Response
 			onMouseUp(Dialog& owner, MouseEventArgs args) 
 			{
 				// Perform hit-test against the non-client area
@@ -188,6 +273,18 @@ namespace core::forms
 
 				return 0;
 			}
+
+			Response
+			onNonClientActivate(Dialog& owner, NonClientActivateEventArgs args) 
+			{
+				// [DEACTIVATING] Remove highlight from all menubar items
+				if (args.CaptionState == WindowCaptionState::Inactive)
+					NonClientMenuBar{owner}.resetAll();
+
+				// Repaint caption
+				owner.onNonClientPaint(NonClientPaintEventArgs{std::move(args)});
+				return args.AllowActivation;
+			}
 			
 			Response
 			onNonClientMouseDown(Dialog& owner, NonClientMouseEventArgs args) 
@@ -197,15 +294,27 @@ namespace core::forms
 				auto const object = bounds.hitTest(args.Position);
 				auto const style = owner.style(); 
 
-				// Delegate mouse-event to appropriate caption button
+				// [BUTTON] Delegate mouse-event to appropriate caption button
 				if (object == WindowHitTest::MaxButton && style.test(WindowStyle::MaximizeBox))
 					this->MaximizeBtn.onMouseDown(bounds.MaximizeBtn);
 				else if (object == WindowHitTest::MinButton && style.test(WindowStyle::MinimizeBox))
 					this->MinimizeBtn.onMouseDown(bounds.MinimizeBtn);
 				else if (object == WindowHitTest::CloseButton && style.test(WindowStyle::SysMenu))
 					this->CloseBtn.onMouseDown(bounds.CloseBtn);
-				else
+				// [MENU] Change selected menu-bar item and popup the appropriate sub-menu
+				else if (NonClientMenuBar menu{owner, bounds.MenuBar}; object == WindowHitTest::Menu && menu.exists()) {
+					auto const [selected, selectionChanged] = menu.hoverAt(args.Position);
+					if (selectionChanged)
+						owner.onNonClientPaint(NonClientPaintEventArgs{owner,Region{bounds.MenuBar}});
+					if (selected)
+						owner.popup(*selected->Item.submenu(), selected->Area.bottomLeft() - Point{0,4});
+				}
+				// [ELSEWHERE] Clear menu highlights, if any
+				else {
+					if (menu.exists() && menu.resetAll())
+						owner.onNonClientPaint(NonClientPaintEventArgs{owner,Region{bounds.MenuBar}});
 					return Unhandled;
+				}
 
 				return 0;
 			}
@@ -218,13 +327,19 @@ namespace core::forms
 				auto const object = bounds.hitTest(args.Position);
 				auto const style = owner.style();
 
-				// Delegate mouse-event to appropriate caption button
+				// [BUTTON] Delegate mouse-event to appropriate caption button
 				if (object == WindowHitTest::MaxButton && style.test(WindowStyle::MaximizeBox))
 					this->MaximizeBtn.onMouseMove(bounds.MaximizeBtn);
 				else if (object == WindowHitTest::MinButton && style.test(WindowStyle::MinimizeBox))
 					this->MinimizeBtn.onMouseMove(bounds.MinimizeBtn);
 				else if (object == WindowHitTest::CloseButton && style.test(WindowStyle::SysMenu))
 					this->CloseBtn.onMouseMove(bounds.CloseBtn);
+				// [MENU] Highlight relevant menubar item [except when window is inactive]
+				else if (NonClientMenuBar menu{owner, bounds.MenuBar}; object == WindowHitTest::Menu && menu.exists() && owner.active()) {
+					auto const [selected, selectionChanged] = menu.hoverAt(args.Position);
+					if (selectionChanged)
+						owner.onNonClientPaint(NonClientPaintEventArgs{owner,Region{bounds.MenuBar}});
+				}
 				else
 					return Unhandled;
 
@@ -438,6 +553,12 @@ namespace core::forms
 			return rc;
 		}
 	
+		NonClientMenuBar
+		menuBar(Rect menuBar) const noexcept
+		{
+			return NonClientMenuBar{*this, menuBar};
+		}
+
 		NonClientLayout 
 		nonClient() const noexcept
 		{
@@ -552,10 +673,8 @@ namespace core::forms
 		virtual onNonClientActivate(NonClientActivateEventArgs args) override 
 		{
 			// Repaint custom non-client area, if any
-			if (this->LookNFeel->customCaption()) {
-				this->onNonClientPaint(NonClientPaintEventArgs{std::move(args)});
-				return args.AllowActivation;
-			}
+			if (this->LookNFeel->customCaption()) 
+				return this->Caption.onNonClientActivate(*this, args);
 
 			return Unhandled;
 		}
@@ -664,6 +783,9 @@ namespace core::forms
 
 		::LRESULT 
 		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
+			if (message == WM_EXITMENULOOP)
+				this->Caption.onExitMenuLoop(*this);
+
 			return ::CallWindowProc(this->wndcls().OriginalWndProc, this->handle(), message, wParam, lParam);
 		}
 		

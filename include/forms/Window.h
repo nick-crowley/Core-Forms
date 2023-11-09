@@ -959,6 +959,11 @@ namespace core::forms
 			auto const wnd = ::GetParent(this->handle());
 			return wnd ? &Window::ExistingWindows[wnd] : nullptr;
 		}
+		
+		void
+		popup(Menu const& menu, Point pt) const noexcept {
+			::TrackPopupMenu(*menu.handle(), TPM_LEFTALIGN|TPM_TOPALIGN, pt.X, pt.Y, win::Reserved<int>, this->handle(), win::Unused<::RECT*>);
+		}
 
 		WindowRole
 		virtual role() const noexcept {
