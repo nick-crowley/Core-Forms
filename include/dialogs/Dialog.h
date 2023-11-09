@@ -196,6 +196,7 @@ namespace core::forms
 			std::tuple<std::optional<Item>, bool>
 			hoverAt(Point const& at)
 			{
+				Invariant(this->Menu);
 				Invariant(this->CustomArea);
 				bool anyStateChanged = false;
 				std::optional<Item> selected;
@@ -214,6 +215,7 @@ namespace core::forms
 			bool
 			resetAll()
 			{
+				Invariant(this->Menu);
 				bool anyStateChanged = false;
 				for (auto item : this->Menu->Items) {
 					if (auto const prevState = item.hover(); prevState) {
@@ -279,7 +281,8 @@ namespace core::forms
 			{
 				// [DEACTIVATING] Remove highlight from all menubar items
 				if (args.CaptionState == WindowCaptionState::Inactive)
-					NonClientMenuBar{owner}.resetAll();
+					if (NonClientMenuBar menu{owner}; menu.exists())
+						menu.resetAll();
 
 				// Repaint caption
 				owner.onNonClientPaint(NonClientPaintEventArgs{std::move(args)});
