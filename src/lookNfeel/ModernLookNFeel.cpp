@@ -185,33 +185,37 @@ ModernLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args)
 	ThrowIfNot(args, args.Graphics == nullopt);
 	args.beginPaint();
 
-	auto const activeCaption = args.CaptionState == WindowCaptionState::Active;
+	auto const isActive = args.CaptionState == WindowCaptionState::Active;
 	auto const components = this->nonClient(Coords::Window, args.Window.style(), args.Bounds, args.Client);
-	auto const captionColour = activeCaption ? this->caption().Active : this->caption().Inactive;
+	auto const captionColour = isActive ? this->caption().Active : this->caption().Inactive;
+	auto const textColour = isActive ? this->primary() : this->tertiary();
 	auto const style = dlg.style();
-	auto const& caption = dlg.caption();
 	AnyColour const buttonColours[2] { captionColour, this->secondary() };
 
-	// Draw window frame
+	// Draw window caption; colour according to activation-state
+	Region const captionArea{Rect{args.Bounds.Left, args.Bounds.Top, args.Bounds.Right, components.MenuBar.Top}};
 	args.Graphics->setBrush(captionColour);
+	args.Graphics->fillRegion(captionArea);
+
+	// Draw window frame consistently in 'active' colours
+	Region const frameEdges = args.Area - Region{args.Client} - captionArea;
+	args.Graphics->setBrush(this->caption().Active);
+	args.Graphics->fillRegion(frameEdges);
+
+	// Draw super-thin outline around entire window
 	args.Graphics->setPen(StockPen::Black);
-	args.Graphics->fillRegion(args.Area - Region{args.Client});
-	args.Graphics->frameRegion(args.Area, Brush{!activeCaption ? this->caption().Active : this->caption().Inactive}, Size{1,1});
-	
-	// Draw caption background
-	args.Graphics->setBrush(activeCaption ? this->caption().Active : this->caption().Inactive);
-	args.Graphics->fillRect(components.Caption);
+	args.Graphics->frameRegion(args.Area, Brush{textColour}, Size{1,1});
 	
 	// Draw caption text
 	args.Graphics->setFont(StockObject::SystemFixedFont);
-	args.Graphics->textColour(this->primary(), transparent);
+	args.Graphics->textColour(textColour, transparent);
 	args.Graphics->drawText(dlg.text(), components.Title, DrawTextFlags::SimpleLeft);
 
 	//! @todo  Draw application icon in caption
 	
 	// Draw maximize button
 	if (style.test(WindowStyle::MaximizeBox)) {
-		bool const isPressed = caption.MaximizeBtn.state() == ButtonState::Pushed;
+		bool const isPressed = dlg.caption().MaximizeBtn.state() == ButtonState::Pushed;
 		auto const pressedOffset = isPressed ? Point{1,1} : Point::Zero;
 		args.Graphics->setBrush(buttonColours[isPressed]);
 		args.Graphics->fillRect(components.MaximizeBtn);
@@ -220,7 +224,7 @@ ModernLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args)
 
 	// Draw minimize button
 	if (style.test(WindowStyle::MinimizeBox)) {
-		bool const isPressed = caption.MinimizeBtn.state() == ButtonState::Pushed;
+		bool const isPressed = dlg.caption().MinimizeBtn.state() == ButtonState::Pushed;
 		auto const pressedOffset = isPressed ? Point{1,1} : Point::Zero;
 		args.Graphics->setBrush(buttonColours[isPressed]);
 		args.Graphics->fillRect(components.MinimizeBtn);
@@ -229,7 +233,7 @@ ModernLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args)
 	
 	// Draw close button
 	if (style.test(WindowStyle::SysMenu)) {
-		bool const isPressed = caption.CloseBtn.state() == ButtonState::Pushed;
+		bool const isPressed = dlg.caption().CloseBtn.state() == ButtonState::Pushed;
 		auto const pressedOffset = isPressed ? Point{1,1} : Point::Zero;
 		args.Graphics->setBrush(buttonColours[isPressed]);
 		args.Graphics->fillRect(components.CloseBtn);
