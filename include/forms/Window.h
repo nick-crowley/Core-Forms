@@ -915,6 +915,7 @@ namespace core::forms
 		using base::info;
 		using base::handle;
 		using base::menu;
+		using base::menuBar;
 		using base::maximized;
 		using base::minimized;
 		using base::post;

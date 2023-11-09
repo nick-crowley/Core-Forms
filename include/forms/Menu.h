@@ -71,11 +71,12 @@ namespace core::forms
 			bool                           IsTopLevel = false;
 			void*                          UserData = nullptr;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			explicit
 			ItemData(std::wstring_view           text, 
+			         bool                        topLevel,
 			         std::optional<forms::Icon>  icon = nullopt) 
 			  : Detail{text}, 
-				Icon{icon}
+				Icon{icon},
+				IsTopLevel{topLevel}
 			{}
 			
 			explicit
@@ -123,7 +124,7 @@ namespace core::forms
 				NotSortable
 			);
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-		private:
+		protected:
 			std::string
 			static to_string(IdentVariant v) {
 				if (std::holds_alternative<int32_t>(v))
@@ -135,14 +136,8 @@ namespace core::forms
 			Rect
 			area() const {
 				Invariant(this->hasIndex());
-				return this->area(win::Unused<::HWND>);
-			}
-			
-			Rect
-			area(::HWND owner) const {
-				Invariant(this->hasIndex());
 				Rect r;
-				if (!::GetMenuItemRect(owner, *this->Owner->handle(), this->index(), static_cast<::RECT*>(r)))
+				if (!::GetMenuItemRect(win::Unused<::HWND>, this->handle(), this->index(), static_cast<::RECT*>(r)))
 					win::LastError{}.throwAlways("GetMenuItemRect({}) failed", to_string(this->Ident));
 				return r;
 			}
@@ -168,7 +163,7 @@ namespace core::forms
 			uint16_t
 			id() const {
 				if (!std::holds_alternative<ItemId>(this->Ident))
-					return win::Word{::GetMenuItemID(*this->Owner->handle(), this->index())};
+					return win::Word{::GetMenuItemID(this->handle(), this->index())};
 				else
 					return std::to_underlying(std::get<ItemId>(this->Ident));
 			}
@@ -182,7 +177,7 @@ namespace core::forms
 			bool
 			ownerDraw() const {
 				::MENUITEMINFO info{sizeof(info), MIIM_FTYPE};
-				if (!::GetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
+				if (!::GetMenuItemInfoW(this->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
 					win::LastError{}.throwAlways("GetMenuItemType({}) failed", to_string(this->Ident));
 				else 
 					return (info.fType & MFT_OWNERDRAW) != 0;
@@ -197,7 +192,7 @@ namespace core::forms
 			bool
 			separator() const {
 				::MENUITEMINFO info{sizeof(info), MIIM_FTYPE};
-				if (!::GetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
+				if (!::GetMenuItemInfoW(this->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
 					win::LastError{}.throwAlways("GetMenuItemType({}) failed", to_string(this->Ident));
 				else 
 					return (info.fType & MFT_SEPARATOR) != 0;
@@ -206,7 +201,7 @@ namespace core::forms
 			nstd::bitset<MenuItemState>
 			state() const {
 				::MENUITEMINFO info{sizeof(info), MIIM_STATE};
-				if (!::GetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
+				if (!::GetMenuItemInfoW(this->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
 					win::LastError{}.throwAlways("GetMenuItemState({}) failed", to_string(this->Ident));
 				else 
 					return static_cast<MenuItemState>(info.fState);
@@ -215,7 +210,7 @@ namespace core::forms
 			std::optional<Menu>
 			submenu() const {
 				Invariant(this->hasIndex());
-				if (::HMENU const sm = ::GetSubMenu(*this->Owner->handle(), this->index()); !sm)
+				if (::HMENU const sm = ::GetSubMenu(this->handle(), this->index()); !sm)
 					return nullopt;
 				else
 					return Menu{SharedMenu{sm, weakref}};
@@ -230,9 +225,14 @@ namespace core::forms
 				wchar_t buffer[64] {};
 				info.dwTypeData = buffer;
 				info.cch = lengthof(buffer);
-				if (!::GetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info)) 
+				if (!::GetMenuItemInfoW(this->handle(), this->ident(), win::Bool{this->Ident.index()}, &info)) 
 					win::LastError{}.throwAlways("GetMenuItemString({}) failed", to_string(this->Ident));
 				return buffer;
+			}
+
+			bool
+			virtual topLevel() const {
+				return false;
 			}
 			
 			template <nstd::Class UserData>
@@ -250,7 +250,7 @@ namespace core::forms
 			AnyType*
 			data() const {
 				::MENUITEMINFO info{sizeof(info), MIIM_DATA};
-				if (!::GetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
+				if (!::GetMenuItemInfoW(this->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
 					win::LastError{}.throwAlways("GetMenuItemData({}) failed", to_string(this->Ident));
 				else 
 					return reinterpret_cast<AnyType*>(info.dwItemData);
@@ -259,6 +259,11 @@ namespace core::forms
 			uint16_t
 			ident() const {
 				return std::holds_alternative<ItemId>(this->Ident) ? this->id() : win::Word{this->index()};
+			}
+
+			::HMENU
+			handle() const {
+				return *this->Owner->handle();
 			}
 
 			bool
@@ -274,21 +279,20 @@ namespace core::forms
 			}
 
 			void
-			ownerDraw(bool newState, bool topLevel) {
+			ownerDraw(bool newState) {
 				if (bool const oldState = this->ownerDraw(); oldState == newState)
 					return;
-				else if (newState) {
-					auto data = std::make_unique<ItemData>(this->text());
-					data->IsTopLevel = topLevel;
+				else if (!newState) 
+					ThrowInvalidArg(newState, "Disabling owner-draw not implemented");
+				else {
+					auto data = std::make_unique<ItemData>(this->text(), this->topLevel());
 					::MENUITEMINFO info{sizeof(info), MIIM_DATA|MIIM_FTYPE};
 					info.dwItemData = reinterpret_cast<uintptr_t>(data.get());
 					info.fType = MFT_OWNERDRAW;
-					if (!::SetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
+					if (!::SetMenuItemInfoW(this->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
 						win::LastError{}.throwAlways("SetMenuItemType({}) failed", to_string(this->Ident));
 					data.release();
 				}
-				else
-					ThrowInvalidArg(newState, "Disabling owner-draw not implemented");
 			}
 			
 			void
@@ -301,7 +305,7 @@ namespace core::forms
 			state(MenuItemState newState) {
 				::MENUITEMINFO info{sizeof(info), MIIM_STATE};
 				info.fState = std::to_underlying(newState);
-				if (!::SetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
+				if (!::SetMenuItemInfoW(this->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
 					win::LastError{}.throwAlways("SetMenuItemState({}, {}) failed", to_string(this->Ident), core::to_string(newState));
 			}
 			
@@ -312,7 +316,7 @@ namespace core::forms
 				else {
 					::MENUITEMINFO info{sizeof(info), MIIM_STRING};
 					info.dwTypeData = const_cast<wchar_t*>(wstr.data());
-					if (!::SetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info)) 
+					if (!::SetMenuItemInfoW(this->handle(), this->ident(), win::Bool{this->Ident.index()}, &info)) 
 						win::LastError{}.throwAlways("SetMenuItemText({}, '{}') failed", to_string(this->Ident), cnarrow(wstr));
 				}
 			}
@@ -326,21 +330,24 @@ namespace core::forms
 				else {
 					::MENUITEMINFO info{sizeof(info), MIIM_DATA};
 					info.dwItemData = reinterpret_cast<uintptr_t>(customUserData);
-					if (!::SetMenuItemInfoW(*this->Owner->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
+					if (!::SetMenuItemInfoW(this->handle(), this->ident(), win::Bool{this->Ident.index()}, &info))
 						win::LastError{}.throwAlways("SetMenuItemData({}) failed", to_string(this->Ident));
 				}
 			}
 		};
 		
 	protected:
-		class ItemCollection {
+		template <typename Value>
+			requires std::is_base_of_v<Item,Value>
+		class ItemCollection 
+		{
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			using iterator = boost::transform_iterator<std::function<Item(int32_t)>, CountingIterator>;
-			using const_iterator = boost::transform_iterator<std::function<Item const(int32_t)>, CountingIterator>;
-			using reference = Item&;
-			using const_reference = Item const&;
-			using value_type = Item;
+			using iterator = boost::transform_iterator<std::function<Value(int32_t)>, CountingIterator>;
+			using const_iterator = boost::transform_iterator<std::function<Value const(int32_t)>, CountingIterator>;
+			using reference = Value&;
+			using const_reference = Value const&;
+			using value_type = Value;
 			using size_type = iterator::difference_type;
 			using difference_type = iterator::difference_type;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -366,14 +373,14 @@ namespace core::forms
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			Item
+			value_type
 			at(size_type idx) const noexcept {
-				return Item{this->Owner, idx};
+				return value_type{this->Owner, idx};
 			}
 
-			Item
+			value_type
 			back() const noexcept {
-				return Item{this->Owner, this->size() - 1};
+				return value_type{this->Owner, this->size() - 1};
 			}
 
 			const_iterator
@@ -396,9 +403,9 @@ namespace core::forms
 				return make_iterator<const_iterator>(this->size());
 			}
 			
-			Item
+			value_type
 			front() const noexcept {
-				return Item{this->Owner, 0};
+				return value_type{this->Owner, 0};
 			}
 
 			size_type 
@@ -406,10 +413,10 @@ namespace core::forms
 				return ::GetMenuItemCount(*this->Owner.handle());
 			}
 			
-			Item
+			value_type
 			operator[](uint16_t id) const {
 				Invariant(id > 10); // You probably meant to call @c ItemCollection::at()
-				return Item{this->Owner, static_cast<ItemId>(id)};
+				return value_type{this->Owner, static_cast<ItemId>(id)};
 			}
 
 		private:
@@ -419,7 +426,7 @@ namespace core::forms
 				return AnyIterator{
 					CountingIterator{&this->Owner, idx},
 					[this](int32_t n) { 
-						return Item{this->Owner, n}; 
+						return value_type{this->Owner, n}; 
 					}
 				};
 			}
@@ -438,7 +445,7 @@ namespace core::forms
 			iterator
 			insert(const_iterator pos, std::wstring_view text) 
 			{
-				Item{this->Owner, pos->index()}.text(text);
+				value_type{this->Owner, pos->index()}.text(text);
 				return this->make_iterator<iterator>(pos->index());
 			}
 			
@@ -448,7 +455,7 @@ namespace core::forms
 			       std::optional<forms::Icon> icon = nullopt) 
 			{
 				// [OWNER-DRAW] Create item data
-				auto data = std::make_unique<ItemData>(text, icon);
+				auto data = std::make_unique<ItemData>(text, this->front().topLevel(), icon);
 				::MENUITEMINFO info{sizeof(info), MIIM_DATA};
 				info.dwItemData = reinterpret_cast<uintptr_t>(data.get());
 				if (!::SetMenuItemInfoW(*this->Owner.handle(), pos->index(), TRUE, &info))
@@ -469,12 +476,12 @@ namespace core::forms
 			}
 
 			void
-			ownerDraw(bool newState, bool isTopLevel = false) {
-				for (Item item : *this) {
-					item.ownerDraw(newState, isTopLevel);
-					if (auto submenu = item.submenu(); submenu) 
-						for (Item subitem : submenu->Items) 
-							subitem.ownerDraw(newState, false);
+			ownerDraw(bool newState) {
+				for (value_type item : *this) {
+					item.ownerDraw(newState);
+					if (std::optional<Menu> submenu = item.submenu(); submenu) 
+						for (auto subitem : submenu->Items) 
+							subitem.ownerDraw(newState);
 				}
 			}
 		};
@@ -483,7 +490,7 @@ namespace core::forms
 		SharedMenu  Handle;
 
 	public:
-		ItemCollection  Items;
+		ItemCollection<Item>  Items;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		explicit
@@ -493,14 +500,20 @@ namespace core::forms
 		{}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		satisfies(Menu,
-			NotCopyable,
+			NotCopyAssignable,
 			NotMoveAssignable,
 			NotEqualityComparable,
 			NotSortable
 		);
+		
+		Menu(Menu const& r) noexcept
+		  : Handle{r.Handle},
+		    Items{*this}
+		{}
 
 		Menu(Menu&& r) noexcept
-		  : Menu{std::move(r.Handle)}
+		  : Handle{std::move(r.Handle)},
+		    Items{*this}
 		{}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	

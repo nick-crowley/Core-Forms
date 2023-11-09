@@ -30,6 +30,7 @@
 #include "graphics/Graphics.h"
 #include "forms/AccessibilityFlags.h"
 #include "forms/Menu.h"
+#include "forms/MenuBar.h"
 #include "forms/ScrollBarInfo.h"
 #include "forms/WindowClass.h"
 #include "forms/WindowInfo.h"
@@ -162,6 +163,13 @@ namespace core::forms
 		menu() const {
 			::HMENU const m = ::GetMenu(this->handle());
 			return nstd::make_optional_if<Menu>(::IsMenu(m), SharedMenu{m, weakref});
+		}
+		
+		std::optional<MenuBar>
+		menuBar() const noexcept
+		{
+			::HMENU const mb = ::GetMenu(this->handle());
+			return nstd::make_optional_if<MenuBar>(::IsMenu(mb), SharedMenu{mb, weakref});
 		}
 
 		::HWND
