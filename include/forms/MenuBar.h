@@ -45,22 +45,22 @@ namespace core::forms
 		using base = Menu;
 
 	public:
-		//! @brief	Facade for a single item identified either by zero-based index or unique identifier
-		class Item : private base::Item 
+		//! @brief	Proxy for a single item identified either by zero-based index or unique identifier
+		class ItemProxy : private base::ItemProxy 
 		{
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			using base = Menu::Item;
+			using base = Menu::ItemProxy;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			Item(Menu& owner, int32_t idx) noexcept
+			ItemProxy(Menu& owner, int32_t idx) noexcept
 			  : base{owner, idx}
 			{}
 			
-			Item(Menu&, ItemId) noexcept = delete;
+			ItemProxy(Menu&, ItemId) noexcept = delete;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			satisfies(Item, 
+			satisfies(ItemProxy, 
 				NotDefaultConstructible,
 				IsCopyable, 
 				IsMovable,
@@ -109,14 +109,16 @@ namespace core::forms
 		};
 		
 	protected:
-		class ItemCollection : public base::ItemCollection<Item>
+		// @brief  Collection facade for menu-bar items
+		class ItemCollection : public base::ItemCollection<ItemProxy>
 		{
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			using base = Menu::ItemCollection<Item>;
+			using base = Menu::ItemCollection<ItemProxy>;
 
+			// @brief  Currently selected menu-bar item
 			struct SelectedItem {
-				Rect  Area;
-				Item  Selected;
+				Rect       Area;
+				ItemProxy  Selected;
 			};
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		

@@ -96,8 +96,8 @@ namespace core::forms
 		//! @brief  Distinguishes item ID type from similar index type
 		enum class ItemId : uint16_t {};
 
-		//! @brief	Facade for a single item identified either by zero-based index or unique identifier
-		class Item {
+		//! @brief	Proxy for a single item identified either by zero-based index or unique identifier
+		class ItemProxy {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 			using IdentVariant = std::variant<ItemId, int32_t>;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -106,17 +106,17 @@ namespace core::forms
 			IdentVariant Ident;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			Item(Menu& owner, ItemId id) noexcept
+			ItemProxy(Menu& owner, ItemId id) noexcept
 			  : Owner{&owner}, 
 			    Ident{id}
 			{}
 			
-			Item(Menu& owner, int32_t idx) noexcept
+			ItemProxy(Menu& owner, int32_t idx) noexcept
 			  : Owner{&owner}, 
 			    Ident{idx}
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			satisfies(Item, 
+			satisfies(ItemProxy, 
 				NotDefaultConstructible,
 				IsCopyable, 
 				IsMovable,
@@ -337,8 +337,9 @@ namespace core::forms
 		};
 		
 	protected:
+		// @brief  Collection facade for submenu items
 		template <typename Value>
-			requires std::is_base_of_v<Item,Value>
+			requires std::is_base_of_v<ItemProxy,Value>
 		class ItemCollection 
 		{
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -490,7 +491,7 @@ namespace core::forms
 		SharedMenu  Handle;
 
 	public:
-		ItemCollection<Item>  Items;
+		ItemCollection<ItemProxy>  Items;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		explicit

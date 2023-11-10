@@ -159,8 +159,8 @@ namespace core::forms
 			);
 		};
 
-		//! @brief	Facade for a single column at a fixed index
-		class Column {
+		//! @brief	Proxy for a single column at a fixed index
+		class ColumnProxy {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -169,12 +169,12 @@ namespace core::forms
 			int32_t           Index;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			Column(ListViewControl& owner, int32_t idx) noexcept
+			ColumnProxy(ListViewControl& owner, int32_t idx) noexcept
 			  : Owner{&owner}, 
 			    Index{idx}
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			satisfies(Column, 
+			satisfies(ColumnProxy, 
 				NotDefaultConstructible,
 				IsCopyable, 
 				IsMovable,
@@ -247,11 +247,11 @@ namespace core::forms
 		class ColumnCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			using iterator = boost::transform_iterator<std::function<Column(int32_t)>, CountingIterator>;
-			using const_iterator = boost::transform_iterator<std::function<Column const(int32_t)>, CountingIterator>;
-			using reference = Column&;
-			using const_reference = Column const&;
-			using value_type = Column;
+			using iterator = boost::transform_iterator<std::function<ColumnProxy(int32_t)>, CountingIterator>;
+			using const_iterator = boost::transform_iterator<std::function<ColumnProxy const(int32_t)>, CountingIterator>;
+			using reference = ColumnProxy&;
+			using const_reference = ColumnProxy const&;
+			using value_type = ColumnProxy;
 			using size_type = iterator::difference_type;
 			using difference_type = iterator::difference_type;
 			
@@ -281,9 +281,9 @@ namespace core::forms
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			Column
+			ColumnProxy
 			back() const noexcept {
-				return Column{this->Owner, this->size() - 1};
+				return ColumnProxy{this->Owner, this->size() - 1};
 			}
 
 			const_iterator
@@ -306,9 +306,9 @@ namespace core::forms
 				return this->make_iterator<const_iterator>(this->size());
 			}
 
-			Column
+			ColumnProxy
 			front() const noexcept {
-				return Column{this->Owner, 0};
+				return ColumnProxy{this->Owner, 0};
 			}
 
 			size_type 
@@ -316,9 +316,9 @@ namespace core::forms
 				return Header_GetItemCount(ListView_GetHeader(this->Owner.handle()));
 			}
 			
-			Column
+			ColumnProxy
 			operator[](size_type idx) const noexcept {
-				return Column(this->Owner, idx);
+				return ColumnProxy(this->Owner, idx);
 			}
 
 		private:
@@ -328,7 +328,7 @@ namespace core::forms
 				return AnyIterator{
 					CountingIterator{&this->Owner, idx},
 					[this](int32_t n) { 
-						return Column{this->Owner, n}; 
+						return ColumnProxy{this->Owner, n}; 
 					}
 				};
 			}
@@ -436,8 +436,8 @@ namespace core::forms
 			}
 		};
 
-		//! @brief	Facade for a sub-item at a fixed index
-		class SubItem {
+		//! @brief	Proxy for a sub-item at a fixed index
+		class SubItemProxy {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -447,13 +447,13 @@ namespace core::forms
 			int32_t           Index;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			SubItem(ListViewControl& owner, int32_t item, int32_t idx) noexcept
+			SubItemProxy(ListViewControl& owner, int32_t item, int32_t idx) noexcept
 			  : Owner{&owner},
 			    ItemIdx{item},
 			    Index{idx}
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			satisfies(SubItem, 
+			satisfies(SubItemProxy, 
 				NotDefaultConstructible,
 				IsCopyable, 
 				IsMovable,
@@ -554,11 +554,11 @@ namespace core::forms
 		class SubItemCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			using iterator = boost::transform_iterator<std::function<SubItem(int32_t)>, CountingIterator>;
-			using const_iterator = boost::transform_iterator<std::function<SubItem const(int32_t)>, CountingIterator>;
-			using reference = SubItem&;
-			using const_reference = SubItem const&;
-			using value_type = SubItem;
+			using iterator = boost::transform_iterator<std::function<SubItemProxy(int32_t)>, CountingIterator>;
+			using const_iterator = boost::transform_iterator<std::function<SubItemProxy const(int32_t)>, CountingIterator>;
+			using reference = SubItemProxy&;
+			using const_reference = SubItemProxy const&;
+			using value_type = SubItemProxy;
 			using size_type = iterator::difference_type;
 			using difference_type = iterator::difference_type;
 			
@@ -590,9 +590,9 @@ namespace core::forms
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			SubItem
+			SubItemProxy
 			back() const noexcept {
-				return SubItem{this->Owner, this->ItemIdx, this->size() - 1};
+				return SubItemProxy{this->Owner, this->ItemIdx, this->size() - 1};
 			}
 
 			const_iterator
@@ -615,9 +615,9 @@ namespace core::forms
 				return this->make_iterator<const_iterator>(this->size());
 			}
 			
-			SubItem
+			SubItemProxy
 			front() const noexcept {
-				return SubItem{this->Owner, this->ItemIdx, 0};
+				return SubItemProxy{this->Owner, this->ItemIdx, 0};
 			}
 
 			size_type 
@@ -626,10 +626,10 @@ namespace core::forms
 				return this->Owner.Columns.size() - 1;
 			}
 			
-			SubItem
+			SubItemProxy
 			operator[](size_type idx) const {
 				Invariant(this->Owner.handle());
-				return SubItem(this->Owner, this->ItemIdx, idx);
+				return SubItemProxy(this->Owner, this->ItemIdx, idx);
 			}
 
 		private:
@@ -639,7 +639,7 @@ namespace core::forms
 				return AnyIterator{
 					CountingIterator{&this->Owner, idx},
 					[this](int32_t n) { 
-						return SubItem{this->Owner, this->ItemIdx, n}; 
+						return SubItemProxy{this->Owner, this->ItemIdx, n}; 
 					}
 				};
 			}
@@ -671,8 +671,8 @@ namespace core::forms
 			push_back(RichText text) = delete;
 		};
 
-		//! @brief	Facade for a single item at a fixed index
-		class Item {
+		//! @brief	Proxy for a single item at a fixed index
+		class ItemProxy {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -684,13 +684,13 @@ namespace core::forms
 			SubItemCollection SubItems;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			Item(ListViewControl& owner, int32_t idx) noexcept
+			ItemProxy(ListViewControl& owner, int32_t idx) noexcept
 			  : Owner{&owner}, 
 			    Index{idx},
 				SubItems{owner,idx}
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			satisfies(Item, 
+			satisfies(ItemProxy, 
 				NotDefaultConstructible,
 				IsCopyable, 
 				IsMovable,
@@ -820,11 +820,11 @@ namespace core::forms
 		class ItemCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			using iterator = boost::transform_iterator<std::function<Item(int32_t)>, CountingIterator>;
-			using const_iterator = boost::transform_iterator<std::function<Item const(int32_t)>, CountingIterator>;
-			using reference = Item&;
-			using const_reference = Item const&;
-			using value_type = Item;
+			using iterator = boost::transform_iterator<std::function<ItemProxy(int32_t)>, CountingIterator>;
+			using const_iterator = boost::transform_iterator<std::function<ItemProxy const(int32_t)>, CountingIterator>;
+			using reference = ItemProxy&;
+			using const_reference = ItemProxy const&;
+			using value_type = ItemProxy;
 			using size_type = iterator::difference_type;
 			using difference_type = iterator::difference_type;
 			
@@ -854,9 +854,9 @@ namespace core::forms
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			Item
+			ItemProxy
 			back() const noexcept {
-				return Item{this->Owner, this->size() - 1};
+				return ItemProxy{this->Owner, this->size() - 1};
 			}
 
 			const_iterator
@@ -879,17 +879,17 @@ namespace core::forms
 				return this->make_iterator<const_iterator>(this->size());
 			}
 
-			std::optional<Item>
+			std::optional<ItemProxy>
 			find(std::wstring_view item) const /*noexcept*/ {
 				throw runtime_error{"Not implemented"}; 
 			}
 			
-			Item
+			ItemProxy
 			front() const noexcept {
-				return Item{this->Owner, 0};
+				return ItemProxy{this->Owner, 0};
 			}
 
-			std::optional<Item>
+			std::optional<ItemProxy>
 			selected() const /*noexcept*/ {
 				throw runtime_error{"Not implemented"}; 
 			}
@@ -900,15 +900,15 @@ namespace core::forms
 				return ListView_GetItemCount(this->Owner.handle());
 			}
 			
-			std::optional<Item>
+			std::optional<ItemProxy>
 			substr(std::wstring_view substring) const /*noexcept*/ {
 				throw runtime_error{"Not implemented"}; 
 			}
 
-			Item
+			ItemProxy
 			operator[](size_type idx) const {
 				Invariant(this->Owner.handle());
-				return Item(this->Owner, idx);
+				return ItemProxy(this->Owner, idx);
 			}
 
 		private:
@@ -918,7 +918,7 @@ namespace core::forms
 				return AnyIterator{
 					CountingIterator{&this->Owner, idx},
 					[this](int32_t n) { 
-						return Item{this->Owner, n}; 
+						return ItemProxy{this->Owner, n}; 
 					}
 				};
 			}
@@ -1018,7 +1018,7 @@ namespace core::forms
 			}
 	
 			void
-			select(Item const& item) /*noexcept*/ {
+			select(ItemProxy const& item) /*noexcept*/ {
 				throw runtime_error{"Not implemented"};
 			}
 			

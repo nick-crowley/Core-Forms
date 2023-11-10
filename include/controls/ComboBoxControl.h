@@ -110,8 +110,8 @@ namespace core::forms
 		//! @brief	Custom item data used for each element when in owner-draw mode
 		using ItemData = ListBoxItemData;
 
-		//! @brief	Facade for a single item at a fixed index
-		class Item {
+		//! @brief	Proxy for a single item at a fixed index
+		class ItemProxy {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -120,12 +120,12 @@ namespace core::forms
 			int32_t           Index;
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			Item(ComboBoxControl& owner, int32_t idx) noexcept
+			ItemProxy(ComboBoxControl& owner, int32_t idx) noexcept
 			  : Owner{&owner}, 
 			    Index{idx}
 			{}
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-			satisfies(Item, 
+			satisfies(ItemProxy, 
 				NotDefaultConstructible,
 				IsCopyable, 
 				IsMovable,
@@ -216,14 +216,15 @@ namespace core::forms
 			}
 		};
 
+		//! @brief  Collection facade representing existing items
 		class ItemCollection {
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			using iterator = boost::transform_iterator<std::function<Item(int32_t)>, CountingIterator>;
-			using const_iterator = boost::transform_iterator<std::function<Item const(int32_t)>, CountingIterator>;
-			using reference = Item&;
-			using const_reference = Item const&;
-			using value_type = Item;
+			using iterator = boost::transform_iterator<std::function<ItemProxy(int32_t)>, CountingIterator>;
+			using const_iterator = boost::transform_iterator<std::function<ItemProxy const(int32_t)>, CountingIterator>;
+			using reference = ItemProxy&;
+			using const_reference = ItemProxy const&;
+			using value_type = ItemProxy;
 			using size_type = iterator::difference_type;
 			using difference_type = iterator::difference_type;
 			
@@ -253,9 +254,9 @@ namespace core::forms
 
 			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
 		public:
-			Item
+			ItemProxy
 			back() const noexcept {
-				return Item{this->Owner, this->size() - 1};
+				return ItemProxy{this->Owner, this->size() - 1};
 			}
 
 			const_iterator
@@ -278,17 +279,17 @@ namespace core::forms
 				return this->make_iterator<const_iterator>(this->size());
 			}
 
-			std::optional<Item>
+			std::optional<ItemProxy>
 			find(std::wstring_view item) const noexcept {
 				if (size_type const idx = ComboBox_FindStringExact(this->Owner.handle(), 0, item.data()); idx == CB_ERR)
 					return nullopt;
 				else
-					return Item{this->Owner, idx};
+					return ItemProxy{this->Owner, idx};
 			}
 		
-			Item
+			ItemProxy
 			front() const noexcept {
-				return Item{this->Owner, 0};
+				return ItemProxy{this->Owner, 0};
 			}
 
 			uint32_t
@@ -297,12 +298,12 @@ namespace core::forms
 				return ComboBox_GetItemHeight(this->Owner.handle());
 			}
 
-			std::optional<Item>
+			std::optional<ItemProxy>
 			selected() const noexcept {
 				if (size_type const idx = ComboBox_GetCurSel(this->Owner.handle()); idx == CB_ERR)
 					return nullopt;
 				else 
-					return Item{this->Owner, idx};
+					return ItemProxy{this->Owner, idx};
 			}
 			
 			size_type 
@@ -310,17 +311,17 @@ namespace core::forms
 				return ComboBox_GetCount(this->Owner.handle());
 			}
 			
-			std::optional<Item>
+			std::optional<ItemProxy>
 			substr(std::wstring_view substring) const noexcept {
 				if (size_type const idx = ComboBox_FindStringExact(this->Owner.handle(), 0, substring.data()); idx == CB_ERR)
 					return nullopt;
 				else
-					return Item{this->Owner, idx};
+					return ItemProxy{this->Owner, idx};
 			}
 
-			Item
+			ItemProxy
 			operator[](size_type idx) const noexcept {
-				return Item(this->Owner, idx);
+				return ItemProxy(this->Owner, idx);
 			}
 
 		private:
@@ -330,7 +331,7 @@ namespace core::forms
 				return AnyIterator{
 					CountingIterator{&this->Owner, idx},
 					[this](int32_t n) { 
-						return Item{this->Owner, n}; 
+						return ItemProxy{this->Owner, n}; 
 					}
 				};
 			}
@@ -474,7 +475,7 @@ namespace core::forms
 			}
 
 			void
-			select(Item const& item) noexcept {
+			select(ItemProxy const& item) noexcept {
 				ComboBox_SetCurSel(this->Owner.handle(), item.index());
 			}
 
