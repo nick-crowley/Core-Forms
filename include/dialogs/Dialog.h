@@ -789,18 +789,21 @@ namespace core::forms
 			auto const container = source.handle();
 			auto const owner = parent ? parent->handle() : nullptr;
 			if (mode == DialogMode::Modal) { 
-				auto result = ::DialogBoxIndirectW(container, blob, owner, this->DialogProc);
-				if (result == -1)
-					win::LastError{}.throwIfError("Failed to display '{}' dialog", to_string(this->DialogId));
+				auto result = ::DialogBoxIndirectParamW(container, blob, owner, this->DialogProc, win::Unused<LPARAM>);
+				if (win::LastError err; result == -1 || (result == 0 && !err))
+					err.throwAlways("Failed to display '{}' dialog", to_string(this->DialogId));
 
 				this->DisplayMode = nullopt;
 				return result;
 			}
 
 			// [MODELESS] Display, set handle, and return nothing
-			if (auto* const dlg = ::CreateDialogIndirectW(container, blob, owner, this->DialogProc); dlg)
+			if (auto* const dlg = ::CreateDialogIndirectW(container, blob, owner, this->DialogProc); !dlg)
+				win::LastError{}.throwAlways("Failed to display '{}' dialog", to_string(this->DialogId));
+			else {
 				this->attach(dlg);
-			return nullopt;
+				return nullopt;
+			}
 		}
 		
 		DialogTemplateBlob
