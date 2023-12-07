@@ -790,10 +790,10 @@ namespace core::forms
 			auto const owner = parent ? parent->handle() : nullptr;
 			if (mode == DialogMode::Modal) { 
 				auto result = ::DialogBoxIndirectParamW(container, blob, owner, this->DialogProc, win::Unused<LPARAM>);
+				this->DisplayMode = nullopt;
+
 				if (win::LastError err; result == -1 || (result == 0 && !err))
 					err.throwAlways("Failed to display '{}' dialog", to_string(this->DialogId));
-
-				this->DisplayMode = nullopt;
 				return result;
 			}
 
