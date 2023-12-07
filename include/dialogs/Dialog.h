@@ -843,23 +843,23 @@ namespace core::forms
 		void 
 		CloseBtn_Clicked(Window& self) 
 		{
-			this->destroy();
+			this->post<WM_SYSCOMMAND>(SC_CLOSE);
 		}
 
 		void 
 		MaximizeBtn_Clicked(Window& self) 
 		{
 			if (this->maximized())
-				this->restore();
+				this->post<WM_SYSCOMMAND>(SC_RESTORE);
 			else
-				this->maximize();
+				this->post<WM_SYSCOMMAND>(SC_MAXIMIZE);
 		}
 
 		void 
 		MinimizeBtn_Clicked(Window& self) 
 		{
 			if (!this->minimized())
-				this->minimize();
+				this->post<WM_SYSCOMMAND>(SC_MINIMIZE);
 		}
 	};
 }	// namespace core::forms
