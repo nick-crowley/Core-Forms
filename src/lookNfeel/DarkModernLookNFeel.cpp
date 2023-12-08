@@ -10,13 +10,13 @@ DarkModernLookNFeel::Instance = std::make_shared<DarkModernLookNFeel>();
 DarkModernLookNFeel::DarkModernLookNFeel()
 {
 	this->Colours.Button = SystemColour::ButtonDkShadow;
-	this->Colours.Caption = {to_colour(36,36,36), Colour::Black};
-	this->Colours.Control = to_colour(36,36,36);
+	this->Colours.Caption = { .Active = Colour::Black, .Inactive = Colour::DarkGrey};
+	this->Colours.Control = Colour::DarkGrey;
     this->Colours.Highlight = SystemColour::GrayText;
     this->Colours.Primary = Colour::White;
     this->Colours.Secondary = SystemColour::ButtonDkShadow;
     this->Colours.Tertiary = SystemColour::ButtonShadow;
-	this->Colours.Window = to_colour(36,36,36);
+	this->Colours.Window = Colour::DarkGrey;
 }
 
 #ifndef DWMWA_USE_IMMERSIVE_DARK_MODE

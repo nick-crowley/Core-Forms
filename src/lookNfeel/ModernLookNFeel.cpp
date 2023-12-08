@@ -197,9 +197,9 @@ ModernLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args)
 	args.Graphics->setBrush(captionColour);
 	args.Graphics->fillRegion(captionArea);
 
-	// Draw window frame consistently in 'active' colours
+	// Draw window frame consistently in 'inactive' colours
 	Region const frameEdges = args.Area - Region{args.Client} - captionArea;
-	args.Graphics->setBrush(this->caption().Active);
+	args.Graphics->setBrush(this->caption().Inactive);
 	args.Graphics->fillRegion(frameEdges);
 
 	// Draw super-thin outline around entire window
