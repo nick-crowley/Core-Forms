@@ -450,8 +450,10 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		if (useIcons) {
 			Size const iconSize = BigIcon;
 			Point const iconPosition = rcContent.topLeft();
-			if (icon)
-				args.Graphics.drawIcon(icon->handle(), iconPosition, iconSize);
+			if (icon) {
+				Point const iconOffset{win::Unused<::LONG>, (rcContent.height() - iconSize.Height) / 2};
+				args.Graphics.drawIcon(icon->handle(), iconPosition + iconOffset, iconSize);
+			}
 
 			// Offset heading/detail drawing rectangles
 			LONG const horzOffset = iconSize.Width + 3*Measurement{SystemMetric::cxFixedFrame};
