@@ -416,9 +416,9 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	auto const backColour = selected ? this->highlight() : ctrl.backColour();
 	
 	// Draw item background
-	Rect const rcContent = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
+	Rect const rcBackground = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
 	args.Graphics.setBrush(backColour);
-	args.Graphics.fillRect(rcContent);
+	args.Graphics.fillRect(rcBackground);
 	final_act(&) noexcept { 
 		args.Graphics.restore();
 	};
@@ -435,6 +435,7 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	bool const useIcons = useBigIcons || ctrl.features().test(ListBoxFeature::Icons);
 	auto const heading = item.heading(); 
 	auto const icon = item.icon();
+	Rect const rcContent = rcBackground - Border{2*Measurement{SystemMetric::cxEdge}, win::Unused<::LONG>};
 
 	// [HEADING] Draw heading and calculate different rectangle for (multi-line) detail text
 	Rect rcDetailText = rcContent;
