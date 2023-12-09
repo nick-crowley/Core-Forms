@@ -435,6 +435,7 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	bool const useIcons = useBigIcons || ctrl.features().test(ListBoxFeature::Icons);
 	auto const heading = item.heading(); 
 	auto const icon = item.icon();
+	auto const detail = item.detail();
 	Rect const rcContent = rcBackground - Border{2*Measurement{SystemMetric::cxEdge}, win::Unused<::LONG>};
 
 	// [HEADING] Draw heading and calculate different rectangle for (multi-line) detail text
@@ -442,10 +443,6 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	if (useHeadings) {
 		Invariant(heading.has_value());
 
-		// Prefer heading font + selected-text colour; fallback to heading-default then control-default
-		args.Graphics.setFont(heading->Font.value_or(ctrl.headingFont().value_or(ctrl.font())));
-		args.Graphics.textColour(selectedTextColour.value_or(heading->Colour.value_or(ctrl.textColour())), transparent);
-		
 		// [HEADING-ICON] Draw icon on left; position both heading and detail text beside it
 		Rect rcHeadingText = rcContent;
 		if (useIcons) {
@@ -461,7 +458,22 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 			rcHeadingText.Left += horzOffset;
 			rcDetailText.Left += horzOffset;
 		}
-
+		
+		// Pre-calculate the detail size in order to calculate the heading offset
+		Rect detailRequired = rcDetailText;
+		args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
+		args.Graphics.calcRect(detail.Text, detailRequired, DrawTextFlags::Left|DrawTextFlags::WordBreak);
+		
+		// Prefer heading font + selected-text colour; fallback to heading-default then control-default
+		args.Graphics.setFont(heading->Font.value_or(ctrl.headingFont().value_or(ctrl.font())));
+		args.Graphics.textColour(selectedTextColour.value_or(heading->Colour.value_or(ctrl.textColour())), transparent);
+		
+		// Calculate the heading offset
+		Rect headingRequired = rcDetailText;
+		args.Graphics.calcRect(heading->Text, headingRequired, DrawTextFlags::Left);
+		Size const headingOffset{win::Unused<LONG>, (rcContent.height() - headingRequired.height() - detailRequired.height()) / 2};
+		rcHeadingText.Top += headingOffset.Height;
+		
 		// Draw heading and offset detail below
 		auto const titleHeight = args.Graphics.drawText(heading->Text, rcHeadingText, DrawTextFlags::Left);
 		rcDetailText.Top += titleHeight;
@@ -478,7 +490,6 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	}
 	
 	// Prefer detail font + selected-text colour; fallback to control-default
-	auto const detail = item.detail();
 	args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
 	args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(ctrl.textColour())), transparent);
 
