@@ -99,6 +99,11 @@ ModernLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		Rect{toggleOffset + Point{toggleSize.Width/2,0}, Size{toggleSize.Width/2, toggleSize.Height}}
 	};
 	
+	// Define objects used to render ball in colours reflecting enabled state
+	auto const enabled = ctrl.enabled();
+	Brush ballInterior{enabled ? this->primary() : this->tertiary()};
+	Pen   ballOutline{enabled ? this->primary() : this->tertiary(), 2};
+
 	if (auto const checked = ctrl.checked(); checked) {
 		// Fillable path requires a central rectangle
 		args.Graphics.beginPath();
@@ -115,8 +120,8 @@ ModernLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		args.Graphics.fillPathAndOutline();
 		
 		// Draw white ball on right
-		args.Graphics.setPen(StockPen::White);
-		args.Graphics.setBrush(StockBrush::White);
+		args.Graphics.setPen(ballOutline);
+		args.Graphics.setBrush(ballInterior);
 		args.Graphics.drawEllipse(Rect{toggle[1].centre(), ballSize, Rect::FromCentre});
 	}
 	else {
@@ -131,18 +136,15 @@ ModernLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		args.Graphics.endPath();
 
 		// [UNCHECKED] Draw outline extended oval
-		Pen outline{this->primary(), 2};
-		args.Graphics.setPen(outline);
+		args.Graphics.setPen(ballOutline);
 		args.Graphics.outlinePath();
 		
 		// Draw dark ball on left
-		Brush interior{this->primary()};
-		args.Graphics.setBrush(interior);
+		args.Graphics.setBrush(ballInterior);
 		args.Graphics.drawEllipse(Rect{toggle[0].centre(), ballSize, Rect::FromCentre});
 	}
 	
 	// Draw text
-	auto const enabled = ctrl.enabled();
 	Rect const areaText = content + Rect{toggle[1].Right - content.Left + 3*Measurement{SystemMetric::cxEdge},0,0,0};
 	args.Graphics.setFont(ctrl.font());
 	args.Graphics.textColour(enabled ? ctrl.textColour() : this->tertiary(), ctrl.backColour());
