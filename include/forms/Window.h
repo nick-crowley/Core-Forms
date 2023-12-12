@@ -925,6 +925,7 @@ namespace core::forms
 		using base::style;
 		using base::systemMenu;
 		using base::text;
+		using base::visible;
 		using base::wndcls;
 		using base::wndRect;
 		using base::wndRgn;

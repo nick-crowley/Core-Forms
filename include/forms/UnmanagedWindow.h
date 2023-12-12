@@ -227,6 +227,11 @@ namespace core::forms
 			}
 		}
 		
+		bool
+		visible() const noexcept {
+			return ::IsWindowVisible(this->handle()) != FALSE;
+		}
+		
 		WindowClass::const_reference
 		virtual wndcls() const {
 			Invariant(this->exists());
