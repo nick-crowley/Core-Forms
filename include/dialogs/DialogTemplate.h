@@ -130,6 +130,7 @@ namespace core::forms
 				
 				CommonControl const kind = forms::identifyControl(ctrl.ClassName.as_id());
 				switch (kind) {
+				case CommonControl::Animation: ctrl.ClassName = win::ResourceId(L"Custom.ANIMATION"); break;
 				case CommonControl::Button:    ctrl.ClassName = win::ResourceId(L"Custom.BUTTON");    break;
 				case CommonControl::Edit:      ctrl.ClassName = win::ResourceId(L"Custom.EDIT");      break;
 				case CommonControl::Static:    ctrl.ClassName = win::ResourceId(L"Custom.STATIC");    break;

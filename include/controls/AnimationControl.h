@@ -25,25 +25,10 @@
 */
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #pragma once
-#pragma comment(lib, "Comctl32.lib")
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
-#include "controls/AnimationControl.h"
-#include "controls/ButtonControl.h"
-#include "controls/CheckBoxControl.h"
-#include "controls/EditControl.h"
-#include "controls/LabelControl.h"
-#include "controls/LinkControl.h"
-#include "controls/GroupBoxControl.h"
-#include "controls/PictureControl.h"
-#include "controls/RadioButtonControl.h"
-#include "controls/StaticControl.h"
-#include "controls/ComboBoxControl.h"
-#include "controls/ListBoxControl.h"
-#include "controls/ListViewControl.h"
-#include "controls/ProgressBarControl.h"
-#include "win/SharedLibrary.h"
-#include "com/Version.h"
+#include "controls/Control.h"
+#include "forms/WindowClass.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -51,98 +36,125 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::forms
-{
-	enum class CommonControl {
-		Unknown,
-		Animation,
-		Static,
-		Button,
-		CheckBox,
-		GroupBox,
-		RadioButton,
-		Edit,
-		RichEdit,
-		ComboBox,
-		ListBox,
-		Header,
-		ListView,
-		TreeView,
-		ScrollBar,
-		ProgressBar,
-		StatusBar,
-		ToolBar,
-		Tabs,
-		Link,
-	};
-}
+
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	namespace detail 
-	{
-		class ComCtl32Registration
-		{
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-		private:
-			com::Version Current;
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
-		public:
-			ComCtl32Registration();
-
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
-		public:
-			com::Version
-			version() const {
-				return this->Current;
-			}
-			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~o
-		};
-	}
-
-	class ControlRegistration : private detail::ComCtl32Registration
+	class AnimationControl : public Control 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	protected:
+		class AnimationNotificationDictionary : public forms::MessageDictionary {
+			using base = forms::MessageDictionary;
+		public:
+			AnimationNotificationDictionary() : base({
+	#define MakeMessageName(msg)  { msg, #msg }
+				MakeMessageName(NM_CLICK),
+				MakeMessageName(ACN_START),
+				MakeMessageName(ACN_STOP)
+	#undef MakeMessageName
+				})
+			{}
+		};
 		
+		class AnimationWindowClass : public forms::WindowClass {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			using const_reference = AnimationWindowClass const&;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			::WNDPROC	OriginalWndProc;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			AnimationWindowClass() : forms::WindowClass{win::ResourceId{ANIMATE_CLASS}}  {
+				this->Name = win::ResourceId{L"Custom.ANIMATION"};
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::defaultMessageHandler);
+				this->Style |= ClassStyle::GlobalClass;
+				this->registér();
+			}
+		};
+
+	public:
+		using WindowClass = AnimationWindowClass;
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		std::optional<std::string>  LoadedAnimation;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		ControlRegistration();
-
+		implicit
+		AnimationControl(uint16_t id) 
+		  : Control{id}
+		{}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		satisfies(ControlRegistration, 
-			NotCopyable, 
-			NotMovable,
-			NotEqualityComparable,
-			NotSortable
-		);
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		void
-		static ensureRegistered()
-		{
-			ControlRegistration [[maybe_unused]]  static obj;
+		bool
+		virtual ownerDraw() const noexcept override {
+			return false;
 		}
 		
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		WindowRole
+		virtual role() const noexcept override {
+			return WindowRole::Animation;
+		}
 
+		AnimationWindowClass::const_reference
+		virtual wndcls() const override {
+			AnimationWindowClass const  static wc;
+			return wc;
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		void
+		load(filesystem::path filename) {
+			if (!this->send<ACM_OPENW>(nullopt, (::LPARAM)(wchar_t const*)filename.wstring().c_str()))
+				throw runtime_error{"Failed to load animation '{}'", filename.string()};
+			
+			this->LoadedAnimation = filename.string();
+		}
+		
+		void
+		load(win::Module container, win::ResourceId id) {
+			if (!this->send<ACM_OPENW>((::WPARAM)container.handle(), (::LPARAM)(wchar_t const*)id))
+				throw runtime_error{"Failed to load animation {}", to_string(id)};
+			
+			this->LoadedAnimation = to_string(id);
+		}
+		
+		void
+		play(std::optional<unsigned> playbackCount = nullopt) {
+			Invariant(this->LoadedAnimation);
+
+			if (!this->send<ACM_PLAY>((::WPARAM)playbackCount.value_or(-1), (::LPARAM)MAKELPARAM(0, -1)))
+				throw runtime_error{"Failed to play animation {}", *this->LoadedAnimation};
+		}
+		
+		void
+		stop() {
+			Invariant(this->LoadedAnimation);
+
+			if (!this->send<ACM_STOP>())
+				throw runtime_error{"Failed to stop animation {}", *this->LoadedAnimation};
+		}
+
+	protected:
+		gsl::czstring
+		virtual notificationName(::UINT notification) override {
+			AnimationNotificationDictionary const  static names;
+			return names.at(notification);
+		}
+		
+		::LRESULT 
+		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
+			return this->subclassedWndProc(message, wParam, lParam);
+		}
 	};
-}
+}	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-namespace core::forms {
-	CommonControl
-	identifyControl(win::ResourceId className) noexcept;
-}
+
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

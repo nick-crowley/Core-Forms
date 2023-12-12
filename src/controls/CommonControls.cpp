@@ -31,6 +31,7 @@ forms::detail::ComCtl32Registration::ComCtl32Registration()
 ControlRegistration::ControlRegistration()
 {
 	Dialog::WindowClass const              [[maybe_unused]] static DialogClass;
+	AnimationControl::WindowClass const    [[maybe_unused]] static AnimationClass;
 	ButtonControl::WindowClass const       [[maybe_unused]] static ButtonClass;
 	ComboBoxControl::WindowClass const     [[maybe_unused]] static ComboBoxeClass;
 	EditControl::WindowClass const         [[maybe_unused]] static EditClass;
@@ -91,6 +92,8 @@ forms::identifyControl(win::ResourceId className) noexcept {
 		return CommonControl::ToolBar;
 	else if (className == win::ResourceId{PROGRESS_CLASS} || className == win::ResourceId{L"Custom.PROGRESSBAR"})
 		return CommonControl::ProgressBar;
+	else if (className == win::ResourceId{ANIMATE_CLASS} || className == win::ResourceId{L"Custom.ANIMATION"})
+		return CommonControl::Animation;
 	else if (className == win::ResourceId{WC_LINK} || className == win::ResourceId{L"Custom.LINK"})
 		return CommonControl::Link;
 
