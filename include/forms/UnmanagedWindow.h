@@ -177,6 +177,14 @@ namespace core::forms
 			return ::GetParent(this->handle());
 		}
 		
+		uint32_t
+		pid() const {
+			::DWORD pid {};
+			if (::DWORD tid = ::GetWindowThreadProcessId(this->handle(), &pid); !tid)
+				win::LastError{}.throwAlways("GetWindowThreadProcessId() failed");
+			return pid;
+		}
+
 		template <unsigned MessageId>
 		::LRESULT
 		post(std::optional<::WPARAM> first = nullopt, std::optional<::LPARAM> second = nullopt) const noexcept {
@@ -225,6 +233,14 @@ namespace core::forms
 					buffer.erase(n, buffer.npos);
 				return buffer;
 			}
+		}
+
+		uint32_t
+		tid() const {
+			if (::DWORD tid = ::GetWindowThreadProcessId(this->handle(), nullptr); !tid)
+				win::LastError{}.throwAlways("GetWindowThreadProcessId() failed");
+			else
+				return tid;
 		}
 		
 		bool
