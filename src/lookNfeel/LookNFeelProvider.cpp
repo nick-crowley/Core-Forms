@@ -397,7 +397,12 @@ LookNFeelProvider::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args)
 	// Draw text
 	args.Graphics.setFont(ctrl.font());
 	args.Graphics.textColour(ctrl.textColour(), ctrl.backColour());
-	args.Graphics.drawText(ctrl.text(), args.Item.Area, forms::drawFlags(ctrl.align()));
+	nstd::bitset<DrawTextFlags> flags = forms::drawFlags(ctrl.align());
+	if (flags.test(DrawTextFlags::VCentre)) {
+		flags.set(DrawTextFlags::WordBreak, true);
+		flags.set(DrawTextFlags::SingleLine, false);
+	}
+	args.Graphics.drawText(ctrl.text(), args.Item.Area, flags);
 
 	args.Graphics.restore();
 }
