@@ -1065,6 +1065,14 @@ namespace core::forms
 				this->font(*rt.Font);
 		}
 		
+		template <typename... Params>
+			requires nstd::AtLeastOneType<Params...>
+		void
+		text(std::wstring_view format, Params&&... args) {
+			this->text(std::vformat(format, std::make_wformat_args(std::forward<Params>(args)...)));
+		}
+
+		void
 		textColour(AnyColour newColour) {
 			ThrowIf(newColour, std::holds_alternative<meta::transparent_t>(newColour));
 			this->TextColour = newColour;
