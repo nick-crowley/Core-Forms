@@ -282,5 +282,11 @@ ModernLookNFeel::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect
 	bounds.Caption.Bottom += CaptionExtension;
 	bounds.MenuBar.translate({0, CaptionExtension});
 
+	// Move the minimize button when the window cannot be maximized
+	if (style.test(WindowStyle::MinimizeBox) && !style.test(WindowStyle::MaximizeBox)) {
+		bounds.MinimizeBtn = bounds.MaximizeBtn;
+		bounds.MaximizeBtn = Rect::Empty;
+	}
+
 	return bounds;
 }
