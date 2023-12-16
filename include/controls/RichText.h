@@ -47,22 +47,39 @@ namespace core::forms
 		std::optional<forms::Font> Font;
 		// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		explicit
-		RichText(
-			std::wstring_view          text, 
-			std::optional<AnyColour>   colour = nullopt, 
-			std::optional<forms::Font> font = nullopt
-		) : Text{text}, 
-			Colour{colour}, 
-			Font{font}
+		RichText(std::wstring_view text)
+		  : Text{text}
+		{}
+
+		RichText(std::string_view text, CodePage encoding)
+		  : Text{widen(text,encoding)}
+		{}
+
+		RichText(std::wstring_view text, std::optional<AnyColour> colour)
+		  : Text{text},
+		    Colour{colour}
 		{}
 		
-		explicit
-		RichText(
-			std::string_view           text, 
-			CodePage                   encoding,
-			std::optional<AnyColour>   colour = nullopt, 
-			std::optional<forms::Font> font = nullopt
-		) : RichText{widen(text,encoding), colour, font}
+		RichText(std::string_view text, CodePage encoding, std::optional<AnyColour> colour)
+		  : Text{widen(text,encoding)},
+		    Colour{colour}
+		{}
+		
+		RichText(std::wstring_view          text,
+		         std::optional<AnyColour>   colour,
+		         std::optional<forms::Font> font) 
+		  : Text{text},
+		    Colour{colour},
+		    Font{font}
+		{}
+
+		RichText(std::string_view           text, 
+		         CodePage                   encoding,
+		         std::optional<AnyColour>   colour,
+		         std::optional<forms::Font> font)
+		  : Text{widen(text,encoding)},
+		    Colour{colour},
+		    Font{font}
 		{}
 		// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 		satisfies(RichText,
