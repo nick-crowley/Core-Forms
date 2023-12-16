@@ -37,6 +37,7 @@
 #include "forms/Response.h"
 #include "forms/UnmanagedWindow.h"
 #include "forms/WindowEventArgs.h"
+#include "controls/RichText.h"
 #pragma comment (lib, "OleAcc.lib")
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -1056,6 +1057,14 @@ namespace core::forms
 		}
 		
 		void
+		text(RichText rt) {
+			base::text(rt.Text);
+			if (rt.Colour)
+				this->textColour(*rt.Colour);
+			if (rt.Font)
+				this->font(*rt.Font);
+		}
+		
 		textColour(AnyColour newColour) {
 			ThrowIf(newColour, std::holds_alternative<meta::transparent_t>(newColour));
 			this->TextColour = newColour;
