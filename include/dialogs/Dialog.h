@@ -356,6 +356,16 @@ namespace core::forms
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();
 			}
+			
+			DialogWindowClass(win::ResourceId clsName, Icon icon) : forms::WindowClass(win::ResourceId::parse(WC_DIALOG))
+			{
+				this->Name = clsName;
+				this->SmallIcon = icon.handle();
+				this->LargeIcon = icon.handle();
+				this->OriginalWndProc = std::exchange(this->WndProc, Dialog::interceptMessageHandler);
+				this->Style |= ClassStyle::GlobalClass;
+				this->registér();
+			}
 		};
 
 		using WindowClass = DialogWindowClass;

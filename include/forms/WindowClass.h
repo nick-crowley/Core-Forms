@@ -27,6 +27,7 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
+#include "graphics/Icon.h"
 #include "graphics/SystemBrush.h"
 #include "nstd/Bitset.h"
 #include "forms/ClassStyle.h"
@@ -53,8 +54,8 @@ namespace core::forms
 		SharedBrush               Background;
 		uint32_t                  ClsExtra = 0;
 		::HCURSOR                 Cursor = nullptr;
-		::HICON                   LargeIcon = nullptr, 
-		                          SmallIcon = nullptr;
+		SharedIcon                LargeIcon, 
+		                          SmallIcon;
 		win::ResourceId           Name;
 		win::ResourceId           Menu;
 		::HMODULE                 Instance = nullptr;
@@ -87,8 +88,8 @@ namespace core::forms
 			}
 			this->ClsExtra = props.cbClsExtra;
 			this->Cursor = props.hCursor;
-			this->LargeIcon = props.hIcon;
-			this->SmallIcon = props.hIconSm;
+			this->LargeIcon = SharedIcon{props.hIcon, weakref};
+			this->SmallIcon = SharedIcon{props.hIconSm, weakref};
 			this->Instance = props.hInstance;
 			this->Menu = win::ResourceId::parse(props.lpszMenuName);
 			this->Name = win::ResourceId::parse(props.lpszClassName);
@@ -138,8 +139,8 @@ namespace core::forms
 			wndcls.cbClsExtra = this->ClsExtra;
 			wndcls.lpszClassName = this->Name;
 			wndcls.hCursor = this->Cursor;
-			wndcls.hIcon = this->LargeIcon;
-			wndcls.hIconSm = this->SmallIcon;
+			wndcls.hIcon = *this->LargeIcon;
+			wndcls.hIconSm = *this->SmallIcon;
 			wndcls.hInstance = this->Instance;
 			wndcls.lpszMenuName = this->Menu;
 			wndcls.style = this->Style.value();

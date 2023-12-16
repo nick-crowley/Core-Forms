@@ -213,7 +213,10 @@ ModernLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args)
 	args.Graphics->textColour(textColour, transparent);
 	args.Graphics->drawText(dlg.text(), components.Title, DrawTextFlags::SimpleLeft);
 
-	//! @todo  Draw application icon in caption
+	// Draw application icon in caption
+	if (auto appIcon = dlg.wndcls().LargeIcon; appIcon)
+		//! @todo  Draw system-default icon if app doesn't provide an icon
+		args.Graphics->drawIcon(*appIcon, components.SysMenuBtn);
 	
 	// Draw maximize button
 	if (style.test(WindowStyle::MaximizeBox)) {
