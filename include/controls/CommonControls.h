@@ -41,6 +41,7 @@
 #include "controls/ComboBoxControl.h"
 #include "controls/ListBoxControl.h"
 #include "controls/ListViewControl.h"
+#include "controls/PanelControl.h"
 #include "controls/ProgressBarControl.h"
 #include "win/SharedLibrary.h"
 #include "com/Version.h"
