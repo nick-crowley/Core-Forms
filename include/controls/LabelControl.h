@@ -51,7 +51,9 @@ namespace core::forms
 	public:
 		implicit
 		LabelControl(uint16_t id) : StaticControl{id}
-		{}
+		{
+			this->Created += {*this, &LabelControl::this_Created};
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -78,6 +80,10 @@ namespace core::forms
 
 			return Unhandled;
 		}
+
+	private:
+		void
+		this_Created([[maybe_unused]] Window& sender, CreateWindowEventArgs args);
 	};
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

@@ -2,6 +2,7 @@
 #include "controls/StaticControl.cpp"
 #include "controls/ButtonControl.cpp"
 #include "controls/EditControl.cpp"
+#include "controls/LabelControl.cpp"
 #include "controls/ComboBoxControl.cpp"
 #include "controls/ListBoxControl.cpp"
 #include "controls/ListViewControl.cpp"

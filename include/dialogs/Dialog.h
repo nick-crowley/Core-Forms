@@ -485,7 +485,12 @@ namespace core::forms
 		{
 			return this->LookNFeel->nonClient(Coords::Screen, this->style(), this->wndRect(), this->clientRect(HWND_DESKTOP));
 		}
-
+		
+		DialogTemplate const&
+		original() const {
+			return this->Template;
+		}
+		
 		WindowRole
 		virtual role() const noexcept override {
 			return WindowRole::Dialog;
