@@ -98,10 +98,10 @@ namespace core::forms
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		::HICON
+		SharedIcon
 		handle() const
 		{
-			return *this->Handle;
+			return this->Handle;
 		}
 	
 		Rect

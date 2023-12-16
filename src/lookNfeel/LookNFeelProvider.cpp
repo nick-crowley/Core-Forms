@@ -231,7 +231,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 			Point const iconPosition = rcContent.topLeft();
 			if (icon) {
 				Point const iconOffset{win::Unused<::LONG>, (rcContent.height() - iconSize.Height) / 2};
-				args.Graphics.drawIcon(icon->handle(), iconPosition + iconOffset, iconSize);
+				args.Graphics.drawIcon(*icon->handle(), iconPosition + iconOffset, iconSize);
 			}
 
 			// Offset heading/detail drawing rectangles
@@ -277,7 +277,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		Size const iconSize = SmallIcon;
 		if (icon) {
 			Point const iconOffset{win::Unused<::LONG>, (rcContent.height() - iconSize.Height) / 2};
-			args.Graphics.drawIcon(icon->handle(), rcContent.topLeft() + iconOffset, iconSize);
+			args.Graphics.drawIcon(*icon->handle(), rcContent.topLeft() + iconOffset, iconSize);
 		}
 		rcDetailText.Left += iconSize.Width + 3*Measurement{SystemMetric::cxFixedFrame};
 	}
@@ -455,7 +455,7 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 			Point const iconPosition = rcContent.topLeft();
 			if (icon) {
 				Point const iconOffset{win::Unused<::LONG>, (rcContent.height() - iconSize.Height) / 2};
-				args.Graphics.drawIcon(icon->handle(), iconPosition + iconOffset, iconSize);
+				args.Graphics.drawIcon(*icon->handle(), iconPosition + iconOffset, iconSize);
 			}
 
 			// Offset heading/detail drawing rectangles
@@ -489,7 +489,7 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		Size const iconSize = (useBigIcons ? BigIcon : SmallIcon);
 		if (icon) {
 			Point const iconOffset{win::Unused<::LONG>, (rcContent.height() - iconSize.Height) / 2};
-			args.Graphics.drawIcon(icon->handle(), rcContent.topLeft() + iconOffset, iconSize);
+			args.Graphics.drawIcon(*icon->handle(), rcContent.topLeft() + iconOffset, iconSize);
 		}
 		rcDetailText.Left += iconSize.Width + 3*Measurement{SystemMetric::cxFixedFrame};
 	}
@@ -611,7 +611,7 @@ LookNFeelProvider::draw(ListViewControl& ctrl, OwnerDrawEventArgs const& args)
 	Rect rcLabel = item.area();
 	if (ctrl.features().test(ListViewFeature::Icons)) {
 		if (std::optional<Icon> icon = item.icon(); icon.has_value()) 
-			args.Graphics.drawIcon(icon->handle(), rcLabel.topLeft(), Size{24,24});
+			args.Graphics.drawIcon(*icon->handle(), rcLabel.topLeft(), Size{24,24});
 
 		rcLabel.Left += 24 + 3*Measurement{SystemMetric::cxEdge};
 	}
@@ -684,7 +684,7 @@ LookNFeelProvider::draw(PictureControl& ctrl, OwnerDrawEventArgs const& args)
 	else if (auto icon = ctrl.icon(); icon) {
 		// Optionally stretch the icon into the client area
 		Rect const rcDest = !DontResize ? args.Item.Area : Rect{args.Item.Area.topLeft(), icon->size()};
-		args.Graphics.drawIcon(icon->handle(), rcDest);
+		args.Graphics.drawIcon(*icon->handle(), rcDest);
 	}
 }
 
