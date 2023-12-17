@@ -493,7 +493,7 @@ namespace core::forms
 		NonClientLayout 
 		nonClient() const noexcept
 		{
-			return this->LookNFeel->nonClient(Coords::Screen, this->style(), this->wndRect(), this->clientRect(HWND_DESKTOP));
+			return this->LookNFeel->nonClient(Coords::Screen, this->style(), this->wndRect());
 		}
 		
 		DialogTemplate const&

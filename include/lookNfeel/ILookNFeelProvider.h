@@ -160,7 +160,7 @@ namespace core::forms
 		//! @brief  Retrieve non-client area component bounds
 		//! @param  client  Client area (in screen co-ordinates)
 		NonClientLayout
-		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const abstract;
+		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const abstract;
 
 		void
 		virtual onCreated(Window&, CreateWindowEventArgs const& args) abstract;

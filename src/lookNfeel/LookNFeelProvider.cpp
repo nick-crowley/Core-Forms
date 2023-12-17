@@ -822,7 +822,7 @@ LookNFeelProvider::measure(Window& wnd, MeasureMenuEventArgs& args)
 }
 
 NonClientLayout
-LookNFeelProvider::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const 
+LookNFeelProvider::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const 
 {
 	ThrowIf(results, results == Coords::Client);
 	NonClientLayout bounds{wnd};
@@ -830,8 +830,8 @@ LookNFeelProvider::nonClient(Coords results, nstd::bitset<WindowStyle> style, Re
 	// Caption
 	Size const Frame{SystemMetric::cxSizeFrame, SystemMetric::cySizeFrame};
 	bounds.Caption = Rect{Point::Zero, Size{wnd.width(), Measurement{SystemMetric::cyCaption}}} 
-	               - Border{2 * Frame.Width, 0}
-	               + Point{0, 2 * Frame.Height};
+	               - Border{2 * Frame.Width, win::Unused<LONG>}
+	               + Point{win::Unused<LONG>, 2 * Frame.Height};
 	
 	// System-menu button
 	Size const rcIcon {bounds.Caption.height(), bounds.Caption.height()};
@@ -852,7 +852,7 @@ LookNFeelProvider::nonClient(Coords results, nstd::bitset<WindowStyle> style, Re
 	bounds.Title.Right = bounds.MinimizeBtn.Left - (2 * Frame.Width);
 
 	// MenuBar
-	bounds.MenuBar = Rect{bounds.Caption.Left, bounds.Caption.Bottom, bounds.Caption.Right, client.Top - wnd.Top};
+	bounds.MenuBar = Rect{bounds.Caption.Left, bounds.Caption.Bottom, bounds.Caption.Right, bounds.Caption.Bottom + Measurement{SystemMetric::cyMenu}};
 
 	// [SCREEN] Translate all generated co-ordinates
 	if (results == Coords::Screen) {

@@ -78,7 +78,7 @@ namespace core::forms
 		virtual draw(Dialog& dlg, NonClientPaintEventArgs& args) override;
 		
 		NonClientLayout
-		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const override;
+		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const override;
 	};
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
