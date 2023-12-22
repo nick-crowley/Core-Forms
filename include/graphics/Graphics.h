@@ -646,6 +646,16 @@ namespace core::forms
 		}
 		
 		void
+		setPen(AnyColour newColour) {
+			if (std::holds_alternative<SystemColour>(newColour))
+				this->setPen(to_colour(newColour));
+			else if (std::holds_alternative<Colour>(newColour))
+				this->setPen(to_colour(newColour));
+			else
+				this->setPen(StockPen::Hollow);
+		}
+		
+		void
 		setPen(Pen const& newPen) {
 			this->setPen(*newPen.handle());
 		}
