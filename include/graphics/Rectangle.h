@@ -74,6 +74,15 @@ namespace core::forms
 			Bottom{bottom}
 		{}
 	
+		//! @brief	Construct from top-left point and bottom-right point
+		constexpr
+		Rect(Point const& topLeft, Point const& bottomRight) noexcept
+		  : Left{static_cast<::LONG>(topLeft.X)}, 
+			Top{static_cast<::LONG>(topLeft.Y)}, 
+			Right{static_cast<::LONG>(bottomRight.X)}, 
+			Bottom{static_cast<::LONG>(bottomRight.Y)} 
+		{}
+	
 		//! @brief	Construct from top-left point and dimensions
 		constexpr
 		Rect(Point const& origin, Size const& dimensions) noexcept

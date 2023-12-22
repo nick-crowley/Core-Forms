@@ -81,7 +81,7 @@ namespace core::forms
 		
 			{
 				auto const rc = this->readObject<SmallRect>(); 
-				dlg.Area = Rect{{rc.Left, rc.Top}, {rc.Width, rc.Height}};
+				dlg.Area = Rect{Point{rc.Left, rc.Top}, Size{rc.Width, rc.Height}};
 			}
 		
 			// wchar menu[], wchar class[], wchar title[]
@@ -120,7 +120,7 @@ namespace core::forms
 			
 				{
 					auto rc = this->readObject<SmallRect>(); 
-					ctrl.Area = Rect{{rc.Left, rc.Top}, {rc.Width, rc.Height}};
+					ctrl.Area = Rect{Point{rc.Left, rc.Top}, Size{rc.Width, rc.Height}};
 				}
 			
 				if (extended) {

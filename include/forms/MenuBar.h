@@ -89,7 +89,7 @@ namespace core::forms
 					win::LastError{}.throwAlways("GetMenuItemRect(#{}) failed", this->index());
 				if (!customArea)
 					return stockArea;
-				return Rect{Point{stockArea.Left, customArea->Top}, {stockArea.width(), customArea->height()}};
+				return Rect{Point{stockArea.Left, customArea->Top}, Size{stockArea.width(), customArea->height()}};
 			}
 			
 			std::optional<Icon>
