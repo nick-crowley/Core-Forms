@@ -31,7 +31,7 @@ ModernLookNFeel::clientRect(Window& wnd, Rect bounds) const
 	Size const Frame{SystemMetric::cxSizeFrame, SystemMetric::cySizeFrame};
 	Rect client = bounds - Border{2 * Frame} - Border{0, 1.5f * Measurement{SystemMetric::cyCaption}, 0, 0};
 	if (wnd.menu().has_value())
-		client.Top += Measurement{SystemMetric::cyMenu};
+		client.Top += 1.5f * Measurement{SystemMetric::cyMenu};
 	return client;
 }
 
@@ -284,6 +284,7 @@ ModernLookNFeel::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect
 	Rect::value_type const CaptionExtension = bounds.Caption.height() / 2;
 	bounds.Caption.Bottom += CaptionExtension;
 	bounds.MenuBar.translate({0, CaptionExtension});
+	bounds.MenuBar.Bottom += Measurement{SystemMetric::cyMenu} / 2;
 
 	// Move the minimize button when the window cannot be maximized
 	if (style.test(WindowStyle::MinimizeBox) && !style.test(WindowStyle::MaximizeBox)) {
