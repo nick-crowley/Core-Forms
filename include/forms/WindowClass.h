@@ -27,6 +27,7 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
+#include "graphics/Cursor.h"
 #include "graphics/Icon.h"
 #include "graphics/SystemBrush.h"
 #include "nstd/Bitset.h"
@@ -53,7 +54,7 @@ namespace core::forms
 	public:
 		SharedBrush               Background;
 		uint32_t                  ClsExtra = 0;
-		::HCURSOR                 Cursor = nullptr;
+		SharedCursor              Cursor;
 		SharedIcon                LargeIcon, 
 		                          SmallIcon;
 		win::ResourceId           Name;
@@ -87,7 +88,7 @@ namespace core::forms
 					this->Background = SharedBrush{props.hbrBackground, weakref};
 			}
 			this->ClsExtra = props.cbClsExtra;
-			this->Cursor = props.hCursor;
+			this->Cursor = SharedCursor{props.hCursor, weakref};
 			this->LargeIcon = SharedIcon{props.hIcon, weakref};
 			this->SmallIcon = SharedIcon{props.hIconSm, weakref};
 			this->Instance = props.hInstance;
@@ -138,7 +139,7 @@ namespace core::forms
 			wndcls.hbrBackground = this->Background.get();
 			wndcls.cbClsExtra = this->ClsExtra;
 			wndcls.lpszClassName = this->Name;
-			wndcls.hCursor = this->Cursor;
+			wndcls.hCursor = *this->Cursor;
 			wndcls.hIcon = *this->LargeIcon;
 			wndcls.hIconSm = *this->SmallIcon;
 			wndcls.hInstance = this->Instance;
