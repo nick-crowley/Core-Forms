@@ -75,6 +75,14 @@ namespace core::forms
             };
         };
         
+        struct CursorTraits {
+            ::HCURSOR constexpr
+            inline static empty = nullptr;
+
+            auto constexpr
+            inline static release = &::DestroyCursor;
+        };
+
         struct DeviceContextTraits {
             ::HDC constexpr
             inline static empty = nullptr;
@@ -113,6 +121,9 @@ namespace core::forms
     
     //! @brief  Shared @c ::HBRUSH released using @c ::DeleteObject()
     using SharedBrush = SmartHandle<::HBRUSH, detail::GdiObjectTraits<::HBRUSH>>;
+    
+    //! @brief  Shared @c ::HCURSOR released using @c ::DestroyCursor()
+    using SharedCursor = SmartHandle<::HCURSOR, detail::CursorTraits>;
     
     //! @brief  Shared @c ::HDROP released using @c ::DragFinish()
     using SharedDrop = SmartHandle<::HDROP>;
