@@ -117,7 +117,7 @@ namespace core::forms
     }
 	
     //! @brief  Shared @c ::HBITMAP released using @c ::DeleteObject()
-    using SharedBitmap = SmartHandle<::HBITMAP, detail::GdiObjectTraits<::HBITMAP>>;
+    using SharedBitmap = SmartHandle<::HBITMAP, detail::GdiObjectTraits<::HBITMAP>>;  //! @bug Should SharedIcon be released using DestroyIcon()?
     
     //! @brief  Shared @c ::HBRUSH released using @c ::DeleteObject()
     using SharedBrush = SmartHandle<::HBRUSH, detail::GdiObjectTraits<::HBRUSH>>;
@@ -135,7 +135,7 @@ namespace core::forms
     using SharedObject = SmartHandle<::HGDIOBJ, detail::GdiObjectTraits<::HGDIOBJ>>;
     
     //! @brief  Shared @c ::HICON released using @c ::DeleteObject()
-    using SharedIcon = SmartHandle<::HICON, detail::GdiObjectTraits<::HICON>>;
+    using SharedIcon = SmartHandle<::HICON, detail::GdiObjectTraits<::HICON>>;  //! @bug Should SharedIcon be released using DestroyIcon()?
     
     //! @brief  Shared @c ::HMENU released using @c ::DestroyMenu()
     using SharedMenu = SmartHandle<::HMENU>;
