@@ -50,18 +50,21 @@ namespace core::forms
 	public:
 		using const_reference = WindowClass const&;
 
+		struct CustomStorageSize {
+			uint32_t  Class = 0;
+			uint32_t  Window = 0;
+		};
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		SharedBrush               Background;
-		uint32_t                  ClsExtra = 0;
 		SharedCursor              Cursor;
+		CustomStorageSize         Extra;
 		SharedIcon                LargeIcon, 
 		                          SmallIcon;
 		win::ResourceId           Name;
 		win::ResourceId           Menu;
 		::HMODULE                 Instance = nullptr;
 		nstd::bitset<ClassStyle>  Style;
-		uint32_t                  WndExtra = 0;
 		::WNDPROC                 WndProc = nullptr;
 
 	protected:
@@ -87,15 +90,15 @@ namespace core::forms
 				else
 					this->Background = SharedBrush{props.hbrBackground, weakref};
 			}
-			this->ClsExtra = props.cbClsExtra;
 			this->Cursor = SharedCursor{props.hCursor, weakref};
+			this->Extra.Class = props.cbClsExtra;
+			this->Extra.Window = props.cbWndExtra;
 			this->LargeIcon = SharedIcon{props.hIcon, weakref};
 			this->SmallIcon = SharedIcon{props.hIconSm, weakref};
 			this->Instance = props.hInstance;
 			this->Menu = win::ResourceId::parse(props.lpszMenuName);
 			this->Name = win::ResourceId::parse(props.lpszClassName);
 			this->Style = static_cast<ClassStyle>(props.style);
-			this->WndExtra = props.cbWndExtra;
 			this->WndProc = props.lpfnWndProc;
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -137,7 +140,7 @@ namespace core::forms
 		registér() {
 			::WNDCLASSEXW wndcls{sizeof(::WNDCLASSEXW)};
 			wndcls.hbrBackground = this->Background.get();
-			wndcls.cbClsExtra = this->ClsExtra;
+			wndcls.cbClsExtra = this->Extra.Class;
 			wndcls.lpszClassName = this->Name;
 			wndcls.hCursor = *this->Cursor;
 			wndcls.hIcon = *this->LargeIcon;
@@ -145,7 +148,7 @@ namespace core::forms
 			wndcls.hInstance = this->Instance;
 			wndcls.lpszMenuName = this->Menu;
 			wndcls.style = this->Style.value();
-			wndcls.cbWndExtra = this->WndExtra;
+			wndcls.cbWndExtra = this->Extra.Window;
 			wndcls.lpfnWndProc = this->WndProc;
 
 			if (::ATOM atom = ::RegisterClassExW(&wndcls); !atom) {
