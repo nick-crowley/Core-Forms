@@ -284,7 +284,7 @@ namespace core::forms
 			reference
 			withClass(WindowClass const& cls) {
 				this->Params.Class = cls.Name;
-				this->Params.Module = cls.Instance;
+				this->Params.Module = *cls.Instance;
 				return *this;
 			}
 

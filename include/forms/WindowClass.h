@@ -63,7 +63,7 @@ namespace core::forms
 		                          SmallIcon;
 		win::ResourceId           Name;
 		win::ResourceId           Menu;
-		::HMODULE                 Instance = nullptr;
+		win::SharedModule         Instance;
 		nstd::bitset<ClassStyle>  Style;
 		::WNDPROC                 WndProc = nullptr;
 
@@ -95,7 +95,7 @@ namespace core::forms
 			this->Extra.Window = props.cbWndExtra;
 			this->LargeIcon = SharedIcon{props.hIcon, weakref};
 			this->SmallIcon = SharedIcon{props.hIconSm, weakref};
-			this->Instance = props.hInstance;
+			this->Instance = win::SharedModule{props.hInstance, weakref};
 			this->Menu = win::ResourceId::parse(props.lpszMenuName);
 			this->Name = win::ResourceId::parse(props.lpszClassName);
 			this->Style = static_cast<ClassStyle>(props.style);
@@ -145,7 +145,7 @@ namespace core::forms
 			wndcls.hCursor = *this->Cursor;
 			wndcls.hIcon = *this->LargeIcon;
 			wndcls.hIconSm = *this->SmallIcon;
-			wndcls.hInstance = this->Instance;
+			wndcls.hInstance = *this->Instance;
 			wndcls.lpszMenuName = this->Menu;
 			wndcls.style = this->Style.value();
 			wndcls.cbWndExtra = this->Extra.Window;
@@ -157,7 +157,7 @@ namespace core::forms
 			}
 			else {
 				auto const releaser = [instance = this->Instance](::ATOM _atom) {
-					::UnregisterClassA(reinterpret_cast<gsl::czstring>(static_cast<uintptr_t>(_atom)), instance);
+					::UnregisterClassA(reinterpret_cast<gsl::czstring>(static_cast<uintptr_t>(_atom)), *instance);
 				};
 				this->Atom.reset(atom, releaser);
 			}
