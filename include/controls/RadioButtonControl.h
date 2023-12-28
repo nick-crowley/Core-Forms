@@ -107,6 +107,20 @@ namespace core::forms
 			}
 		}
 		
+		std::optional<int16_t>
+		selection() const 
+		{
+			// Search for the checked sibling
+			Window const* const dialog = this->parent();
+			for (auto id = this->GroupBoundaries.first; id <= this->GroupBoundaries.second; ++id) {
+				RadioButtonControl const* const ctrl = (id == this->ident()) ? this 
+				                                     : Window::ExistingWindows.find<RadioButtonControl>(::GetDlgItem(dialog->handle(),id));
+				if (ctrl->checked())
+					return id;
+			}
+			return nullopt;
+		}
+
 	protected:
 		Response 
 		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
