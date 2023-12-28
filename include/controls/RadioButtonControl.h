@@ -99,8 +99,7 @@ namespace core::forms
 						this->Checked = true;
 						this->invalidate(true);
 					}
-					else {
-						auto* sibling = Window::ExistingWindows.find<RadioButtonControl>(::GetDlgItem(dialog->handle(),id));
+					else if (auto* sibling = Window::ExistingWindows.find<RadioButtonControl>(::GetDlgItem(dialog->handle(),id)); sibling) {
 						sibling->Checked = false;
 						sibling->invalidate(true);
 					}
