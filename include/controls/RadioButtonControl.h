@@ -108,6 +108,7 @@ namespace core::forms
 			}
 		}
 		
+	protected:
 		Response 
 		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
 			if (args.Ident == this->ident()) {
