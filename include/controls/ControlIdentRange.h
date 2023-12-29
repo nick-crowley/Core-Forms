@@ -49,6 +49,8 @@ namespace core::forms
 		uint16_t  Finish;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
+		//! @param[in]  finish  Inclusive maximum
+		//! @remarks  @p start and @p finish isn't a half-open range
 		template <nstd::Integer IntA, nstd::Integer IntB>
 		constexpr
 		ControlIdentRange(IntA start, IntB finish)
@@ -75,7 +77,7 @@ namespace core::forms
 
 		boost::counting_iterator<uint16_t>
 		end() const noexcept {
-			return {this->Finish};
+			return {static_cast<uint16_t>(this->Finish+1)};
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
