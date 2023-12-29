@@ -27,8 +27,6 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
-#include "controls/ButtonControl.h"
-#include "controls/ControlIdentRange.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -39,144 +37,49 @@
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
-{
-	class RadioButtonControl : public ButtonControl 
+{	
+	//! @brief  Contiguous ascending range of control identifiers
+	class ControlIdentRange
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	private:
-		using base = ButtonControl;
+		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	private:
-		nstd::bitset<ButtonState> StateWhenOwnerDraw = ButtonState::None;
-		ControlIdentRange GroupBoundaries;
+	public:
+		uint16_t  Start;
+		uint16_t  Finish;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		implicit
-		RadioButtonControl(uint16_t id, ControlIdentRange group)
-		  : base{id}, 
-		    GroupBoundaries{group}
+		template <nstd::Integer IntA, nstd::Integer IntB>
+		constexpr
+		ControlIdentRange(IntA start, IntB finish)
+		  : Start{static_cast<uint16_t>(start)},
+		    Finish{static_cast<uint16_t>(finish)}
 		{
-			this->Clicked += {*this, &RadioButtonControl::this_Clicked};
-			this->MouseDown += {*this, &RadioButtonControl::this_MouseEvent};
-			this->MouseMove += {*this, &RadioButtonControl::this_MouseEvent};
-			this->MouseUp += {*this, &RadioButtonControl::this_MouseEvent};
-			this->backColour(this->LookNFeel->window());
+			ThrowIf(start, start < 0);
+			ThrowIf(finish, finish < 0);
+			ThrowIfNot(start, start < finish);
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		satisfies(ControlIdentRange,
+			constexpr IsRegular noexcept
+		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	private:
-		template <typename Self>
-		nstd::mirror_cv_ref_t<Self, RadioButtonControl>*
-		sibling(this Self&&, Window const& parent, uint16_t id) {
-			return Window::ExistingWindows.find<RadioButtonControl>(::GetDlgItem(parent.handle(),id));
-		}
+		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		bool
-		checked() const noexcept {
-			return this->state().test(ButtonState::Checked);
-		}
-		
-		nstd::bitset<Alignment>
-		defaultAlign() const noexcept override {
-			return Alignment::Left|Alignment::VCentre;
+		boost::counting_iterator<uint16_t>
+		begin() const noexcept {
+			return {this->Start};
 		}
 
-		WindowRole
-		virtual role() const noexcept override {
-			return WindowRole::RadioButton;
-		}
-		
-		nstd::bitset<ButtonState>
-		state() const noexcept {
-			// Owner-draw buttons don't maintain radio-button state
-			if (this->ownerDraw())
-				return this->StateWhenOwnerDraw;
-			return base::state();
+		boost::counting_iterator<uint16_t>
+		end() const noexcept {
+			return {this->Finish};
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		void
-		check() noexcept 
-		{
-			if (!this->ownerDraw()) 
-				Button_SetCheck(this->handle(), ButtonState::Checked);
-			else {
-				// Invalidate this control and siblings within group
-				Window const* dialog = this->parent();
-				for (auto const id : this->GroupBoundaries) {
-					if (id == this->ident()) {
-						this->StateWhenOwnerDraw.set(ButtonState::Checked, true);
-						this->invalidate(true);
-					}
-					else if (RadioButtonControl* ctrl = this->sibling(*dialog,id); ctrl) {
-						ctrl->StateWhenOwnerDraw.set(ButtonState::Checked, false);
-						ctrl->invalidate(true);
-					}
-				}
-			}
-		}
-		
-		std::optional<int16_t>
-		selection() const 
-		{
-			// Search for the checked sibling
-			Window const* dialog = this->parent();
-			for (auto const id : this->GroupBoundaries) {
-				RadioButtonControl const* ctrl = (id == this->ident()) ? this : this->sibling(*dialog,id);
-				if (ctrl->checked())
-					return id;
-			}
-			return nullopt;
-		}
-
-	protected:
-		Response 
-		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
-			if (args.Ident == this->ident()) {
-				if (this->checked())
-					args.Item.State |= OwnerDrawState::Checked;
-				this->LookNFeel->draw(*this, args);
-				return TRUE;
-			}
-
-			return Unhandled;
-		}
-		
-	protected:
-		/*Response
-		virtual onOfferNotification(::UINT notification) override {
-			switch (notification) {
-			case BN_CLICKED:
-				this->Clicked.raise();
-				return 0;
-			}
-			return Unhandled;
-		}*/
-		
-	private:
-		void
-		this_Clicked(Window& sender) {
-			if (this->ownerDraw() && !this->checked()) 
-				this->check();
-		}
-	
-		void
-		this_MouseEvent(forms::Window& sender, forms::MouseEventArgs args) {
-			if (!this->ownerDraw())
-				return;
-
-			if (args.Event == forms::MouseMessage::ButtonDown) {
-				this->StateWhenOwnerDraw.set(ButtonState::Pushed, true);
-				this->invalidate();
-			}
-			else if (args.Event == forms::MouseMessage::ButtonUp) {
-				this->StateWhenOwnerDraw.set(ButtonState::Pushed, false);
-				this->invalidate();
-			}
-		}
 	};
+
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
