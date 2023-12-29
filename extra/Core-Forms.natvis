@@ -244,7 +244,7 @@
 		<DisplayString Condition="!Handle">{{ Label: id={Ident,d} &lt;Not a window&gt; }}</DisplayString>
 		<DisplayString>{{ Label: {Debug.Text._Elems,s}  id={Ident,d}  {Debug.State} }}</DisplayString>
 		<Expand>
-			<Item Name="[alignment]">TextAlignment,en</Item>
+			<Item Name="[alignment]">OwnerDrawAlignment,en</Item>
 			<ExpandedItem>*(core::forms::Control*)this,nd</ExpandedItem>
 		</Expand>
 	</Type>
