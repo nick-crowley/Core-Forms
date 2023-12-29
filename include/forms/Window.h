@@ -1404,8 +1404,10 @@ namespace core::forms
 				return this->onControlColour({message,wParam,lParam});
 
 			case WM_DRAWITEM:
-				return wParam ? this->onOwnerDraw({wParam,lParam}) 
-							  : this->onOwnerDrawMenu({wParam,lParam});
+				if (reinterpret_cast<::DRAWITEMSTRUCT*>(lParam)->CtlType == ODT_MENU)
+					return this->onOwnerDrawMenu({wParam,lParam});
+				
+				return this->onOwnerDraw({wParam,lParam});
 				
 			case WM_MEASUREITEM:
 				if (reinterpret_cast<::MEASUREITEMSTRUCT*>(lParam)->CtlType == ODT_MENU)
