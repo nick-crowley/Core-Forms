@@ -65,7 +65,7 @@ namespace core::forms
 		}
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
+	protected:
 		Response 
 		virtual onEraseBackground(EraseBackgroundEventArgs args) override {
 			if (!this->ownerDraw())

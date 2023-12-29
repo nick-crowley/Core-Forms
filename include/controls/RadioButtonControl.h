@@ -144,7 +144,6 @@ namespace core::forms
 			return Unhandled;
 		}
 		
-	protected:
 		/*Response
 		virtual onOfferNotification(::UINT notification) override {
 			switch (notification) {

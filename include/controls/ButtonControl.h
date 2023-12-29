@@ -155,25 +155,13 @@ namespace core::forms
 			return WindowRole::PushButton;
 		}
 
-	public:
 		ButtonWindowClass::const_reference 
 		virtual wndcls() const override {
 			ButtonWindowClass const  static wc;
 			return wc;
 		}
-	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		Response 
-		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
-			if (args.Ident == this->ident()) {
-				this->LookNFeel->draw(*this, args);
-				return TRUE;
-			}
-
-			return Unhandled;
-		}
-
 		nstd::bitset<ButtonState>
 		state() const noexcept {
 			return static_cast<ButtonState>(this->send<BM_GETSTATE>(0,0));
@@ -183,6 +171,16 @@ namespace core::forms
 		gsl::czstring
 		virtual notificationName(::UINT notification) override {
 			return ButtonControl::identifyNotification(notification);
+		}
+		
+		Response 
+		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
+			if (args.Ident == this->ident()) {
+				this->LookNFeel->draw(*this, args);
+				return TRUE;
+			}
+
+			return Unhandled;
 		}
 
 		Response

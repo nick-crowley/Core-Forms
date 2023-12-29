@@ -159,13 +159,11 @@ namespace core::forms
 			return WindowRole::Text;
 		}
 
-	public:
 		EditWindowClass::const_reference
 		virtual wndcls() const override {
 			EditWindowClass const  static wc;
 			return wc;
 		}
-		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
 		gsl::czstring

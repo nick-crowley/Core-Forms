@@ -592,6 +592,12 @@ namespace core::forms
 		virtual role() const noexcept override {
 			return WindowRole::ComboBox;
 		}
+
+		ComboBoxWindowClass::const_reference
+		virtual wndcls() const override {
+			ComboBoxWindowClass const  static wc;
+			return wc;
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
@@ -610,6 +616,12 @@ namespace core::forms
 			this->HeadingFont = newFont;
 		}
 		
+	protected:
+		gsl::czstring
+		virtual notificationName(::UINT notification) override {
+			return ComboBoxControl::identifyNotification(notification);
+		}
+
 		Response 
 		virtual onCommand(CommandEventArgs args) override
 		{
@@ -665,18 +677,6 @@ namespace core::forms
 			return Unhandled;
 		}
 		
-		ComboBoxWindowClass::const_reference
-		virtual wndcls() const override {
-			ComboBoxWindowClass const  static wc;
-			return wc;
-		}
-
-	protected:
-		gsl::czstring
-		virtual notificationName(::UINT notification) override {
-			return ComboBoxControl::identifyNotification(notification);
-		}
-
 		Response
 		virtual onOfferNotification(::UINT notification) override {
 			switch (notification) {

@@ -671,6 +671,11 @@ namespace core::forms
 			return WindowRole::List;
 		}
 		
+		HeaderWindowClass::const_reference
+		virtual wndcls() const override {
+			HeaderWindowClass const  static wc;
+			return wc;
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
@@ -683,6 +688,12 @@ namespace core::forms
 			this->HeadingFont = newFont;
 		}
 		
+	protected:
+		gsl::czstring
+		virtual notificationName(::UINT notification) override {
+			return HeaderControl::identifyNotification(notification);
+		}
+
 		//Response 
 		//virtual onControlColour(ControlColourEventArgs args) override
 		//{
@@ -724,18 +735,6 @@ namespace core::forms
 			}
 
 			return Unhandled;
-		}
-
-		HeaderWindowClass::const_reference
-		virtual wndcls() const override {
-			HeaderWindowClass const  static wc;
-			return wc;
-		}
-
-	protected:
-		gsl::czstring
-		virtual notificationName(::UINT notification) override {
-			return HeaderControl::identifyNotification(notification);
 		}
 
 		/*Response

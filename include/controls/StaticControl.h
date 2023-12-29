@@ -137,7 +137,12 @@ namespace core::forms
 		}
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
+	protected:
+		gsl::czstring
+		virtual notificationName(::UINT notification) override {
+			return StaticControl::identifyNotification(notification);
+		}
+
 		Response 
 		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
 			if (args.Ident == this->ident()) {
@@ -146,12 +151,6 @@ namespace core::forms
 			}
 
 			return Unhandled;
-		}
-	
-	protected:
-		gsl::czstring
-		virtual notificationName(::UINT notification) override {
-			return StaticControl::identifyNotification(notification);
 		}
 		
 		::LRESULT 

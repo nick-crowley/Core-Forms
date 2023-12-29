@@ -71,6 +71,7 @@ namespace core::forms
 			this->OwnerDrawAlignment = ownerDrawAlign;
 		}
 
+	protected:
 		Response 
 		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
 			if (args.Ident == this->ident()) {

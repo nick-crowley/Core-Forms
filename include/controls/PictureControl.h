@@ -107,6 +107,7 @@ namespace core::forms
 			this->Opacity = px;
 		}
 		
+	protected:
 		Response 
 		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
 			if (args.Ident == this->ident()) {

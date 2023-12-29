@@ -91,16 +91,6 @@ namespace core::forms
 			}
 		}
 		
-		Response 
-		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
-			if (args.Ident == this->ident()) {
-				this->LookNFeel->draw(*this, args);
-				return TRUE;
-			}
-
-			return Unhandled;
-		}
-		
 		void
 		uncheck() noexcept {
 			Button_SetCheck(this->handle(), ButtonState::Unchecked);
@@ -121,7 +111,17 @@ namespace core::forms
 			}
 			return Unhandled;
 		}*/
+		
+		Response 
+		virtual onOwnerDraw(OwnerDrawEventArgs args) override {
+			if (args.Ident == this->ident()) {
+				this->LookNFeel->draw(*this, args);
+				return TRUE;
+			}
 
+			return Unhandled;
+		}
+		
 		void
 		this_Clicked(Window& sender) {
 			if (!this->ownerDraw())

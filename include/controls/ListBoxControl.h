@@ -668,6 +668,11 @@ namespace core::forms
 			return WindowRole::List;
 		}
 		
+		ListBoxWindowClass::const_reference
+		virtual wndcls() const override {
+			ListBoxWindowClass const  static wc;
+			return wc;
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		void
@@ -680,6 +685,12 @@ namespace core::forms
 			this->HeadingFont = newFont;
 		}
 		
+	protected:
+		gsl::czstring
+		virtual notificationName(::UINT notification) override {
+			return ListBoxControl::identifyNotification(notification);
+		}
+
 		//Response 
 		//virtual onControlColour(ControlColourEventArgs args) override
 		//{
@@ -721,18 +732,6 @@ namespace core::forms
 			}
 
 			return Unhandled;
-		}
-
-		ListBoxWindowClass::const_reference
-		virtual wndcls() const override {
-			ListBoxWindowClass const  static wc;
-			return wc;
-		}
-
-	protected:
-		gsl::czstring
-		virtual notificationName(::UINT notification) override {
-			return ListBoxControl::identifyNotification(notification);
 		}
 
 		Response

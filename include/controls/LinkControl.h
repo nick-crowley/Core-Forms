@@ -100,13 +100,11 @@ namespace core::forms
 			return WindowRole::Link;
 		}
 
-	public:
 		LinkWindowClass::const_reference
 		virtual wndcls() const override {
 			LinkWindowClass const  static wc;
 			return wc;
 		}
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
 		gsl::czstring
