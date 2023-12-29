@@ -66,7 +66,12 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	private:
+		template <typename Self>
+		nstd::mirror_cv_ref_t<Self, RadioButtonControl>*
+		sibling(this Self&&, Window const& parent, uint16_t id) {
+			return Window::ExistingWindows.find<RadioButtonControl>(::GetDlgItem(parent.handle(),id));
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		bool
@@ -99,17 +104,15 @@ namespace core::forms
 			if (!this->ownerDraw()) 
 				Button_SetCheck(this->handle(), ButtonState::Checked);
 			else {
-				auto const* const dialog = this->parent();
-
 				// Invalidate this control and siblings within group
-				for (auto id = this->GroupBoundaries.first; id <= this->GroupBoundaries.second; ++id) {
+				Window const* dialog = this->parent();
 					if (id == this->ident()) {
 						this->StateWhenOwnerDraw.set(ButtonState::Checked, true);
 						this->invalidate(true);
 					}
-					else if (auto* sibling = Window::ExistingWindows.find<RadioButtonControl>(::GetDlgItem(dialog->handle(),id)); sibling) {
-						sibling->StateWhenOwnerDraw.set(ButtonState::Checked, false);
-						sibling->invalidate(true);
+					else if (RadioButtonControl* ctrl = this->sibling(*dialog,id); ctrl) {
+						ctrl->StateWhenOwnerDraw.set(ButtonState::Checked, false);
+						ctrl->invalidate(true);
 					}
 				}
 			}
@@ -119,10 +122,9 @@ namespace core::forms
 		selection() const 
 		{
 			// Search for the checked sibling
-			Window const* const dialog = this->parent();
+			Window const* dialog = this->parent();
 			for (auto id = this->GroupBoundaries.first; id <= this->GroupBoundaries.second; ++id) {
-				RadioButtonControl const* const ctrl = (id == this->ident()) ? this 
-				                                     : Window::ExistingWindows.find<RadioButtonControl>(::GetDlgItem(dialog->handle(),id));
+				RadioButtonControl const* ctrl = (id == this->ident()) ? this : this->sibling(*dialog,id);
 				if (ctrl->checked())
 					return id;
 			}
