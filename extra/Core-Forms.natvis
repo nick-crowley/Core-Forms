@@ -229,7 +229,17 @@
 		</Expand>
 	</Type>
 
-	<Type Name="core::forms::LabelControl">
+  <Type Name="core::forms::RadioButtonControl">
+    <DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
+    <DisplayString Condition="!Handle">{{ RadioButton: id={Ident,d} &lt;Not a window&gt; }}</DisplayString>
+    <DisplayString>{{ RadioButton: {Debug.Text._Elems,s}  id={Ident,d}  {Debug.State} }}</DisplayString>
+    <Expand>
+      <ExpandedItem>*(core::forms::Control*)this,nd</ExpandedItem>
+      <Item Name="State">StateWhenOwnerDraw</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="core::forms::LabelControl">
 		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
 		<DisplayString Condition="!Handle">{{ Label: id={Ident,d} &lt;Not a window&gt; }}</DisplayString>
 		<DisplayString>{{ Label: {Debug.Text._Elems,s}  id={Ident,d}  {Debug.State} }}</DisplayString>
