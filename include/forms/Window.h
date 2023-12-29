@@ -287,6 +287,12 @@ namespace core::forms
 				this->Params.Module = *cls.Instance;
 				return *this;
 			}
+			
+			reference
+			withIdent(uint16_t ident) {
+				this->Params.Menu = reinterpret_cast<::HMENU>(static_cast<uintptr_t>(ident));
+				return *this;
+			}
 
 			reference
 			withParameter(Window* wnd) {
@@ -1032,9 +1038,10 @@ namespace core::forms
 		}
 
 		void 
-		create(const Window& parent, std::wstring_view text, WindowStyle style, Rect area)
+		create(const Window& parent, uint16_t ident, std::wstring_view text, WindowStyle style, Rect area)
 		{
 			auto const params = CreateWindowParamsBuilder{}.withClass(this->wndcls())
+			                                               .withIdent(ident)
 			                                               .withStyle(style)
 			                                               .withParent(parent)
 			                                               .withText(text)
