@@ -156,10 +156,11 @@
 	
 	<Type Name="core::forms::Control">
 		<DisplayString Condition="__vfptr == 0xccCCccCCccCCccCC">&lt;Uninitialized&gt;</DisplayString>
-		<DisplayString Condition="!Handle">{{ id={Ident,d} &lt;Not a window&gt; }}</DisplayString>
-		<DisplayString>{{ {Debug.Class._Elems,sb}: {Debug.Text._Elems,s}  id={Ident,d}  {Debug.State} }}</DisplayString>
+		<DisplayString Condition="!Handle">{{ Control: id={Ident,d} &lt;Not a window&gt; }}</DisplayString>
+		<DisplayString>{{ Control: {Debug.Class._Elems,sb}: {Debug.Text._Elems,s}  id={Ident,d}  {Debug.State} }}</DisplayString>
 		<Expand>
 			<Item Name="[ident]">Ident</Item>
+      <Item Name="[anchors]">Anchors,en</Item>
 			<ExpandedItem>*(core::forms::Window*)this,nd</ExpandedItem>
 		</Expand>
 	</Type>
