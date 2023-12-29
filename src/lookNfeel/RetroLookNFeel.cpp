@@ -13,6 +13,7 @@ RetroLookNFeel::RetroLookNFeel()
 {
 	using namespace forms::literals;
 	this->Fonts.Paragraph = this->makeDefault();
+	this->Fonts.Heading3 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(14_pt);
 	this->Fonts.Heading2 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(18_pt);
 	this->Fonts.Heading1 = FontBuilder{}.fromExisting(this->Fonts.Paragraph).withSize(24_pt);
 	this->Colours.Button = SystemColour::ButtonFace;

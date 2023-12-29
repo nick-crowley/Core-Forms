@@ -60,6 +60,7 @@ LookNFeelProvider::LookNFeelProvider()
   : Fonts{
     .Heading1{StockFont::DefaultGui},
     .Heading2{StockFont::DefaultGui},
+    .Heading3{StockFont::DefaultGui},
     .Paragraph{StockFont::DefaultGui}
   },
   Colours{
@@ -913,6 +914,14 @@ LookNFeelProvider::heading2() {
 		return (*CustomImpl)->heading2();
 
 	return this->Fonts.Heading2;
+}
+
+Font
+LookNFeelProvider::heading3() {
+	if (CustomImpl)
+		return (*CustomImpl)->heading3();
+
+	return this->Fonts.Heading3;
 }
 
 AnyColour

@@ -183,6 +183,9 @@ namespace core::forms
 		Font
 		virtual heading2() abstract;
 		
+		Font
+		virtual heading3() abstract;
+		
 		AnyColour
 		virtual highlight() abstract;
 		

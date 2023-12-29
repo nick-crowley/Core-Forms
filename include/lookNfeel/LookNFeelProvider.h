@@ -59,6 +59,7 @@ namespace core::forms
 		struct {
 			Font  Heading1;
 			Font  Heading2;
+			Font  Heading3;
 			Font  Paragraph;
 		} Fonts;
 
@@ -169,6 +170,9 @@ namespace core::forms
 
 		Font
 		virtual heading2() override;
+		
+		Font
+		virtual heading3() override;
 		
 		AnyColour
 		virtual highlight() override;

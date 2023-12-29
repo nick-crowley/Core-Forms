@@ -179,6 +179,11 @@ namespace core::forms
 		virtual heading2() override {
 			return this->ColourImpl->heading2();
 		}
+		
+		Font 
+		virtual heading3() override {
+			return this->ColourImpl->heading3();
+		}
 
 		AnyColour 
 		virtual highlight() override {
