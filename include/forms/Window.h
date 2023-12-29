@@ -1243,7 +1243,12 @@ namespace core::forms
 
 		Response 
 		virtual onPaint() {
-			return Unhandled;
+			return this->onPaint(PaintWindowEventArgs{*this});
+		}
+		
+		Response 
+		virtual onPaint(PaintWindowEventArgs args) {
+			return 0;	// Validate the update region
 		}
 		
 		Response 

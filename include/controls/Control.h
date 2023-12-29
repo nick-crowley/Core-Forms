@@ -84,6 +84,8 @@ namespace core::forms
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
+		using base = Window;
+
 		enum class FakeStyle : uint32_t { None, /*Placeholder for control-defined*/ };
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
@@ -106,7 +108,12 @@ namespace core::forms
 			NotSortable
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
+	public:
+		template <typename Self>
+		bool constexpr
+		subclassed(this Self&&) {
+			return meta::SubclassedControl<Self>;
+		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		nstd::bitset<Side>
@@ -154,6 +161,8 @@ namespace core::forms
 		}
 	
 	protected:
+		using base::onPaint;
+
 		Response 
 		virtual onControlColour(ControlColourEventArgs args) override
 		{
@@ -166,6 +175,15 @@ namespace core::forms
 			return Unhandled;
 		}
 
+		Response 
+		virtual onPaint() override {
+			// Subclassed controls must skip calling Begin/EndPaint() so superclass can paint
+			if (!this->subclassed())
+				return this->onPaint(PaintWindowEventArgs{*this});
+
+			return Unhandled;
+		}
+		
 		template <meta::SubclassedControl Self>
 		::LRESULT
 		subclassedWndProc(this Self&& self, unsigned message, std::optional<::WPARAM> w = nullopt, std::optional<::LPARAM> l = nullopt) {
