@@ -1242,7 +1242,7 @@ namespace core::forms
 		}
 
 		Response 
-		virtual onPaint(PaintWindowEventArgs args) {
+		virtual onPaint() {
 			return Unhandled;
 		}
 		
@@ -1393,7 +1393,7 @@ namespace core::forms
 				return this->onEraseBackground({wParam,lParam});
 				
 			case WM_PAINT:
-				return this->onPaint({this});
+				return this->onPaint();
 			
 			case WM_CTLCOLORDLG:
 			case WM_CTLCOLORSTATIC:
@@ -1534,7 +1534,7 @@ namespace core::forms
 				return;
 			
 			case WM_PAINT:
-				this->Painted.raise(*this, PaintWindowEventArgs{this});
+				this->Painted.raise(*this);
 				return;
 			
 			case WM_LBUTTONDOWN:

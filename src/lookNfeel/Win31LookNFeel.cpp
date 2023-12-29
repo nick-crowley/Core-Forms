@@ -69,10 +69,10 @@ void
 Win31LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 {
 	// Erase background
-	args.Graphics->setBrush(this->window());
-	args.Graphics->fillRect(*args.Area);
+	args.Graphics.setBrush(this->window());
+	args.Graphics.fillRect(args.Area);
 
-	args.Graphics->restore();
+	args.Graphics.restore();
 }
 
 Response

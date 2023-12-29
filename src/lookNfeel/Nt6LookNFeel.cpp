@@ -63,16 +63,16 @@ void
 Nt6LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 {
 	// Erase background
-	args.Graphics->setBrush(this->window());
-	args.Graphics->fillRect(*args.Area);
+	args.Graphics.setBrush(this->window());
+	args.Graphics.fillRect(args.Area);
 
 	// [SIZE-GRIP]
 	if (dlg.style().test(WindowStyle::SizeBox)) {
-		Rect rc{args.Area->bottomRight(), Size{SystemMetric::cxHThumb, SystemMetric::cyVThumb}, Rect::FromBottomRight};
-		args.Graphics->drawControl(rc, DFC_SCROLL, DFCS_SCROLLSIZEGRIP);
+		Rect rc{args.Area.bottomRight(), Size{SystemMetric::cxHThumb, SystemMetric::cyVThumb}, Rect::FromBottomRight};
+		args.Graphics.drawControl(rc, DFC_SCROLL, DFCS_SCROLLSIZEGRIP);
 	}
 
-	args.Graphics->restore();
+	args.Graphics.restore();
 }
 
 Response

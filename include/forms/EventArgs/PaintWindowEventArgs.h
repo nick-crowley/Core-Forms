@@ -43,29 +43,46 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class FormsExport PaintWindowEventArgs {
+	class FormsExport PaintWindowEventArgs 
+	{
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		::PAINTSTRUCT                 Data {};
+		::PAINTSTRUCT  Data {};
 
 	public:
-		std::optional<Rect>           Area;
-		std::optional<DeviceContext>  mutable Graphics;
-		std::optional<bool>           Erase = false, 
-									  Restore = false, 
-									  Update = false;
-		Window*                       Window;
+		Rect           Area;
+		bool           Erase = false, 
+		               Restore = false, 
+		               Update = false;
+		Window&        Window;
+		DeviceContext  mutable Graphics;   // Initialize last; destroy first
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		explicit
+		PaintWindowEventArgs(forms::Window& wnd);
 
-		PaintWindowEventArgs(forms::Window* w) : Window(w) 
-		{}
+	private:
+		PaintWindowEventArgs(forms::Window& wnd, ::HDC dc);
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		satisfies(PaintWindowEventArgs,
+			IsCopyConstructible,
+			IsMoveConstructible,
+			NotCopyAssignable,
+			NotMoveAssignable,
+			NotEqualityComparable,
+			NotSortable
+		);
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
-		void 
-		beginPaint();
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
-		void 
-		endPaint();
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 
-	using PaintWindowDelegate = Delegate<void (Window&,PaintWindowEventArgs)>;
+	using PaintWindowDelegate = Delegate<void (Window&)>;
 	using PaintWindowEvent = ObservableEvent<PaintWindowDelegate>;
 	
 }	// namespace core::forms

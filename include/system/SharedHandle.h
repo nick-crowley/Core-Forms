@@ -171,7 +171,11 @@ namespace core::forms
         SharedDeviceContext(::HDC dc, meta::weakref_t)
           : base{dc, weakref}
         {}
-    
+        
+        template <std::invocable<::HDC> ReleaseDelegate>
+        SharedDeviceContext(::HDC dc, ReleaseDelegate release)
+          : base{dc, release}
+        {}
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
     public:
         satisfies(SharedDeviceContext,
