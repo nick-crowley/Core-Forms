@@ -102,7 +102,13 @@ namespace core::forms
 		virtual notificationName(::UINT notification) override {
 			return "Unknown";
 		}
-
+		
+		Response 
+		virtual onPaint() override {
+			// Subclassed controls must not prevent subclasses from painting by calling Begin/EndPaint()
+			return Unhandled;
+		}
+		
 		::LRESULT 
 		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
 			return this->subclassedWndProc(message, wParam, lParam);

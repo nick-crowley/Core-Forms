@@ -181,6 +181,12 @@ namespace core::forms
 			return Unhandled;
 		}
 		
+		Response 
+		virtual onPaint() override {
+			// Subclassed controls must not prevent subclasses from painting by calling Begin/EndPaint()
+			return Unhandled;
+		}
+		
 		::LRESULT 
 		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override 
 		{

@@ -108,7 +108,7 @@ namespace core::forms
 			NotSortable
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
+	protected:
 		template <typename Self>
 		bool constexpr
 		subclassed(this Self&&) {
@@ -175,15 +175,6 @@ namespace core::forms
 			return Unhandled;
 		}
 
-		Response 
-		virtual onPaint() override {
-			// Subclassed controls must skip calling Begin/EndPaint() so superclass can paint
-			if (!this->subclassed())
-				return this->onPaint(PaintWindowEventArgs{*this});
-
-			return Unhandled;
-		}
-		
 		template <meta::SubclassedControl Self>
 		::LRESULT
 		subclassedWndProc(this Self&& self, unsigned message, std::optional<::WPARAM> w = nullopt, std::optional<::LPARAM> l = nullopt) {
