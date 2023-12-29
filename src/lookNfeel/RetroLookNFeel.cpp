@@ -30,8 +30,8 @@ RetroLookNFeel::customCaption() const {
 	return true;
 }
 
-ILookNFeelProvider::FontDescription
-RetroLookNFeel::default() 
+RetroLookNFeel::FontDescription
+RetroLookNFeel::default() const
 {
 	using namespace forms::literals;
 	return FontDescription{L"FixedSys Excelsior", 11_pt};

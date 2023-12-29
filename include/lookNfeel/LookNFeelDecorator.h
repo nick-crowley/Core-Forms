@@ -151,67 +151,67 @@ namespace core::forms
 		}
 
 		AnyColour 
-		virtual button() override {
+		virtual button() const override {
 			return this->ColourImpl->button();
 		}
 
 		AnyColourPair 
-		virtual caption() override {
+		virtual caption() const override {
 			return this->ColourImpl->caption();
 		}
 
 		AnyColour 
-		virtual control() override {
+		virtual control() const override {
 			return this->ColourImpl->control();
 		}
 		
 		FontDescription
-		virtual default() override {
+		virtual default() const override {
 			return this->ColourImpl->default();
 		}
 
 		Font 
-		virtual heading1() override {
+		virtual heading1() const override {
 			return this->ColourImpl->heading1();
 		}
 
 		Font 
-		virtual heading2() override {
+		virtual heading2() const override {
 			return this->ColourImpl->heading2();
 		}
 		
 		Font 
-		virtual heading3() override {
+		virtual heading3() const override {
 			return this->ColourImpl->heading3();
 		}
 
 		AnyColour 
-		virtual highlight() override {
+		virtual highlight() const override {
 			return this->ColourImpl->highlight();
 		}
 
 		Font 
-		virtual paragraph() override {
+		virtual paragraph() const override {
 			return this->ColourImpl->paragraph();
 		}
 
 		AnyColour 
-		virtual primary() override {
+		virtual primary() const override {
 			return this->ColourImpl->primary();
 		}
 
 		AnyColour 
-		virtual secondary() override {
+		virtual secondary() const override {
 			return this->ColourImpl->secondary();
 		}
 
 		AnyColour 
-		virtual tertiary() override {
+		virtual tertiary() const override {
 			return this->ColourImpl->tertiary();
 		}
 
 		AnyColour 
-		virtual window() override {
+		virtual window() const override {
 			return this->ColourImpl->window();
 		}
 	};

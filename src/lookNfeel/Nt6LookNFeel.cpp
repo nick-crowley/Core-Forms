@@ -28,8 +28,8 @@ Nt6LookNFeel::Nt6LookNFeel(SharedLookNFeelProvider custom)
 {
 }
 
-ILookNFeelProvider::FontDescription
-Nt6LookNFeel::default() 
+Nt6LookNFeel::FontDescription
+Nt6LookNFeel::default() const
 {
 	using namespace forms::literals;
 	return FontDescription{L"Segoe UI", 11_pt};

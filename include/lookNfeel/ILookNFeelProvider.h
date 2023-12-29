@@ -27,11 +27,10 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
-#include "graphics/Colours.h"
-#include "graphics/Font.h"
 #include "forms/WindowStyle.h"
 #include "forms/NonClientLayout.h"
 #include "forms/Response.h"
+#include "looknfeel/IColourScheme.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -65,28 +64,17 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	//! @brief  Distinguishes colours used by the current look-n-feel
+	//! @brief  Distinguishes colours scheme used by the current look-n-feel
 	enum class ColourScheme : uint32_t { Default, Dark, Light };
-	
+
 	//! @brief  Supported looks-n-feels
 	enum class VisualStyle : uint32_t { Modern, Retro, Vintage };
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	struct ILookNFeelProvider
+	struct ILookNFeelProvider : IColourScheme
 	{
-		struct FontDescription 
-		{
-			std::wstring  Name;
-			PointSize     Height;
-		};
-
-		struct AnyColourPair
-		{
-			AnyColour  Active, Inactive;
-		};
-
 		satisfies(ILookNFeelProvider,
 			IsInterface
 		);
@@ -164,45 +152,6 @@ namespace core::forms
 
 		void
 		virtual onCreated(Window&, CreateWindowEventArgs const& args) abstract;
-		
-		AnyColour
-		virtual button() abstract;
-		
-		AnyColourPair
-		virtual caption() abstract;
-		
-		AnyColour
-		virtual control() abstract;
-		
-		FontDescription
-		virtual default() abstract;
-
-		Font
-		virtual heading1() abstract;
-
-		Font
-		virtual heading2() abstract;
-		
-		Font
-		virtual heading3() abstract;
-		
-		AnyColour
-		virtual highlight() abstract;
-		
-		Font
-		virtual paragraph() abstract;
-
-		AnyColour
-		virtual primary() abstract;
-		
-		AnyColour
-		virtual secondary() abstract;
-		
-		AnyColour
-		virtual tertiary() abstract;
-
-		AnyColour
-		virtual window() abstract;
 	};
 
 	using SharedLookNFeelProvider = std::shared_ptr<ILookNFeelProvider>;

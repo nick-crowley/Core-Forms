@@ -877,7 +877,7 @@ LookNFeelProvider::onCreated(Window&, CreateWindowEventArgs const& args) {
 }
 
 AnyColour
-LookNFeelProvider::button() {
+LookNFeelProvider::button() const {
 	if (CustomImpl)
 		return (*CustomImpl)->button();
 
@@ -885,7 +885,7 @@ LookNFeelProvider::button() {
 }
 
 LookNFeelProvider::AnyColourPair
-LookNFeelProvider::caption() {
+LookNFeelProvider::caption() const {
 	if (CustomImpl)
 		return (*CustomImpl)->caption();
 
@@ -893,7 +893,7 @@ LookNFeelProvider::caption() {
 }
 
 AnyColour
-LookNFeelProvider::control() {
+LookNFeelProvider::control() const {
 	if (CustomImpl)
 		return (*CustomImpl)->control();
 
@@ -901,7 +901,7 @@ LookNFeelProvider::control() {
 }
 
 Font
-LookNFeelProvider::heading1() {
+LookNFeelProvider::heading1() const {
 	if (CustomImpl)
 		return (*CustomImpl)->heading1();
 
@@ -909,7 +909,7 @@ LookNFeelProvider::heading1() {
 }
 
 Font
-LookNFeelProvider::heading2() {
+LookNFeelProvider::heading2() const {
 	if (CustomImpl)
 		return (*CustomImpl)->heading2();
 
@@ -917,7 +917,7 @@ LookNFeelProvider::heading2() {
 }
 
 Font
-LookNFeelProvider::heading3() {
+LookNFeelProvider::heading3() const {
 	if (CustomImpl)
 		return (*CustomImpl)->heading3();
 
@@ -925,7 +925,7 @@ LookNFeelProvider::heading3() {
 }
 
 AnyColour
-LookNFeelProvider::highlight() {
+LookNFeelProvider::highlight() const {
 	if (CustomImpl)
 		return (*CustomImpl)->highlight();
 
@@ -933,7 +933,7 @@ LookNFeelProvider::highlight() {
 }
 
 Font
-LookNFeelProvider::paragraph() {
+LookNFeelProvider::paragraph() const {
 	if (CustomImpl)
 		return (*CustomImpl)->paragraph();
 
@@ -941,7 +941,7 @@ LookNFeelProvider::paragraph() {
 }
 
 AnyColour
-LookNFeelProvider::primary() {
+LookNFeelProvider::primary() const {
 	if (CustomImpl)
 		return (*CustomImpl)->primary();
 
@@ -949,7 +949,7 @@ LookNFeelProvider::primary() {
 }
 
 AnyColour
-LookNFeelProvider::secondary() {
+LookNFeelProvider::secondary() const {
 	if (CustomImpl)
 		return (*CustomImpl)->secondary();
 
@@ -957,7 +957,7 @@ LookNFeelProvider::secondary() {
 }
 
 AnyColour
-LookNFeelProvider::tertiary() {
+LookNFeelProvider::tertiary() const {
 	if (CustomImpl)
 		return (*CustomImpl)->tertiary();
 
@@ -965,7 +965,7 @@ LookNFeelProvider::tertiary() {
 }
 
 AnyColour
-LookNFeelProvider::window() {
+LookNFeelProvider::window() const {
 	if (CustomImpl)
 		return (*CustomImpl)->window();
 

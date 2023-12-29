@@ -57,7 +57,7 @@ namespace core::forms
 		virtual customCaption() const override;
 
 		FontDescription
-		virtual default() override;
+		virtual default() const override;
 		
 		void
 		virtual draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) override;

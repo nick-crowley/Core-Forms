@@ -41,8 +41,8 @@ ModernLookNFeel::customCaption() const {
 	return true;
 }
 
-ILookNFeelProvider::FontDescription
-ModernLookNFeel::default() 
+ModernLookNFeel::FontDescription
+ModernLookNFeel::default() const
 {
 	using namespace forms::literals;
 	return FontDescription{L"Lucida Console", 11_pt};

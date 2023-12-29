@@ -34,8 +34,8 @@ Win31LookNFeel::customCaption() const {
 	return true;
 }
 
-ILookNFeelProvider::FontDescription
-Win31LookNFeel::default() 
+Win31LookNFeel::FontDescription
+Win31LookNFeel::default() const
 {
 	using namespace forms::literals;
 	return FontDescription{L"FixedSys Excelsior", 12_pt};

@@ -157,40 +157,40 @@ namespace core::forms
 		virtual onCreated(Window&, CreateWindowEventArgs const& args) override;
 		
 		AnyColour
-		virtual button() override;
+		virtual button() const override;
 		
 		AnyColourPair
-		virtual caption() override;
+		virtual caption() const override;
 		
 		AnyColour
-		virtual control() override;
+		virtual control() const override;
 
 		Font
-		virtual heading1() override;
+		virtual heading1() const override;
 
 		Font
-		virtual heading2() override;
+		virtual heading2() const override;
 		
 		Font
-		virtual heading3() override;
+		virtual heading3() const override;
 		
 		AnyColour
-		virtual highlight() override;
+		virtual highlight() const override;
 
 		Font
-		virtual paragraph() override;
+		virtual paragraph() const override;
 
 		AnyColour
-		virtual primary() override;
+		virtual primary() const override;
 
 		AnyColour
-		virtual secondary() override;
+		virtual secondary() const override;
 		
 		AnyColour
-		virtual tertiary() override;
+		virtual tertiary() const override;
 
 		AnyColour
-		virtual window() override;
+		virtual window() const override;
 	};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

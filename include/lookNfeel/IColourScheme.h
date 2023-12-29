@@ -26,8 +26,9 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "lookNfeel/LookNFeelProvider.h"
-#include "graphics/Graphics.h"
+#include "library/core.Forms.h"
+#include "graphics/Colours.h"
+#include "graphics/Font.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -39,37 +40,66 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class FormsExport Nt6LookNFeel : public LookNFeelProvider
+	struct IColourScheme
 	{
-		using base = LookNFeelProvider;
+		struct FontDescription 
+		{
+			std::wstring  Name;
+			PointSize     Height;
+		};
+
+		struct AnyColourPair
+		{
+			AnyColour  Active;
+			AnyColour  Inactive;
+		};
+
+		satisfies(IColourScheme,
+			IsInterface
+		);
 		
-	public:
-		std::shared_ptr<ILookNFeelProvider> const
-		static Instance;
-
-	public:
-		Nt6LookNFeel();
-
-		Nt6LookNFeel(SharedLookNFeelProvider custom);
-
-	public:
-		using base::draw;
+		AnyColour
+		virtual button() const abstract;
+		
+		AnyColourPair
+		virtual caption() const abstract;
+		
+		AnyColour
+		virtual control() const abstract;
 		
 		FontDescription
-		virtual default() const override;
+		virtual default() const abstract;
 
-		void
-		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
-	
-		void
-		virtual draw(Dialog& dlg, PaintWindowEventArgs const& args) override;
-	
-		Response
-		virtual draw(Dialog& dlg, NonClientPaintEventArgs& args) override;
+		Font
+		virtual heading1() const abstract;
+
+		Font
+		virtual heading2() const abstract;
 		
-		NonClientLayout
-		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const override;
+		Font
+		virtual heading3() const abstract;
+		
+		AnyColour
+		virtual highlight() const abstract;
+		
+		Font
+		virtual paragraph() const abstract;
+
+		AnyColour
+		virtual primary() const abstract;
+		
+		AnyColour
+		virtual secondary() const abstract;
+		
+		AnyColour
+		virtual tertiary() const abstract;
+
+		AnyColour
+		virtual window() const abstract;
 	};
+	
+	using SharedColourScheme = std::shared_ptr<IColourScheme>;
+
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
