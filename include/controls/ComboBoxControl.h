@@ -557,7 +557,7 @@ namespace core::forms
 		}
 		
 		forms::Font
-		editFont() {
+		editFont() const {
 			return this->EditFont.value_or(this->font());
 		}
 		
