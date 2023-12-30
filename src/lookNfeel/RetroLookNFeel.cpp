@@ -25,7 +25,7 @@ RetroLookNFeel::RetroLookNFeel()
 }
 
 bool
-RetroLookNFeel::customCaption() const {
+RetroLookNFeel::customFrame() const {
 	return true;
 }
 

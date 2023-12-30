@@ -29,12 +29,12 @@ Nt6LookNFeel::Nt6LookNFeel(SharedColourScheme alternateColours, SharedWindowFram
 }
 
 NonClientLayout
-Nt6LookNFeel::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const 
+Nt6LookNFeel::nonClientArea(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const 
 {
 	ThrowIf(results, results == Coords::Client);
 	
 	// Base non-client area upon the default
-	NonClientLayout bounds = base::nonClient(results, style, wnd);
+	NonClientLayout bounds = base::nonClientArea(results, style, wnd);
 	
 	// Use smaller buttons than other styles
 	bounds.CloseBtn.inflate(-2);
@@ -93,7 +93,7 @@ Nt6LookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args) const
 	args.beginPaint();
 
 	auto const activeCaption = args.CaptionState == WindowCaptionState::Active;
-	auto const components = this->nonClient(Coords::Window, args.Window.style(), args.Bounds);
+	auto const components = this->nonClientArea(Coords::Window, args.Window.style(), args.Bounds);
 	auto const style = dlg.style();
 	auto const& caption = dlg.caption();
 

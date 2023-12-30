@@ -175,7 +175,7 @@ namespace core::forms
 				if (auto menu = owner.menuBar(); menu)
 					menu->Items.resetAll();
 
-				owner.onNonClientPaint(NonClientPaintEventArgs{owner,Region{owner.nonClient().MenuBar}});
+				owner.onNonClientPaint(NonClientPaintEventArgs{owner,Region{owner.nonClientArea().MenuBar}});
 				return Unhandled;
 			}
 
@@ -183,7 +183,7 @@ namespace core::forms
 			onMouseUp(Dialog& owner, MouseEventArgs args) 
 			{
 				// Perform hit-test against the non-client area
-				auto const bounds = owner.nonClient();
+				auto const bounds = owner.nonClientArea();
 				auto const object = bounds.hitTest(owner.screenPoint(args.Position));
 				auto const style = owner.style();
 				
@@ -217,7 +217,7 @@ namespace core::forms
 			onNonClientMouseDown(Dialog& owner, NonClientMouseEventArgs args) 
 			{
 				// Repeat hit-test for our custom non-client area
-				auto const bounds = owner.nonClient();
+				auto const bounds = owner.nonClientArea();
 				auto const object = bounds.hitTest(args.Position);
 				auto const style = owner.style(); 
 
@@ -250,7 +250,7 @@ namespace core::forms
 			onNonClientMouseMove(Dialog& owner, NonClientMouseEventArgs args) 
 			{
 				// Repeat hit-test for our custom non-client area
-				auto const bounds = owner.nonClient();
+				auto const bounds = owner.nonClientArea();
 				auto const object = bounds.hitTest(args.Position);
 				auto const style = owner.style();
 
@@ -491,9 +491,9 @@ namespace core::forms
 		}
 	
 		NonClientLayout 
-		nonClient() const noexcept
+		nonClientArea() const noexcept
 		{
-			return this->LookNFeel->nonClient(Coords::Screen, this->style(), this->wndRect());
+			return this->LookNFeel->nonClientArea(Coords::Screen, this->style(), this->wndRect());
 		}
 		
 		DialogTemplate const&
@@ -598,7 +598,7 @@ namespace core::forms
 		virtual onMouseUp(MouseEventArgs args) override
 		{
 			// Delegate to custom non-client area, if any
-			if (this->LookNFeel->customCaption())
+			if (this->LookNFeel->customFrame())
 				if (auto const r = this->Caption.onMouseUp(*this, args); r)
 					return r;
 
@@ -609,7 +609,7 @@ namespace core::forms
 		virtual onNonClientActivate(NonClientActivateEventArgs args) override 
 		{
 			// Repaint custom non-client area, if any
-			if (this->LookNFeel->customCaption()) 
+			if (this->LookNFeel->customFrame()) 
 				return this->Caption.onNonClientActivate(*this, args);
 
 			return Unhandled;
@@ -619,8 +619,8 @@ namespace core::forms
 		virtual onNonClientCalculate(NonClientCalculateEventArgs args) 
 		{
 			// Calculate client area from custom non-client area, if any
-			if (this->LookNFeel->customCaption()) {
-				args.ClientArea = this->LookNFeel->clientRect(*this, args.ProposedWindow);
+			if (this->LookNFeel->customFrame()) {
+				args.ClientArea = this->LookNFeel->clientArea(*this, args.ProposedWindow);
 				return 0;
 			}
 
@@ -631,8 +631,8 @@ namespace core::forms
 		virtual onNonClientHitTest(NonClientHitTestEventArgs args) override 
 		{
 			// Perform hit-test against custom non-client area, if any
-			if (this->LookNFeel->customCaption())
-				return this->nonClient().hitTest(args.Position);
+			if (this->LookNFeel->customFrame())
+				return this->nonClientArea().hitTest(args.Position);
 			
 			return Unhandled;
 		}
@@ -641,7 +641,7 @@ namespace core::forms
 		virtual onNonClientMouseDown(NonClientMouseEventArgs args) override 
 		{
 			// Delegate to custom non-client area, if any
-			if (this->LookNFeel->customCaption())
+			if (this->LookNFeel->customFrame())
 				if (auto const r = this->Caption.onNonClientMouseDown(*this, args); r)
 					return r;
 
@@ -656,7 +656,7 @@ namespace core::forms
 		virtual onNonClientMouseMove(NonClientMouseEventArgs args) 
 		{	
 			// Delegate to custom non-client area, if any
-			if (this->LookNFeel->customCaption())
+			if (this->LookNFeel->customFrame())
 				if (auto const r = this->Caption.onNonClientMouseMove(*this, args); r)
 					return r;
 
@@ -666,7 +666,7 @@ namespace core::forms
 		Response
 		virtual onNonClientPaint(NonClientPaintEventArgs args) override 
 		{
-			if (this->LookNFeel->customCaption())
+			if (this->LookNFeel->customFrame())
 				return this->LookNFeel->draw(*this, args);
 
 			return Unhandled;

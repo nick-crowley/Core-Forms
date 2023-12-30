@@ -88,11 +88,11 @@ LookNFeelProvider::makeDefault() const {
 }
 
 Rect
-LookNFeelProvider::clientRect(Window& wnd, Rect bounds) const
+LookNFeelProvider::clientArea(Window& wnd, Rect bounds) const
 {	
 	// Delegate if decorated
 	if (this->FrameDecorator)
-		return this->FrameDecorator->clientRect(wnd, bounds);
+		return this->FrameDecorator->clientArea(wnd, bounds);
 
 	Size const Frame{SystemMetric::cxSizeFrame, SystemMetric::cySizeFrame};
 	Rect client = bounds - Border{2 * Frame} - Border{0, Measurement{SystemMetric::cyCaption}, 0, 0};
@@ -102,23 +102,23 @@ LookNFeelProvider::clientRect(Window& wnd, Rect bounds) const
 }
 
 bool
-LookNFeelProvider::customCaption() const 
+LookNFeelProvider::customFrame() const 
 {
 	// Delegate if decorated
 	if (this->FrameDecorator)
-		return this->FrameDecorator->customCaption();
+		return this->FrameDecorator->customFrame();
 
 	return false;
 }
 
 NonClientLayout
-LookNFeelProvider::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const 
+LookNFeelProvider::nonClientArea(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const 
 {
 	ThrowIf(results, results == Coords::Client);
 	
 	// Delegate if decorated
 	if (this->FrameDecorator)
-		return this->FrameDecorator->nonClient(results, style, wnd);
+		return this->FrameDecorator->nonClientArea(results, style, wnd);
 
 	// Caption
 	NonClientLayout bounds{wnd};
@@ -812,7 +812,7 @@ LookNFeelProvider::draw(Window& wnd, OwnerDrawMenuEventArgs& args) const
 	auto const& item = *args.Item.data<Menu::ItemData>();
 	
 	// When using a custom non-client area, the menu-bar is drawn as part of the non-client paint cycle
-	if (this->customCaption() && item.IsTopLevel) 
+	if (this->customFrame() && item.IsTopLevel) 
 		return;
 
 	auto const& detail = item.Detail;

@@ -54,7 +54,7 @@ namespace core::forms
 		using base::draw;
 		
 		bool
-		virtual customCaption() const override;
+		virtual customFrame() const override;
 
 		void
 		virtual draw(CheckBoxControl& ctrl, OwnerDrawEventArgs& args) const override;

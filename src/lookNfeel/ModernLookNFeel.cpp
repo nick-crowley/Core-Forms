@@ -26,7 +26,7 @@ ModernLookNFeel::ModernLookNFeel()
 }
 
 Rect
-ModernLookNFeel::clientRect(Window& wnd, Rect bounds) const
+ModernLookNFeel::clientArea(Window& wnd, Rect bounds) const
 {	
 	Size const Frame{SystemMetric::cxSizeFrame, SystemMetric::cySizeFrame};
 	Rect client = bounds - Border{2 * Frame} - Border{0, 1.5f * Measurement{SystemMetric::cyCaption}, 0, 0};
@@ -36,17 +36,17 @@ ModernLookNFeel::clientRect(Window& wnd, Rect bounds) const
 }
 
 bool
-ModernLookNFeel::customCaption() const {
+ModernLookNFeel::customFrame() const {
 	return true;
 }
 
 NonClientLayout
-ModernLookNFeel::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const 
+ModernLookNFeel::nonClientArea(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const 
 {
 	ThrowIf(results, results == Coords::Client);
 	
 	// Base non-client area upon the default
-	NonClientLayout bounds = base::nonClient(results, style, wnd);
+	NonClientLayout bounds = base::nonClientArea(results, style, wnd);
 	
 	// Extend height of caption by 50%
 	Rect::value_type const CaptionExtension = bounds.Caption.height() / 2;
@@ -205,7 +205,7 @@ ModernLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args) const
 	args.beginPaint();
 
 	auto const isActive = args.CaptionState == WindowCaptionState::Active;
-	auto const components = this->nonClient(Coords::Window, args.Window.style(), args.Bounds);
+	auto const components = this->nonClientArea(Coords::Window, args.Window.style(), args.Bounds);
 	auto const captionColour = isActive ? this->caption().Active : this->caption().Inactive;
 	auto const textColour = isActive ? this->primary() : this->tertiary();
 	auto const style = dlg.style();

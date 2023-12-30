@@ -57,10 +57,10 @@ namespace core::forms
 		using base::draw;
 		
 		bool
-		virtual customCaption() const override;
+		virtual customFrame() const override;
 		
 		NonClientLayout
-		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const override;
+		virtual nonClientArea(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const override;
 
 		void
 		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs& args) const override;

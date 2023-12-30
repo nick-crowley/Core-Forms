@@ -95,13 +95,13 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Rect
-		virtual clientRect(Window& wnd, Rect bounds) const override;
+		virtual clientArea(Window& wnd, Rect bounds) const override;
 
 		bool
-		virtual customCaption() const override;
+		virtual customFrame() const override;
 		
 		NonClientLayout
-		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const override;
+		virtual nonClientArea(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const override;
 
 		void
 		virtual onWindowCreated(Window&) const override;

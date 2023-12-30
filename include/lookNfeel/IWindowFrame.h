@@ -53,15 +53,15 @@ namespace core::forms
 		);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		Rect
-		virtual clientRect(Window& wnd, Rect bounds) const abstract;
+		virtual clientArea(Window& wnd, Rect bounds) const abstract;
 
 		bool
-		virtual customCaption() const abstract;
+		virtual customFrame() const abstract;
 
 		//! @brief  Retrieve non-client area component bounds
 		//! @param  client  Client area (in screen co-ordinates)
 		NonClientLayout
-		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const abstract;
+		virtual nonClientArea(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const abstract;
 
 		void
 		virtual onWindowCreated(Window&) const abstract;
