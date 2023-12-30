@@ -23,9 +23,26 @@ Nt6LookNFeel::Nt6LookNFeel()
 	this->Colours.Window = SystemColour::Dialog;
 }
 
-Nt6LookNFeel::Nt6LookNFeel(SharedLookNFeelProvider custom)
-	: base{custom}
+Nt6LookNFeel::Nt6LookNFeel(SharedColourScheme alternateColours, SharedWindowFrame windowFrame)
+  : base{alternateColours, windowFrame}
 {
+}
+
+NonClientLayout
+Nt6LookNFeel::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const 
+{
+	ThrowIf(results, results == Coords::Client);
+	
+	// Base non-client area upon the default
+	NonClientLayout bounds = base::nonClient(results, style, wnd);
+	
+	// Use smaller buttons than other styles
+	bounds.CloseBtn.inflate(-2);
+	bounds.SysMenuBtn.inflate(-2);
+	bounds.MaximizeBtn.inflate(-2);
+	bounds.MinimizeBtn.inflate(-2);
+
+	return bounds;
 }
 
 Nt6LookNFeel::FontDescription
@@ -131,21 +148,4 @@ Nt6LookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args)
 	args.Graphics->restore();
 	args.endPaint();
 	return 0;
-}
-
-NonClientLayout
-Nt6LookNFeel::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const 
-{
-	ThrowIf(results, results == Coords::Client);
-
-	// Base non-client area upon the default
-	NonClientLayout bounds = base::nonClient(results, style, wnd);
-	
-	// Use smaller buttons than other styles
-	bounds.CloseBtn.inflate(-2);
-	bounds.SysMenuBtn.inflate(-2);
-	bounds.MaximizeBtn.inflate(-2);
-	bounds.MinimizeBtn.inflate(-2);
-
-	return bounds;
 }

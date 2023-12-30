@@ -169,7 +169,8 @@ ModernLookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		throw runtime_error{"GroupBox #{} must be OwnerDraw", args.Ident};
 
 	// Same as NT6
-	Nt6LookNFeel{this->shared_from_this()}.draw(ctrl, args);
+	auto const self = this->shared_from_this();
+	Nt6LookNFeel{self,self}.draw(ctrl, args);
 }
 
 void

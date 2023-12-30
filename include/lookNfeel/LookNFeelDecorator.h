@@ -146,8 +146,8 @@ namespace core::forms
 		}
 
 		void 
-		virtual onCreated(Window& wnd, CreateWindowEventArgs const& args) override {
-			this->LogicImpl->onCreated(wnd, args);
+		virtual onWindowCreated(Window& wnd) const override {
+			this->LogicImpl->onWindowCreated(wnd);
 		}
 
 		AnyColour 

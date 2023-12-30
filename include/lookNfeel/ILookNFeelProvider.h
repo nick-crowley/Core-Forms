@@ -31,6 +31,7 @@
 #include "forms/NonClientLayout.h"
 #include "forms/Response.h"
 #include "looknfeel/IColourScheme.h"
+#include "looknfeel/IWindowFrame.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -73,18 +74,12 @@ namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	struct ILookNFeelProvider : IColourScheme
+	struct ILookNFeelProvider : IColourScheme, IWindowFrame
 	{
 		satisfies(ILookNFeelProvider,
 			IsInterface
 		);
 		
-		Rect
-		virtual clientRect(Window& wnd, Rect bounds) const abstract;
-
-		bool
-		virtual customCaption() const abstract;
-
 		void
 		virtual draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) abstract;
 	
@@ -144,14 +139,6 @@ namespace core::forms
 		
 		void
 		virtual measure(Window& wnd, MeasureMenuEventArgs& args) abstract;
-		
-		//! @brief  Retrieve non-client area component bounds
-		//! @param  client  Client area (in screen co-ordinates)
-		NonClientLayout
-		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const abstract;
-
-		void
-		virtual onCreated(Window&, CreateWindowEventArgs const& args) abstract;
 	};
 
 	using SharedLookNFeelProvider = std::shared_ptr<ILookNFeelProvider>;

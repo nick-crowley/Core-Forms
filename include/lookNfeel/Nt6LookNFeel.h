@@ -49,11 +49,15 @@ namespace core::forms
 
 	public:
 		Nt6LookNFeel();
-
-		Nt6LookNFeel(SharedLookNFeelProvider custom);
+		
+		//! @brief  Construct decorator with properties from another look'n'feel
+		Nt6LookNFeel(SharedColourScheme alternateColours, SharedWindowFrame windowFrame);
 
 	public:
 		using base::draw;
+		
+		NonClientLayout
+		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const override;
 		
 		FontDescription
 		virtual default() const override;
@@ -66,9 +70,6 @@ namespace core::forms
 	
 		Response
 		virtual draw(Dialog& dlg, NonClientPaintEventArgs& args) override;
-		
-		NonClientLayout
-		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const override;
 	};
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

@@ -24,14 +24,30 @@ Win31LookNFeel::Win31LookNFeel()
 	this->Colours.Window = Colour::White;
 }
 
-Win31LookNFeel::Win31LookNFeel(SharedLookNFeelProvider custom) 
-	: base{custom} 
+Win31LookNFeel::Win31LookNFeel(SharedColourScheme alternateColours, SharedWindowFrame windowFrame)
+  : base{alternateColours,windowFrame}
 {
 }
 
 bool
 Win31LookNFeel::customCaption() const {
 	return true;
+}
+
+NonClientLayout
+Win31LookNFeel::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const 
+{
+	ThrowIf(results, results == Coords::Client);
+
+	// Base non-client area upon the default
+	NonClientLayout bounds = base::nonClient(results, style, wnd);
+
+	// Shift Minimize/Maximize buttons right by 1 button
+	bounds.MinimizeBtn = bounds.MaximizeBtn;
+	bounds.MaximizeBtn = bounds.CloseBtn;
+	bounds.CloseBtn = Rect::Empty;
+
+	return bounds;
 }
 
 Win31LookNFeel::FontDescription
@@ -146,20 +162,4 @@ Win31LookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args)
 	args.Graphics->restore();
 	args.endPaint();
 	return 0;
-}
-
-NonClientLayout
-Win31LookNFeel::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const 
-{
-	ThrowIf(results, results == Coords::Client);
-
-	// Base non-client area upon the default
-	NonClientLayout bounds = base::nonClient(results, style, wnd);
-
-	// Shift Minimize/Maximize buttons right by 1 button
-	bounds.MinimizeBtn = bounds.MaximizeBtn;
-	bounds.MaximizeBtn = bounds.CloseBtn;
-	bounds.CloseBtn = Rect::Empty;
-
-	return bounds;
 }

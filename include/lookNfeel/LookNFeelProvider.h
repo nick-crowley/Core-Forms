@@ -55,6 +55,10 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	private:
+		SharedColourScheme ColourDecorator;
+		SharedWindowFrame  FrameDecorator;
+
 	protected:
 		struct {
 			Font  Heading1;
@@ -73,13 +77,13 @@ namespace core::forms
 			AnyColour  Tertiary;
 			AnyColour  Window;
 		} Colours;
-
-		std::optional<SharedLookNFeelProvider> CustomImpl;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
+		//! @brief  Construct
 		LookNFeelProvider();
 
-		LookNFeelProvider(SharedLookNFeelProvider custom);
+		//! @brief  Construct decorator with properties from another look'n'feel
+		LookNFeelProvider(SharedColourScheme alternateColours, SharedWindowFrame windowFrame);
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
@@ -154,7 +158,7 @@ namespace core::forms
 		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const override;
 
 		void
-		virtual onCreated(Window&, CreateWindowEventArgs const& args) override;
+		virtual onWindowCreated(Window&) const override;
 		
 		AnyColour
 		virtual button() const override;

@@ -1636,8 +1636,8 @@ namespace core::forms
 		}
 		
 		void
-		this_Created(Window&, CreateWindowEventArgs args) {
-			this->LookNFeel->onCreated(*this, args);
+		this_Created(Window&, CreateWindowEventArgs) {
+			this->LookNFeel->onWindowCreated(*this);
 		}
 
 		void

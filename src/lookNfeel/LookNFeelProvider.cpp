@@ -75,15 +75,20 @@ LookNFeelProvider::LookNFeelProvider()
 {
 }
 
-LookNFeelProvider::LookNFeelProvider(SharedLookNFeelProvider impl) 
-	: LookNFeelProvider{}
+LookNFeelProvider::LookNFeelProvider(SharedColourScheme alternateColours, SharedWindowFrame windowFrame) 
+  : LookNFeelProvider{}
 {
-	this->CustomImpl = impl;
+	this->ColourDecorator = alternateColours;
+	this->FrameDecorator = windowFrame;
 }
 
 Rect
 LookNFeelProvider::clientRect(Window& wnd, Rect bounds) const
 {	
+	// Delegate if decorated
+	if (this->FrameDecorator)
+		return this->FrameDecorator->clientRect(wnd, bounds);
+
 	Size const Frame{SystemMetric::cxSizeFrame, SystemMetric::cySizeFrame};
 	Rect client = bounds - Border{2 * Frame} - Border{0, Measurement{SystemMetric::cyCaption}, 0, 0};
 	if (wnd.menu().has_value())
@@ -92,11 +97,73 @@ LookNFeelProvider::clientRect(Window& wnd, Rect bounds) const
 }
 
 bool
-LookNFeelProvider::customCaption() const {
-	if (CustomImpl)
-		return (*CustomImpl)->customCaption();
+LookNFeelProvider::customCaption() const 
+{
+	// Delegate if decorated
+	if (this->FrameDecorator)
+		return this->FrameDecorator->customCaption();
 
 	return false;
+}
+
+NonClientLayout
+LookNFeelProvider::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const 
+{
+	ThrowIf(results, results == Coords::Client);
+	
+	// Delegate if decorated
+	if (this->FrameDecorator)
+		return this->FrameDecorator->nonClient(results, style, wnd);
+
+	// Caption
+	NonClientLayout bounds{wnd};
+	Size const Frame{SystemMetric::cxSizeFrame, SystemMetric::cySizeFrame};
+	bounds.Caption = Rect{Point::Zero, Size{wnd.width(), Measurement{SystemMetric::cyCaption}}} 
+	               - Border{2 * Frame.Width, win::Unused<LONG>}
+	               + Point{win::Unused<LONG>, 2 * Frame.Height};
+	
+	// System-menu button
+	Size const rcIcon {bounds.Caption.height(), bounds.Caption.height()};
+	bounds.SysMenuBtn = Rect{bounds.Caption.topLeft(), rcIcon};
+
+	// Close/Maximize/minimize buttons
+	using enum WindowStyle;
+	Rect const rightButtonCoords{bounds.Caption.topRight(), rcIcon, Rect::FromTopRight};
+	Rect const middleButtonCoords = rightButtonCoords - Point{rcIcon.Width,0};
+	Rect const leftButtonCoords = middleButtonCoords - Point{rcIcon.Width,0};
+	bounds.CloseBtn = rightButtonCoords;
+	bounds.MaximizeBtn = middleButtonCoords;
+	bounds.MinimizeBtn = leftButtonCoords;
+	
+	// Title
+	bounds.Title = bounds.Caption;
+	bounds.Title.Left = bounds.SysMenuBtn.Right + (2 * Frame.Width);
+	bounds.Title.Right = bounds.MinimizeBtn.Left - (2 * Frame.Width);
+
+	// MenuBar
+	bounds.MenuBar = Rect{bounds.Caption.Left, bounds.Caption.Bottom, bounds.Caption.Right, bounds.Caption.Bottom + Measurement{SystemMetric::cyMenu}};
+
+	// [SCREEN] Translate all generated co-ordinates
+	if (results == Coords::Screen) {
+		bounds.Caption += wnd.topLeft();
+		bounds.Title += wnd.topLeft();
+		bounds.CloseBtn += wnd.topLeft();
+		bounds.MenuBar += wnd.topLeft();
+		bounds.SysMenuBtn += wnd.topLeft();
+		bounds.MaximizeBtn += wnd.topLeft();
+		bounds.MinimizeBtn += wnd.topLeft();
+	}
+
+	return bounds;
+}
+
+void
+LookNFeelProvider::onWindowCreated(Window& wnd) const {
+	// Delegate if decorated
+	if (this->FrameDecorator)
+		return this->FrameDecorator->onWindowCreated(wnd);
+	
+	// (Noop by default)
 }
 
 Font
@@ -824,150 +891,98 @@ LookNFeelProvider::measure(Window& wnd, MeasureMenuEventArgs& args)
 	args.Graphics.restore();
 }
 
-NonClientLayout
-LookNFeelProvider::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const 
-{
-	ThrowIf(results, results == Coords::Client);
-	NonClientLayout bounds{wnd};
-
-	// Caption
-	Size const Frame{SystemMetric::cxSizeFrame, SystemMetric::cySizeFrame};
-	bounds.Caption = Rect{Point::Zero, Size{wnd.width(), Measurement{SystemMetric::cyCaption}}} 
-	               - Border{2 * Frame.Width, win::Unused<LONG>}
-	               + Point{win::Unused<LONG>, 2 * Frame.Height};
-	
-	// System-menu button
-	Size const rcIcon {bounds.Caption.height(), bounds.Caption.height()};
-	bounds.SysMenuBtn = Rect{bounds.Caption.topLeft(), rcIcon};
-
-	// Close/Maximize/minimize buttons
-	using enum WindowStyle;
-	Rect const rightButtonCoords{bounds.Caption.topRight(), rcIcon, Rect::FromTopRight};
-	Rect const middleButtonCoords = rightButtonCoords - Point{rcIcon.Width,0};
-	Rect const leftButtonCoords = middleButtonCoords - Point{rcIcon.Width,0};
-	bounds.CloseBtn = rightButtonCoords;
-	bounds.MaximizeBtn = middleButtonCoords;
-	bounds.MinimizeBtn = leftButtonCoords;
-	
-	// Title
-	bounds.Title = bounds.Caption;
-	bounds.Title.Left = bounds.SysMenuBtn.Right + (2 * Frame.Width);
-	bounds.Title.Right = bounds.MinimizeBtn.Left - (2 * Frame.Width);
-
-	// MenuBar
-	bounds.MenuBar = Rect{bounds.Caption.Left, bounds.Caption.Bottom, bounds.Caption.Right, bounds.Caption.Bottom + Measurement{SystemMetric::cyMenu}};
-
-	// [SCREEN] Translate all generated co-ordinates
-	if (results == Coords::Screen) {
-		bounds.Caption += wnd.topLeft();
-		bounds.Title += wnd.topLeft();
-		bounds.CloseBtn += wnd.topLeft();
-		bounds.MenuBar += wnd.topLeft();
-		bounds.SysMenuBtn += wnd.topLeft();
-		bounds.MaximizeBtn += wnd.topLeft();
-		bounds.MinimizeBtn += wnd.topLeft();
-	}
-
-	return bounds;
-}
-
-void
-LookNFeelProvider::onCreated(Window&, CreateWindowEventArgs const& args) {
-	// nothing
-}
-
 AnyColour
 LookNFeelProvider::button() const {
-	if (CustomImpl)
-		return (*CustomImpl)->button();
+	if (this->ColourDecorator)
+		return this->ColourDecorator->button();
 
 	return this->Colours.Button;
 }
 
 LookNFeelProvider::AnyColourPair
 LookNFeelProvider::caption() const {
-	if (CustomImpl)
-		return (*CustomImpl)->caption();
+	if (this->ColourDecorator)
+		return this->ColourDecorator->caption();
 
 	return this->Colours.Caption;
 }
 
 AnyColour
 LookNFeelProvider::control() const {
-	if (CustomImpl)
-		return (*CustomImpl)->control();
+	if (this->ColourDecorator)
+		return this->ColourDecorator->control();
 
 	return this->Colours.Control;
 }
 
 Font
 LookNFeelProvider::heading1() const {
-	if (CustomImpl)
-		return (*CustomImpl)->heading1();
+	if (this->ColourDecorator)
+		return this->ColourDecorator->heading1();
 
 	return this->Fonts.Heading1;
 }
 
 Font
 LookNFeelProvider::heading2() const {
-	if (CustomImpl)
-		return (*CustomImpl)->heading2();
+	if (this->ColourDecorator)
+		return this->ColourDecorator->heading2();
 
 	return this->Fonts.Heading2;
 }
 
 Font
 LookNFeelProvider::heading3() const {
-	if (CustomImpl)
-		return (*CustomImpl)->heading3();
+	if (this->ColourDecorator)
+		return this->ColourDecorator->heading3();
 
 	return this->Fonts.Heading3;
 }
 
 AnyColour
 LookNFeelProvider::highlight() const {
-	if (CustomImpl)
-		return (*CustomImpl)->highlight();
+	if (this->ColourDecorator)
+		return this->ColourDecorator->highlight();
 
 	return this->Colours.Highlight;
 }
 
 Font
 LookNFeelProvider::paragraph() const {
-	if (CustomImpl)
-		return (*CustomImpl)->paragraph();
+	if (this->ColourDecorator)
+		return this->ColourDecorator->paragraph();
 
 	return this->Fonts.Paragraph;
 }
 
 AnyColour
 LookNFeelProvider::primary() const {
-	if (CustomImpl)
-		return (*CustomImpl)->primary();
+	if (this->ColourDecorator)
+		return this->ColourDecorator->primary();
 
 	return this->Colours.Primary;
 }
 
 AnyColour
 LookNFeelProvider::secondary() const {
-	if (CustomImpl)
-		return (*CustomImpl)->secondary();
+	if (this->ColourDecorator)
+		return this->ColourDecorator->secondary();
 
 	return this->Colours.Secondary;
 }
 
 AnyColour
 LookNFeelProvider::tertiary() const {
-	if (CustomImpl)
-		return (*CustomImpl)->tertiary();
+	if (this->ColourDecorator)
+		return this->ColourDecorator->tertiary();
 
 	return this->Colours.Tertiary;
 }
 
 AnyColour
 LookNFeelProvider::window() const {
-	if (CustomImpl)
-		return (*CustomImpl)->window();
+	if (this->ColourDecorator)
+		return this->ColourDecorator->window();
 
 	return this->Colours.Window;
 }

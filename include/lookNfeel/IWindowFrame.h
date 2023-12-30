@@ -26,12 +26,16 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Preprocessor Directives o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-#include "lookNfeel/LookNFeelProvider.h"
-#include "graphics/Graphics.h"
+#include "library/core.Forms.h"
+#include "forms/WindowStyle.h"
+#include "forms/NonClientLayout.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+namespace core::forms
+{
+	class Window;
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -39,41 +43,29 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class FormsExport Win31LookNFeel : public LookNFeelProvider
+	struct IWindowFrame
 	{
-		using base = LookNFeelProvider;
-
-	public:
-		std::shared_ptr<ILookNFeelProvider> const
-		static Instance;
-
-	public:
-		Win31LookNFeel();
+		satisfies(IWindowFrame,
+			IsInterface
+		);
 		
-		//! @brief  Construct decorator with properties from another look'n'feel
-		Win31LookNFeel(SharedColourScheme alternateColours, SharedWindowFrame windowFrame);
+		Rect
+		virtual clientRect(Window& wnd, Rect bounds) const abstract;
 
-	public:
-		using base::draw;
-		
 		bool
-		virtual customCaption() const override;
-		
+		virtual customCaption() const abstract;
+
+		//! @brief  Retrieve non-client area component bounds
+		//! @param  client  Client area (in screen co-ordinates)
 		NonClientLayout
-		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const override;
-
-		FontDescription
-		virtual default() const override;
+		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const abstract;
 
 		void
-		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
-	
-		void
-		virtual draw(Dialog& dlg, PaintWindowEventArgs const& args) override;
-	
-		Response
-		virtual draw(Dialog& dlg, NonClientPaintEventArgs& args) override;
+		virtual onWindowCreated(Window&) const abstract;
 	};
+
+	using SharedWindowFrame = std::shared_ptr<IWindowFrame>;
+
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 

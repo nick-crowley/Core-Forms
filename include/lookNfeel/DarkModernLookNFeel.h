@@ -52,7 +52,7 @@ namespace core::forms
 
 	public:
 		void
-		virtual onCreated(Window&, CreateWindowEventArgs const& args) override;
+		virtual onWindowCreated(Window&) const override;
 	};
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

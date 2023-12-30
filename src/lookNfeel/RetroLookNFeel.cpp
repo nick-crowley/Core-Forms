@@ -149,7 +149,8 @@ RetroLookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		throw runtime_error{"GroupBox #{} must be OwnerDraw", args.Ident};
 
 	// Same as Win3.1
-	Win31LookNFeel{this->shared_from_this()}.draw(ctrl, args);
+	auto const self = this->shared_from_this();
+	Win31LookNFeel{self,self}.draw(ctrl, args);
 }
 
 Response
@@ -158,5 +159,6 @@ RetroLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args)
 	ThrowIfNot(args, args.Graphics == nullopt);
 
 	// Same as Win3.1
-	return Win31LookNFeel{this->shared_from_this()}.draw(dlg, args);
+	auto const self = this->shared_from_this();
+	return Win31LookNFeel{self,self}.draw(dlg, args);
 }
