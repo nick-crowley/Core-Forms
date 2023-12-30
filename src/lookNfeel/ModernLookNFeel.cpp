@@ -1,6 +1,5 @@
 ﻿#include "lookNfeel/ModernLookNFeel.h"
 #include "lookNfeel/Nt6LookNFeel.h"
-#include "lookNfeel/LookNFeelDecorator.h"
 #include "controls/CommonControls.h"
 #include "graphics/FontBuilder.h"
 using namespace core;

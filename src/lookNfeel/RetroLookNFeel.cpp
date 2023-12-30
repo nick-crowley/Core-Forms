@@ -1,6 +1,5 @@
 ﻿#include "lookNfeel/RetroLookNFeel.h"
 #include "lookNfeel/Win31LookNFeel.h"
-#include "lookNfeel/LookNFeelDecorator.h"
 #include "controls/CommonControls.h"
 #include "graphics/FontBuilder.h"
 using namespace core;
