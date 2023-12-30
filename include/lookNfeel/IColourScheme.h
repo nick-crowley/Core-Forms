@@ -42,6 +42,7 @@ namespace core::forms
 {
 	struct IColourScheme
 	{
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		struct FontDescription 
 		{
 			std::wstring  Name;
@@ -53,11 +54,11 @@ namespace core::forms
 			AnyColour  Active;
 			AnyColour  Inactive;
 		};
-
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		satisfies(IColourScheme,
 			IsInterface
 		);
-		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		AnyColour
 		virtual button() const abstract;
 		
@@ -96,6 +97,7 @@ namespace core::forms
 
 		AnyColour
 		virtual window() const abstract;
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 	
 	using SharedColourScheme = std::shared_ptr<IColourScheme const>;

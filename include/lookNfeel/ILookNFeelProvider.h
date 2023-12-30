@@ -76,10 +76,13 @@ namespace core::forms
 {
 	struct ILookNFeelProvider : IColourScheme, IWindowFrame
 	{
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		satisfies(ILookNFeelProvider,
 			IsInterface
 		);
-		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		void
 		virtual draw(ButtonControl& ctrl, OwnerDrawEventArgs& args) const abstract;
 	
@@ -139,6 +142,7 @@ namespace core::forms
 		
 		void
 		virtual measure(Window& wnd, MeasureMenuEventArgs& args) const abstract;
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 
 	using SharedLookNFeelProvider = std::shared_ptr<ILookNFeelProvider const>;

@@ -45,10 +45,13 @@ namespace core::forms
 {
 	struct IWindowFrame
 	{
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		satisfies(IWindowFrame,
 			IsInterface
 		);
-		
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 		Rect
 		virtual clientRect(Window& wnd, Rect bounds) const abstract;
 
@@ -62,6 +65,7 @@ namespace core::forms
 
 		void
 		virtual onWindowCreated(Window&) const abstract;
+		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 
 	using SharedWindowFrame = std::shared_ptr<IWindowFrame const>;
