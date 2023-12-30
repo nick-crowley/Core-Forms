@@ -72,7 +72,7 @@ namespace core::forms
 
 	public:
 		ItemData          Item;	
-		DeviceContext     mutable Graphics;
+		DeviceContext     Graphics;
 
 	public:
 		MeasureMenuEventArgs(forms::Window& wnd, ::WPARAM w, ::LPARAM l)

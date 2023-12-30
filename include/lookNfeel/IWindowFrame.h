@@ -64,7 +64,7 @@ namespace core::forms
 		virtual onWindowCreated(Window&) const abstract;
 	};
 
-	using SharedWindowFrame = std::shared_ptr<IWindowFrame>;
+	using SharedWindowFrame = std::shared_ptr<IWindowFrame const>;
 
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

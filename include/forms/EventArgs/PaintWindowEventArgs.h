@@ -57,7 +57,7 @@ namespace core::forms
 		               Restore = false, 
 		               Update = false;
 		Window&        Window;
-		DeviceContext  mutable Graphics;   // Initialize last; destroy first
+		DeviceContext  Graphics;   // Initialize last; destroy first
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		explicit

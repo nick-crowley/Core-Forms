@@ -120,7 +120,7 @@ namespace core::forms
 		::NMCUSTOMDRAW*   Header;
 
 	public:
-		DeviceContext                    mutable Graphics;
+		DeviceContext                    Graphics;
 		ItemData                         Item;
 		nstd::bitset<CustomDrawStage>    Stage;
 		forms::Window*                   Window;

@@ -53,7 +53,7 @@ Nt6LookNFeel::default() const
 }
 
 void
-Nt6LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) 
+Nt6LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs& args) const
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"GroupBox #{} must be OwnerDraw", args.Ident};
@@ -78,7 +78,7 @@ Nt6LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 void
-Nt6LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
+Nt6LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs& args) const
 {
 	// Erase background
 	args.Graphics.setBrush(this->window());
@@ -94,7 +94,7 @@ Nt6LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 }
 
 Response
-Nt6LookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args) 
+Nt6LookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args) const 
 {
 	ThrowIfNot(args, args.Graphics == nullopt);
 	args.beginPaint();

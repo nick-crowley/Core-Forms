@@ -167,12 +167,12 @@ LookNFeelProvider::onWindowCreated(Window& wnd) const {
 }
 
 Font
-LookNFeelProvider::makeDefault() {
+LookNFeelProvider::makeDefault() const {
 	return FontBuilder{}.withName(this->default().Name).withSize(this->default().Height);
 }
 
 void
-LookNFeelProvider::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) 
+LookNFeelProvider::draw(ButtonControl& ctrl, OwnerDrawEventArgs& args) const
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"Button #{} must be OwnerDraw", args.Ident};
@@ -210,7 +210,7 @@ LookNFeelProvider::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 void
-LookNFeelProvider::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) 
+LookNFeelProvider::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs& args) const
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"CheckBox #{} must be OwnerDraw", args.Ident};
@@ -246,7 +246,7 @@ LookNFeelProvider::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 void
-LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args) 
+LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs& args) const
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"ComboBox #{} must be OwnerDraw", args.Ident};
@@ -366,7 +366,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 void
-LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& args)
+LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs& args) const
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"ComboBox #{} must be OwnerDraw", args.Ident};
@@ -439,7 +439,7 @@ LookNFeelProvider::measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& ar
 }
 
 void
-LookNFeelProvider::erase(GroupBoxControl& ctrl, EraseBackgroundEventArgs const& args) 
+LookNFeelProvider::erase(GroupBoxControl& ctrl, EraseBackgroundEventArgs& args) const
 {
 	// Erase background
 	Rect const rcClient = ctrl.clientRect();
@@ -453,7 +453,7 @@ LookNFeelProvider::erase(GroupBoxControl& ctrl, EraseBackgroundEventArgs const& 
 }
 
 void
-LookNFeelProvider::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args) 
+LookNFeelProvider::draw(LabelControl& ctrl, OwnerDrawEventArgs& args) const
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"Label #{} must be OwnerDraw", args.Ident};
@@ -478,7 +478,7 @@ LookNFeelProvider::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 void
-LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args) 
+LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs& args) const
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"ListBox #{} must be OwnerDraw", args.Ident};
@@ -580,7 +580,7 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 void
-LookNFeelProvider::measure(ListBoxControl& ctrl, MeasureItemEventArgs const& args)
+LookNFeelProvider::measure(ListBoxControl& ctrl, MeasureItemEventArgs& args) const
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"ListBox #{} must be OwnerDraw", args.Ident};
@@ -642,7 +642,7 @@ LookNFeelProvider::measure(ListBoxControl& ctrl, MeasureItemEventArgs const& arg
 }
 
 void
-LookNFeelProvider::erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& args) 
+LookNFeelProvider::erase(ListBoxControl& ctrl, EraseBackgroundEventArgs& args) const
 {
 	// Erase background
 	Rect const rcClient = ctrl.clientRect();
@@ -656,7 +656,7 @@ LookNFeelProvider::erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& a
 }
 
 void
-LookNFeelProvider::draw(ListViewControl& ctrl, OwnerDrawEventArgs const& args) 
+LookNFeelProvider::draw(ListViewControl& ctrl, OwnerDrawEventArgs& args) const
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"ListView #{} must be OwnerDraw", args.Ident};
@@ -703,7 +703,7 @@ LookNFeelProvider::draw(ListViewControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 void
-LookNFeelProvider::measure(ListViewControl& ctrl, MeasureItemEventArgs const& args)
+LookNFeelProvider::measure(ListViewControl& ctrl, MeasureItemEventArgs& args) const
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"ListView #{} must be OwnerDraw", args.Ident};
@@ -718,7 +718,7 @@ LookNFeelProvider::measure(ListViewControl& ctrl, MeasureItemEventArgs const& ar
 }
 
 void
-LookNFeelProvider::erase(ListViewControl& ctrl, EraseBackgroundEventArgs const& args) 
+LookNFeelProvider::erase(ListViewControl& ctrl, EraseBackgroundEventArgs& args) const
 {
 	// Erase background
 	Rect const rcClient = ctrl.clientRect();
@@ -732,7 +732,7 @@ LookNFeelProvider::erase(ListViewControl& ctrl, EraseBackgroundEventArgs const& 
 }
 
 void
-LookNFeelProvider::draw(PictureControl& ctrl, OwnerDrawEventArgs const& args) 
+LookNFeelProvider::draw(PictureControl& ctrl, OwnerDrawEventArgs& args) const
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"Picture #{} must be OwnerDraw", args.Ident};
@@ -759,7 +759,7 @@ LookNFeelProvider::draw(PictureControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 void
-LookNFeelProvider::draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args)
+LookNFeelProvider::draw(RadioButtonControl& ctrl, OwnerDrawEventArgs& args) const
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"RadioButton #{} must be OwnerDraw", args.Ident};
@@ -787,7 +787,7 @@ LookNFeelProvider::draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args
 }
 
 void
-LookNFeelProvider::draw(StaticControl& ctrl, OwnerDrawEventArgs const& args)
+LookNFeelProvider::draw(StaticControl& ctrl, OwnerDrawEventArgs& args) const
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"Static #{} must be OwnerDraw", args.Ident};
@@ -799,14 +799,14 @@ LookNFeelProvider::draw(StaticControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 Response
-LookNFeelProvider::draw(Dialog& dlg, NonClientPaintEventArgs& args) 
+LookNFeelProvider::draw(Dialog& dlg, NonClientPaintEventArgs& args) const
 {
 	// Use Windows default
 	return Window::Unhandled;
 }
 
 void
-LookNFeelProvider::draw(Window& wnd, OwnerDrawMenuEventArgs& args)
+LookNFeelProvider::draw(Window& wnd, OwnerDrawMenuEventArgs& args) const
 {
 	Invariant(args.Item.data<Menu::ItemData>() != nullptr);
 	auto const& item = *args.Item.data<Menu::ItemData>();
@@ -850,7 +850,7 @@ LookNFeelProvider::draw(Window& wnd, OwnerDrawMenuEventArgs& args)
 }
 
 void
-LookNFeelProvider::measure(Window& wnd, MeasureMenuEventArgs& args)
+LookNFeelProvider::measure(Window& wnd, MeasureMenuEventArgs& args) const
 {
 	Invariant(args.Item.data<Menu::ItemData>() != nullptr);
 	auto const& item = *args.Item.data<Menu::ItemData>();

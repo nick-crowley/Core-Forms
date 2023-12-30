@@ -81,67 +81,67 @@ namespace core::forms
 		);
 		
 		void
-		virtual draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) abstract;
+		virtual draw(ButtonControl& ctrl, OwnerDrawEventArgs& args) const abstract;
 	
 		void
-		virtual draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) abstract;
+		virtual draw(CheckBoxControl& ctrl, OwnerDrawEventArgs& args) const abstract;
 	
 		void
-		virtual draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args) abstract;
+		virtual draw(ComboBoxControl& ctrl, OwnerDrawEventArgs& args) const abstract;
 	
 		void
-		virtual measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& args) abstract;
+		virtual measure(ComboBoxControl& ctrl, MeasureItemEventArgs& args) const abstract;
 	
 		void
-		virtual draw(LabelControl& ctrl, OwnerDrawEventArgs const& args) abstract;
+		virtual draw(LabelControl& ctrl, OwnerDrawEventArgs& args) const abstract;
 	
 		void
-		virtual draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args) abstract;
+		virtual draw(ListBoxControl& ctrl, OwnerDrawEventArgs& args) const abstract;
 	
 		void
-		virtual erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& args) abstract;
+		virtual erase(ListBoxControl& ctrl, EraseBackgroundEventArgs& args) const abstract;
 	
 		void
-		virtual measure(ListBoxControl& ctrl, MeasureItemEventArgs const& args) abstract;
+		virtual measure(ListBoxControl& ctrl, MeasureItemEventArgs& args) const abstract;
 	
 		void
-		virtual draw(ListViewControl& ctrl, OwnerDrawEventArgs const& args) abstract;
+		virtual draw(ListViewControl& ctrl, OwnerDrawEventArgs& args) const abstract;
 	
 		void
-		virtual erase(ListViewControl& ctrl, EraseBackgroundEventArgs const& args) abstract;
+		virtual erase(ListViewControl& ctrl, EraseBackgroundEventArgs& args) const abstract;
 	
 		void
-		virtual measure(ListViewControl& ctrl, MeasureItemEventArgs const& args) abstract;
+		virtual measure(ListViewControl& ctrl, MeasureItemEventArgs& args) const abstract;
 	
 		void
-		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) abstract;
+		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs& args) const abstract;
 	
 		void
-		virtual erase(GroupBoxControl& ctrl, EraseBackgroundEventArgs const& args) abstract;
+		virtual erase(GroupBoxControl& ctrl, EraseBackgroundEventArgs& args) const abstract;
 	
 		void
-		virtual draw(PictureControl& ctrl, OwnerDrawEventArgs const& args) abstract;
+		virtual draw(PictureControl& ctrl, OwnerDrawEventArgs& args) const abstract;
 	
 		void
-		virtual draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args) abstract;
+		virtual draw(RadioButtonControl& ctrl, OwnerDrawEventArgs& args) const abstract;
 
 		void
-		virtual draw(StaticControl& ctrl, OwnerDrawEventArgs const& args) abstract;
+		virtual draw(StaticControl& ctrl, OwnerDrawEventArgs& args) const abstract;
 
 		void
-		virtual draw(Dialog& dlg, PaintWindowEventArgs const& args) abstract;
+		virtual draw(Dialog& dlg, PaintWindowEventArgs& args) const abstract;
 	
 		Response
-		virtual draw(Dialog& dlg, NonClientPaintEventArgs& args) abstract;
+		virtual draw(Dialog& dlg, NonClientPaintEventArgs& args) const abstract;
 		
 		void
-		virtual draw(Window& wnd, OwnerDrawMenuEventArgs& args) abstract;
+		virtual draw(Window& wnd, OwnerDrawMenuEventArgs& args) const abstract;
 		
 		void
-		virtual measure(Window& wnd, MeasureMenuEventArgs& args) abstract;
+		virtual measure(Window& wnd, MeasureMenuEventArgs& args) const abstract;
 	};
 
-	using SharedLookNFeelProvider = std::shared_ptr<ILookNFeelProvider>;
+	using SharedLookNFeelProvider = std::shared_ptr<ILookNFeelProvider const>;
 
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

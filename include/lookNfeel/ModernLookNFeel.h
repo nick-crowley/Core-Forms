@@ -63,19 +63,19 @@ namespace core::forms
 		virtual default() const override;
 		
 		void
-		virtual draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(ButtonControl& ctrl, OwnerDrawEventArgs& args) const override;
 	
 		void
-		virtual draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(CheckBoxControl& ctrl, OwnerDrawEventArgs& args) const override;
 	
 		void
-		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs& args) const override;
 	
 		void
-		virtual draw(Dialog& dlg, PaintWindowEventArgs const& args) override;
+		virtual draw(Dialog& dlg, PaintWindowEventArgs& args) const override;
 		
 		Response
-		virtual draw(Dialog& dlg, NonClientPaintEventArgs& args) override;
+		virtual draw(Dialog& dlg, NonClientPaintEventArgs& args) const override;
 		
 		NonClientLayout
 		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const override;

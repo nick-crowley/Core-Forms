@@ -48,7 +48,7 @@ ModernLookNFeel::default() const
 }
 
 void
-ModernLookNFeel::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) 
+ModernLookNFeel::draw(ButtonControl& ctrl, OwnerDrawEventArgs& args) const
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"Button #{} must be OwnerDraw", args.Ident};
@@ -79,7 +79,7 @@ ModernLookNFeel::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 void
-ModernLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) 
+ModernLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs& args) const
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"CheckBox #{} must be OwnerDraw", args.Ident};
@@ -162,7 +162,7 @@ ModernLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 void
-ModernLookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) 
+ModernLookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs& args) const
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"GroupBox #{} must be OwnerDraw", args.Ident};
@@ -173,7 +173,7 @@ ModernLookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 void
-ModernLookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
+ModernLookNFeel::draw(Dialog& dlg, PaintWindowEventArgs& args) const
 {
 	// Erase background
 	args.Graphics.setBrush(this->window());
@@ -183,7 +183,7 @@ ModernLookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 }
 
 Response
-ModernLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args) 
+ModernLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args) const
 {
 	ThrowIfNot(args, args.Graphics == nullopt);
 	args.beginPaint();

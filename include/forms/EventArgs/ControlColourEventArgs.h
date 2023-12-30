@@ -55,7 +55,7 @@ namespace core::forms
 			Static = WM_CTLCOLORSTATIC,
 		};
 
-		DeviceContext   mutable Graphics;
+		DeviceContext   Graphics;
 		Window*         Managed;
 		UnmanagedWindow Window;
 		SupportedSender Source;

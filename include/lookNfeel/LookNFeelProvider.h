@@ -91,7 +91,7 @@ namespace core::forms
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	protected:
 		Font
-		makeDefault();
+		makeDefault() const;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
 		Rect
@@ -101,58 +101,58 @@ namespace core::forms
 		virtual customCaption() const override;
 
 		void
-		virtual draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(ButtonControl& ctrl, OwnerDrawEventArgs& args) const override;
 	
 		void
-		virtual draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(CheckBoxControl& ctrl, OwnerDrawEventArgs& args) const override;
 	
 		void
-		virtual draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(ComboBoxControl& ctrl, OwnerDrawEventArgs& args) const override;
 	
 		void
-		virtual measure(ComboBoxControl& ctrl, MeasureItemEventArgs const& args) override;
+		virtual measure(ComboBoxControl& ctrl, MeasureItemEventArgs& args) const override;
 	
 		void
-		virtual erase(GroupBoxControl& ctrl, EraseBackgroundEventArgs const& args) override;
+		virtual erase(GroupBoxControl& ctrl, EraseBackgroundEventArgs& args) const override;
 	
 		void
-		virtual draw(LabelControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(LabelControl& ctrl, OwnerDrawEventArgs& args) const override;
 	
 		void
-		virtual draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(ListBoxControl& ctrl, OwnerDrawEventArgs& args) const override;
 	
 		void
-		virtual erase(ListBoxControl& ctrl, EraseBackgroundEventArgs const& args) override;
+		virtual erase(ListBoxControl& ctrl, EraseBackgroundEventArgs& args) const override;
 	
 		void
-		virtual measure(ListBoxControl& ctrl, MeasureItemEventArgs const& args) override;
+		virtual measure(ListBoxControl& ctrl, MeasureItemEventArgs& args) const override;
 	
 		void
-		virtual draw(ListViewControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(ListViewControl& ctrl, OwnerDrawEventArgs& args) const override;
 	
 		void
-		virtual erase(ListViewControl& ctrl, EraseBackgroundEventArgs const& args) override;
+		virtual erase(ListViewControl& ctrl, EraseBackgroundEventArgs& args) const override;
 	
 		void
-		virtual measure(ListViewControl& ctrl, MeasureItemEventArgs const& args) override;
+		virtual measure(ListViewControl& ctrl, MeasureItemEventArgs& args) const override;
 	
 		void
-		virtual draw(PictureControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(PictureControl& ctrl, OwnerDrawEventArgs& args) const override;
 	
 		void
-		virtual draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(RadioButtonControl& ctrl, OwnerDrawEventArgs& args) const override;
 
 		void
-		virtual draw(StaticControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(StaticControl& ctrl, OwnerDrawEventArgs& args) const override;
 		
 		Response
-		virtual draw(Dialog& dlg, NonClientPaintEventArgs& args) override;
+		virtual draw(Dialog& dlg, NonClientPaintEventArgs& args) const override;
 
 		void
-		virtual draw(Window& wnd, OwnerDrawMenuEventArgs& args) override;
+		virtual draw(Window& wnd, OwnerDrawMenuEventArgs& args) const override;
 		
 		void
-		virtual measure(Window& wnd, MeasureMenuEventArgs& args) override;
+		virtual measure(Window& wnd, MeasureMenuEventArgs& args) const override;
 		
 		NonClientLayout
 		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const override;

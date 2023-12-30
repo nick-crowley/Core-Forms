@@ -68,7 +68,7 @@ public:
 };
 
 void
-RetroLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) 
+RetroLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs& args) const 
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"CheckBox #{} must be OwnerDraw", args.Ident};
@@ -142,7 +142,7 @@ RetroLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 void
-RetroLookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) 
+RetroLookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs& args) const 
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"GroupBox #{} must be OwnerDraw", args.Ident};
@@ -153,7 +153,7 @@ RetroLookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 Response
-RetroLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args) 
+RetroLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args) const
 {
 	ThrowIfNot(args, args.Graphics == nullopt);
 

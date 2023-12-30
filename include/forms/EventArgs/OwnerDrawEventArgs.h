@@ -68,7 +68,7 @@ namespace core::forms
 		nstd::bitset<OwnerDrawAction> Action;
 		int16_t                       Ident;
 		ItemData                      Item;
-		DeviceContext                 mutable Graphics;
+		DeviceContext                 Graphics;
 		OwnerDrawControl              Source;
 		Window*                       Window;
 

@@ -50,7 +50,7 @@ namespace core::forms
 		Region                         Area;
 		Rect                           Bounds;
 		Rect                           Client;  // In window co-ordinates
-		std::optional<DeviceContext>   mutable Graphics;
+		std::optional<DeviceContext>   Graphics;
 		std::optional<Region>          InvalidArea;
 		Window&                        Window;
 		WindowCaptionState             CaptionState;

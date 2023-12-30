@@ -60,13 +60,13 @@ namespace core::forms
 		virtual default() const override;
 		
 		void
-		virtual draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(CheckBoxControl& ctrl, OwnerDrawEventArgs& args) const override;
 	
 		void
-		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) override;
+		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs& args) const override;
 	
 		Response
-		virtual draw(Dialog& dlg, NonClientPaintEventArgs& args) override;
+		virtual draw(Dialog& dlg, NonClientPaintEventArgs& args) const override;
 	};
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

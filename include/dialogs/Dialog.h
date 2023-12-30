@@ -674,7 +674,8 @@ namespace core::forms
 
 		Response
 		virtual onPaint() override {
-			this->LookNFeel->draw(*this, PaintWindowEventArgs{*this});
+			PaintWindowEventArgs args{*this};
+			this->LookNFeel->draw(*this, args);
 			return 0;
 		}
 

@@ -63,7 +63,7 @@ namespace core::forms
 	public:
 		nstd::bitset<OwnerDrawAction> Action;
 		ItemData                      Item;
-		DeviceContext                 mutable Graphics;
+		DeviceContext                 Graphics;
 		forms::Menu                   Menu;
 
 	public:

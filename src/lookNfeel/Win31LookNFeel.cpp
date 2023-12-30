@@ -58,7 +58,7 @@ Win31LookNFeel::default() const
 }
 
 void
-Win31LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args) 
+Win31LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs& args) const 
 {
 	if (!ctrl.ownerDraw())
 		throw runtime_error{"GroupBox #{} must be OwnerDraw", args.Ident};
@@ -83,7 +83,7 @@ Win31LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs const& args)
 }
 
 void
-Win31LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
+Win31LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs& args) const
 {
 	// Erase background
 	args.Graphics.setBrush(this->window());
@@ -93,7 +93,7 @@ Win31LookNFeel::draw(Dialog& dlg, PaintWindowEventArgs const& args)
 }
 
 Response
-Win31LookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args) 
+Win31LookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args) const 
 {
 	ThrowIfNot(args, args.Graphics == nullopt);
 	args.beginPaint();

@@ -98,7 +98,7 @@ namespace core::forms
 		virtual window() const abstract;
 	};
 	
-	using SharedColourScheme = std::shared_ptr<IColourScheme>;
+	using SharedColourScheme = std::shared_ptr<IColourScheme const>;
 
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
