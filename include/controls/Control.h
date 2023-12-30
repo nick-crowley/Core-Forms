@@ -153,6 +153,12 @@ namespace core::forms
 			this->Anchors = newAnchors;
 		}
 		
+		void 
+		create(const Window& parent, std::wstring_view text, WindowStyle style, Rect area)
+		{
+			base::create(parent, this->ident(), text, style, area);
+		}
+
 		template <nstd::Enumeration Style>
 			requires std::same_as<std::underlying_type_t<Style>, std::underlying_type_t<FakeStyle>>
 		void
