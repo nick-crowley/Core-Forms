@@ -62,9 +62,6 @@ namespace core::forms
 		NonClientLayout
 		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const override;
 
-		FontDescription
-		virtual default() const override;
-
 		void
 		virtual draw(GroupBoxControl& ctrl, OwnerDrawEventArgs& args) const override;
 	
@@ -73,6 +70,9 @@ namespace core::forms
 	
 		Response
 		virtual draw(Dialog& dlg, NonClientPaintEventArgs& args) const override;
+		
+		FontDescription
+		virtual default() const override;
 	};
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

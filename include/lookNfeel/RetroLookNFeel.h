@@ -56,9 +56,6 @@ namespace core::forms
 		bool
 		virtual customCaption() const override;
 
-		FontDescription
-		virtual default() const override;
-		
 		void
 		virtual draw(CheckBoxControl& ctrl, OwnerDrawEventArgs& args) const override;
 	
@@ -67,6 +64,9 @@ namespace core::forms
 	
 		Response
 		virtual draw(Dialog& dlg, NonClientPaintEventArgs& args) const override;
+		
+		FontDescription
+		virtual default() const override;
 	};
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

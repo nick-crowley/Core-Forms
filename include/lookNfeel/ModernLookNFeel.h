@@ -58,10 +58,10 @@ namespace core::forms
 
 		bool
 		virtual customCaption() const override;
-
-		FontDescription
-		virtual default() const override;
 		
+		NonClientLayout
+		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const override;
+
 		void
 		virtual draw(ButtonControl& ctrl, OwnerDrawEventArgs& args) const override;
 	
@@ -77,8 +77,8 @@ namespace core::forms
 		Response
 		virtual draw(Dialog& dlg, NonClientPaintEventArgs& args) const override;
 		
-		NonClientLayout
-		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const override;
+		FontDescription
+		virtual default() const override;
 	};
 }	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

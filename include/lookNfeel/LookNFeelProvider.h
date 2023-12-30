@@ -99,7 +99,13 @@ namespace core::forms
 
 		bool
 		virtual customCaption() const override;
+		
+		NonClientLayout
+		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const override;
 
+		void
+		virtual onWindowCreated(Window&) const override;
+		
 		void
 		virtual draw(ButtonControl& ctrl, OwnerDrawEventArgs& args) const override;
 	
@@ -153,12 +159,6 @@ namespace core::forms
 		
 		void
 		virtual measure(Window& wnd, MeasureMenuEventArgs& args) const override;
-		
-		NonClientLayout
-		virtual nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const override;
-
-		void
-		virtual onWindowCreated(Window&) const override;
 		
 		AnyColour
 		virtual button() const override;

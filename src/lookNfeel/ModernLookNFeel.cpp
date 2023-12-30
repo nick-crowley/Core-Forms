@@ -40,11 +40,27 @@ ModernLookNFeel::customCaption() const {
 	return true;
 }
 
-ModernLookNFeel::FontDescription
-ModernLookNFeel::default() const
+NonClientLayout
+ModernLookNFeel::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const 
 {
-	using namespace forms::literals;
-	return FontDescription{L"Lucida Console", 11_pt};
+	ThrowIf(results, results == Coords::Client);
+	
+	// Base non-client area upon the default
+	NonClientLayout bounds = base::nonClient(results, style, wnd);
+	
+	// Extend height of caption by 50%
+	Rect::value_type const CaptionExtension = bounds.Caption.height() / 2;
+	bounds.Caption.Bottom += CaptionExtension;
+	bounds.MenuBar.translate({0, CaptionExtension});
+	bounds.MenuBar.Bottom += Measurement{SystemMetric::cyMenu} / 2;
+
+	// Move the minimize button when the window cannot be maximized
+	if (style.test(WindowStyle::MinimizeBox) && !style.test(WindowStyle::MaximizeBox)) {
+		bounds.MinimizeBtn = bounds.MaximizeBtn;
+		bounds.MaximizeBtn = Rect::Empty;
+	}
+
+	return bounds;
 }
 
 void
@@ -273,25 +289,9 @@ ModernLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args) const
 	return 0;
 }
 
-NonClientLayout
-ModernLookNFeel::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const 
+ModernLookNFeel::FontDescription
+ModernLookNFeel::default() const
 {
-	ThrowIf(results, results == Coords::Client);
-	
-	// Base non-client area upon the default
-	NonClientLayout bounds = base::nonClient(results, style, wnd);
-	
-	// Extend height of caption by 50%
-	Rect::value_type const CaptionExtension = bounds.Caption.height() / 2;
-	bounds.Caption.Bottom += CaptionExtension;
-	bounds.MenuBar.translate({0, CaptionExtension});
-	bounds.MenuBar.Bottom += Measurement{SystemMetric::cyMenu} / 2;
-
-	// Move the minimize button when the window cannot be maximized
-	if (style.test(WindowStyle::MinimizeBox) && !style.test(WindowStyle::MaximizeBox)) {
-		bounds.MinimizeBtn = bounds.MaximizeBtn;
-		bounds.MaximizeBtn = Rect::Empty;
-	}
-
-	return bounds;
+	using namespace forms::literals;
+	return FontDescription{L"Lucida Console", 11_pt};
 }

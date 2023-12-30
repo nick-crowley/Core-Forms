@@ -82,6 +82,11 @@ LookNFeelProvider::LookNFeelProvider(SharedColourScheme alternateColours, Shared
 	this->FrameDecorator = windowFrame;
 }
 
+Font
+LookNFeelProvider::makeDefault() const {
+	return FontBuilder{}.withName(this->default().Name).withSize(this->default().Height);
+}
+
 Rect
 LookNFeelProvider::clientRect(Window& wnd, Rect bounds) const
 {	
@@ -164,11 +169,6 @@ LookNFeelProvider::onWindowCreated(Window& wnd) const {
 		return this->FrameDecorator->onWindowCreated(wnd);
 	
 	// (Noop by default)
-}
-
-Font
-LookNFeelProvider::makeDefault() const {
-	return FontBuilder{}.withName(this->default().Name).withSize(this->default().Height);
 }
 
 void

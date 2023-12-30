@@ -50,13 +50,6 @@ Win31LookNFeel::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect 
 	return bounds;
 }
 
-Win31LookNFeel::FontDescription
-Win31LookNFeel::default() const
-{
-	using namespace forms::literals;
-	return FontDescription{L"FixedSys Excelsior", 12_pt};
-}
-
 void
 Win31LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs& args) const 
 {
@@ -162,4 +155,11 @@ Win31LookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args) const
 	args.Graphics->restore();
 	args.endPaint();
 	return 0;
+}
+
+Win31LookNFeel::FontDescription
+Win31LookNFeel::default() const
+{
+	using namespace forms::literals;
+	return FontDescription{L"FixedSys Excelsior", 12_pt};
 }

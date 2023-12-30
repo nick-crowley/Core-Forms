@@ -45,13 +45,6 @@ Nt6LookNFeel::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wn
 	return bounds;
 }
 
-Nt6LookNFeel::FontDescription
-Nt6LookNFeel::default() const
-{
-	using namespace forms::literals;
-	return FontDescription{L"Segoe UI", 11_pt};
-}
-
 void
 Nt6LookNFeel::draw(GroupBoxControl& ctrl, OwnerDrawEventArgs& args) const
 {
@@ -148,4 +141,11 @@ Nt6LookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args) const
 	args.Graphics->restore();
 	args.endPaint();
 	return 0;
+}
+
+Nt6LookNFeel::FontDescription
+Nt6LookNFeel::default() const
+{
+	using namespace forms::literals;
+	return FontDescription{L"Segoe UI", 11_pt};
 }

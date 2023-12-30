@@ -29,13 +29,6 @@ RetroLookNFeel::customCaption() const {
 	return true;
 }
 
-RetroLookNFeel::FontDescription
-RetroLookNFeel::default() const
-{
-	using namespace forms::literals;
-	return FontDescription{L"FixedSys Excelsior", 11_pt};
-}
-
 //! @brief  Generates the points of an octagon
 class Octagon {
 	Rect              Bounds;
@@ -160,4 +153,11 @@ RetroLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args) const
 	// Same as Win3.1
 	auto const self = this->shared_from_this();
 	return Win31LookNFeel{self,self}.draw(dlg, args);
+}
+
+RetroLookNFeel::FontDescription
+RetroLookNFeel::default() const
+{
+	using namespace forms::literals;
+	return FontDescription{L"FixedSys Excelsior", 11_pt};
 }
