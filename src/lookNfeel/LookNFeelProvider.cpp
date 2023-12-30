@@ -5,7 +5,7 @@ using namespace core;
 using namespace forms;
 
 DrawTextFlags
-forms::drawFlags(nstd::bitset<Alignment> align) noexcept
+forms::drawTextFlags(nstd::bitset<Alignment> align) noexcept
 {
 	nstd::bitset<DrawTextFlags> flags = align.test(Alignment::Left)   ? DrawTextFlags::Left
 	                                  : align.test(Alignment::Right)  ? DrawTextFlags::Right
@@ -199,7 +199,7 @@ LookNFeelProvider::draw(ButtonControl& ctrl, OwnerDrawEventArgs const& args)
 	Rect const content = args.Item.Area - Border{SystemMetric::cxFixedFrame} + (pushed ? Point{1,1} : Point::Zero);
 	args.Graphics.setFont(ctrl.font());
 	args.Graphics.textColour(enabled ? ctrl.textColour() : SystemColour::GrayText, ctrl.backColour());
-	args.Graphics.drawText(ctrl.text(), content, forms::drawFlags(ctrl.align()));
+	args.Graphics.drawText(ctrl.text(), content, forms::drawTextFlags(ctrl.align()));
 
 	// Draw focus rectangle
 	auto const focused = state.test(ButtonState::Focus);
@@ -235,7 +235,7 @@ LookNFeelProvider::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	Rect const areaText = content - Border{SystemMetric::cxSmallIcon,0,0,0} - Border{SystemMetric::cxEdge,0,0,0};
 	args.Graphics.setFont(ctrl.font());
 	args.Graphics.textColour(enabled ? ctrl.textColour() : SystemColour::GrayText, ctrl.backColour());
-	args.Graphics.drawText(ctrl.text(), areaText, forms::drawFlags(alignment));
+	args.Graphics.drawText(ctrl.text(), areaText, forms::drawTextFlags(alignment));
 	
 	// Draw focus rectangle
 	auto const focused = ctrl.state().test(ButtonState::Focus);
@@ -465,7 +465,7 @@ LookNFeelProvider::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args)
 	// Draw text
 	args.Graphics.setFont(ctrl.font());
 	args.Graphics.textColour(ctrl.textColour(), ctrl.backColour());
-	nstd::bitset<DrawTextFlags> flags = forms::drawFlags(ctrl.align());
+	nstd::bitset<DrawTextFlags> flags = forms::drawTextFlags(ctrl.align());
 	if (flags.test(DrawTextFlags::Bottom)) 
 		flags.set(DrawTextFlags::SingleLine, true);
 	else if (flags.test(DrawTextFlags::VCentre)) {
@@ -777,7 +777,7 @@ LookNFeelProvider::draw(RadioButtonControl& ctrl, OwnerDrawEventArgs const& args
 	Rect const areaText = content - Border{30,0,0,0};
 	args.Graphics.setFont(ctrl.font());
 	args.Graphics.textColour(enabled ? ctrl.textColour() : SystemColour::GrayText, ctrl.backColour());
-	args.Graphics.drawText(ctrl.text(), areaText, forms::drawFlags(ctrl.align()));
+	args.Graphics.drawText(ctrl.text(), areaText, forms::drawTextFlags(ctrl.align()));
 
 	// Draw focus rectangle
 	if (focused)
@@ -793,7 +793,7 @@ LookNFeelProvider::draw(StaticControl& ctrl, OwnerDrawEventArgs const& args)
 		throw runtime_error{"Static #{} must be OwnerDraw", args.Ident};
 
 	args.Graphics.setBrush(ctrl.backColour());
-	args.Graphics.drawText(ctrl.text(), args.Item.Area, forms::drawFlags(ctrl.align()));
+	args.Graphics.drawText(ctrl.text(), args.Item.Area, forms::drawTextFlags(ctrl.align()));
 	
 	args.Graphics.restore();
 }

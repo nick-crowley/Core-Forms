@@ -203,7 +203,7 @@ namespace core::forms
 namespace core::forms
 {
 	DrawTextFlags
-	drawFlags(nstd::bitset<Alignment> align) noexcept;
+	drawTextFlags(nstd::bitset<Alignment> align) noexcept;
 
 	EdgeFlags
 	edgeFlags(nstd::bitset<ExWindowStyle> style) noexcept;
