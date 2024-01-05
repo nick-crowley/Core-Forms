@@ -113,5 +113,18 @@ namespace core::forms
 	}
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+namespace core::forms
+{
+	template <nstd::AnyArithmeticExcept<bool,wchar_t,char8_t,char16_t,char32_t> Arithmetic>
+	Measurement
+	operator*(SystemMetric metric, Arithmetic n) {
+		return Measurement{metric} * n;
+	}
 
+	template <nstd::AnyArithmeticExcept<bool,wchar_t,char8_t,char16_t,char32_t> Arithmetic>
+	Measurement
+	operator*(Arithmetic n, SystemMetric metric) {
+		return Measurement{metric} * n;
+	}
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=-o End of File o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
