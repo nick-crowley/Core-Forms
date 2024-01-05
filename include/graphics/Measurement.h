@@ -50,14 +50,14 @@ namespace core::forms
 		value_type  Value;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		//! @brief	Construct from user-supplied integer
-		template <nstd::Integer Integer>
+		//! @brief	Construct from user-supplied integer or floating-point
+		template <nstd::AnyArithmeticExcept<bool,wchar_t,char8_t,char16_t,char32_t> Arithmetic>
 		constexpr implicit
-		Measurement(Integer n) noexcept
+		Measurement(Arithmetic n) noexcept
 		  : Value{static_cast<value_type>(n)}
 		{}
 
-		//! @brief	Construct from any integral system-defined metric
+		//! @brief	Construct from any system-defined metric
 		implicit
 		Measurement(SystemMetric metric) noexcept
 		  : Value{::GetSystemMetrics(static_cast<value_type>(metric))}
