@@ -27,9 +27,8 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
-#include "graphics/Rectangle.h"
-#include "system/SharedHandle.h"
-#include "win/Module.h"
+#include "controls/Control.h"
+#include "forms/WindowClass.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -41,84 +40,119 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class Icon
+	class AnimationControl : public Control 
 	{
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	protected:
+		class AnimationNotificationDictionary : public forms::MessageDictionary {
+			using base = forms::MessageDictionary;
+		public:
+			AnimationNotificationDictionary() : base({
+	#define MakeMessageName(msg)  { msg, #msg }
+				MakeMessageName(NM_CLICK),
+				MakeMessageName(ACN_START),
+				MakeMessageName(ACN_STOP)
+	#undef MakeMessageName
+				})
+			{}
+		};
+		
+		class AnimationWindowClass : public forms::WindowClass {
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			using const_reference = AnimationWindowClass const&;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			::WNDPROC	OriginalWndProc;
+			// o~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~o
+		public:
+			AnimationWindowClass() : forms::WindowClass{win::ResourceId{ANIMATE_CLASS}}  {
+				this->Name = win::ResourceId{L"Custom.ANIMATION"};
+				this->OriginalWndProc = std::exchange(this->WndProc, Window::defaultMessageHandler);
+				this->Style |= ClassStyle::GlobalClass;
+				this->registér();
+			}
+		};
 
+	public:
+		using WindowClass = AnimationWindowClass;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		SharedIcon    Handle;
-		Size          Dimensions;
+		std::optional<std::string>  LoadedAnimation;
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		explicit
-		Icon(SharedIcon icon, Size dimensions) 
-		  : Handle{std::move(ThrowIfEmpty(icon))},
-			Dimensions{dimensions}
-		{
-		}
+		implicit
+		AnimationControl(uint16_t id) 
+		  : Control{id}
+		{}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		satisfies(Icon,
-			NotDefaultConstructible,
-			IsCopyable noexcept,
-			IsMovable noexcept,
-			IsEqualityComparable,
-			NotSortable
-		);
+
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		Icon
-		static load(std::wstring_view path) 
-		{
-			ThrowIfEmpty(path);
 
-			Size const 
-			static dimensions{SystemMetric::cxIcon,SystemMetric::cyIcon};
-
-			if (auto const icon = (::HICON)::LoadImageW(nullptr, path.data(), 
-														IMAGE_ICON, 
-														dimensions.Width, dimensions.Height, 
-														LR_LOADFROMFILE|LR_LOADTRANSPARENT); !icon)
-				win::LastError{}.throwAlways("LoadImage({}) failed", to_utf8(path));
-			else
-				return Icon{SharedIcon{icon,&::DestroyIcon}, dimensions};
-		}
-		
-		Icon
-		static load(win::Module source, win::ResourceId name, Size dimensions = Size{SystemMetric::cxIcon,SystemMetric::cyIcon})
-		{
-			if (auto const icon = (::HICON)::LoadImageW(source.handle(), name, 
-														IMAGE_ICON, 
-														dimensions.Width, dimensions.Height, 
-														LR_LOADTRANSPARENT); !icon)
-				win::LastError{}.throwAlways("LoadImage({}, {}) failed", to_string(name), to_string(dimensions));
-			else
-				return Icon{SharedIcon{icon,&::DestroyIcon}, dimensions};
-		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
-		SharedIcon
-		handle() const
-		{
-			return this->Handle;
+		bool
+		virtual ownerDraw() const noexcept override {
+			return false;
 		}
-	
-		Rect
-		rect() const
-		{
-			return Rect{{0,0}, this->Dimensions};
+		
+		WindowRole
+		virtual role() const noexcept override {
+			return WindowRole::Animation;
 		}
 
-		Size
-		size() const
-		{
-			return this->Dimensions;
+		AnimationWindowClass::const_reference
+		virtual wndcls() const override {
+			AnimationWindowClass const  static wc;
+			return wc;
 		}
-
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
+	public:
+		void
+		load(filesystem::path filename) {
+			if (!this->send<ACM_OPENW>(nullopt, (::LPARAM)(wchar_t const*)filename.wstring().c_str()))
+				throw runtime_error{"Failed to load animation '{}'", filename.string()};
+			
+			this->LoadedAnimation = filename.string();
+		}
+		
+		void
+		load(win::Module container, win::ResourceId id) {
+			if (!this->send<ACM_OPENW>((::WPARAM)container.handle(), (::LPARAM)(wchar_t const*)id))
+				throw runtime_error{"Failed to load animation {}", to_string(id)};
+			
+			this->LoadedAnimation = to_string(id);
+		}
+		
+		void
+		play(std::optional<unsigned> playbackCount = nullopt) {
+			Invariant(this->LoadedAnimation);
+
+			if (!this->send<ACM_PLAY>((::WPARAM)playbackCount.value_or(-1), (::LPARAM)MAKELPARAM(0, -1)))
+				throw runtime_error{"Failed to play animation {}", *this->LoadedAnimation};
+		}
+		
+		void
+		stop() {
+			Invariant(this->LoadedAnimation);
+
+			if (!this->send<ACM_STOP>())
+				throw runtime_error{"Failed to stop animation {}", *this->LoadedAnimation};
+		}
+
+	protected:
+		gsl::czstring
+		virtual notificationName(::UINT notification) override {
+			AnimationNotificationDictionary const  static names;
+			return names.at(notification);
+		}
+		
+		::LRESULT 
+		virtual onRouteUnhandled(::UINT message, ::WPARAM wParam, ::LPARAM lParam) override {
+			return this->subclassedWndProc(message, wParam, lParam);
+		}
 	};
-}
+}	// namespace core::forms
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Global Functions o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o

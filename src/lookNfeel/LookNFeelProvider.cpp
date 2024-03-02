@@ -231,7 +231,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 			Point const iconPosition = rcContent.topLeft();
 			if (icon) {
 				Point const iconOffset{win::Unused<::LONG>, (rcContent.height() - iconSize.Height) / 2};
-				args.Graphics.drawIcon(icon->handle(), iconPosition + iconOffset, iconSize);
+				args.Graphics.drawIcon(*icon->handle(), iconPosition + iconOffset, iconSize);
 			}
 
 			// Offset heading/detail drawing rectangles
@@ -277,7 +277,7 @@ LookNFeelProvider::draw(ComboBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		Size const iconSize = SmallIcon;
 		if (icon) {
 			Point const iconOffset{win::Unused<::LONG>, (rcContent.height() - iconSize.Height) / 2};
-			args.Graphics.drawIcon(icon->handle(), rcContent.topLeft() + iconOffset, iconSize);
+			args.Graphics.drawIcon(*icon->handle(), rcContent.topLeft() + iconOffset, iconSize);
 		}
 		rcDetailText.Left += iconSize.Width + 3*Measurement{SystemMetric::cxFixedFrame};
 	}
@@ -397,7 +397,12 @@ LookNFeelProvider::draw(LabelControl& ctrl, OwnerDrawEventArgs const& args)
 	// Draw text
 	args.Graphics.setFont(ctrl.font());
 	args.Graphics.textColour(ctrl.textColour(), ctrl.backColour());
-	args.Graphics.drawText(ctrl.text(), args.Item.Area, forms::drawFlags(ctrl.align()));
+	nstd::bitset<DrawTextFlags> flags = forms::drawFlags(ctrl.align());
+	if (flags.test(DrawTextFlags::VCentre)) {
+		flags.set(DrawTextFlags::WordBreak, true);
+		flags.set(DrawTextFlags::SingleLine, false);
+	}
+	args.Graphics.drawText(ctrl.text(), args.Item.Area, flags);
 
 	args.Graphics.restore();
 }
@@ -416,9 +421,9 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	auto const backColour = selected ? this->highlight() : ctrl.backColour();
 	
 	// Draw item background
-	Rect const rcContent = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
+	Rect const rcBackground = args.Item.Area - Border{measureEdge(ctrl.exStyle()).Width};
 	args.Graphics.setBrush(backColour);
-	args.Graphics.fillRect(rcContent);
+	args.Graphics.fillRect(rcBackground);
 	final_act(&) noexcept { 
 		args.Graphics.restore();
 	};
@@ -435,30 +440,45 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 	bool const useIcons = useBigIcons || ctrl.features().test(ListBoxFeature::Icons);
 	auto const heading = item.heading(); 
 	auto const icon = item.icon();
+	auto const detail = item.detail();
+	Rect const rcContent = rcBackground - Border{2*Measurement{SystemMetric::cxEdge}, win::Unused<::LONG>};
 
 	// [HEADING] Draw heading and calculate different rectangle for (multi-line) detail text
 	Rect rcDetailText = rcContent;
 	if (useHeadings) {
 		Invariant(heading.has_value());
 
-		// Prefer heading font + selected-text colour; fallback to heading-default then control-default
-		args.Graphics.setFont(heading->Font.value_or(ctrl.headingFont().value_or(ctrl.font())));
-		args.Graphics.textColour(selectedTextColour.value_or(heading->Colour.value_or(ctrl.textColour())), transparent);
-		
 		// [HEADING-ICON] Draw icon on left; position both heading and detail text beside it
 		Rect rcHeadingText = rcContent;
 		if (useIcons) {
 			Size const iconSize = BigIcon;
 			Point const iconPosition = rcContent.topLeft();
-			if (icon)
-				args.Graphics.drawIcon(icon->handle(), iconPosition, iconSize);
+			if (icon) {
+				Point const iconOffset{win::Unused<::LONG>, (rcContent.height() - iconSize.Height) / 2};
+				args.Graphics.drawIcon(*icon->handle(), iconPosition + iconOffset, iconSize);
+			}
 
 			// Offset heading/detail drawing rectangles
 			LONG const horzOffset = iconSize.Width + 3*Measurement{SystemMetric::cxFixedFrame};
 			rcHeadingText.Left += horzOffset;
 			rcDetailText.Left += horzOffset;
 		}
-
+		
+		// Pre-calculate the detail size in order to calculate the heading offset
+		Rect detailRequired = rcDetailText;
+		args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
+		args.Graphics.calcRect(detail.Text, detailRequired, DrawTextFlags::Left|DrawTextFlags::WordBreak);
+		
+		// Prefer heading font + selected-text colour; fallback to heading-default then control-default
+		args.Graphics.setFont(heading->Font.value_or(ctrl.headingFont().value_or(ctrl.font())));
+		args.Graphics.textColour(selectedTextColour.value_or(heading->Colour.value_or(ctrl.textColour())), transparent);
+		
+		// Calculate the heading offset
+		Rect headingRequired = rcDetailText;
+		args.Graphics.calcRect(heading->Text, headingRequired, DrawTextFlags::Left);
+		Size const headingOffset{win::Unused<LONG>, (rcContent.height() - headingRequired.height() - detailRequired.height()) / 2};
+		rcHeadingText.Top += headingOffset.Height;
+		
 		// Draw heading and offset detail below
 		auto const titleHeight = args.Graphics.drawText(heading->Text, rcHeadingText, DrawTextFlags::Left);
 		rcDetailText.Top += titleHeight;
@@ -469,13 +489,12 @@ LookNFeelProvider::draw(ListBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		Size const iconSize = (useBigIcons ? BigIcon : SmallIcon);
 		if (icon) {
 			Point const iconOffset{win::Unused<::LONG>, (rcContent.height() - iconSize.Height) / 2};
-			args.Graphics.drawIcon(icon->handle(), rcContent.topLeft() + iconOffset, iconSize);
+			args.Graphics.drawIcon(*icon->handle(), rcContent.topLeft() + iconOffset, iconSize);
 		}
 		rcDetailText.Left += iconSize.Width + 3*Measurement{SystemMetric::cxFixedFrame};
 	}
 	
 	// Prefer detail font + selected-text colour; fallback to control-default
-	auto const detail = item.detail();
 	args.Graphics.setFont(detail.Font.value_or(ctrl.font()));
 	args.Graphics.textColour(selectedTextColour.value_or(detail.Colour.value_or(ctrl.textColour())), transparent);
 
@@ -592,7 +611,7 @@ LookNFeelProvider::draw(ListViewControl& ctrl, OwnerDrawEventArgs const& args)
 	Rect rcLabel = item.area();
 	if (ctrl.features().test(ListViewFeature::Icons)) {
 		if (std::optional<Icon> icon = item.icon(); icon.has_value()) 
-			args.Graphics.drawIcon(icon->handle(), rcLabel.topLeft(), Size{24,24});
+			args.Graphics.drawIcon(*icon->handle(), rcLabel.topLeft(), Size{24,24});
 
 		rcLabel.Left += 24 + 3*Measurement{SystemMetric::cxEdge};
 	}
@@ -665,7 +684,7 @@ LookNFeelProvider::draw(PictureControl& ctrl, OwnerDrawEventArgs const& args)
 	else if (auto icon = ctrl.icon(); icon) {
 		// Optionally stretch the icon into the client area
 		Rect const rcDest = !DontResize ? args.Item.Area : Rect{args.Item.Area.topLeft(), icon->size()};
-		args.Graphics.drawIcon(icon->handle(), rcDest);
+		args.Graphics.drawIcon(*icon->handle(), rcDest);
 	}
 }
 
@@ -803,7 +822,7 @@ LookNFeelProvider::measure(Window& wnd, MeasureMenuEventArgs& args)
 }
 
 NonClientLayout
-LookNFeelProvider::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const 
+LookNFeelProvider::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const 
 {
 	ThrowIf(results, results == Coords::Client);
 	NonClientLayout bounds{wnd};
@@ -811,8 +830,8 @@ LookNFeelProvider::nonClient(Coords results, nstd::bitset<WindowStyle> style, Re
 	// Caption
 	Size const Frame{SystemMetric::cxSizeFrame, SystemMetric::cySizeFrame};
 	bounds.Caption = Rect{Point::Zero, Size{wnd.width(), Measurement{SystemMetric::cyCaption}}} 
-	               - Border{2 * Frame.Width, 0}
-	               + Point{0, 2 * Frame.Height};
+	               - Border{2 * Frame.Width, win::Unused<LONG>}
+	               + Point{win::Unused<LONG>, 2 * Frame.Height};
 	
 	// System-menu button
 	Size const rcIcon {bounds.Caption.height(), bounds.Caption.height()};
@@ -833,7 +852,7 @@ LookNFeelProvider::nonClient(Coords results, nstd::bitset<WindowStyle> style, Re
 	bounds.Title.Right = bounds.MinimizeBtn.Left - (2 * Frame.Width);
 
 	// MenuBar
-	bounds.MenuBar = Rect{bounds.Caption.Left, bounds.Caption.Bottom, bounds.Caption.Right, client.Top - wnd.Top};
+	bounds.MenuBar = Rect{bounds.Caption.Left, bounds.Caption.Bottom, bounds.Caption.Right, bounds.Caption.Bottom + Measurement{SystemMetric::cyMenu}};
 
 	// [SCREEN] Translate all generated co-ordinates
 	if (results == Coords::Screen) {

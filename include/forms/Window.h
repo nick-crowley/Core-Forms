@@ -37,6 +37,7 @@
 #include "forms/Response.h"
 #include "forms/UnmanagedWindow.h"
 #include "forms/WindowEventArgs.h"
+#include "controls/RichText.h"
 #pragma comment (lib, "OleAcc.lib")
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
@@ -925,6 +926,7 @@ namespace core::forms
 		using base::style;
 		using base::systemMenu;
 		using base::text;
+		using base::visible;
 		using base::wndcls;
 		using base::wndRect;
 		using base::wndRgn;
@@ -1054,6 +1056,22 @@ namespace core::forms
 			base::font(*newFont.handle(), true);
 		}
 		
+		void
+		text(RichText rt) {
+			base::text(rt.Text);
+			if (rt.Colour)
+				this->textColour(*rt.Colour);
+			if (rt.Font)
+				this->font(*rt.Font);
+		}
+		
+		template <typename... Params>
+			requires nstd::AtLeastOneType<Params...>
+		void
+		text(std::wstring_view format, Params&&... args) {
+			this->text(std::vformat(format, std::make_wformat_args(std::forward<Params>(args)...)));
+		}
+
 		void
 		textColour(AnyColour newColour) {
 			ThrowIf(newColour, std::holds_alternative<meta::transparent_t>(newColour));

@@ -99,6 +99,11 @@ ModernLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		Rect{toggleOffset + Point{toggleSize.Width/2,0}, Size{toggleSize.Width/2, toggleSize.Height}}
 	};
 	
+	// Define objects used to render ball in colours reflecting enabled state
+	auto const enabled = ctrl.enabled();
+	Brush ballInterior{enabled ? this->primary() : this->tertiary()};
+	Pen   ballOutline{enabled ? this->primary() : this->tertiary(), 2};
+
 	if (auto const checked = ctrl.checked(); checked) {
 		// Fillable path requires a central rectangle
 		args.Graphics.beginPath();
@@ -115,8 +120,8 @@ ModernLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		args.Graphics.fillPathAndOutline();
 		
 		// Draw white ball on right
-		args.Graphics.setPen(StockPen::White);
-		args.Graphics.setBrush(StockBrush::White);
+		args.Graphics.setPen(ballOutline);
+		args.Graphics.setBrush(ballInterior);
 		args.Graphics.drawEllipse(Rect{toggle[1].centre(), ballSize, Rect::FromCentre});
 	}
 	else {
@@ -131,18 +136,15 @@ ModernLookNFeel::draw(CheckBoxControl& ctrl, OwnerDrawEventArgs const& args)
 		args.Graphics.endPath();
 
 		// [UNCHECKED] Draw outline extended oval
-		Pen outline{this->primary(), 2};
-		args.Graphics.setPen(outline);
+		args.Graphics.setPen(ballOutline);
 		args.Graphics.outlinePath();
 		
 		// Draw dark ball on left
-		Brush interior{this->primary()};
-		args.Graphics.setBrush(interior);
+		args.Graphics.setBrush(ballInterior);
 		args.Graphics.drawEllipse(Rect{toggle[0].centre(), ballSize, Rect::FromCentre});
 	}
 	
 	// Draw text
-	auto const enabled = ctrl.enabled();
 	Rect const areaText = content + Rect{toggle[1].Right - content.Left + 3*Measurement{SystemMetric::cxEdge},0,0,0};
 	args.Graphics.setFont(ctrl.font());
 	args.Graphics.textColour(enabled ? ctrl.textColour() : this->tertiary(), ctrl.backColour());
@@ -186,7 +188,7 @@ ModernLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args)
 	args.beginPaint();
 
 	auto const isActive = args.CaptionState == WindowCaptionState::Active;
-	auto const components = this->nonClient(Coords::Window, args.Window.style(), args.Bounds, args.Client);
+	auto const components = this->nonClient(Coords::Window, args.Window.style(), args.Bounds);
 	auto const captionColour = isActive ? this->caption().Active : this->caption().Inactive;
 	auto const textColour = isActive ? this->primary() : this->tertiary();
 	auto const style = dlg.style();
@@ -197,9 +199,9 @@ ModernLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args)
 	args.Graphics->setBrush(captionColour);
 	args.Graphics->fillRegion(captionArea);
 
-	// Draw window frame consistently in 'active' colours
+	// Draw window frame consistently in 'inactive' colours
 	Region const frameEdges = args.Area - Region{args.Client} - captionArea;
-	args.Graphics->setBrush(this->caption().Active);
+	args.Graphics->setBrush(this->caption().Inactive);
 	args.Graphics->fillRegion(frameEdges);
 
 	// Draw super-thin outline around entire window
@@ -211,7 +213,10 @@ ModernLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args)
 	args.Graphics->textColour(textColour, transparent);
 	args.Graphics->drawText(dlg.text(), components.Title, DrawTextFlags::SimpleLeft);
 
-	//! @todo  Draw application icon in caption
+	// Draw application icon in caption
+	if (auto appIcon = dlg.wndcls().LargeIcon; appIcon)
+		//! @todo  Draw system-default icon if app doesn't provide an icon
+		args.Graphics->drawIcon(*appIcon, components.SysMenuBtn);
 	
 	// Draw maximize button
 	if (style.test(WindowStyle::MaximizeBox)) {
@@ -268,17 +273,23 @@ ModernLookNFeel::draw(Dialog& dlg, NonClientPaintEventArgs& args)
 }
 
 NonClientLayout
-ModernLookNFeel::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd, Rect client) const 
+ModernLookNFeel::nonClient(Coords results, nstd::bitset<WindowStyle> style, Rect wnd) const 
 {
 	ThrowIf(results, results == Coords::Client);
 	
 	// Base non-client area upon the default
-	NonClientLayout bounds = base::nonClient(results, style, wnd, client);
+	NonClientLayout bounds = base::nonClient(results, style, wnd);
 	
 	// Extend height of caption by 50%
 	Rect::value_type const CaptionExtension = bounds.Caption.height() / 2;
 	bounds.Caption.Bottom += CaptionExtension;
 	bounds.MenuBar.translate({0, CaptionExtension});
+
+	// Move the minimize button when the window cannot be maximized
+	if (style.test(WindowStyle::MinimizeBox) && !style.test(WindowStyle::MaximizeBox)) {
+		bounds.MinimizeBtn = bounds.MaximizeBtn;
+		bounds.MaximizeBtn = Rect::Empty;
+	}
 
 	return bounds;
 }

@@ -28,6 +28,7 @@
 #pragma comment(lib, "Comctl32.lib")
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
+#include "controls/AnimationControl.h"
 #include "controls/ButtonControl.h"
 #include "controls/CheckBoxControl.h"
 #include "controls/EditControl.h"
@@ -40,6 +41,7 @@
 #include "controls/ComboBoxControl.h"
 #include "controls/ListBoxControl.h"
 #include "controls/ListViewControl.h"
+#include "controls/PanelControl.h"
 #include "controls/ProgressBarControl.h"
 #include "win/SharedLibrary.h"
 #include "com/Version.h"
@@ -54,6 +56,7 @@ namespace core::forms
 {
 	enum class CommonControl {
 		Unknown,
+		Animation,
 		Static,
 		Button,
 		CheckBox,

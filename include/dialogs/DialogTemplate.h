@@ -130,6 +130,7 @@ namespace core::forms
 				
 				CommonControl const kind = forms::identifyControl(ctrl.ClassName.as_id());
 				switch (kind) {
+				case CommonControl::Animation: ctrl.ClassName = win::ResourceId(L"Custom.ANIMATION"); break;
 				case CommonControl::Button:    ctrl.ClassName = win::ResourceId(L"Custom.BUTTON");    break;
 				case CommonControl::Edit:      ctrl.ClassName = win::ResourceId(L"Custom.EDIT");      break;
 				case CommonControl::Static:    ctrl.ClassName = win::ResourceId(L"Custom.STATIC");    break;
@@ -138,7 +139,14 @@ namespace core::forms
 				case CommonControl::ComboBox:  ctrl.ClassName = win::ResourceId(L"Custom.COMBOBOX");  break;
 				case CommonControl::Link:      ctrl.ClassName = win::ResourceId(L"Custom.LINK");      break;
 				case CommonControl::ListView:  ctrl.ClassName = win::ResourceId(L"Custom.LISTVIEW");  break;
-				default: throw invalid_argument{"Controls with window class {} not yet supported", win::to_string(ctrl.ClassName.as_id())};
+				case CommonControl::Header:
+				case CommonControl::ProgressBar:
+				case CommonControl::RichEdit:
+				case CommonControl::StatusBar:
+				case CommonControl::Tabs:
+				case CommonControl::ToolBar:
+				case CommonControl::TreeView:
+					throw invalid_argument{"Controls with window class {} not yet supported", win::to_string(ctrl.ClassName.as_id())};
 				}
 				
 				// [GROUP-BOX] GroupBoxes must have the @c WindowStyle::ClipSiblings style to prevent them from over-painting

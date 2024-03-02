@@ -356,6 +356,16 @@ namespace core::forms
 				this->Style |= ClassStyle::GlobalClass;
 				this->registér();
 			}
+			
+			DialogWindowClass(win::ResourceId clsName, Icon icon) : forms::WindowClass(win::ResourceId::parse(WC_DIALOG))
+			{
+				this->Name = clsName;
+				this->SmallIcon = icon.handle();
+				this->LargeIcon = icon.handle();
+				this->OriginalWndProc = std::exchange(this->WndProc, Dialog::interceptMessageHandler);
+				this->Style |= ClassStyle::GlobalClass;
+				this->registér();
+			}
 		};
 
 		using WindowClass = DialogWindowClass;
@@ -483,9 +493,14 @@ namespace core::forms
 		NonClientLayout 
 		nonClient() const noexcept
 		{
-			return this->LookNFeel->nonClient(Coords::Screen, this->style(), this->wndRect(), this->clientRect(HWND_DESKTOP));
+			return this->LookNFeel->nonClient(Coords::Screen, this->style(), this->wndRect());
 		}
-
+		
+		DialogTemplate const&
+		original() const {
+			return this->Template;
+		}
+		
 		WindowRole
 		virtual role() const noexcept override {
 			return WindowRole::Dialog;
@@ -789,18 +804,21 @@ namespace core::forms
 			auto const container = source.handle();
 			auto const owner = parent ? parent->handle() : nullptr;
 			if (mode == DialogMode::Modal) { 
-				auto result = ::DialogBoxIndirectW(container, blob, owner, this->DialogProc);
-				if (result == -1)
-					win::LastError{}.throwIfError("Failed to display '{}' dialog", to_string(this->DialogId));
-
+				auto result = ::DialogBoxIndirectParamW(container, blob, owner, this->DialogProc, win::Unused<LPARAM>);
 				this->DisplayMode = nullopt;
+
+				if (win::LastError err; result == -1 || (result == 0 && !err))
+					err.throwAlways("Failed to display '{}' dialog", to_string(this->DialogId));
 				return result;
 			}
 
 			// [MODELESS] Display, set handle, and return nothing
-			if (auto* const dlg = ::CreateDialogIndirectW(container, blob, owner, this->DialogProc); dlg)
+			if (auto* const dlg = ::CreateDialogIndirectW(container, blob, owner, this->DialogProc); !dlg)
+				win::LastError{}.throwAlways("Failed to display '{}' dialog", to_string(this->DialogId));
+			else {
 				this->attach(dlg);
-			return nullopt;
+				return nullopt;
+			}
 		}
 		
 		DialogTemplateBlob
@@ -840,23 +858,23 @@ namespace core::forms
 		void 
 		CloseBtn_Clicked(Window& self) 
 		{
-			this->destroy();
+			this->post<WM_SYSCOMMAND>(SC_CLOSE);
 		}
 
 		void 
 		MaximizeBtn_Clicked(Window& self) 
 		{
 			if (this->maximized())
-				this->restore();
+				this->post<WM_SYSCOMMAND>(SC_RESTORE);
 			else
-				this->maximize();
+				this->post<WM_SYSCOMMAND>(SC_MAXIMIZE);
 		}
 
 		void 
 		MinimizeBtn_Clicked(Window& self) 
 		{
 			if (!this->minimized())
-				this->minimize();
+				this->post<WM_SYSCOMMAND>(SC_MINIMIZE);
 		}
 	};
 }	// namespace core::forms

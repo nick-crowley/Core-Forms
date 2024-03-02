@@ -27,9 +27,6 @@
 #pragma once
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Header Files o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 #include "library/core.Forms.h"
-#include "graphics/Rectangle.h"
-#include "system/SharedHandle.h"
-#include "win/Module.h"
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Name Imports o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Forward Declarations o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
@@ -37,86 +34,34 @@
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Macro Definitions o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o Constants & Enumerations o~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
-
+namespace core::meta
+{
+	template <typename T>
+	concept HasAllControls = requires (T&& t) { 
+		{ t.AllControls } -> nstd::InputRangeConvertibleTo<forms::Window*>;
+	};
+}
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Class Declarations o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
 namespace core::forms
 {
-	class Icon
+	//! @brief  Imaginary control used to simplify manipulating multiple controls as a group
+	struct PanelControl
 	{
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Types & Constants o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	private:
-		SharedIcon    Handle;
-		Size          Dimensions;
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		explicit
-		Icon(SharedIcon icon, Size dimensions) 
-		  : Handle{std::move(ThrowIfEmpty(icon))},
-			Dimensions{dimensions}
-		{
-		}
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		satisfies(Icon,
-			NotDefaultConstructible,
-			IsCopyable noexcept,
-			IsMovable noexcept,
-			IsEqualityComparable,
-			NotSortable
-		);
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Static Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		Icon
-		static load(std::wstring_view path) 
-		{
-			ThrowIfEmpty(path);
-
-			Size const 
-			static dimensions{SystemMetric::cxIcon,SystemMetric::cyIcon};
-
-			if (auto const icon = (::HICON)::LoadImageW(nullptr, path.data(), 
-														IMAGE_ICON, 
-														dimensions.Width, dimensions.Height, 
-														LR_LOADFROMFILE|LR_LOADTRANSPARENT); !icon)
-				win::LastError{}.throwAlways("LoadImage({}) failed", to_utf8(path));
-			else
-				return Icon{SharedIcon{icon,&::DestroyIcon}, dimensions};
-		}
-		
-		Icon
-		static load(win::Module source, win::ResourceId name, Size dimensions = Size{SystemMetric::cxIcon,SystemMetric::cyIcon})
-		{
-			if (auto const icon = (::HICON)::LoadImageW(source.handle(), name, 
-														IMAGE_ICON, 
-														dimensions.Width, dimensions.Height, 
-														LR_LOADTRANSPARENT); !icon)
-				win::LastError{}.throwAlways("LoadImage({}, {}) failed", to_string(name), to_string(dimensions));
-			else
-				return Icon{SharedIcon{icon,&::DestroyIcon}, dimensions};
-		}
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~o Observer Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
-	public:
-		SharedIcon
-		handle() const
-		{
-			return this->Handle;
-		}
-	
-		Rect
-		rect() const
-		{
-			return Rect{{0,0}, this->Dimensions};
+		template <typename Self>
+			requires meta::HasAllControls<std::remove_cvref_t<Self>>
+		void
+		hide(this Self&& self) {
+			for (auto* ctrl : self.AllControls)
+				ctrl->hide();
 		}
 
-		Size
-		size() const
-		{
-			return this->Dimensions;
+		template <typename Self>
+			requires meta::HasAllControls<std::remove_cvref_t<Self>>
+		void
+		show(this Self&& self) {
+			for (auto* ctrl : self.AllControls)
+				ctrl->show();
 		}
-
-		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Mutator Methods & Operators o~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	};
 }
 // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Non-member Methods o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o
