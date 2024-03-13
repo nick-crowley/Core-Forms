@@ -47,7 +47,7 @@ namespace core::forms
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		IdentDictionary m_items;
+		IdentDictionary Items;
 		
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -58,7 +58,7 @@ namespace core::forms
 			ThrowIf(controls, ranges::any_of(controls, lambda(=, const* c, c->ident() == /*IDC_STATIC*/ -1)));
 
 			for (auto* c : controls)
-				this->m_items[c->ident()] = c; 
+				this->Items[c->ident()] = c; 
 		}
 		// o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
@@ -75,34 +75,34 @@ namespace core::forms
 	public:
 		IdentDictionary::const_iterator 
 		begin() const { 
-			return this->m_items.begin(); 
+			return this->Items.begin(); 
 		}
 
 		IdentDictionary::const_iterator
 		end() const { 
-			return this->m_items.end(); 
+			return this->Items.end(); 
 		}
 
 		template <std::integral Ident>
 		bool
 		contains(Ident id) const {
-			return this->m_items.contains(static_cast<uint16_t>(id));
+			return this->Items.contains(static_cast<uint16_t>(id));
 		}
 		
 		bool
 		empty() const {
-			return this->m_items.empty();
+			return this->Items.empty();
 		}
 
 		IdentDictionary::size_type
 		size() const { 
-			return this->m_items.size();  
+			return this->Items.size();  
 		}
 		
 		template <std::integral Ident>
 		Control*
 		operator[](Ident id) const {
-			return this->m_items.at(static_cast<uint16_t>(id));
+			return this->Items.at(static_cast<uint16_t>(id));
 		}
 		
 		ControlDictionary
@@ -114,8 +114,8 @@ namespace core::forms
 	public:
 		ControlDictionary&
 		operator+=(ControlDictionary const& other) {
-			for (auto kvp : other.m_items)
-				this->m_items[kvp.first] = kvp.second;
+			for (auto kvp : other.Items)
+				this->Items[kvp.first] = kvp.second;
 			return *this;
 		}
 	};
