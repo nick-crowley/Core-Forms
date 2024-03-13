@@ -59,42 +59,26 @@ namespace core::forms
 			using base = com::adapter<interface_type>;
 
 		public:
-			method_t<1,&interface_type::Add>              add;
-			method_t<0,&interface_type::Draw>             draw;
-			method_t<1,&interface_type::GetBkColor>       getBkColour;
-			method_t<1,&interface_type::GetIcon>          getIcon;
-			method_t<1,&interface_type::GetImageCount>    getImageCount;
-			method_t<1,&interface_type::GetImageInfo>     getImageInfo;
-			method_t<1,&interface_type::GetImageRect>     getImageRect;
-			method_t<2,&interface_type::GetIconSize>      getIconSize;
-			method_t<1,&interface_type::GetOverlayImage>  getOverlayImage;
-			method_t<0,&interface_type::Initialize>       initialize;
-			method_t<0,&interface_type::Remove>           remove;
-			method_t<1,&interface_type::ReplaceIcon>      replaceIcon;
-			method_t<1,&interface_type::SetBkColor>       setBkColour;
-			method_t<0,&interface_type::SetIconSize>      setIconSize;
-			method_t<0,&interface_type::SetImageCount>    setImageCount;
-			method_t<0,&interface_type::SetOverlayImage>  setOverlayImage;
+			method_t<1,&interface_type::Add>              add = base::method<1>(&interface_type::Add);
+			method_t<0,&interface_type::Draw>             draw = base::method<0>(&interface_type::Draw);
+			method_t<1,&interface_type::GetBkColor>       getBkColour = base::method<1>(&interface_type::GetBkColor);
+			method_t<1,&interface_type::GetIcon>          getIcon = base::method<1>(&interface_type::GetIcon);
+			method_t<1,&interface_type::GetImageCount>    getImageCount = base::method<1>(&interface_type::GetImageCount);
+			method_t<1,&interface_type::GetImageInfo>     getImageInfo = base::method<1>(&interface_type::GetImageInfo);
+			method_t<1,&interface_type::GetImageRect>     getImageRect = base::method<1>(&interface_type::GetImageRect);
+			method_t<2,&interface_type::GetIconSize>      getIconSize = base::method<2>(&interface_type::GetIconSize);
+			method_t<1,&interface_type::GetOverlayImage>  getOverlayImage = base::method<1>(&interface_type::GetOverlayImage);
+			method_t<0,&interface_type::Initialize>       initialize = base::method<0>(&interface_type::Initialize);
+			method_t<0,&interface_type::Remove>           remove = base::method<0>(&interface_type::Remove);
+			method_t<1,&interface_type::ReplaceIcon>      replaceIcon = base::method<1>(&interface_type::ReplaceIcon);
+			method_t<1,&interface_type::SetBkColor>       setBkColour = base::method<1>(&interface_type::SetBkColor);
+			method_t<0,&interface_type::SetIconSize>      setIconSize = base::method<0>(&interface_type::SetIconSize);
+			method_t<0,&interface_type::SetImageCount>    setImageCount = base::method<0>(&interface_type::SetImageCount);
+			method_t<0,&interface_type::SetOverlayImage>  setOverlayImage = base::method<0>(&interface_type::SetOverlayImage);
 
 		public:
 			CoImageListImpl(com::shared_ptr<interface_type> ptr) 
-			  : base{ptr},
-				add{this->method<1>(&interface_type::Add)},
-				draw{this->method<0>(&interface_type::Draw)},
-				getBkColour{this->method<1>(&interface_type::GetBkColor)},
-				getIcon{this->method<1>(&interface_type::GetIcon)},
-				getImageCount{this->method<1>(&interface_type::GetImageCount)},
-				getImageInfo{this->method<1>(&interface_type::GetImageInfo)},
-				getImageRect{this->method<1>(&interface_type::GetImageRect)},
-				getIconSize{this->method<2>(&interface_type::GetIconSize)},
-				getOverlayImage{this->method<1>(&interface_type::GetOverlayImage)},
-				initialize{this->method<0>(&interface_type::Initialize)},
-				remove{this->method<0>(&interface_type::Remove)},
-				replaceIcon{this->method<1>(&interface_type::ReplaceIcon)},
-				setBkColour{this->method<1>(&interface_type::SetBkColor)},
-				setIconSize{this->method<0>(&interface_type::SetIconSize)},
-				setImageCount{this->method<0>(&interface_type::SetImageCount)},
-				setOverlayImage{this->method<0>(&interface_type::SetOverlayImage)}
+			  : base{ptr}
 			{}
 		};
 
