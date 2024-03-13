@@ -116,7 +116,7 @@ namespace core::forms
 	public:
 		void
 		appendIcon(Icon const& icon) {
-			this->Impl.replaceIcon(-1, icon.handle());
+			this->Impl.replaceIcon(-1, *icon.handle());
 		}
 
 		void
@@ -215,7 +215,7 @@ namespace core::forms
 		
 		void
 		setIcon(unsigned idx, Icon const& icon) {
-			this->Impl.replaceIcon(idx, icon.handle());
+			this->Impl.replaceIcon(idx, *icon.handle());
 		}
 
 	private:
