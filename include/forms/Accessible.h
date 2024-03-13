@@ -47,12 +47,12 @@ namespace core::forms
 		using base = ::IAccessible;
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=o Representation o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	private:
-		com::shared_ptr<::IAccessible>  m_impl;
+		com::shared_ptr<::IAccessible>  Impl;
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-o Construction & Destruction o=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
 	public:
         explicit
 		AccessibleDecorator(com::shared_ptr<::IAccessible> impl) 
-			: m_impl{std::move(ThrowIfEmpty(impl))}
+			: Impl{std::move(ThrowIfEmpty(impl))}
 		{}
         // o~=~-~=~-~=~-~=~-~=~-~=~-~=~-~=~o Copy & Move Semantics o-~=~-~=~-~=~-~=~-~=~-~=~-~=~-~o
     public:
@@ -70,7 +70,7 @@ namespace core::forms
 #pragma region IAccessible methods
         ::HRESULT
         COMAPI accSelect(long flagsSelect, ::VARIANT varChild) override {
-			return this->m_impl->accSelect(flagsSelect,varChild);
+			return this->Impl->accSelect(flagsSelect,varChild);
 		}
         
         ::HRESULT
@@ -79,119 +79,119 @@ namespace core::forms
                            com::out_t<long> pcxWidth,
                            com::out_t<long> pcyHeight,
                            ::VARIANT varChild) override {
-			return this->m_impl->accLocation(pxLeft,pyTop,pcxWidth,pcyHeight,varChild);
+			return this->Impl->accLocation(pxLeft,pyTop,pcxWidth,pcyHeight,varChild);
 		}
         
         ::HRESULT
         COMAPI accNavigate(long navDir, ::VARIANT start, com::out_t<::VARIANT> endUpAt) override {
-			return this->m_impl->accNavigate(navDir,start,endUpAt);
+			return this->Impl->accNavigate(navDir,start,endUpAt);
 		}
         
         ::HRESULT
         COMAPI accHitTest(long xLeft, long yTop, com::out_t<::VARIANT> child) override {
-			return this->m_impl->accHitTest(xLeft,yTop,child);
+			return this->Impl->accHitTest(xLeft,yTop,child);
 		}
         
         ::HRESULT
         COMAPI accDoDefaultAction(::VARIANT child) override {
-			return this->m_impl->accDoDefaultAction(child);
+			return this->Impl->accDoDefaultAction(child);
 		}
         
         ::HRESULT
         COMAPI get_accParent(com::out_t<::IDispatch*> parent) override {
-			return this->m_impl->get_accParent(parent);
+			return this->Impl->get_accParent(parent);
 		}
         
         ::HRESULT
         COMAPI get_accChildCount(com::out_t<long> count) override {
-			return this->m_impl->get_accChildCount(count);
+			return this->Impl->get_accChildCount(count);
 		}
         
         ::HRESULT
         COMAPI get_accChild(::VARIANT child, com::out_t<::IDispatch*> ppv) override {
-			return this->m_impl->get_accChild(child,ppv);
+			return this->Impl->get_accChild(child,ppv);
 		}
         
         ::HRESULT
         COMAPI get_accName(::VARIANT child, com::out_t<::BSTR> name) override {
-			return this->m_impl->get_accName(child,name);
+			return this->Impl->get_accName(child,name);
 		}
         
         ::HRESULT
         COMAPI put_accName(::VARIANT child, ::BSTR name) override {
-			return this->m_impl->put_accName(child,name);
+			return this->Impl->put_accName(child,name);
 		}
         
         ::HRESULT
         COMAPI get_accValue(::VARIANT child, com::out_t<::BSTR> value) override {
-			return this->m_impl->get_accValue(child,value);
+			return this->Impl->get_accValue(child,value);
 		}
         
         ::HRESULT
         COMAPI put_accValue( ::VARIANT child, ::BSTR value) override {
-			return this->m_impl->put_accValue(child,value);
+			return this->Impl->put_accValue(child,value);
 		}
 
         ::HRESULT
         COMAPI get_accDescription(::VARIANT child, com::out_t<::BSTR> description) override {
-			return this->m_impl->get_accDescription(child,description);
+			return this->Impl->get_accDescription(child,description);
 		}
         
         ::HRESULT
         COMAPI get_accRole(::VARIANT child, com::out_t<::VARIANT> role) override {
-			return this->m_impl->get_accRole(child,role);
+			return this->Impl->get_accRole(child,role);
 		}
         
         ::HRESULT
         COMAPI get_accState(::VARIANT child, com::out_t<::VARIANT> state) override {
-			return this->m_impl->get_accState(child,state);
+			return this->Impl->get_accState(child,state);
 		}
         
         ::HRESULT
         COMAPI get_accHelp(::VARIANT child, com::out_t<::BSTR> help) override {
-			return this->m_impl->get_accHelp(child,help);
+			return this->Impl->get_accHelp(child,help);
 		}
         
         ::HRESULT
         COMAPI get_accHelpTopic(com::out_t<::BSTR> helpFile, ::VARIANT child, com::out_t<long> idTopic) override {
-			return this->m_impl->get_accHelpTopic(helpFile,child,idTopic);
+			return this->Impl->get_accHelpTopic(helpFile,child,idTopic);
 		}
         
         ::HRESULT
         COMAPI get_accKeyboardShortcut(::VARIANT child, com::out_t<::BSTR> keyboardShortcut) override {
-			return this->m_impl->get_accKeyboardShortcut(child,keyboardShortcut);
+			return this->Impl->get_accKeyboardShortcut(child,keyboardShortcut);
 		}
         
         ::HRESULT
         COMAPI get_accFocus(com::out_t<::VARIANT> child) override {
-			return this->m_impl->get_accFocus(child);
+			return this->Impl->get_accFocus(child);
 		}
         
         ::HRESULT
         COMAPI get_accSelection(com::out_t<::VARIANT> children) override {
-			return this->m_impl->get_accSelection(children);
+			return this->Impl->get_accSelection(children);
 		}
         
         ::HRESULT
         COMAPI get_accDefaultAction(::VARIANT child, com::out_t<::BSTR> defaultAction) override {
-			return this->m_impl->get_accDefaultAction(child,defaultAction);
+			return this->Impl->get_accDefaultAction(child,defaultAction);
 		}
 #pragma endregion
 		
 #pragma region IDispatch methods
         ::HRESULT 
         COMAPI GetTypeInfoCount(com::retval_t<::UINT> count) override {
-			return this->m_impl->GetTypeInfoCount(count);
+			return this->Impl->GetTypeInfoCount(count);
         }
         
         ::HRESULT 
         COMAPI GetTypeInfo(::UINT iTInfo, ::LCID lcid, com::retval_t<::ITypeInfo*> ppv) override {
-			return this->m_impl->GetTypeInfo(iTInfo,lcid,ppv);
+			return this->Impl->GetTypeInfo(iTInfo,lcid,ppv);
         }
         
         ::HRESULT
         COMAPI GetIDsOfNames(::GUID const& iid, com::in_t<wchar_t*> names, ::UINT count, ::LCID lcid, com::retval_t<::DISPID> ppv) override {
-			return this->m_impl->GetIDsOfNames(iid,names,count,lcid,ppv);
+			return this->Impl->GetIDsOfNames(iid,names,count,lcid,ppv);
         }
         
         ::HRESULT 
@@ -203,7 +203,7 @@ namespace core::forms
                       com::out_t<::VARIANT>    result, 
                       com::out_t<::EXCEPINFO>  except, 
                       com::out_t<::UINT>       argErr) override {
-            return this->m_impl->Invoke(member, iid, lcid, flags, params, result, except, argErr);
+            return this->Impl->Invoke(member, iid, lcid, flags, params, result, except, argErr);
         }
 #pragma endregion
 	};
