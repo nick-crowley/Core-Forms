@@ -616,6 +616,7 @@ add_dependencies(exeFormsTests
 file(GLOB_RECURSE PROJECT_EXTRA_FILES
     "${PROJECT_EXTRA_FOLDER}*.h"
     "${PROJECT_EXTRA_FOLDER}*.cpp"
+    "${PROJECT_EXTRA_FOLDER}*.natvis"
 )
 
 # Sample files
