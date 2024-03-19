@@ -1,36 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
-	<Type Name="nstd::bitset&lt;*&gt;">
-		<DisplayString>{Value,en}</DisplayString>
-	</Type>
-
-	<Type Name="core::ObservableEvent&lt;*&gt;">
-		<Intrinsic Name="size" Expression="Observers.size()" />
-		<DisplayString Condition="size() == 0">{{ empty }}</DisplayString>
-		<DisplayString>{{ {size()} listener(s) }}</DisplayString>
-	</Type>
-	
-	<Type Name="core::SmartHandle&lt;*,*&gt;">
-		<DisplayString Condition="Object._Rep == 0">{{ empty }}</DisplayString>
-		<DisplayString>{{ present }}</DisplayString>
-	</Type>
-
-	<Type Name="core::win::ResourceId">
-		<Intrinsic Name="index" Expression="(int)Ident._Which"/>
-		<DisplayString Condition="index() == 0" Optional="true">#{Ident._Head}</DisplayString>
-		<DisplayString Condition="index() == 1" Optional="true">{Ident._Tail._Head,su}</DisplayString>
-		<DisplayString>&lt;Cannot determine&gt;</DisplayString>
-	</Type>
-
-	<Type Name="std::variant&lt;enum core::forms::Colour,enum core::forms::SystemColour,core::meta::transparent_t&gt;"> 
-		 <Intrinsic Name="index" Expression="(int)_Which"/>
-		 <DisplayString Condition="index() == 0" Optional="true">{_Head,x}</DisplayString>
-		 <DisplayString Condition="index() == 1" Optional="true">{_Tail._Head,en}</DisplayString>
-		 <DisplayString Condition="index() == 2" Optional="true">transparent</DisplayString>
-		<DisplayString>&lt;Cannot determine&gt;</DisplayString>
-	</Type>
-
 	<Type Name="core::forms::Brush">
 		<DisplayString>{Handle}</DisplayString>
 	</Type>
